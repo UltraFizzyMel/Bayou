@@ -26,6 +26,7 @@ public class DialogueTrigger : MonoBehaviour
             //Debug.Log(InputManager.GetInstance().GetInteractPressed());
             if (InputManager.GetInstance().GetInteractPressed())
             {
+                Debug.Log("EnterDialogueMode");
                 DialogueManager.GetInstance().EnterDialogueMode(inkJSON, knotName);
             }
         }
