@@ -79,6 +79,10 @@ namespace Bayou.Player
 
         private void FixedUpdate()
         {
+            if (DialogueManager.GetInstance().dialogueIsPlaying)
+            {
+                return;
+            }
             isGrounded = Physics.Raycast(
                 origin: rb.position + Vector3.up * 0.05f,
                 direction: Vector3.down,

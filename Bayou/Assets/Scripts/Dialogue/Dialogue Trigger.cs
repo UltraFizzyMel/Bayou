@@ -1,3 +1,4 @@
+using Bayou.Player;
 using UnityEngine;
 
 public class DialogueTrigger : MonoBehaviour
@@ -33,7 +34,7 @@ public class DialogueTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(other.TryGetComponent<PlayerMovement>(out PlayerMovement playerMovement))
+        if(other.TryGetComponent<BayouCharacterMotor>(out BayouCharacterMotor bayouCharacterMotor))
         {
             playerInRange = true;
         }
@@ -41,7 +42,7 @@ public class DialogueTrigger : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent<PlayerMovement>(out PlayerMovement playerMovement))
+        if (other.TryGetComponent<BayouCharacterMotor>(out BayouCharacterMotor bayouCharacterMotor))
         {
             playerInRange = false;
         }
