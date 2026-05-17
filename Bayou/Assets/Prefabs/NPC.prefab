@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 55ee1b3bce2f61d4da74a53cd734339b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -144,7 +144,7 @@ MonoBehaviour:
   visualCue: {fileID: 6321801231864508449}
   inkJSON: {fileID: 4900000, guid: 3c781195057b7a941bf86de918c1034e, type: 3}
   knotName: 
-  playerInRange: 0
+  playerInRange: 1
 --- !u!1 &3625172921421620672
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,17 +171,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3625172921421620672}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.9659259, z: 0.258819, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: -0.0009122281, y: -0.0009122281, z: -0.0009122281}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: -0.0025, y: -0.0025, z: -0.0025}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3557808461460856998}
   m_Father: {fileID: 8833810356521053790}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -30, y: 180, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0.0000038147, y: 0.88}
+  m_AnchoredPosition: {x: 0.0000038147, y: 2.22}
   m_SizeDelta: {x: 1920, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &4900082719228192608
@@ -305,7 +305,7 @@ Transform:
   m_GameObject: {fileID: 7704442045392199539}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.16, y: 1.53, z: 0}
+  m_LocalPosition: {x: 2.40546, y: 0.35, z: 2.47766}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

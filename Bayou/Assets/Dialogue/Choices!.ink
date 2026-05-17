@@ -1,16 +1,20 @@
  INCLUDE globals.ink
  
- #portrait: father_landry_neutral #layout: left
+ #portrait: father_landry_neutral #layout: left #background: church
  {priest_name == "":-> main |-> knownName}
  
 === knownName ===
 #speaker: Father Landry
 It's good to see you again.
--> questions
+-> service
 
 === main ===
 It's a pleasure to make your acquaintance.
--> questions
+-> service
+
+=== service ===
+How might I be of service?
+->questions
 
 === questions ===
 +[Who are you?]
@@ -23,16 +27,16 @@ It's a pleasure to make your acquaintance.
  === introduction(name) ===
  ~ priest_name = name
  The name is <color=\#F8FF30>Father Landry.</color> #speaker: Father Landry
- -> main
+ -> questions
  
  === repeatName ===
  Call me Landry... 
- ->main
+ ->questions
  
  === location ===
  The Bayou... You must have hit your head hard.
+ -> questions
  
- -> main
  === goodbye ===
  until next time my friend.
  -> END
