@@ -1,0 +1,1 @@
+VAR priest_name = ""
