@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40b094bf5eff826459b4f0b012668fe9, type: 3}
+  m_Name: Shop_BayouMerchant
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.Shop.ShopDefinition
+  merchantName: Bayou Trader
+  layout: {fileID: 11400000, guid: 03f59b81f9cc81547af6e0713d4551fa, type: 2}
+  stock:
+  - item: {fileID: 11400000, guid: dba47288da7522a4d915f7c31973216b, type: 2}
+    rotation: 0
+    compartmentId: 
+    gridX: 0
+    gridY: 0
+  - item: {fileID: 11400000, guid: 4b8455a457be26141be9a4cb9b449b90, type: 2}
+    rotation: 0
+    compartmentId: 
+    gridX: 0
+    gridY: 0

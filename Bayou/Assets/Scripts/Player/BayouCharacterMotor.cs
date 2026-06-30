@@ -1,3 +1,4 @@
+using Bayou.Save;
 using UnityEngine;
 
 namespace Bayou.Player
@@ -80,6 +81,11 @@ namespace Bayou.Player
         private void FixedUpdate()
         {
             if (DialogueManager.GetInstance().dialogueIsPlaying)
+            {
+                return;
+            }
+
+            if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen)
             {
                 return;
             }

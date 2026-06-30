@@ -1,3 +1,4 @@
+using Bayou.Inventory;
 using UnityEngine;
 
 namespace Bayou.Fish
@@ -17,6 +18,9 @@ namespace Bayou.Fish
 
         [Header("References")]
         [SerializeField] private Transform player;
+
+        [Header("Inventory (optional)")]
+        [SerializeField] private ItemDefinition inventoryItemWhenCaught;
 
         public bool IsCaught { get; private set; }
 
@@ -72,6 +76,12 @@ namespace Bayou.Fish
             if (IsCaught) return;
             IsCaught = true;
             _wanderDir = Vector3.zero;
+
+            if (inventoryItemWhenCaught != null && InventoryController.Instance != null)
+            {
+                if (!InventoryController.Instance.TryAddItem(inventoryItemWhenCaught))
+                    Debug.LogWarning($"[BayouFish] Inventory full — could not add {inventoryItemWhenCaught.displayName}.");
+            }
         }
 
         private void PickNewWanderDir()
