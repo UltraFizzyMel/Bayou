@@ -3,7 +3,27 @@ guid: 351a46c2fde307b44b86831717134f00
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Dry Grass
+    second: {fileID: 2100000, guid: 60ce65ea57a1a8d4dbf98ba32168e545, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Dry Grass.001
+    second: {fileID: 2100000, guid: 1ed7626d9ee0a0e41b3298539856ea83, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Green Grass
+    second: {fileID: 2100000, guid: 7f2f5c884b74c314d9a553539aabf02c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Green Grass.001
+    second: {fileID: 2100000, guid: 01945154d74f0d44bb5b98c03d063ff2, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -91,7 +111,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.5
+    globalScale: 50
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
