@@ -8,6 +8,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 902226729919725538, guid: d0eee295eef89e2499df008d4086606a, type: 3}
+      propertyPath: m_Size.x
+      value: 23.570526
+      objectReference: {fileID: 0}
+    - target: {fileID: 902226729919725538, guid: d0eee295eef89e2499df008d4086606a, type: 3}
+      propertyPath: m_Center.x
+      value: 18.58775
+      objectReference: {fileID: 0}
+    - target: {fileID: 902226729919725538, guid: d0eee295eef89e2499df008d4086606a, type: 3}
+      propertyPath: m_Center.z
+      value: 0.0101683615
+      objectReference: {fileID: 0}
     - target: {fileID: 3599997271720843492, guid: d0eee295eef89e2499df008d4086606a, type: 3}
       propertyPath: m_Name
       value: Fence Section (2) Variant
