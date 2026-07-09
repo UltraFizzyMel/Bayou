@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ac2964dc728fb04590f57e327aed7c3, type: 3}
   m_Name: CollectFishExampleQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestInfoSO
-  <id>k__BackingField: 
-  displayName: 
+  <id>k__BackingField: CollectFishExampleQuest
+  displayName: Catch a fish!
   netLevelRequirement: 0
   rodLevelRequirement: 0
   questPrerequistes: []

@@ -11,6 +11,7 @@ public class QuestInfoSO : ScriptableObject
     [Header("Requirements")]
     public int netLevelRequirement;
     public int rodLevelRequirement;
+    public int mainQuestLevel;
 
     public QuestInfoSO[] questPrerequistes;
 

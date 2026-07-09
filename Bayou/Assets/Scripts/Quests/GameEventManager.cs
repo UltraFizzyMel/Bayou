@@ -1,11 +1,12 @@
 using UnityEngine;
+using System;
 
 public class GameEventManager : MonoBehaviour
 {
 
     public static GameEventManager Instance { get; private set; }
 
-    //public QuestEvents questEvents;
+    public QuestEvents questEvents;
 
     public void Awake()
     {
@@ -16,6 +17,6 @@ public class GameEventManager : MonoBehaviour
         Instance = this;
 
         //initialize all events
-        //questEvents = new QuestEvents();
+        questEvents = new QuestEvents();
     }
 }
