@@ -7,6 +7,10 @@ public class QuestPoint : MonoBehaviour
     [Header("Quest")]
     [SerializeField] private QuestInfoSO questInfoForPoint;
 
+    [Header("Config")]
+    [SerializeField] private bool startPoint = true;
+    [SerializeField] private bool finishPoint = true;
+
 
     private bool playerIsNear = false;
     private string questId;
@@ -38,6 +42,18 @@ public class QuestPoint : MonoBehaviour
         }
     }
 
+    private void CheckQuest()
+    {
+        if (currentQuestState.Equals(QuestState.CAN_START) && startPoint)
+        {
+            GameEventManager.Instance.questEvents.StartQuest(questId);
+        }
+        else if(currentQuestState.Equals(QuestState.CAN_FINISH) && finishPoint)
+        {
+            GameEventManager.Instance.questEvents.FinishQuest(questId);
+        }
+    }
+   
 
     private void OnTriggerEnter(Collider other)
     {
@@ -45,6 +61,7 @@ public class QuestPoint : MonoBehaviour
         {
             playerIsNear = true;
         }
+        CheckQuest();
     }
 
     private void OnTriggerExit(Collider other)

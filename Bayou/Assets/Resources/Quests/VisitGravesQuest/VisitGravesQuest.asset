@@ -10,14 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0ac2964dc728fb04590f57e327aed7c3, type: 3}
-  m_Name: CollectFishExampleQuest
+  m_Name: VisitGravesQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestInfoSO
-  <id>k__BackingField: CollectFishExampleQuest
-  displayName: Catch a fish!
+  <id>k__BackingField: VisitGravesQuest
+  displayName: Find the Graves...
   netLevelRequirement: 0
   rodLevelRequirement: 0
   mainQuestLevel: 0
   questPrerequistes: []
-  questStepPrefabs: []
+  questStepPrefabs:
+  - {fileID: 4186559727008806551, guid: 90b46e7ae49e58c4bb4eab7aa5084e65, type: 3}
+  - {fileID: 4186559727008806551, guid: affb9a2f89ca5c1408fd64233ab89b8f, type: 3}
+  - {fileID: 4186559727008806551, guid: fc91accb2ee153b458bda0bf3000dfba, type: 3}
   moneyReward: 0
   MiscReward: 
