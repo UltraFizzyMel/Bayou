@@ -7253,6 +7253,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23601382aa8d46346a7a79da958b2a92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestManager
+  loadQuestState: 0
+  netLevel: 0
+  rodLevel: 0
+  currentMainQuestLevel: 0
 --- !u!1001 &740111404
 PrefabInstance:
   m_ObjectHideFlags: 0

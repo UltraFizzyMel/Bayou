@@ -6,4 +6,18 @@ public class CollectCoinsQuestStep : QuestStep
     private int fishToComplete = 1;
 
     //GameEventManager.instance.
+
+
+    /*
+     private void UpdateState()
+    {
+        string state = xxx.ToString();
+        ChangeState(state);
+    }
+     
+     */
+    protected override void SetQuestStepState(string state)
+    {
+       //UpdateState();
+    }
 }
