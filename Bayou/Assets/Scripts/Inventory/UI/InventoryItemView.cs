@@ -13,6 +13,7 @@ namespace Bayou.Inventory.UI
         private IInventoryDragHost _ui;
         private InventoryCompartmentUI _compartment;
         private RectTransform _rt;
+        private CanvasGroup _canvasGroup;
 
         public InventoryItemInstance Item { get; private set; }
         public InventoryCompartmentUI Compartment => _compartment;
@@ -26,6 +27,10 @@ namespace Bayou.Inventory.UI
             _rt = GetComponent<RectTransform>();
             _rt.pivot = new Vector2(0, 1);
             _rt.anchorMin = _rt.anchorMax = new Vector2(0, 1);
+            _canvasGroup = GetComponent<CanvasGroup>();
+            if (_canvasGroup == null)
+                _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
             if (iconImage == null)
                 iconImage = GetComponentInChildren<Image>();
 
@@ -64,8 +69,20 @@ namespace Bayou.Inventory.UI
             SyncFromItem();
         }
 
-        public void OnBeginDrag(PointerEventData eventData) => _ui?.BeginDrag(this);
+        public void OnBeginDrag(PointerEventData eventData)
+        {
+            if (_canvasGroup != null)
+                _canvasGroup.blocksRaycasts = false;
+            _ui?.BeginDrag(this);
+        }
+
         public void OnDrag(PointerEventData eventData) => _ui?.Dragging(this, eventData);
-        public void OnEndDrag(PointerEventData eventData) => _ui?.EndDrag(this, eventData);
+
+        public void OnEndDrag(PointerEventData eventData)
+        {
+            _ui?.EndDrag(this, eventData);
+            if (_canvasGroup != null)
+                _canvasGroup.blocksRaycasts = true;
+        }
     }
 }

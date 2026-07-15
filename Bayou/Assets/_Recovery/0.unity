@@ -233,6 +233,7 @@ MonoBehaviour:
   layout: {fileID: 11400000, guid: 03f59b81f9cc81547af6e0713d4551fa, type: 2}
   cellSpacing: 2
   cellSizeOverride: 0
+  gridFillsPanel: 1
   gridPanelPadding: 12
   clipItemsToGrid: 1
   cellEmptyColor: {r: 0.12, g: 0.14, b: 0.16, a: 0.55}
@@ -5308,6 +5309,7 @@ MonoBehaviour:
   layout: {fileID: 11400000, guid: 03f59b81f9cc81547af6e0713d4551fa, type: 2}
   cellSpacing: 2
   cellSizeOverride: 0
+  gridFillsPanel: 1
   gridPanelPadding: 12
   clipItemsToGrid: 1
   cellEmptyColor: {r: 0.12, g: 0.14, b: 0.16, a: 0.55}

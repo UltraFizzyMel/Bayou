@@ -22,6 +22,8 @@ namespace Bayou.Inventory.Shop
         [SerializeField] private RectTransform overlayRoot;
         [SerializeField] private InventoryBagPanelUI playerPanel;
         [SerializeField] private InventoryBagPanelUI merchantPanel;
+        [Tooltip("The main backpack UI shown as the left 'Personal' panel while the shop is open. Auto-resolved if left empty.")]
+        [SerializeField] private InventoryUIController playerInventoryUi;
         [SerializeField] private TextMeshProUGUI merchantNameLabel;
         [SerializeField] private TextMeshProUGUI balanceLabel;
         [SerializeField] private TextMeshProUGUI dealSummaryLabel;
@@ -139,8 +141,11 @@ namespace Bayou.Inventory.Shop
             playerPanel.Configure(_playerInventory.Bag, layout, unlock);
             merchantPanel.Configure(_merchantBag, layout, _ => true);
 
-            playerPanel.SetCrossPanelDropHandler((view, data) => TryCrossPanelDrop(playerPanel, merchantPanel, view, data));
-            merchantPanel.SetCrossPanelDropHandler((view, data) => TryCrossPanelDrop(merchantPanel, playerPanel, view, data));
+            // The visible "Personal" panel is the main backpack UI (InventoryUIController); the shop's own
+            // playerPanel is hidden by the split layout. Bridge dragging between the two visible grids.
+            playerPanel.SetCrossPanelDropHandler(TryDropPersonalToMerchant);
+            merchantPanel.SetCrossPanelDropHandler(TryDropMerchantToPersonal);
+            playerInventoryUi?.SetCrossPanelDropHandler(TryDropPersonalToMerchant);
 
             if (merchantNameLabel != null)
                 merchantNameLabel.text = shopDefinition.merchantName;
@@ -150,6 +155,7 @@ namespace Bayou.Inventory.Shop
 
             GameplayPause.SyncFromUiState();
             ApplySplitLayout(true);
+            playerInventoryUi?.Refresh();
 
             if (overlayRoot != null)
                 overlayRoot.gameObject.SetActive(true);
@@ -169,6 +175,7 @@ namespace Bayou.Inventory.Shop
 
             playerPanel.CancelDrag();
             merchantPanel.CancelDrag();
+            playerInventoryUi?.SetCrossPanelDropHandler(null);
 
             _isOpen = false;
             if (ActiveShop == this)
@@ -201,6 +208,8 @@ namespace Bayou.Inventory.Shop
             if (!_transaction.TryCloseDeal(_wallet))
                 return;
 
+            playerInventoryUi?.SetCrossPanelDropHandler(null);
+
             _isOpen = false;
             if (ActiveShop == this)
                 ActiveShop = null;
@@ -230,50 +239,196 @@ namespace Bayou.Inventory.Shop
             }
         }
 
-        private bool TryCrossPanelDrop(
-            InventoryBagPanelUI sourcePanel,
-            InventoryBagPanelUI targetPanel,
-            InventoryItemView view,
-            PointerEventData eventData)
+        // Personal (player backpack) -> Shopkeeper (merchant stock): mark item for selling.
+        private bool TryDropPersonalToMerchant(InventoryItemView view, PointerEventData eventData)
         {
-            if (sourcePanel == null || targetPanel == null || view?.Item == null)
+            if (view?.Item?.definition == null || merchantPanel == null ||
+                _merchantBag == null || _playerInventory?.Bag == null)
                 return false;
 
-            if (!targetPanel.ContainsScreenPoint(eventData.position, eventData.pressEventCamera))
+            if (!merchantPanel.ContainsScreenPoint(eventData.position, eventData.pressEventCamera))
                 return false;
 
-            if (!targetPanel.ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
+            if (!merchantPanel.ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
                     out var compartmentId, out var hoverX, out var hoverY))
                 return false;
 
-            var sourceBag = sourcePanel.Bag;
-            var targetBag = targetPanel.Bag;
             var item = view.Item;
+            var grabOffset = playerInventoryUi?.CurrentDragGrabOffset ?? Vector2Int.zero;
+            ResolveAnchor(_merchantBag, item, compartmentId, hoverX, hoverY, grabOffset, out var gx, out var gy);
+            if (!_merchantBag.CanPlace(item, compartmentId, gx, gy, item.rotation))
+                return false;
 
+            var sourceBag = _playerInventory.Bag;
+            sourceBag.Remove(item);
+            if (!_merchantBag.TryPlace(item, compartmentId, gx, gy, item.rotation))
+            {
+                sourceBag.HoldItem(item);
+                return false;
+            }
+
+            RefreshAfterCrossPanelMove();
+            return true;
+        }
+
+        // Shopkeeper (merchant stock) -> Personal (player backpack): mark item for buying.
+        private bool TryDropMerchantToPersonal(InventoryItemView view, PointerEventData eventData)
+        {
+            if (view?.Item?.definition == null ||
+                _merchantBag == null || _playerInventory?.Bag == null)
+                return false;
+
+            var targetUi = FindPlayerInventoryUiUnderPoint(eventData.position, eventData.pressEventCamera);
+            if (targetUi == null)
+                return false;
+
+            if (!targetUi.ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
+                    out var compartmentId, out var hoverX, out var hoverY))
+                return false;
+
+            if (!_playerInventory.IsCompartmentUnlocked(compartmentId))
+                return false;
+
+            var item = view.Item;
+            var playerBag = _playerInventory.Bag;
+            var grabOffset = merchantPanel?.CurrentDragGrabOffset ?? Vector2Int.zero;
+            ResolveAnchor(playerBag, item, compartmentId, hoverX, hoverY, grabOffset, out var gx, out var gy);
+            if (!playerBag.CanPlace(item, compartmentId, gx, gy, item.rotation))
+                return false;
+
+            _merchantBag.Remove(item);
+            if (!targetUi.Inventory.TryPlace(item, compartmentId, gx, gy, item.rotation))
+            {
+                _merchantBag.HoldItem(item);
+                return false;
+            }
+
+            RefreshAfterCrossPanelMove();
+            return true;
+        }
+
+        private InventoryUIController FindPlayerInventoryUiUnderPoint(Vector2 screen, Camera cam)
+        {
+            var ui = FindPlayerInventoryUiViaRaycast(screen, cam);
+            if (ui != null)
+                return ui;
+
+            if (playerInventoryUi != null && playerInventoryUi.ContainsScreenPoint(screen, cam))
+                return playerInventoryUi;
+
+            foreach (var candidate in UnityEngine.Object.FindObjectsByType<InventoryUIController>(FindObjectsSortMode.None))
+            {
+                if (candidate == null || !candidate.ContainsScreenPoint(screen, cam))
+                    continue;
+
+                playerInventoryUi = candidate;
+                return candidate;
+            }
+
+            playerInventoryUi = FindFirstObjectByType<InventoryUIController>();
+            return playerInventoryUi?.ContainsScreenPoint(screen, cam) == true ? playerInventoryUi : null;
+        }
+
+        private InventoryUIController FindPlayerInventoryUiViaRaycast(Vector2 screen, Camera cam)
+        {
+            var eventSystem = EventSystem.current;
+            if (eventSystem == null)
+                return null;
+
+            var pointerData = new PointerEventData(eventSystem)
+            {
+                position = screen
+            };
+
+            var hits = new System.Collections.Generic.List<RaycastResult>();
+            eventSystem.RaycastAll(pointerData, hits);
+            Debug.Log($"[Shop Raycast] EventSystem hits={hits.Count} cam={(cam!=null?cam.name:"null")} ");
+            foreach (var h in hits)
+            {
+                Debug.Log($"[Shop Raycast] hit: {h.gameObject.name} module={h.module?.GetType().Name}");
+            }
+
+            var ui = GetFirstInventoryUiFromHits(hits);
+            if (ui != null)
+                return ui;
+
+            // If we didn't find a candidate via EventSystem, try per-canvas GraphicRaycaster checks
+            var canvases = UnityEngine.Object.FindObjectsOfType<Canvas>();
+            foreach (var canvas in canvases)
+            {
+                if (canvas == null) continue;
+                var gr = canvas.GetComponent<UnityEngine.UI.GraphicRaycaster>();
+                if (gr == null) continue;
+
+                var list = new System.Collections.Generic.List<RaycastResult>();
+                gr.Raycast(pointerData, list);
+                if (list.Count > 0)
+                {
+                    Debug.Log($"[Shop Raycast] Canvas '{canvas.name}' (camera={(canvas.worldCamera!=null?canvas.worldCamera.name:"null")}) hits={list.Count}");
+                    foreach (var r in list)
+                        Debug.Log($"[Shop Raycast]  canvas hit: {r.gameObject.name} module={r.module?.GetType().Name}");
+
+                    var found = GetFirstInventoryUiFromHits(list);
+                    if (found != null)
+                        return found;
+                }
+            }
+
+            Debug.Log("[Shop Raycast] No inventory UI found under point.");
+            return null;
+        }
+
+        private InventoryUIController GetFirstInventoryUiFromHits(System.Collections.Generic.List<RaycastResult> hits)
+        {
+            foreach (var hit in hits)
+            {
+                var ui = GetInventoryUiForGameObject(hit.gameObject);
+                if (ui != null)
+                    return ui;
+            }
+            return null;
+        }
+
+        private InventoryUIController GetInventoryUiForGameObject(GameObject go)
+        {
+            if (go == null) return null;
+
+            foreach (var ui in UnityEngine.Object.FindObjectsByType<InventoryUIController>(FindObjectsSortMode.None))
+            {
+                if (ui == null || ui.PanelRoot == null) continue;
+                if (go == ui.PanelRoot.gameObject || go.transform.IsChildOf(ui.PanelRoot))
+                    return ui;
+            }
+
+            return null;
+        }
+
+        private static void ResolveAnchor(
+            InventoryBagModel targetBag,
+            InventoryItemInstance item,
+            string compartmentId,
+            int hoverX,
+            int hoverY,
+            Vector2Int grabOffset,
+            out int gx,
+            out int gy)
+        {
             InventoryDragPlacement.TryGetAnchorFromHover(
                 item.definition.shape,
                 item.rotation,
                 hoverX,
                 hoverY,
-                Vector2Int.zero,
+                grabOffset,
                 (ax, ay) => targetBag.CanPlace(item, compartmentId, ax, ay, item.rotation),
-                out var gx,
-                out var gy);
+                out gx,
+                out gy);
+        }
 
-            if (!targetBag.CanPlace(item, compartmentId, gx, gy, item.rotation))
-                return false;
-
-            sourceBag.Remove(item);
-            if (!targetBag.TryPlace(item, compartmentId, gx, gy, item.rotation))
-            {
-                sourceBag.TryAddItem(item.definition, item.rotation, out _);
-                return false;
-            }
-
+        private void RefreshAfterCrossPanelMove()
+        {
             _transaction.Recalculate(_playerInventory.Bag, _merchantBag);
-            playerPanel.Refresh();
+            _playerInventory.NotifyChanged();
             merchantPanel.Refresh();
-            return true;
         }
 
         private void RefreshBalance()
@@ -307,6 +462,9 @@ namespace Bayou.Inventory.Shop
             _wallet = PlayerWallet.Instance;
             if (_wallet == null)
                 _wallet = FindFirstObjectByType<PlayerWallet>();
+
+            if (playerInventoryUi == null)
+                playerInventoryUi = FindFirstObjectByType<InventoryUIController>();
         }
     }
 }

@@ -28,7 +28,6 @@ namespace Bayou.Inventory.UI
         [SerializeField] private BackpackLayoutDefinition layout;
         [SerializeField] private float cellSpacing = 2f;
         [SerializeField] private float cellSizeOverride;
-        [SerializeField] private bool gridFillsPanel = true;
         [SerializeField] private float gridPanelPadding = 12f;
         [SerializeField] private bool clipItemsToGrid = true;
 
@@ -52,9 +51,11 @@ namespace Bayou.Inventory.UI
         private int _dragStartRotation;
         private Vector2Int _dragGrabOffset;
         private Coroutine _layoutRebuildCoroutine;
+        private bool _layoutRebuildPending;
 
         public RectTransform PanelRoot => panelRoot;
         public InventoryBagModel Bag => _bag;
+        public Vector2Int CurrentDragGrabOffset => _dragGrabOffset;
 
         public void Configure(
             InventoryBagModel bag,
@@ -94,6 +95,22 @@ namespace Bayou.Inventory.UI
 
         public bool ScreenPointToGrid(Vector2 screen, Camera cam, out string compartmentId, out int gx, out int gy)
         {
+            var canvas = panelRoot?.GetComponentInParent<Canvas>();
+            var canvasCam = canvas?.worldCamera;
+            if (canvasCam != cam && TryScreenPointToGrid(screen, canvasCam, out compartmentId, out gx, out gy))
+                return true;
+
+            if (TryScreenPointToGrid(screen, cam, out compartmentId, out gx, out gy))
+                return true;
+
+            if (cam != null && TryScreenPointToGrid(screen, null, out compartmentId, out gx, out gy))
+                return true;
+
+            return false;
+        }
+
+        private bool TryScreenPointToGrid(Vector2 screen, Camera cam, out string compartmentId, out int gx, out int gy)
+        {
             compartmentId = null;
             gx = gy = -1;
 
@@ -115,7 +132,15 @@ namespace Bayou.Inventory.UI
         public bool ContainsScreenPoint(Vector2 screen, Camera cam)
         {
             if (panelRoot == null) return false;
-            return RectTransformUtility.RectangleContainsScreenPoint(panelRoot, screen, cam);
+            var canvas = panelRoot.GetComponentInParent<Canvas>();
+            var canvasCam = canvas?.worldCamera;
+            if (canvasCam != cam && RectTransformUtility.RectangleContainsScreenPoint(panelRoot, screen, canvasCam))
+                return true;
+
+            if (RectTransformUtility.RectangleContainsScreenPoint(panelRoot, screen, cam))
+                return true;
+
+            return cam != null && RectTransformUtility.RectangleContainsScreenPoint(panelRoot, screen, null);
         }
 
         public bool TryPlace(InventoryItemInstance item, string compartmentId, int x, int y, int rotation)
@@ -131,6 +156,19 @@ namespace Bayou.Inventory.UI
             _bag?.DetachFromGrid(item);
         }
 
+        private Camera GetCanvasCamera() => panelRoot?.GetComponentInParent<Canvas>()?.worldCamera;
+
+        private void MoveDragViewToCanvas(InventoryItemView view)
+        {
+            if (view == null || panelRoot == null) return;
+            var canvas = panelRoot.GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+
+            var canvasTransform = canvas.transform;
+            if (view.transform.parent == canvasTransform) return;
+            view.transform.SetParent(canvasTransform, true);
+        }
+
         public void BeginDrag(InventoryItemView view)
         {
             if (_bag == null) return;
@@ -141,9 +179,10 @@ namespace Bayou.Inventory.UI
             _dragStartY = view.Item.gridY;
             _dragStartRotation = view.Item.rotation;
             _dragGrabOffset = Vector2Int.zero;
+            var cam = GetCanvasCamera();
             if (_dragHadPlacement && view.Item.definition != null &&
                 Mouse.current != null &&
-                ScreenPointToGrid(Mouse.current.position.ReadValue(), null, out _, out var hx, out var hy))
+                ScreenPointToGrid(Mouse.current.position.ReadValue(), cam, out _, out var hx, out var hy))
             {
                 _dragGrabOffset = InventoryDragPlacement.ComputeGrabOffset(
                     view.Item.definition.shape, view.Item.rotation,
@@ -151,6 +190,7 @@ namespace Bayou.Inventory.UI
             }
 
             DetachForDrag(view.Item);
+            MoveDragViewToCanvas(view);
             view.transform.SetAsLastSibling();
             UpdatePlacementPreview(view);
         }
@@ -162,7 +202,11 @@ namespace Bayou.Inventory.UI
             if (TryGetDragAnchor(eventData.position, eventData.pressEventCamera, view,
                     out var compartment, out _, out var gx, out var gy))
             {
-                compartment.SnapItemToGrid(view.Item, gx, gy, view.RectTransform);
+                SnapDragViewToGrid(view, compartment, gx, gy);
+            }
+            else if (_crossPanelDropHandler != null)
+            {
+                FollowPointerOnCanvas(view, eventData);
             }
             else
             {
@@ -170,6 +214,34 @@ namespace Bayou.Inventory.UI
             }
 
             UpdatePlacementPreview(view);
+        }
+
+        private void SnapDragViewToGrid(InventoryItemView view, InventoryCompartmentUI compartment, int gx, int gy)
+        {
+            if (view == null || compartment == null || view.Item?.definition == null) return;
+            if (view.RectTransform.parent == compartment.ItemsRoot)
+            {
+                compartment.SnapItemToGrid(view.Item, gx, gy, view.RectTransform);
+                return;
+            }
+
+            var targetWorld = compartment.GridRoot.TransformPoint(compartment.GridToAnchoredPosition(gx, gy, view.Item.definition.shape, view.Item.rotation));
+            var canvasRoot = view.RectTransform.parent as RectTransform;
+            if (canvasRoot == null)
+            {
+                compartment.SnapItemToGrid(view.Item, gx, gy, view.RectTransform);
+                return;
+            }
+
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    canvasRoot,
+                    RectTransformUtility.WorldToScreenPoint(null, targetWorld),
+                    canvasRoot.GetComponentInParent<Canvas>()?.worldCamera,
+                    out var local))
+            {
+                view.RectTransform.anchoredPosition = local;
+                view.RectTransform.sizeDelta = compartment.GetItemSize(view.Item.definition.shape, view.Item.rotation);
+            }
         }
 
         public void EndDrag(InventoryItemView view, PointerEventData eventData)
@@ -219,10 +291,24 @@ namespace Bayou.Inventory.UI
             }
         }
 
+        private void OnEnable()
+        {
+            if (_layoutRebuildPending)
+                ScheduleLayoutRebuild();
+        }
+
         private void ScheduleLayoutRebuild()
         {
             if (_layoutRebuildCoroutine != null)
                 StopCoroutine(_layoutRebuildCoroutine);
+
+            if (!isActiveAndEnabled)
+            {
+                _layoutRebuildPending = true;
+                return;
+            }
+
+            _layoutRebuildPending = false;
             _layoutRebuildCoroutine = StartCoroutine(RebuildAfterLayoutPass());
         }
 
@@ -473,18 +559,44 @@ namespace Bayou.Inventory.UI
         private void ClampDragToCompartment(InventoryItemView view, PointerEventData eventData)
         {
             var compartment = view.Compartment ?? GetCompartmentById(_dragStartCompartmentId);
-            var dragParent = compartment?.ItemsRoot;
+            var dragParent = view.RectTransform.parent as RectTransform ?? compartment?.ItemsRoot;
             if (dragParent == null) return;
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
                     dragParent, eventData.position, eventData.pressEventCamera, out var local))
                 return;
 
-            var max = compartment != null ? compartment.GridPixelSize : dragParent.rect.size;
-            local.x = Mathf.Clamp(local.x, 0f, max.x);
-            local.y = Mathf.Clamp(local.y, -max.y, 0f);
+            var rect = dragParent.rect;
+            local.x = Mathf.Clamp(local.x, rect.xMin, rect.xMax);
+            local.y = Mathf.Clamp(local.y, rect.yMin, rect.yMax);
             view.RectTransform.anchoredPosition = local;
         }
+        private void FollowPointerOnCanvas(InventoryItemView view, PointerEventData eventData)
+        {
+            if (view == null || view.RectTransform == null) return;
+            var canvas = panelRoot?.GetComponentInParent<Canvas>();
+            if (canvas == null) return;
 
+            var canvasRoot = canvas.transform as RectTransform;
+            if (canvasRoot == null) return;
+
+            var canvasCam = canvas.worldCamera;
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    canvasRoot, eventData.position, canvasCam ?? eventData.pressEventCamera, out var local))
+                return;
+
+            view.RectTransform.SetParent(canvasRoot, true);
+
+            var offset = Vector2.zero;
+            if (view.Item?.definition != null && view.Compartment != null)
+            {
+                var step = view.Compartment.CellSize + view.Compartment.CellSpacing;
+                offset = new Vector2(_dragGrabOffset.x * step, -_dragGrabOffset.y * step);
+            }
+
+            view.RectTransform.anchoredPosition = local - offset;
+            if (view.Item?.definition != null)
+                view.RectTransform.sizeDelta = view.Compartment?.GetItemSize(view.Item.definition.shape, view.Item.rotation) ?? view.RectTransform.sizeDelta;
+        }
         private void CancelActiveDrag()
         {
             if (_dragging == null) return;

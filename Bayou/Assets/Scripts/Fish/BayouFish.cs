@@ -1,100 +1,198 @@
 using Bayou.Inventory;
+using Bayou.Fishing;
 using UnityEngine;
 
 namespace Bayou.Fish
 {
-    /// <summary>
-    /// Simple surface fish: wanders on XZ, flees from the player, can be caught by hand net overlap.
-    /// </summary>
     [DisallowMultipleComponent]
     public sealed class BayouFish : MonoBehaviour
     {
         [Header("Movement")]
-        [SerializeField] private float wanderSpeed = 1.1f;
-        [SerializeField] private float wanderIntervalMin = 1.2f;
-        [SerializeField] private float wanderIntervalMax = 3.5f;
-        [SerializeField] private float fleeSpeed = 2.8f;
+        [SerializeField] private float wanderSpeed = 1.2f;
+        [SerializeField] private float turnSpeed = 60f;
+        [SerializeField] private float directionChangeInterval = 2f;
+        [SerializeField] private float randomTurnStrength = 35f;
+        [SerializeField] private float swimWobble = 20f;
+        [SerializeField] private float fleeSpeed = 3f;
         [SerializeField] private float fleeRadius = 3.5f;
+        [SerializeField] private float roamRadius = 5f;
 
         [Header("References")]
         [SerializeField] private Transform player;
 
-        [Header("Inventory (optional)")]
+        [Header("Inventory")]
         [SerializeField] private ItemDefinition inventoryItemWhenCaught;
 
         public bool IsCaught { get; private set; }
 
-        private Vector3 _wanderDir;
-        private float _nextWanderTime;
+        private Vector3 _spawnPosition;
+        private Vector3 _currentDirection;
+        private Vector3 _targetDirection;
+
+        private float _nextDirectionChange;
+        private float _wobbleSeed;
 
         private void Awake()
         {
+            _spawnPosition = transform.position;
+
             if (player == null)
             {
-                var p = GameObject.FindGameObjectWithTag("Player");
-                if (p != null) player = p.transform;
+                GameObject p = GameObject.FindGameObjectWithTag("Player");
+                if (p != null)
+                    player = p.transform;
             }
 
-            PickNewWanderDir();
+            _wobbleSeed = Random.Range(0f, 1000f);
+
+            PickNewDirection();
+            _currentDirection = _targetDirection;
         }
 
         private void Update()
         {
-            if (IsCaught) return;
+            if (IsCaught)
+                return;
 
-            var dt = Time.deltaTime;
-            var pos = transform.position;
+            float dt = Time.deltaTime;
 
+            // Flee player
             if (player != null)
             {
-                var toPlayer = Flat(pos - player.position);
-                if (toPlayer.magnitude < fleeRadius && toPlayer.sqrMagnitude > 0.0001f)
+                Vector3 away = Flat(transform.position - player.position);
+
+                if (away.magnitude < fleeRadius)
                 {
-                    transform.position += (-toPlayer.normalized) * (fleeSpeed * dt);
+                    away.Normalize();
+
+                    _currentDirection = Vector3.RotateTowards(
+                        _currentDirection,
+                        away,
+                        Mathf.Deg2Rad * turnSpeed * 3f * dt,
+                        0f);
+
+                    Move(fleeSpeed, dt);
                     return;
                 }
             }
 
-            if (Time.time >= _nextWanderTime)
-                PickNewWanderDir();
+            if (Time.time >= _nextDirectionChange)
+                PickNewDirection();
 
-            transform.position += _wanderDir * (wanderSpeed * dt);
+            // Smooth steering
+            _currentDirection = Vector3.RotateTowards(
+                _currentDirection,
+                _targetDirection,
+                Mathf.Deg2Rad * turnSpeed * dt,
+                0f);
+
+            // Small continuous wobble
+            float wobble =
+                Mathf.Sin((Time.time + _wobbleSeed) * 2f) *
+                swimWobble;
+
+            Quaternion wobbleRot =
+                Quaternion.Euler(0f, wobble * dt, 0f);
+
+            _currentDirection = wobbleRot * _currentDirection;
+
+            // Keep fish inside roam radius
+            Vector3 toHome = _spawnPosition - transform.position;
+
+            if (toHome.magnitude > roamRadius * 0.8f)
+            {
+                _targetDirection = toHome.normalized;
+            }
+
+            Move(wanderSpeed, dt);
         }
 
-        /// <summary>Called by <see cref="Fishing.HandNetAreaController"/> when the net is used.</summary>
+        private void Move(float speed, float dt)
+        {
+            transform.position += _currentDirection.normalized * speed * dt;
+
+            if (_currentDirection.sqrMagnitude > 0.001f)
+            {
+                Quaternion targetRotation =
+                    Quaternion.LookRotation(_currentDirection);
+
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    targetRotation,
+                    dt * 5f);
+            }
+        }
+
+        private void PickNewDirection()
+        {
+            float randomAngle = Random.Range(
+                -randomTurnStrength,
+                randomTurnStrength);
+
+            Quaternion rotation =
+                Quaternion.Euler(0f, randomAngle, 0f);
+
+            _targetDirection =
+                rotation * (_currentDirection == Vector3.zero
+                    ? Random.insideUnitSphere
+                    : _currentDirection);
+
+            _targetDirection.y = 0f;
+            _targetDirection.Normalize();
+
+            _nextDirectionChange =
+                Time.time + Random.Range(
+                    directionChangeInterval * 0.6f,
+                    directionChangeInterval * 1.4f);
+        }
+
         public void TryCatchFromNet(Vector3 netCenter, float radius)
         {
-            if (IsCaught) return;
+            if (IsCaught)
+                return;
 
-            var p = Flat(transform.position - netCenter);
-            if (p.magnitude <= radius)
+            if (!FishingZoneManager.IsInFishingZone(transform.position))
+                return;
+
+            if (Vector3.Distance(
+                Flat(transform.position),
+                Flat(netCenter)) <= radius)
+            {
                 Catch();
+            }
         }
 
         public void Catch()
         {
-            if (IsCaught) return;
+            if (IsCaught)
+                return;
+
             IsCaught = true;
-            _wanderDir = Vector3.zero;
 
-            if (inventoryItemWhenCaught != null && InventoryController.Instance != null)
+            if (inventoryItemWhenCaught != null &&
+                InventoryController.Instance != null)
             {
-                if (!InventoryController.Instance.TryAddItem(inventoryItemWhenCaught))
-                    Debug.LogWarning($"[BayouFish] Inventory full — could not add {inventoryItemWhenCaught.displayName}.");
+                InventoryController.Instance.TryAddItem(
+                    inventoryItemWhenCaught);
             }
-        }
 
-        private void PickNewWanderDir()
-        {
-            var a = Random.Range(0f, Mathf.PI * 2f);
-            _wanderDir = new Vector3(Mathf.Cos(a), 0f, Mathf.Sin(a)).normalized;
-            _nextWanderTime = Time.time + Random.Range(wanderIntervalMin, wanderIntervalMax);
+            gameObject.SetActive(false);
         }
 
         private static Vector3 Flat(Vector3 v)
         {
             v.y = 0f;
             return v;
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(
+                Application.isPlaying
+                    ? _spawnPosition
+                    : transform.position,
+                roamRadius);
         }
     }
 }
