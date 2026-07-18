@@ -32823,6 +32823,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameEventManager
   questEvents: {fileID: 0}
+  dialogueEvents: {fileID: 0}
 --- !u!4 &2046602337
 Transform:
   m_ObjectHideFlags: 0

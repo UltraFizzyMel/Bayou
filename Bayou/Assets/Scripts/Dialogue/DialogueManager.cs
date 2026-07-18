@@ -36,6 +36,7 @@ public class DialogueManager : MonoBehaviour
 
     private InkExternalFunctions inkExternalFunctions;
 
+
     private bool canContinueToNextLine = false;
 
     private Coroutine displayLineCoroutine;
@@ -48,6 +49,7 @@ public class DialogueManager : MonoBehaviour
     private const string BACKGROUND_TAG = "background";
 
     private DialogueVariables dialogueVariables;
+   
 
     private void Awake()
     {
@@ -58,6 +60,7 @@ public class DialogueManager : MonoBehaviour
         instance = this;
 
         dialogueVariables = new DialogueVariables(loadGlobalsJSON);
+        
     }
 
     public static DialogueManager GetInstance()
@@ -81,6 +84,32 @@ public class DialogueManager : MonoBehaviour
             choicesText[index] = choice.GetComponentInChildren<TextMeshProUGUI>();
             index++;
         }
+    }
+
+    private void OnEnable()
+    {
+        GameEventManager.Instance.dialogueEvents.onUpdateDialogueVariable += UpdateDialogueVariable;
+        GameEventManager.Instance.questEvents.onQuestStateChange += QuestStateChange;
+    }
+
+    private void OnDisable()
+    {
+        GameEventManager.Instance.dialogueEvents.onUpdateDialogueVariable -= UpdateDialogueVariable;
+        GameEventManager.Instance.questEvents.onQuestStateChange -= QuestStateChange;
+    }
+
+    private void QuestStateChange(Quest quest)
+    {
+        GameEventManager.Instance.dialogueEvents.UpdateDialogueVariable(
+            quest.info.id + "State",
+            new StringValue(quest.state.ToString())
+            );
+    }
+
+    private void UpdateDialogueVariable(string name, Ink.Runtime.Object value)
+    {
+       
+        dialogueVariables.VariableChanged(name, value);
     }
 
     public void Update()

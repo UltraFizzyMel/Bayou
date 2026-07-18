@@ -38,11 +38,11 @@
  Find me something shiny from the church pond. 
  You'll know it when you see it.
  + {CollectPondItemQuestState == "CAN_FINISH"} [Do you mean this?] ->DeliveredItem 
-     ~FinishQuest("CollectPondItemQuest")
-     ~CollectPondItemQuestState = "FINISHED"
+     ~FinishQuest(CollectPondItemQuestId)
+     //~CollectPondItemQuestState = "FINISHED"
  +[Right away.]
-     ~StartQuest("CollectPondItemQuest")
-     ~CollectPondItemQuestState = "IN_PROGRESS"
+     ~StartQuest(CollectPondItemQuestId)
+     //~CollectPondItemQuestState = "IN_PROGRESS"
      ->END
  
  ===DeliverItem
@@ -50,8 +50,8 @@
  Did you find it?
     +[Not Yet…] -> UnDeliveredItem
     +{CollectPondItemQuestState == "CAN_FINISH"}[I have.] ->DeliveredItem
-    ~FinishQuest("CollectPondItemQuest")
-    ~CollectPondItemQuestState = "FINISHED"
+    ~FinishQuest(CollectPondItemQuestId)
+    //~CollectPondItemQuestState = "FINISHED"
  
  ===UnDeliveredItem
  Come back as soon as you have it. ->END
