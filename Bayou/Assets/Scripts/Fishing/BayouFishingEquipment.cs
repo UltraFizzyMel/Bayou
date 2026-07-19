@@ -2,8 +2,6 @@
 #error BayouFishingEquipment requires the New Input System (ENABLE_INPUT_SYSTEM).
 #endif
 
-using Bayou.Combat;
-using Bayou.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,31 +10,29 @@ namespace Bayou.Fishing
     public enum BayouFishingTool
     {
         ThrowingNet,
-        HandNet,
-        FishingRod
+        HandNet
     }
 
     /// <summary>
-    /// Switches between throwing net, hand net, and fishing rod (fish out of combat / melee in combat).
+    /// Switches between long-range throwing net (<see cref="FishingNetCaster"/>) and short-range area hand net.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BayouFishingEquipment : MonoBehaviour
     {
         [SerializeField] private FishingNetCaster throwingCaster;
         [SerializeField] private HandNetAreaController handNet;
-        [SerializeField] private FishingRodController fishingRod;
 
         [Header("Input")]
-        [Tooltip("Press to cycle Throwing net → Hand net → Fishing rod.")]
+        [Tooltip("Press to cycle Throwing net ↔ Hand net (or wire Prev/Next separately).")]
         [SerializeField] private InputActionReference switchToolAction;
 
+        [Tooltip("Optional: switch directly to hand net.")]
         [SerializeField] private InputActionReference selectHandNetAction;
+
+        [Tooltip("Optional: switch directly to throwing net.")]
         [SerializeField] private InputActionReference selectThrowingNetAction;
-        [SerializeField] private InputActionReference selectFishingRodAction;
 
-        [SerializeField] private BayouFishingTool startingTool = BayouFishingTool.FishingRod;
-
-        private InputAction _switchTool;
+        [SerializeField] private BayouFishingTool startingTool = BayouFishingTool.ThrowingNet;
 
         public BayouFishingTool CurrentTool { get; private set; }
 
@@ -44,31 +40,27 @@ namespace Bayou.Fishing
         {
             throwingCaster = GetComponent<FishingNetCaster>();
             handNet = GetComponent<HandNetAreaController>();
-            fishingRod = GetComponent<FishingRodController>();
         }
 
         private void Awake()
         {
             if (throwingCaster == null) throwingCaster = GetComponent<FishingNetCaster>();
             if (handNet == null) handNet = GetComponent<HandNetAreaController>();
-            if (fishingRod == null) fishingRod = GetComponent<FishingRodController>();
         }
 
         private void OnEnable()
         {
-            ResolveSwitchAction();
-            _switchTool?.Enable();
+            switchToolAction?.action?.Enable();
             selectHandNetAction?.action?.Enable();
             selectThrowingNetAction?.action?.Enable();
-            selectFishingRodAction?.action?.Enable();
             ApplyTool(startingTool);
         }
 
         private void OnDisable()
         {
+            switchToolAction?.action?.Disable();
             selectHandNetAction?.action?.Disable();
             selectThrowingNetAction?.action?.Disable();
-            selectFishingRodAction?.action?.Disable();
         }
 
         private void Update()
@@ -85,52 +77,19 @@ namespace Bayou.Fishing
                 return;
             }
 
-            if (selectFishingRodAction?.action != null && selectFishingRodAction.action.WasPressedThisFrame())
-            {
-                ApplyTool(BayouFishingTool.FishingRod);
-                return;
-            }
-
-            if (_switchTool != null && _switchTool.WasPressedThisFrame())
-                ApplyTool(NextTool(CurrentTool));
+            if (switchToolAction?.action != null && switchToolAction.action.WasPressedThisFrame())
+                ApplyTool(CurrentTool == BayouFishingTool.ThrowingNet ? BayouFishingTool.HandNet : BayouFishingTool.ThrowingNet);
         }
 
         public void ApplyTool(BayouFishingTool tool)
         {
             CurrentTool = tool;
 
-            var useThrow = tool == BayouFishingTool.ThrowingNet || tool == BayouFishingTool.FishingRod;
-            var useHand = tool == BayouFishingTool.HandNet;
-            var useRod = tool == BayouFishingTool.FishingRod;
-
             if (throwingCaster != null)
-                throwingCaster.enabled = useThrow;
+                throwingCaster.enabled = tool == BayouFishingTool.ThrowingNet;
 
             if (handNet != null)
-                handNet.enabled = useHand;
-
-            if (fishingRod != null)
-                fishingRod.enabled = useRod;
-        }
-
-        private static BayouFishingTool NextTool(BayouFishingTool tool) =>
-            tool switch
-            {
-                BayouFishingTool.ThrowingNet => BayouFishingTool.HandNet,
-                BayouFishingTool.HandNet => BayouFishingTool.FishingRod,
-                _ => BayouFishingTool.ThrowingNet
-            };
-
-        private void ResolveSwitchAction()
-        {
-            _switchTool = switchToolAction != null ? switchToolAction.action : null;
-            if (_switchTool != null) return;
-
-            var motor = GetComponent<BayouCharacterMotor>();
-            if (motor?.MoveAction?.action?.actionMap?.asset == null) return;
-
-            _switchTool = motor.MoveAction.action.actionMap.asset
-                .FindAction("Player/Switch Tool", throwIfNotFound: false);
+                handNet.enabled = tool == BayouFishingTool.HandNet;
         }
     }
 }

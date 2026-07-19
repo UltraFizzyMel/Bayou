@@ -15,6 +15,14 @@ public class DialogueVariables
         //create the story
         globalVariablesStory = new Story(loadGlobalsJSON.text);
 
+        /*
+         * If(PlayerPrefs.HasKey(saveVariablesKey);
+         * {
+         * string JsonState = Playerprefs.GetString(saveVariableKey);
+         * globalVariablesStory.state.LoadJson(jsonState);
+         * }
+          */
+
         //initialize the dictionary
         variables = new Dictionary<string, Ink.Runtime.Object>();
         foreach (string name in globalVariablesStory.variablesState)
@@ -49,13 +57,14 @@ public class DialogueVariables
         story.variablesState.variableChangedEvent -= VariableChanged;
     }
 
-    private void VariableChanged(string name, Ink.Runtime.Object value)
+    public void VariableChanged(string name, Ink.Runtime.Object value)
     {
         //only maintain variables that were initialized from the globals ink file;
         if(variables.ContainsKey(name)) 
         {
             variables.Remove(name);
             variables.Add(name, value );
+            Debug.Log("Updated dialogue variable: "+ name + "  " + value);
         }
     }
 

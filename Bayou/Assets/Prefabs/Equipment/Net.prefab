@@ -14,8 +14,6 @@ GameObject:
   - component: {fileID: 3538025880212568178}
   - component: {fileID: 3926147882703795810}
   - component: {fileID: 7056091586404632398}
-  - component: {fileID: 6100001000000000001}
-  - component: {fileID: 6100001000000000002}
   m_Layer: 0
   m_Name: Net
   m_TagString: Untagged
@@ -98,63 +96,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfd0267cf63aa75499c941fd0d578b93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingNetProjectile
-  lifeSeconds: 12
-  stickOnDryLand: 1
-  waterLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  acceptWaterTagFallback: 1
-  waterSnapOffset: 0.06
-  destroyDelayAfterResolve: 0.65
---- !u!114 &6100001000000000001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1386620055010380889}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 27468f987d81d3d45b3be63c123e5586, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingAttractPhase
-  moveAction: {fileID: -645209185300053943, guid: 9570144001aab784db680dd6d8fd2b79, type: 3}
-  directionChangesRequired: 12
-  inputDeadzone: 0.22
-  progressDecayPerSecond: 0.12
-  onAttractComplete:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!114 &6100001000000000002
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1386620055010380889}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2c3d4e5f60718293a4b5c6d7e8f901a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingReelPhase
-  moveAction: {fileID: -645209185300053943, guid: 9570144001aab784db680dd6d8fd2b79, type: 3}
-  reelFillPerSecond: 0.4
-  reelDecayPerSecond: 0.18
-  inputDeadzone: 0.2
-  timeoutSeconds: 10
-  attractRadius: 5.5
-  catchRadius: 2.2
-  fishPullSpeed: 2.8
-  fishMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  maxFishToCatch: 3
-  onReelSuccess:
-    m_PersistentCalls:
-      m_Calls: []
-  onReelFail:
-    m_PersistentCalls:
-      m_Calls: []
+  lifeSeconds: 10
+  inWaterLinearDamping: 6
+  stickOnImpact: 1
+  acceptWaterTagWithoutComponent: 1
 --- !u!114 &3926147882703795810
 MonoBehaviour:
   m_ObjectHideFlags: 0

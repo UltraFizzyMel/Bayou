@@ -20,6 +20,3 @@ MonoBehaviour:
     height: 1
     cells: 00
   maxStack: 1
-  buyPrice: 0
-  sellPrice: 0
-  isFish: 1

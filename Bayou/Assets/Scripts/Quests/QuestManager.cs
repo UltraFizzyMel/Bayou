@@ -86,7 +86,7 @@ public class QuestManager : MonoBehaviour
 
     private void Update()
     {
-        //loop through All quests
+        //loop through All quests to see if the quests can start.
         foreach(Quest quest in questMap.Values)
         { if (quest.state == QuestState.REQUIREMENTS_NOT_MET && CheckRequirementsMet(quest))
             { ChangeQuestState(quest.info.id, QuestState.CAN_START); }

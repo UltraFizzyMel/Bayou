@@ -25,9 +25,6 @@ namespace Bayou.Fish
 
         public bool IsCaught { get; private set; }
 
-        /// <summary>When true, wander/flee are skipped — <see cref="FishingReelPhase"/> drives motion.</summary>
-        public bool IsBeingReeled { get; set; }
-
         private Vector3 _spawnPosition;
         private Vector3 _currentDirection;
         private Vector3 _targetDirection;
@@ -54,7 +51,7 @@ namespace Bayou.Fish
 
         private void Update()
         {
-            if (IsCaught || IsBeingReeled)
+            if (IsCaught)
                 return;
 
             float dt = Time.deltaTime;
@@ -165,25 +162,12 @@ namespace Bayou.Fish
             }
         }
 
-        /// <summary>Pull this fish toward a world point (throw-net reel).</summary>
-        public void PullToward(Vector3 worldTarget, float speed)
-        {
-            if (IsCaught) return;
-
-            var flat = Flat(worldTarget - transform.position);
-            if (flat.sqrMagnitude < 0.0001f) return;
-
-            _currentDirection = flat.normalized;
-            Move(Mathf.Max(0.1f, speed), Time.deltaTime);
-        }
-
         public void Catch()
         {
             if (IsCaught)
                 return;
 
             IsCaught = true;
-            IsBeingReeled = false;
 
             if (inventoryItemWhenCaught != null &&
                 InventoryController.Instance != null)

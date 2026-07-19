@@ -34,6 +34,9 @@ public class DialogueManager : MonoBehaviour
 
     public bool dialogueIsPlaying { get; private set; }
 
+    private InkExternalFunctions inkExternalFunctions;
+
+
     private bool canContinueToNextLine = false;
 
     private Coroutine displayLineCoroutine;
@@ -46,6 +49,7 @@ public class DialogueManager : MonoBehaviour
     private const string BACKGROUND_TAG = "background";
 
     private DialogueVariables dialogueVariables;
+   
 
     private void Awake()
     {
@@ -56,6 +60,7 @@ public class DialogueManager : MonoBehaviour
         instance = this;
 
         dialogueVariables = new DialogueVariables(loadGlobalsJSON);
+        
     }
 
     public static DialogueManager GetInstance()
@@ -81,6 +86,32 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        GameEventManager.Instance.dialogueEvents.onUpdateDialogueVariable += UpdateDialogueVariable;
+        GameEventManager.Instance.questEvents.onQuestStateChange += QuestStateChange;
+    }
+
+    private void OnDisable()
+    {
+        GameEventManager.Instance.dialogueEvents.onUpdateDialogueVariable -= UpdateDialogueVariable;
+        GameEventManager.Instance.questEvents.onQuestStateChange -= QuestStateChange;
+    }
+
+    private void QuestStateChange(Quest quest)
+    {
+        GameEventManager.Instance.dialogueEvents.UpdateDialogueVariable(
+            quest.info.id + "State",
+            new StringValue(quest.state.ToString())
+            );
+    }
+
+    private void UpdateDialogueVariable(string name, Ink.Runtime.Object value)
+    {
+       
+        dialogueVariables.VariableChanged(name, value);
+    }
+
     public void Update()
     {
         //Debug.Log(dialogueIsPlaying);
@@ -104,6 +135,10 @@ public class DialogueManager : MonoBehaviour
     {
         
         currentStory = new Story(inkJSON.text);
+
+        inkExternalFunctions = new InkExternalFunctions();
+        inkExternalFunctions.Bind(currentStory);
+
         if (knotName != "")
         {
             currentStory.ChoosePathString(knotName);
@@ -125,7 +160,7 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator  ExitDialogueMode()
     {
         yield return new WaitForSeconds(0.2f);
-
+        inkExternalFunctions.Unbind(currentStory);
         dialogueVariables.StopListening(currentStory);
 
         dialogueIsPlaying = false;
@@ -142,7 +177,13 @@ public class DialogueManager : MonoBehaviour
             {
                 StopCoroutine(displayLineCoroutine);
             }
-            displayLineCoroutine = StartCoroutine(DisplayLine(currentStory.Continue()));
+            /*string dialogueLine = currentStory.Continue();
+            while (IsLineBlank(dialogueLine) && currentStory.canContinue)
+            {
+                dialogueLine = currentStory.Continue();
+            }*/
+
+                displayLineCoroutine = StartCoroutine(DisplayLine(currentStory.Continue()));
 
             //handle tags
             HandleTags(currentStory.currentTags);
@@ -155,8 +196,10 @@ public class DialogueManager : MonoBehaviour
 
     private IEnumerator DisplayLine(string line)
     {
-        //set the text to the full line, but set the visible characters to 0
-        dialogueText.text = line;
+        
+    //set the text to the full line, but set the visible characters to 0
+    dialogueText.text = line;
+
         dialogueText.maxVisibleCharacters = 0;
         //hide items while text is typing
         continueIcon.SetActive(false);
@@ -165,6 +208,23 @@ public class DialogueManager : MonoBehaviour
         canContinueToNextLine = false;
 
         bool isAddingRichTextTag = false;
+
+        while (IsLineBlank(line) && currentStory.canContinue)
+        {
+            //handle tags
+            HandleTags(currentStory.currentTags);
+            line = currentStory.Continue();
+            dialogueText.text = line;
+
+            dialogueText.maxVisibleCharacters = 0;
+            //hide items while text is typing
+            continueIcon.SetActive(false);
+            HideChoices();
+
+            canContinueToNextLine = false;
+
+            isAddingRichTextTag = false;
+        }
 
         //display each letter one at a time
         foreach (char letter in line.ToCharArray())
@@ -303,4 +363,10 @@ public class DialogueManager : MonoBehaviour
         }
         return variableValue;
     }
+
+    private bool IsLineBlank(string dialogueLine)
+    {
+        return dialogueLine.Trim().Equals("") || dialogueLine.Trim().Equals("\n");
+    }
 }
+
