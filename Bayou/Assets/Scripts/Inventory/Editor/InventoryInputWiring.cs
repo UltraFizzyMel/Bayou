@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using Bayou.Inventory;
 using Bayou.Inventory.Shop;
 using Bayou.Inventory.UI;
 using UnityEditor;
@@ -22,6 +23,16 @@ namespace Bayou.Inventory.Editor
 
             var toggle = CreateRef(controls, "Toggle Inventory");
             var rotate = CreateRef(controls, "Rotate");
+
+            foreach (var ui in Object.FindObjectsByType<InventoryDisplayUI>(FindObjectsSortMode.None))
+            {
+                var so = new SerializedObject(ui);
+                if (so.FindProperty("toggleInventoryAction").objectReferenceValue == null)
+                    so.FindProperty("toggleInventoryAction").objectReferenceValue = toggle;
+                if (so.FindProperty("rotateItemAction").objectReferenceValue == null)
+                    so.FindProperty("rotateItemAction").objectReferenceValue = rotate;
+                so.ApplyModifiedPropertiesWithoutUndo();
+            }
 
             foreach (var ui in Object.FindObjectsByType<InventoryUIController>(FindObjectsSortMode.None))
             {

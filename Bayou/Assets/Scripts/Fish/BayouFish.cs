@@ -23,6 +23,9 @@ namespace Bayou.Fish
         [Header("Inventory")]
         [SerializeField] private ItemDefinition inventoryItemWhenCaught;
 
+        [Header("Net attraction")]
+        [SerializeField] private float attractSwimSpeed = 2.4f;
+
         public bool IsCaught { get; private set; }
 
         private Vector3 _spawnPosition;
@@ -31,6 +34,10 @@ namespace Bayou.Fish
 
         private float _nextDirectionChange;
         private float _wobbleSeed;
+
+        private bool _hasAttractTarget;
+        private Vector3 _attractTarget;
+        private float _attractPull01;
 
         private void Awake()
         {
@@ -49,12 +56,44 @@ namespace Bayou.Fish
             _currentDirection = _targetDirection;
         }
 
+        public void SetAttractTarget(Vector3 worldPoint, float pull01)
+        {
+            _hasAttractTarget = true;
+            _attractTarget = worldPoint;
+            _attractPull01 = Mathf.Clamp01(pull01);
+        }
+
+        public void ClearAttractTarget()
+        {
+            _hasAttractTarget = false;
+            _attractPull01 = 0f;
+        }
+
         private void Update()
         {
             if (IsCaught)
                 return;
 
             float dt = Time.deltaTime;
+
+            // Swim toward planted net when attracted (wiggle strengthens pull).
+            if (_hasAttractTarget)
+            {
+                var toNet = Flat(_attractTarget - transform.position);
+                if (toNet.sqrMagnitude > 0.0001f)
+                {
+                    _targetDirection = toNet.normalized;
+                    _currentDirection = Vector3.RotateTowards(
+                        _currentDirection,
+                        _targetDirection,
+                        Mathf.Deg2Rad * turnSpeed * (1.5f + _attractPull01 * 2f) * dt,
+                        0f);
+
+                    var speed = Mathf.Lerp(wanderSpeed, attractSwimSpeed, _attractPull01);
+                    Move(speed, dt);
+                    return;
+                }
+            }
 
             // Flee player
             if (player != null)
@@ -169,14 +208,18 @@ namespace Bayou.Fish
 
             IsCaught = true;
 
-            if (inventoryItemWhenCaught != null &&
-                InventoryController.Instance != null)
-            {
-                InventoryController.Instance.TryAddItem(
-                    inventoryItemWhenCaught);
-            }
+            Bayou.Audio.FishingAudio.Resolve()?.PlaySnagCatch();
 
             gameObject.SetActive(false);
+
+            if (inventoryItemWhenCaught == null)
+            {
+                Debug.LogWarning($"[Fish] {name} has no inventoryItemWhenCaught assigned.");
+                return;
+            }
+
+            // Reveal → open bag → player places or discards (no auto-slot).
+            CaughtFishPresenter.Present(inventoryItemWhenCaught);
         }
 
         private static Vector3 Flat(Vector3 v)

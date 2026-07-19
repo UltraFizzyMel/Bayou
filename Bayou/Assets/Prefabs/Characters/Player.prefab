@@ -16,9 +16,12 @@ GameObject:
   - component: {fileID: 6014290347612645707}
   - component: {fileID: 4578208305090228881}
   - component: {fileID: 2256531683429934156}
+  - component: {fileID: 1372594026724026855}
+  - component: {fileID: 7045370368611028313}
+  - component: {fileID: 4905685235082120590}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -185,9 +188,11 @@ MonoBehaviour:
   waterLayers:
     serializedVersion: 2
     m_Bits: 16
+  footOverlapYOffset: 0.08
+  footOverlapRadius: 0.38
   rayOriginOffset: {x: 0, y: 0.25, z: 0}
   rayLength: 2.5
-  useTriggerOverlapFallback: 0
+  useTriggerMessages: 1
   acceptWaterTagWithoutComponent: 1
 --- !u!114 &2256531683429934156
 MonoBehaviour:
@@ -206,7 +211,15 @@ MonoBehaviour:
   netPrefab: {fileID: 3538025880212568178, guid: f2c89442436dbdd4c85be83d3b0d65c4, type: 3}
   trajectoryLine: {fileID: 0}
   autoCreateTrajectoryLine: 1
+  sectorAngleDegrees: 30
+  directionGizmoRadius: 3.5
+  directionSweepCycleSeconds: 2.5
+  directionWedgeLine: {fileID: 0}
+  directionSweepLine: {fileID: 0}
+  autoCreateDirectionLines: 1
   castHoldAction: {fileID: 6979640695562240059, guid: 9570144001aab784db680dd6d8fd2b79, type: 3}
+  lockDirectionAction: {fileID: 0}
+  cancelCastAction: {fileID: 0}
   chargeCycleSeconds: 2
   minCastDistance: 4
   maxCastDistance: 18
@@ -220,3 +233,64 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &1372594026724026855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1638070245639809799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55193482e3927854c8aedee80274e2a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Audio.SfxPlayer
+  source: {fileID: 0}
+  outputGroup: {fileID: -1399666201495523780, guid: 312109c978c74d140a536bd1d851b28f, type: 2}
+--- !u!114 &7045370368611028313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1638070245639809799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5de841a51c0bf444093467539c09bbda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Audio.FishingAudio
+  sfx: {fileID: 1372594026724026855}
+  castConfirm: {fileID: 8300000, guid: c17344fad62b10141ba70b016cf6d396, type: 3}
+  throwNet: {fileID: 8300000, guid: b140348dea4cfd845b8eec032b76910c, type: 3}
+  rodCasting: {fileID: 8300000, guid: 5999ed718a576ee41bede43a8cf6c1fa, type: 3}
+  handNetScoop: {fileID: 8300000, guid: b140348dea4cfd845b8eec032b76910c, type: 3}
+  rodLanding: {fileID: 8300000, guid: 825dff704e3d75d468fa10d0cdc1d31f, type: 3}
+  fishOnLine: {fileID: 8300000, guid: ed0692ceec9024a4a96edd1fe889790c, type: 3}
+  reelingInFish: {fileID: 8300000, guid: 1ade30213ea5a33459e2dae1ccdb6237, type: 3}
+  manSnaggingFish: {fileID: 8300000, guid: a3bb85035031a504c97153327b3ce14f, type: 3}
+--- !u!114 &4905685235082120590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1638070245639809799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bba31d2550aed9c4bb2ea41c9e9cae63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Audio.PlayerLocomotionAudio
+  motor: {fileID: 6014290347612645707}
+  waterSensor: {fileID: 4578208305090228881}
+  sfx: {fileID: 1372594026724026855}
+  walkingInMarsh:
+  - {fileID: 8300000, guid: 7560346b35508d048aefe9f1f26dafb8, type: 3}
+  - {fileID: 8300000, guid: de63dea836cb3a7408d5bc0cfaafdc42, type: 3}
+  wadingInWater:
+  - {fileID: 8300000, guid: 8bf663797831db9488b9670fd717597d, type: 3}
+  - {fileID: 8300000, guid: f14c4349c19cab94b97996235270ba2d, type: 3}
+  - {fileID: 8300000, guid: bc6550f9a63411345a5639b2069a6e92, type: 3}
+  swimming: {fileID: 8300000, guid: 32601df733b1fd04882077d6e993d216, type: 3}
+  stepInterval: 0.42
+  moveSpeedThreshold: 0.35
+  swimLoopVolume: 0.55

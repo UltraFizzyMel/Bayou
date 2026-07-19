@@ -25,3 +25,8 @@ MonoBehaviour:
     compartmentId: 
     gridX: 0
     gridY: 0
+  - item: {fileID: 11400000, guid: e15fe0c9a3c00d843866a682e73bca64, type: 2}
+    rotation: 0
+    compartmentId: 
+    gridX: 0
+    gridY: 0

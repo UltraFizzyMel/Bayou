@@ -96,10 +96,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfd0267cf63aa75499c941fd0d578b93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingNetProjectile
-  lifeSeconds: 10
-  inWaterLinearDamping: 6
-  stickOnImpact: 1
-  acceptWaterTagWithoutComponent: 1
+  missLifetimeSeconds: 8
+  stickOnDryLand: 1
+  waterLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  acceptWaterTagFallback: 1
+  waterSnapOffset: 0.06
+  plantDepth: 0.15
 --- !u!114 &3926147882703795810
 MonoBehaviour:
   m_ObjectHideFlags: 0

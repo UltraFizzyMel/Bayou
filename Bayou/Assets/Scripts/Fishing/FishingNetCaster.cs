@@ -4,6 +4,9 @@
 
 using UnityEngine;
 using UnityEngine.InputSystem;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Bayou.Fishing
 {
@@ -71,10 +74,12 @@ namespace Bayou.Fishing
 
         private float _directionSweepStartTime;
         private bool _charging;
+        private FishingNetProjectile _activeNet;
 
         public float CurrentCharge01 { get; private set; }
 
         public FishingCastPhase Phase => _phase;
+        public bool HasActiveNet => _activeNet != null;
 
         private void Reset()
         {
@@ -96,11 +101,41 @@ namespace Bayou.Fishing
             cancelCastAction?.action?.Disable();
         }
 
+        private const string NetPrefabPath = "Assets/Prefabs/Equipment/Net.prefab";
+
         private void Awake()
         {
+            EnsureNetPrefab();
             EnsureTrajectoryLine();
             EnsureDirectionLines();
             HideAllVisuals();
+            if (GetComponent<FishingHud>() == null)
+                gameObject.AddComponent<FishingHud>();
+        }
+
+        private void EnsureNetPrefab()
+        {
+            if (netPrefab != null) return;
+
+#if UNITY_EDITOR
+            var fromAsset = AssetDatabase.LoadAssetAtPath<FishingNetProjectile>(NetPrefabPath);
+            if (fromAsset != null)
+            {
+                netPrefab = fromAsset;
+                return;
+            }
+#endif
+            // Fallback: any loaded Net projectile prefab / scene template.
+            foreach (var candidate in Resources.FindObjectsOfTypeAll<FishingNetProjectile>())
+            {
+                if (candidate == null) continue;
+                if (candidate.gameObject.scene.IsValid()) continue; // skip scene instances
+                netPrefab = candidate;
+                return;
+            }
+
+            Debug.LogWarning(
+                "[Fishing] netPrefab missing. Assign Assets/Prefabs/Equipment/Net on FishingNetCaster.");
         }
 
         private void HideAllVisuals()
@@ -197,11 +232,21 @@ namespace Bayou.Fishing
             switch (_phase)
             {
                 case FishingCastPhase.Idle:
+                    // Cancel an in-flight / landed net even while caster is idle.
+                    if (_activeNet != null)
+                    {
+                        if (TryCancelFromInput())
+                            CancelActiveNet();
+                        // Don't start a new cast while a net is still out.
+                        break;
+                    }
+
                     if (TryBeginDirectionSweepFromInput())
                     {
                         _phase = FishingCastPhase.DirectionSweep;
                         _directionSweepStartTime = Time.time;
                         ShowDirectionGizmo(true);
+                        Bayou.Audio.FishingAudio.Resolve()?.PlayCastConfirm();
                     }
                     break;
 
@@ -242,25 +287,66 @@ namespace Bayou.Fishing
         private bool TryBeginDirectionSweepFromInput()
         {
             var a = castHoldAction?.action;
-            return a != null && a.WasPressedThisFrame();
+            if (a != null && a.WasPressedThisFrame())
+                return true;
+
+            var mouse = Mouse.current;
+            return mouse != null && mouse.leftButton.wasPressedThisFrame;
         }
 
         private bool TryLockDirectionFromInput()
         {
             var a = lockDirectionAction?.action;
-            return a != null && a.WasPressedThisFrame();
+            if (a != null && a.WasPressedThisFrame())
+                return true;
+
+            // Fallbacks when Lock Direction isn't wired on the prefab:
+            // second click, Space, or hold Cast briefly during the sweep.
+            var cast = castHoldAction?.action;
+            if (cast != null && cast.WasPressedThisFrame())
+                return true;
+
+            var kb = Keyboard.current;
+            if (kb != null && kb.spaceKey.wasPressedThisFrame)
+                return true;
+
+            var mouse = Mouse.current;
+            if (mouse != null && mouse.leftButton.wasPressedThisFrame)
+                return true;
+
+            var held = (cast != null && cast.IsPressed()) ||
+                       (mouse != null && mouse.leftButton.isPressed);
+            return held && (Time.time - _directionSweepStartTime) >= 0.35f;
         }
 
         private bool TryCancelFromInput()
         {
             var a = cancelCastAction?.action;
-            return a != null && a.WasPressedThisFrame();
+            if (a != null && a.WasPressedThisFrame())
+                return true;
+
+            var kb = Keyboard.current;
+            if (kb != null && (kb.escapeKey.wasPressedThisFrame || kb.qKey.wasPressedThisFrame))
+                return true;
+
+            var mouse = Mouse.current;
+            return mouse != null && mouse.rightButton.wasPressedThisFrame;
+        }
+
+        private void CancelActiveNet()
+        {
+            if (_activeNet != null)
+            {
+                _activeNet.CancelAndDestroy();
+                _activeNet = null;
+            }
+
+            ResetToIdle();
         }
 
         private void UpdateChargingTrajectoryPhase()
         {
-            var act = castHoldAction?.action;
-            var pressed = act != null && act.IsPressed();
+            var pressed = IsCastHeld();
 
             if (!pressed)
             {
@@ -271,6 +357,7 @@ namespace Bayou.Fishing
                     TryFireNet(releaseCharge);
                     ResetToIdle();
                 }
+                // Waiting for hold after aim lock — stay in this phase until hold or cancel.
                 return;
             }
 
@@ -286,6 +373,16 @@ namespace Bayou.Fishing
             DrawTrajectory(origin, velocity);
         }
 
+        private bool IsCastHeld()
+        {
+            var act = castHoldAction?.action;
+            if (act != null && act.IsPressed())
+                return true;
+
+            var mouse = Mouse.current;
+            return mouse != null && mouse.leftButton.isPressed;
+        }
+
         private void TryFireNet(float charge01)
         {
             if (Time.time - _lastCastTime < cooldownSeconds)
@@ -293,15 +390,21 @@ namespace Bayou.Fishing
 
             _lastCastTime = Time.time;
 
+            EnsureNetPrefab();
             if (netPrefab == null)
             {
-                Debug.LogWarning("[Fishing] No netPrefab set on FishingNetCaster.");
+                Debug.LogWarning("[Fishing] No netPrefab set on FishingNetCaster. See wiring notes in console.");
                 return;
             }
 
             var (origin, velocity) = ComputeLaunch(charge01, _lockedCastDirection);
+            if (_activeNet != null)
+                _activeNet.CancelAndDestroy();
+
             var net = Instantiate(netPrefab, origin, Quaternion.identity);
+            _activeNet = net;
             net.Launch(velocity);
+            Bayou.Audio.FishingAudio.Resolve()?.PlayThrowNet();
         }
 
         private void ResetToIdle()

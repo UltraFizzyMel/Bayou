@@ -179,6 +179,19 @@ namespace Bayou.Inventory
             return false;
         }
 
+        /// <summary>
+        /// Creates an item in the bag without auto-placing it (player must drag it into a cell).
+        /// </summary>
+        public bool TryHoldNewItem(ItemDefinition definition, out InventoryItemInstance instance, int rotation = 0)
+        {
+            instance = null;
+            if (definition == null || Bag == null) return false;
+            instance = new InventoryItemInstance(definition, rotation);
+            Bag.HoldItem(instance);
+            NotifyChanged();
+            return true;
+        }
+
         public bool TryPlace(InventoryItemInstance item, string compartmentId, int x, int y, int rotation)
         {
             if (Bag == null || item == null) return false;

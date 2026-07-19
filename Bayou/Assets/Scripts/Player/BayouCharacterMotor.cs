@@ -15,6 +15,9 @@ namespace Bayou.Player
 #if ENABLE_INPUT_SYSTEM
         [Tooltip("Assign the Move action from your .inputactions asset. It is enabled automatically here unless you use PlayerInput on the same action (avoid duplicate wiring).")]
         [SerializeField] private UnityEngine.InputSystem.InputActionReference moveAction;
+
+        /// <summary>Shared Move action — fishing attract uses the same binding.</summary>
+        public UnityEngine.InputSystem.InputActionReference MoveAction => moveAction;
 #endif
 
         [Header("Ground")]
@@ -40,6 +43,20 @@ namespace Bayou.Player
 
         private Vector2 moveInput;
         private bool isGrounded;
+
+        /// <summary>Horizontal speed used by locomotion SFX.</summary>
+        public float PlanarSpeed
+        {
+            get
+            {
+                if (rb == null) return 0f;
+                var v = rb.linearVelocity;
+                return new Vector3(v.x, 0f, v.z).magnitude;
+            }
+        }
+
+        /// <summary>True when the player is holding move input.</summary>
+        public bool HasMoveInput => moveInput.sqrMagnitude > 0.01f;
 
         private void Awake()
         {

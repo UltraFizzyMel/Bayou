@@ -11,44 +11,59 @@ namespace Bayou.Fishing
         AttractComplete
     }
 
+    /// <summary>
+    /// Thrown net: flies, then plants statically in water. Fish swim toward it during attract.
+    /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody))]
     public sealed class FishingNetProjectile : MonoBehaviour
     {
+        public static FishingNetProjectile ActiveInWater { get; private set; }
+
         [Header("Physics")]
-        [SerializeField] private float lifeSeconds = 12f;
+        [Tooltip("Auto-destroy only if the net never lands in water. 0 = never.")]
+        [SerializeField] private float missLifetimeSeconds = 8f;
         [SerializeField] private bool stickOnDryLand = true;
 
-        [Header("Water (solid collider + layer — recommended)")]
-        [Tooltip("Assign the same Water layer as your water plane/mesh.")]
+        [Header("Water")]
         [SerializeField] private LayerMask waterLayers;
-
         [SerializeField] private bool acceptWaterTagFallback = true;
-
-        [Tooltip("Small lift along surface normal when snapping to water hit.")]
         [SerializeField] private float waterSnapOffset = 0.06f;
+        [SerializeField] private float plantDepth = 0.15f;
 
-        private Rigidbody rb;
+        private Rigidbody _rb;
         private bool _hasLanded;
+        private FishingNetVisual _visual;
 
         public FishingNetPhase Phase { get; private set; } = FishingNetPhase.Flying;
+        public Vector3 PlantPosition => transform.position;
 
         private void Awake()
         {
-            rb = GetComponent<Rigidbody>();
-            rb.interpolation = RigidbodyInterpolation.Interpolate;
-            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            _rb = GetComponent<Rigidbody>();
+            _rb.interpolation = RigidbodyInterpolation.Interpolate;
+            _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+
+            EnsurePhases();
+            EnsureVisual();
 
             var attract = GetComponent<FishingAttractPhase>();
             if (attract != null)
                 attract.enabled = false;
 
-            if (lifeSeconds > 0f)
-                Invoke(nameof(DestroyAfterLifetime), lifeSeconds);
+            var reel = GetComponent<FishingReelPhase>();
+            if (reel != null)
+                reel.enabled = false;
+
+            if (missLifetimeSeconds > 0f)
+                Invoke(nameof(DestroyAfterMissLifetime), missLifetimeSeconds);
         }
 
         private void OnDestroy()
         {
+            if (ActiveInWater == this)
+                ActiveInWater = null;
+
             var attract = GetComponent<FishingAttractPhase>();
             if (attract != null)
                 attract.AttractComplete -= OnAttractCompleteFromPhase;
@@ -58,8 +73,16 @@ namespace Bayou.Fishing
         {
             Phase = FishingNetPhase.Flying;
             _hasLanded = false;
-            rb.isKinematic = false;
-            rb.linearVelocity = initialVelocity;
+            if (ActiveInWater == this)
+                ActiveInWater = null;
+
+            _rb.isKinematic = false;
+            _rb.useGravity = true;
+            _rb.linearVelocity = initialVelocity;
+
+            EnsurePhases();
+            EnsureVisual();
+            _visual?.ShowInFlight();
 
             var attract = GetComponent<FishingAttractPhase>();
             if (attract != null)
@@ -70,19 +93,65 @@ namespace Bayou.Fishing
             }
         }
 
+        private void EnsureVisual()
+        {
+            _visual = GetComponent<FishingNetVisual>();
+            if (_visual == null)
+                _visual = gameObject.AddComponent<FishingNetVisual>();
+        }
+
+        public void CancelAndDestroy()
+        {
+            CancelMissLifetime();
+
+            var reel = GetComponent<FishingReelPhase>();
+            if (reel != null && reel.IsActive)
+            {
+                reel.CancelReel();
+                return;
+            }
+
+            var attract = GetComponent<FishingAttractPhase>();
+            if (attract != null)
+                attract.CancelAttract();
+
+            if (ActiveInWater == this)
+                ActiveInWater = null;
+
+            if (this != null && gameObject != null)
+                Destroy(gameObject);
+        }
+
         private void OnAttractCompleteFromPhase()
         {
             Phase = FishingNetPhase.AttractComplete;
+            CancelMissLifetime();
+
+            var reel = GetComponent<FishingReelPhase>();
+            if (reel == null)
+                reel = gameObject.AddComponent<FishingReelPhase>();
+            reel.BeginReel();
         }
 
-        private void DestroyAfterLifetime()
+        private void EnsurePhases()
         {
+            if (GetComponent<FishingAttractPhase>() == null)
+                gameObject.AddComponent<FishingAttractPhase>();
+            if (GetComponent<FishingReelPhase>() == null)
+                gameObject.AddComponent<FishingReelPhase>();
+        }
+
+        private void DestroyAfterMissLifetime()
+        {
+            // Only despawn misses — planted nets stay until cancel / catch / reel end.
+            if (Phase == FishingNetPhase.LandedInWater || Phase == FishingNetPhase.AttractComplete)
+                return;
             Destroy(gameObject);
         }
 
-        private void CancelLifetime()
+        private void CancelMissLifetime()
         {
-            CancelInvoke(nameof(DestroyAfterLifetime));
+            CancelInvoke(nameof(DestroyAfterMissLifetime));
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -109,18 +178,30 @@ namespace Bayou.Fishing
         {
             _hasLanded = true;
             Phase = FishingNetPhase.LandedInWater;
+            ActiveInWater = this;
 
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            rb.isKinematic = true;
+            _rb.linearVelocity = Vector3.zero;
+            _rb.angularVelocity = Vector3.zero;
+            _rb.isKinematic = true;
+            _rb.useGravity = false;
 
             if (collision != null && collision.contactCount > 0)
             {
                 var c = collision.GetContact(0);
-                transform.position = c.point + c.normal * waterSnapOffset;
+                transform.position = c.point + c.normal * waterSnapOffset - Vector3.up * plantDepth;
+            }
+            else
+            {
+                var p = transform.position;
+                p.y -= plantDepth;
+                transform.position = p;
             }
 
-            CancelLifetime();
+            CancelMissLifetime();
+            EnsureVisual();
+            _visual?.ShowPlanted();
+
+            Bayou.Audio.FishingAudio.Resolve()?.PlayLanding();
 
             var attract = GetComponent<FishingAttractPhase>();
             if (attract != null)
@@ -135,9 +216,9 @@ namespace Bayou.Fishing
             if (!stickOnDryLand)
                 return;
 
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            rb.isKinematic = true;
+            _rb.linearVelocity = Vector3.zero;
+            _rb.angularVelocity = Vector3.zero;
+            _rb.isKinematic = true;
         }
 
         private bool IsWater(Collider other)
@@ -161,13 +242,6 @@ namespace Bayou.Fishing
                 return w.Matches(other.gameObject);
 
             return acceptWaterTagFallback && other.CompareTag("Water");
-        }
-
-        /// <summary>Optional hook for Part 3 (reeling). Call when you're ready to transition.</summary>
-        public void MarkReadyForReel()
-        {
-            if (Phase == FishingNetPhase.LandedInWater || Phase == FishingNetPhase.AttractComplete)
-                Phase = FishingNetPhase.AttractComplete;
         }
     }
 }
