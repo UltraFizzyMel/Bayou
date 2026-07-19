@@ -74,9 +74,10 @@
  ->Agree
  
  ===Agreed ===
- Excellent! To venture deeper into the bayou you'll need to first fetch a lantern for me…
- You'll find the gate to the NorthWest Graveyard unlocked. What better place to do some soul searching.
- Be careful out there. Not everthing is as it seems… Your eyes and ears will be your greatest deceivers.
+ Excellent! To venture into the bayou's depths, you'll need to first fetch a lantern a lantern for me.
+ Take this key, it will unlock the NorthWest gate to the graveyard.
+ What better place to do some soul searching?
+ Be careful out there. Not everything is as it seems… Your eyes and ears will be your greatest deceivers.
  ->END
  
 === knownName ===

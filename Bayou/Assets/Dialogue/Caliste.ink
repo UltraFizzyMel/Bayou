@@ -19,7 +19,9 @@ You want to see my wares?
 +[I'll give you your space.]->END
 
 === speak ===
-Talk...You seem... we can talk.
+Talk...
+You seem... 
+We can talk.
 My wares may be of interest.
 -> questions
 
