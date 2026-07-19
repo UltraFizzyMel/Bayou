@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tree 6
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ef787340e2fcc014a9ae7f9e081e5e48, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 2147483647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
