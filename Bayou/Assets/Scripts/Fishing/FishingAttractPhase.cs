@@ -2,12 +2,15 @@ using System;
 using Bayou.Input;
 using UnityEngine;
 using UnityEngine.Events;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace Bayou.Fishing
 {
     /// <summary>
     /// Part 2: after the net lands in water, player "wiggles" (alternates horizontal input) to attract fish.
-    /// Part 3 (reeling) will hook into <see cref="onAttractComplete"/> later.
+    /// On complete, <see cref="FishingReelPhase"/> takes over (Part 3).
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class FishingAttractPhase : MonoBehaviour
@@ -15,7 +18,7 @@ namespace Bayou.Fishing
         [Header("Input")]
         [Tooltip("Same Move Vector2 as character motor — horizontal axis used for wiggle detection.")]
 #if ENABLE_INPUT_SYSTEM
-        [SerializeField] private UnityEngine.InputSystem.InputActionReference moveAction;
+        [SerializeField] private InputActionReference moveAction;
 #endif
 
         [Header("Difficulty")]
@@ -35,7 +38,9 @@ namespace Bayou.Fishing
         private int _lastDirection;
         private bool _hasDirection;
 
-        // Do not Enable/Disable moveAction here — it is usually shared with BayouCharacterMotor.
+#if ENABLE_INPUT_SYSTEM
+        public void SetMoveAction(InputActionReference action) => moveAction = action;
+#endif
 
         /// <summary>Called by <see cref="FishingNetProjectile"/> when the net settles in water.</summary>
         public void BeginAttract()
@@ -45,6 +50,19 @@ namespace Bayou.Fishing
             _lastDirection = 0;
             _hasDirection = false;
             enabled = true;
+            FishingActivity.SetBusy(true);
+        }
+
+        private void OnDisable()
+        {
+            if (IsActive)
+            {
+                IsActive = false;
+                // Reel phase may still be busy; only clear if reel is not running.
+                var reel = GetComponent<FishingReelPhase>();
+                if (reel == null || !reel.IsActive)
+                    FishingActivity.SetBusy(false);
+            }
         }
 
         private void Update()
@@ -67,7 +85,10 @@ namespace Bayou.Fishing
                 {
                     Progress01 += 1f / Mathf.Max(1, directionChangesRequired);
                     if (Progress01 >= 1f)
+                    {
                         CompleteAttract();
+                        return;
+                    }
                 }
 
                 _lastDirection = dir;
@@ -84,6 +105,7 @@ namespace Bayou.Fishing
             IsActive = false;
             Progress01 = 1f;
             enabled = false;
+            // Keep FishingActivity busy — reel phase begins immediately after.
             onAttractComplete?.Invoke();
             AttractComplete?.Invoke();
         }

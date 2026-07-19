@@ -2,6 +2,7 @@
 #error HandNetAreaController requires the New Input System (ENABLE_INPUT_SYSTEM).
 #endif
 
+using Bayou.Combat;
 using Bayou.Fish;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -91,6 +92,8 @@ namespace Bayou.Fishing
         private void Update()
         {
             if (!enabled) return;
+            if (FishingActivity.IsBusy) return;
+            if (CombatPresence.IsPlayerThreatened) return;
 
             var act = useNetAction?.action;
             if (act == null || !act.WasPressedThisFrame())

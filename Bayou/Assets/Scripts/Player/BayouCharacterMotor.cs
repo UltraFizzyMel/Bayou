@@ -1,5 +1,10 @@
+using Bayou.Combat;
+using Bayou.Fishing;
 using Bayou.Save;
 using UnityEngine;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace Bayou.Player
 {
@@ -14,13 +19,18 @@ namespace Bayou.Player
         [Header("Input (New Input System)")]
 #if ENABLE_INPUT_SYSTEM
         [Tooltip("Assign the Move action from your .inputactions asset. It is enabled automatically here unless you use PlayerInput on the same action (avoid duplicate wiring).")]
-        [SerializeField] private UnityEngine.InputSystem.InputActionReference moveAction;
+        [SerializeField] private InputActionReference moveAction;
+
+        /// <summary>Shared with throw-net attract / reel so minigames read the same Move action.</summary>
+        public InputActionReference MoveAction => moveAction;
 #endif
 
         [Header("Ground")]
         [SerializeField] private float maxSpeed = 6.0f;
         [SerializeField] private float acceleration = 30.0f;
         [SerializeField] private float braking = 40.0f;
+        [Tooltip("Speed multiplier while a melee swing is active.")]
+        [SerializeField] private float meleeMoveMultiplier = 0.45f;
 
         [Header("Water (heavier / slower)")]
         [SerializeField] private float waterSpeedMultiplier = 0.45f;
@@ -37,6 +47,7 @@ namespace Bayou.Player
 
         private Rigidbody rb;
         private BayouWaterSensor waterSensor;
+        private MeleeAttack melee;
 
         private Vector2 moveInput;
         private bool isGrounded;
@@ -49,6 +60,7 @@ namespace Bayou.Player
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
             waterSensor = GetComponent<BayouWaterSensor>();
+            melee = GetComponent<MeleeAttack>();
         }
 
 #if ENABLE_INPUT_SYSTEM
@@ -68,6 +80,12 @@ namespace Bayou.Player
 
         private void Update()
         {
+            if (IsMovementBlocked())
+            {
+                moveInput = Vector2.zero;
+                return;
+            }
+
             moveInput = Vector2.ClampMagnitude(
 #if ENABLE_INPUT_SYSTEM
                 Bayou.Input.BayouInput.ReadMove(moveAction),
@@ -80,15 +98,12 @@ namespace Bayou.Player
 
         private void FixedUpdate()
         {
-            if (DialogueManager.GetInstance().dialogueIsPlaying)
+            if (IsMovementBlocked())
             {
+                BrakePlanarVelocity();
                 return;
             }
 
-            if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen)
-            {
-                return;
-            }
             isGrounded = Physics.Raycast(
                 origin: rb.position + Vector3.up * 0.05f,
                 direction: Vector3.down,
@@ -100,6 +115,11 @@ namespace Bayou.Player
             var inWater = waterSensor != null && waterSensor.InWater;
             var speed = maxSpeed * (inWater ? waterSpeedMultiplier : 1f);
             var accel = acceleration * (inWater ? waterAccelerationMultiplier : 1f);
+            if (melee != null && melee.IsAttacking)
+            {
+                speed *= meleeMoveMultiplier;
+                accel *= meleeMoveMultiplier;
+            }
 
             var wishDir = GetWishDirection(moveInput);
             var vel = rb.linearVelocity;
@@ -118,10 +138,7 @@ namespace Bayou.Player
             }
             else
             {
-                // Braking: pull planar velocity toward zero.
-                var maxDelta = braking * Time.fixedDeltaTime;
-                var change = Vector3.ClampMagnitude(-planar, maxDelta);
-                rb.AddForce(new Vector3(change.x, 0f, change.z), ForceMode.VelocityChange);
+                BrakePlanarVelocity();
             }
 
             if (inWater)
@@ -136,6 +153,30 @@ namespace Bayou.Player
             {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, -1f, rb.linearVelocity.z);
             }
+        }
+
+        private static bool IsMovementBlocked()
+        {
+            if (FishingActivity.IsBusy)
+                return true;
+
+            var dialogue = DialogueManager.GetInstance();
+            if (dialogue != null && dialogue.dialogueIsPlaying)
+                return true;
+
+            if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen)
+                return true;
+
+            return false;
+        }
+
+        private void BrakePlanarVelocity()
+        {
+            var vel = rb.linearVelocity;
+            var planar = new Vector3(vel.x, 0f, vel.z);
+            var maxDelta = braking * Time.fixedDeltaTime;
+            var change = Vector3.ClampMagnitude(-planar, maxDelta);
+            rb.AddForce(new Vector3(change.x, 0f, change.z), ForceMode.VelocityChange);
         }
 
         private Vector3 GetWishDirection(Vector2 input)

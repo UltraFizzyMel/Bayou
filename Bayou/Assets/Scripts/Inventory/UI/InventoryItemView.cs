@@ -19,6 +19,12 @@ namespace Bayou.Inventory.UI
         public InventoryCompartmentUI Compartment => _compartment;
         public RectTransform RectTransform => _rt;
 
+        public void BindImages(Image icon, Image background)
+        {
+            iconImage = icon;
+            backgroundImage = background;
+        }
+
         public void Init(IInventoryDragHost ui, InventoryItemInstance item, InventoryCompartmentUI compartment)
         {
             _ui = ui;

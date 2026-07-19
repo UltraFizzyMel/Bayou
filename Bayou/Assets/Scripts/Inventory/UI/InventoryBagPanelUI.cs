@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Bayou.Inventory;
+using Bayou.Inventory.Shop;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -19,6 +20,12 @@ namespace Bayou.Inventory.UI
     [DisallowMultipleComponent]
     public sealed class InventoryBagPanelUI : MonoBehaviour, IInventoryDragHost
     {
+        [Header("Editor Preview")]
+        [SerializeField] private bool useEditorGrid = false;
+        [SerializeField] private int editorGridWidth = 6;
+        [SerializeField] private int editorGridHeight = 4;
+        [SerializeField] private float editorCellSizeOverride;
+
         [SerializeField] private RectTransform panelRoot;
         [SerializeField] private Image backgroundImage;
         [SerializeField] private GameObject cellPrefab;
@@ -32,9 +39,10 @@ namespace Bayou.Inventory.UI
         [SerializeField] private bool clipItemsToGrid = true;
 
         [Header("Colors")]
-        [SerializeField] private Color cellEmptyColor = new(0.12f, 0.14f, 0.16f, 0.55f);
-        [SerializeField] private Color cellHoverValidColor = new(0.2f, 0.45f, 0.25f, 0.85f);
-        [SerializeField] private Color cellHoverInvalidColor = new(0.5f, 0.15f, 0.12f, 0.85f);
+        [SerializeField] private Color panelBackgroundColor = new(0.45f, 0.34f, 0.22f, 1f);
+        [SerializeField] private Color cellEmptyColor = new(0.92f, 0.88f, 0.78f, 1f);
+        [SerializeField] private Color cellHoverValidColor = new(0.2f, 0.55f, 0.28f, 0.85f);
+        [SerializeField] private Color cellHoverInvalidColor = new(0.55f, 0.18f, 0.14f, 0.9f);
 
         private readonly List<InventoryCompartmentUI> _compartments = new();
         private readonly Dictionary<string, InventoryItemView> _views = new();
@@ -67,7 +75,18 @@ namespace Bayou.Inventory.UI
                 layout = layoutOverride;
             _compartmentUnlocked = compartmentUnlocked ?? (_ => true);
             ApplyBackground();
-            ScheduleLayoutRebuild();
+            // Rebuild immediately so first drag/sell in the same frame can hit the grid.
+            if (isActiveAndEnabled && panelRoot != null)
+            {
+                Canvas.ForceUpdateCanvases();
+                LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
+                RebuildCompartments();
+                RefreshAll();
+            }
+            else
+            {
+                ScheduleLayoutRebuild();
+            }
         }
 
         public void SetCrossPanelDropHandler(Func<InventoryItemView, PointerEventData, bool> handler) =>
@@ -76,6 +95,24 @@ namespace Bayou.Inventory.UI
         public void Refresh() => RefreshAll();
 
         public void CancelDrag() => CancelActiveDrag();
+
+        /// <summary>Wire prefabs + MockUI cream/brown chrome (shop merchant panel).</summary>
+        public void ApplyMockUiChrome(Image background, GameObject cell, GameObject item)
+        {
+            if (panelRoot == null)
+                panelRoot = transform as RectTransform;
+            backgroundImage = background;
+            cellPrefab = cell;
+            itemViewPrefab = item;
+            panelBackgroundColor = ShopUiStyle.PanelBrown;
+            cellEmptyColor = ShopUiStyle.CellCream;
+            cellHoverValidColor = ShopUiStyle.HoverValid;
+            cellHoverInvalidColor = ShopUiStyle.HoverInvalid;
+            clipItemsToGrid = true;
+            gridPanelPadding = 12f;
+            if (backgroundImage != null)
+                backgroundImage.color = panelBackgroundColor;
+        }
 
         public void TryRotateDraggedItem()
         {
@@ -132,15 +169,41 @@ namespace Bayou.Inventory.UI
         public bool ContainsScreenPoint(Vector2 screen, Camera cam)
         {
             if (panelRoot == null) return false;
+
+            // Overlay canvases must use cam=null; a Scene camera breaks hit tests.
             var canvas = panelRoot.GetComponentInParent<Canvas>();
-            var canvasCam = canvas?.worldCamera;
-            if (canvasCam != cam && RectTransformUtility.RectangleContainsScreenPoint(panelRoot, screen, canvasCam))
+            var overlayCam = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+                ? canvas.worldCamera
+                : null;
+
+            if (RectContains(panelRoot, screen, overlayCam))
+                return true;
+            if (cam != overlayCam && RectContains(panelRoot, screen, cam))
                 return true;
 
-            if (RectTransformUtility.RectangleContainsScreenPoint(panelRoot, screen, cam))
-                return true;
+            // Full brown case (parent) — title/padding still count as "over the shop".
+            var caseRoot = panelRoot.parent as RectTransform;
+            if (caseRoot != null)
+            {
+                if (RectContains(caseRoot, screen, overlayCam))
+                    return true;
+                if (cam != overlayCam && RectContains(caseRoot, screen, cam))
+                    return true;
+            }
 
-            return cam != null && RectTransformUtility.RectangleContainsScreenPoint(panelRoot, screen, null);
+            return false;
+        }
+
+        private static bool RectContains(RectTransform rt, Vector2 screen, Camera cam) =>
+            rt != null && RectTransformUtility.RectangleContainsScreenPoint(rt, screen, cam);
+
+        /// <summary>Overlay-safe grid pick (always tries null camera for Screen Space Overlay).</summary>
+        public bool TryPickGrid(Vector2 screen, out string compartmentId, out int gx, out int gy)
+        {
+            var canvas = panelRoot?.GetComponentInParent<Canvas>();
+            if (canvas != null && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                return ScreenPointToGrid(screen, null, out compartmentId, out gx, out gy);
+            return ScreenPointToGrid(screen, canvas?.worldCamera, out compartmentId, out gx, out gy);
         }
 
         public bool TryPlace(InventoryItemInstance item, string compartmentId, int x, int y, int rotation)
@@ -276,9 +339,9 @@ namespace Bayou.Inventory.UI
 
         private void ApplyBackground()
         {
-            if (backgroundImage == null || layout == null) return;
+            if (backgroundImage == null) return;
 
-            if (layout.backgroundSprite != null)
+            if (layout != null && layout.backgroundSprite != null)
             {
                 backgroundImage.sprite = layout.backgroundSprite;
                 backgroundImage.preserveAspect = true;
@@ -287,7 +350,7 @@ namespace Bayou.Inventory.UI
             else
             {
                 backgroundImage.sprite = null;
-                backgroundImage.color = new Color(0.08f, 0.09f, 0.11f, 0.94f);
+                backgroundImage.color = panelBackgroundColor;
             }
         }
 
@@ -346,12 +409,18 @@ namespace Bayou.Inventory.UI
             if (_bag == null || cellPrefab == null || panelRoot == null || _compartments.Count > 0)
                 return;
 
+            // If designer opted to use the editor-populated grid, show that in the editor only
+            if (!Application.isPlaying && useEditorGrid)
+                return;
+
             if (layout?.compartments != null && layout.compartments.Length > 0)
             {
                 var primary = GetPrimaryCompartmentConfig(layout);
                 if (primary != null && _bag.TryGetGrid(primary.id, out var primaryGrid))
+                {
                     BuildOneCompartment(primary, primaryGrid);
-                return;
+                    return;
+                }
             }
 
             var grid = _bag.CompartmentIds.Count > 0 ? _bag.GetGrid(_bag.CompartmentIds[0]) : null;
@@ -489,6 +558,88 @@ namespace Bayou.Inventory.UI
                 }
             }
         }
+
+#if UNITY_EDITOR
+        [ContextMenu("Populate Editor Grid")]
+        private void PopulateGridEditor()
+        {
+            if (cellPrefab == null || panelRoot == null) return;
+
+            // clear any existing editor grid
+            for (int i = panelRoot.childCount - 1; i >= 0; i--)
+            {
+                var c = panelRoot.GetChild(i);
+                if (c.name == "EditorGrid")
+                    DestroyImmediate(c.gameObject);
+            }
+
+            var editorGrid = new GameObject("EditorGrid", typeof(RectTransform));
+            var rt = editorGrid.GetComponent<RectTransform>();
+            rt.SetParent(panelRoot, false);
+            // fill with padding
+            rt.anchorMin = Vector2.zero;
+            rt.anchorMax = Vector2.one;
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.offsetMin = new Vector2(gridPanelPadding, gridPanelPadding);
+            rt.offsetMax = new Vector2(-gridPanelPadding, -gridPanelPadding);
+            rt.anchoredPosition = Vector2.zero;
+
+            // compute cell size
+            var area = rt.rect.size;
+            if (area.x < 1f || area.y < 1f)
+                area = panelRoot != null ? panelRoot.rect.size : new Vector2(256f, 192f);
+
+            var cellSize = editorCellSizeOverride > 0f
+                ? editorCellSizeOverride
+                : ComputeAutoCellSize(area, Math.Max(1, editorGridWidth), Math.Max(1, editorGridHeight));
+
+            // instantiate cells under editorGrid
+            var contentX = editorGridWidth * (cellSize + cellSpacing) - cellSpacing;
+            var contentY = editorGridHeight * (cellSize + cellSpacing) - cellSpacing;
+            var contentOffset = new Vector2(
+                Mathf.Max(0f, (area.x - contentX) * 0.5f),
+                Mathf.Min(0f, -(area.y - contentY) * 0.5f));
+
+            for (var y = 0; y < editorGridHeight; y++)
+            {
+                for (var x = 0; x < editorGridWidth; x++)
+                {
+                    var prefabInstance = UnityEditor.PrefabUtility.InstantiatePrefab(cellPrefab, panelRoot.gameObject.scene) as GameObject;
+                    if (prefabInstance == null) continue;
+                    prefabInstance.transform.SetParent(rt, false);
+                    prefabInstance.name = $"Cell_{x}_{y}";
+                    var r = prefabInstance.GetComponent<RectTransform>();
+                    if (r != null)
+                    {
+                        r.anchorMin = r.anchorMax = new Vector2(0f, 1f);
+                        r.pivot = new Vector2(0f, 1f);
+                        r.sizeDelta = new Vector2(cellSize, cellSize);
+                        r.anchoredPosition = new Vector2(contentOffset.x + x * (cellSize + cellSpacing), contentOffset.y - y * (cellSize + cellSpacing));
+                    }
+
+                    var img = prefabInstance.GetComponent<Image>();
+                    if (img != null)
+                        img.color = cellEmptyColor;
+                }
+            }
+
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+
+        [ContextMenu("Clear Editor Grid")]
+        private void ClearEditorGrid()
+        {
+            if (panelRoot == null) return;
+            for (int i = panelRoot.childCount - 1; i >= 0; i--)
+            {
+                var c = panelRoot.GetChild(i);
+                if (c.name == "EditorGrid")
+                    DestroyImmediate(c.gameObject);
+            }
+
+            UnityEditor.EditorUtility.SetDirty(this);
+        }
+#endif
 
         private Vector2 ComputeContentCenterOffset(RectTransform layer, int width, int height, float cellSize)
         {

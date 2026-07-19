@@ -2,6 +2,8 @@
 #error FishingNetCaster requires the New Input System (ENABLE_INPUT_SYSTEM). Project Settings > Player > Active Input Handling must include Input System, or add scripting define.
 #endif
 
+using Bayou.Combat;
+using Bayou.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -71,6 +73,7 @@ namespace Bayou.Fishing
 
         private float _directionSweepStartTime;
         private bool _charging;
+        private BayouCharacterMotor _motor;
 
         public float CurrentCharge01 { get; private set; }
 
@@ -98,6 +101,7 @@ namespace Bayou.Fishing
 
         private void Awake()
         {
+            _motor = GetComponent<BayouCharacterMotor>();
             EnsureTrajectoryLine();
             EnsureDirectionLines();
             HideAllVisuals();
@@ -194,6 +198,17 @@ namespace Bayou.Fishing
 
         private void Update()
         {
+            if (FishingActivity.IsBusy && _phase == FishingCastPhase.Idle)
+                return;
+
+            // Can't start (or continue) a cast while hostiles are engaged — rod becomes a weapon.
+            if (CombatPresence.IsPlayerThreatened)
+            {
+                if (_phase != FishingCastPhase.Idle)
+                    ResetToIdle();
+                return;
+            }
+
             switch (_phase)
             {
                 case FishingCastPhase.Idle:
@@ -301,6 +316,8 @@ namespace Bayou.Fishing
 
             var (origin, velocity) = ComputeLaunch(charge01, _lockedCastDirection);
             var net = Instantiate(netPrefab, origin, Quaternion.identity);
+            if (_motor != null && _motor.MoveAction != null)
+                net.BindPlayerInput(_motor.MoveAction);
             net.Launch(velocity);
         }
 
