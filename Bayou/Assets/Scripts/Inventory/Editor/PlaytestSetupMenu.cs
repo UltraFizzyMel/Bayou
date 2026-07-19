@@ -1,4 +1,5 @@
 #if UNITY_EDITOR
+using Bayou.Audio.Editor;
 using Bayou.Inventory;
 using Bayou.Inventory.Shop;
 using Bayou.Save;
@@ -18,24 +19,44 @@ namespace Bayou.Inventory.Editor
         [MenuItem("Bayou/Test/Setup Playtest Scene (Inventory + Shop + Bonfire)", false, 0)]
         public static void SetupPlaytestScene()
         {
+            SetupPlaytestScene(preservePlayerPosition: false);
+        }
+
+        /// <summary>
+        /// Wires inventory, shop, bonfire, UI input, and playtest harness into the open scene.
+        /// When <paramref name="preservePlayerPosition"/> is true (MovementTest), shop/bonfire
+        /// are placed near the existing player instead of relocating them to the origin.
+        /// </summary>
+        public static void SetupPlaytestScene(bool preservePlayerPosition)
+        {
+            // Tag first — inventory/shop setup look up Player by tag and must not spawn a duplicate.
+            TagPlayer();
+
             InventorySetupMenu.CreateSampleItems();
             InventorySetupMenu.CreateCaseLayoutAsset();
-            InventorySetupMenu.SetupBasicInventoryInScene();
-            ShopSetupMenu.SetupShopInScene();
+
+            // Handmade MockUI bag (InventoryTest), not procedural InventoryUIController.
+            HandmadeInventorySetupMenu.EnsureHandmadeInventoryInScene(removeProceduralInventory: true);
+
+            ShopSetupMenu.SetupShopInScene(forceRecreate: true);
+            HandmadeInventorySetupMenu.WireShopToHandmade();
+
             BonfireSetupMenu.SetupBonfireInScene();
             BonfireSetupMenu.CreateOrRefreshItemCatalog();
 
-            TagPlayer();
             EnsurePlayerWallet();
             EnsureUiInput();
             InventoryInputWiring.WireInventoryActionsInScene();
             EnsureGameplayUiLayout();
-            EnsurePlaytestLayout();
+            EnsurePlaytestLayout(preservePlayerPosition);
             EnsurePlaytestHarness();
+            HandmadeInventorySetupMenu.EnsurePlaytestHarnessRefs();
+            WireCaughtFishItems();
+            AudioSetupMenu.WireGameplayAudio();
 
             Debug.Log(
-                "[Bayou] Playtest scene ready. Press Play, then use ` for shortcuts panel.\n" +
-                "  I = inventory | E = interact | Shift+1..9 = playtest actions (click HUD buttons too)");
+                "[Bayou] Playtest scene ready (handmade MockUI inventory).\n" +
+                "  I = bag | E = interact | drag+R = rotate | Shift+1..9 = playtest (` = HUD)");
         }
 
         [MenuItem("Bayou/Test/Delete Save File")]
@@ -129,26 +150,51 @@ namespace Bayou.Inventory.Editor
             go.AddComponent<GameplayUiLayout>();
         }
 
-        private static void EnsurePlaytestLayout()
+        private static void EnsurePlaytestLayout(bool preservePlayerPosition)
         {
             var root = GameObject.Find(PlaytestRootName);
             if (root == null)
                 root = new GameObject(PlaytestRootName);
 
             var player = FindPlayerObject();
+            var origin = new Vector3(0f, 1f, 0f);
             if (player != null)
             {
-                Undo.RecordObject(player.transform, "Position Player");
-                player.transform.position = new Vector3(0f, 1f, 0f);
+                if (preservePlayerPosition)
+                {
+                    origin = player.transform.position;
+                }
+                else
+                {
+                    Undo.RecordObject(player.transform, "Position Player");
+                    player.transform.position = origin;
+                }
             }
 
-            var shopPoint = EnsureMarker(root.transform, "ShopPoint", new Vector3(6f, 1f, 0f), new Color(0.9f, 0.75f, 0.2f));
-            var bonfirePoint = EnsureMarker(root.transform, "BonfirePoint", new Vector3(-6f, 1f, 0f), new Color(1f, 0.45f, 0.1f));
+            var shopPoint = EnsureMarker(root.transform, "ShopPoint", origin + new Vector3(6f, 0f, 0f), new Color(0.9f, 0.75f, 0.2f));
+            var bonfirePoint = EnsureMarker(root.transform, "BonfirePoint", origin + new Vector3(-6f, 0f, 0f), new Color(1f, 0.45f, 0.1f));
 
             MoveOrCreateShopkeeper(shopPoint);
             MoveOrCreateBonfire(bonfirePoint);
 
             Selection.activeGameObject = root;
+        }
+
+        private static void WireCaughtFishItems()
+        {
+            var fishItem = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/Inventory/Items/Item_Fish.asset");
+            if (fishItem == null) return;
+
+            var fish = Object.FindObjectsByType<Bayou.Fish.BayouFish>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            foreach (var f in fish)
+            {
+                var so = new SerializedObject(f);
+                var prop = so.FindProperty("inventoryItemWhenCaught");
+                if (prop == null || prop.objectReferenceValue != null) continue;
+                prop.objectReferenceValue = fishItem;
+                so.ApplyModifiedPropertiesWithoutUndo();
+                EditorUtility.SetDirty(f);
+            }
         }
 
         private static Transform EnsureMarker(Transform parent, string name, Vector3 position, Color color)

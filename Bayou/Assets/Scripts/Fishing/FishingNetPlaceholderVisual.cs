@@ -47,10 +47,18 @@ namespace Bayou.Fishing
 
         private void HideMeshes()
         {
+            // Keep FishingNetVisual meshes — only hide leftover art cubes on the prefab root.
             foreach (var r in GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if (r.GetComponentInParent<FishingNetVisual>() != null) continue;
                 r.enabled = false;
+            }
+
             foreach (var r in GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                if (r.GetComponentInParent<FishingNetVisual>() != null) continue;
                 r.enabled = false;
+            }
         }
 
         private void ConfigureIfNeeded()

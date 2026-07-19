@@ -92,8 +92,7 @@ namespace Bayou.Fishing
         {
             if (!enabled) return;
 
-            var act = useNetAction?.action;
-            if (act == null || !act.WasPressedThisFrame())
+            if (!WasUsePressed())
                 return;
 
             if (Time.time - _lastUseTime < useCooldown)
@@ -103,7 +102,19 @@ namespace Bayou.Fishing
                 return;
 
             _lastUseTime = Time.time;
+            Bayou.Audio.FishingAudio.Resolve()?.PlayHandNetScoop();
             TryCatchFishInArea(center, coverageRadius);
+        }
+
+        private bool WasUsePressed()
+        {
+            var act = useNetAction?.action;
+            if (act != null && act.WasPressedThisFrame())
+                return true;
+
+            // Same Cast / LMB as the rod when no dedicated scoop action is wired.
+            var mouse = Mouse.current;
+            return mouse != null && mouse.leftButton.wasPressedThisFrame;
         }
 
         private bool TryGetNetCenter(out Vector3 center)

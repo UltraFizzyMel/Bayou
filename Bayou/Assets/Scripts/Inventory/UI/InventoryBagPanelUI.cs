@@ -6,6 +6,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Bayou.Inventory;
+using Bayou.Inventory.Shop;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -76,6 +77,45 @@ namespace Bayou.Inventory.UI
         public void Refresh() => RefreshAll();
 
         public void CancelDrag() => CancelActiveDrag();
+
+        /// <summary>Shop builder: wire prefabs + MockUI cream/brown palette.</summary>
+        public void ApplyMockUiChrome(Image background, GameObject cell, GameObject item)
+        {
+            if (panelRoot == null)
+                panelRoot = transform as RectTransform;
+            backgroundImage = background;
+            cellPrefab = cell;
+            itemViewPrefab = item;
+            cellEmptyColor = ShopUiStyle.CellCream;
+            cellHoverValidColor = ShopUiStyle.HoverValid;
+            cellHoverInvalidColor = ShopUiStyle.HoverInvalid;
+            clipItemsToGrid = true;
+            gridPanelPadding = 12f;
+            if (backgroundImage != null)
+                backgroundImage.color = ShopUiStyle.PanelBrown;
+        }
+
+        /// <summary>Force a full grid rebuild (used when opening the shop after layout docks).</summary>
+        public void ForceRebuild()
+        {
+            ClearBuiltCompartments();
+            foreach (var kv in _views)
+            {
+                if (kv.Value != null)
+                    Destroy(kv.Value.gameObject);
+            }
+            _views.Clear();
+            ScheduleLayoutRebuild();
+        }
+
+        /// <summary>Overlay-safe grid pick used by shop cross-panel drops.</summary>
+        public bool TryPickGrid(Vector2 screen, out string compartmentId, out int gx, out int gy)
+        {
+            var canvas = panelRoot?.GetComponentInParent<Canvas>();
+            if (canvas != null && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                return ScreenPointToGrid(screen, null, out compartmentId, out gx, out gy);
+            return ScreenPointToGrid(screen, canvas?.worldCamera, out compartmentId, out gx, out gy);
+        }
 
         public void TryRotateDraggedItem()
         {
@@ -156,7 +196,21 @@ namespace Bayou.Inventory.UI
             _bag?.DetachFromGrid(item);
         }
 
-        private Camera GetCanvasCamera() => panelRoot?.GetComponentInParent<Canvas>()?.worldCamera;
+        /// <summary>Overlay canvases must use null — a gameplay camera breaks UI hit tests.</summary>
+        private Camera GetCanvasCamera()
+        {
+            var canvas = panelRoot?.GetComponentInParent<Canvas>();
+            if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                return null;
+            return canvas.worldCamera;
+        }
+
+        private static Camera EventCameraFor(Canvas canvas, Camera pressEventCamera)
+        {
+            if (canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                return null;
+            return canvas.worldCamera != null ? canvas.worldCamera : pressEventCamera;
+        }
 
         private void MoveDragViewToCanvas(InventoryItemView view)
         {
@@ -199,7 +253,8 @@ namespace Bayou.Inventory.UI
         {
             if (_dragging != view) return;
 
-            if (TryGetDragAnchor(eventData.position, eventData.pressEventCamera, view,
+            var cam = GetCanvasCamera();
+            if (TryGetDragAnchor(eventData.position, cam, view,
                     out var compartment, out _, out var gx, out var gy))
             {
                 SnapDragViewToGrid(view, compartment, gx, gy);
@@ -248,8 +303,9 @@ namespace Bayou.Inventory.UI
         {
             if (_dragging != view) return;
 
+            var cam = GetCanvasCamera();
             var placed = false;
-            if (TryGetDragAnchor(eventData.position, eventData.pressEventCamera, view,
+            if (TryGetDragAnchor(eventData.position, cam, view,
                     out _, out var compartmentId, out var gx, out var gy) &&
                 _bag.CanPlace(view.Item, compartmentId, gx, gy, view.Item.rotation))
             {
@@ -276,19 +332,15 @@ namespace Bayou.Inventory.UI
 
         private void ApplyBackground()
         {
-            if (backgroundImage == null || layout == null) return;
+            if (backgroundImage == null) return;
 
-            if (layout.backgroundSprite != null)
+            if (layout?.backgroundSprite != null)
             {
                 backgroundImage.sprite = layout.backgroundSprite;
                 backgroundImage.preserveAspect = true;
                 backgroundImage.color = Color.white;
             }
-            else
-            {
-                backgroundImage.sprite = null;
-                backgroundImage.color = new Color(0.08f, 0.09f, 0.11f, 0.94f);
-            }
+            // Otherwise keep MockUI / inspector chrome (do not wipe cream cells / brown panel).
         }
 
         private void OnEnable()
@@ -350,8 +402,11 @@ namespace Bayou.Inventory.UI
             {
                 var primary = GetPrimaryCompartmentConfig(layout);
                 if (primary != null && _bag.TryGetGrid(primary.id, out var primaryGrid))
+                {
                     BuildOneCompartment(primary, primaryGrid);
-                return;
+                    return;
+                }
+                // Fall through if layout ids don't match the bag.
             }
 
             var grid = _bag.CompartmentIds.Count > 0 ? _bag.GetGrid(_bag.CompartmentIds[0]) : null;
@@ -470,6 +525,7 @@ namespace Bayou.Inventory.UI
                 for (var x = 0; x < width; x++)
                 {
                     var cell = Instantiate(cellPrefab, ui.GridRoot);
+                    cell.SetActive(true);
                     cell.name = $"Cell_{x}_{y}";
                     var rt = cell.GetComponent<RectTransform>();
                     if (rt != null)
@@ -483,7 +539,11 @@ namespace Bayou.Inventory.UI
                     var img = cell.GetComponent<Image>();
                     if (img != null)
                     {
+                        if (img.sprite == null)
+                            img.sprite = UiWhiteSprite.Get();
                         img.color = cellEmptyColor;
+                        // Cells are visual-only — items must receive the drag raycasts.
+                        img.raycastTarget = false;
                         ui.RegisterCell(img);
                     }
                 }
@@ -561,8 +621,9 @@ namespace Bayou.Inventory.UI
             var compartment = view.Compartment ?? GetCompartmentById(_dragStartCompartmentId);
             var dragParent = view.RectTransform.parent as RectTransform ?? compartment?.ItemsRoot;
             if (dragParent == null) return;
+            var canvas = dragParent.GetComponentInParent<Canvas>();
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    dragParent, eventData.position, eventData.pressEventCamera, out var local))
+                    dragParent, eventData.position, EventCameraFor(canvas, eventData.pressEventCamera), out var local))
                 return;
 
             var rect = dragParent.rect;
@@ -579,12 +640,11 @@ namespace Bayou.Inventory.UI
             var canvasRoot = canvas.transform as RectTransform;
             if (canvasRoot == null) return;
 
-            var canvasCam = canvas.worldCamera;
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                    canvasRoot, eventData.position, canvasCam ?? eventData.pressEventCamera, out var local))
+                    canvasRoot, eventData.position, EventCameraFor(canvas, eventData.pressEventCamera), out var local))
                 return;
 
-            view.RectTransform.SetParent(canvasRoot, true);
+            view.RectTransform.SetParent(canvasRoot, false);
 
             var offset = Vector2.zero;
             if (view.Item?.definition != null && view.Compartment != null)
@@ -673,6 +733,7 @@ namespace Bayou.Inventory.UI
                 if (!_views.TryGetValue(item.instanceId, out var view))
                 {
                     var go = Instantiate(itemViewPrefab, parent);
+                    go.SetActive(true);
                     view = go.GetComponent<InventoryItemView>();
                     if (view == null)
                         view = go.AddComponent<InventoryItemView>();

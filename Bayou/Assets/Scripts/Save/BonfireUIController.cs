@@ -69,6 +69,10 @@ namespace Bayou.Save
             if (overlayRoot != null)
                 overlayRoot.gameObject.SetActive(true);
 
+            var fireAudio = Bayou.Audio.BonfireAudio.Resolve();
+            fireAudio?.PlayStrikeMatch();
+            fireAudio?.StartBurningLoop();
+
             GameplayPause.SyncFromUiState();
             RefreshFishList();
             UpdateCookButton();
@@ -76,6 +80,8 @@ namespace Bayou.Save
 
         public void Close()
         {
+            Bayou.Audio.BonfireAudio.Resolve()?.StopBurningLoop();
+
             _isOpen = false;
             _selectedFish = null;
             if (Active == this)

@@ -120,11 +120,15 @@ namespace Bayou.Inventory
             _allItems.Remove(item);
         }
 
-        /// <summary>Stores an existing instance without grid placement (used when reverting shop deals).</summary>
+        /// <summary>
+        /// Keeps an item in the bag without a grid cell (catch allocation, shop revert, failed drop).
+        /// </summary>
         public void HoldItem(InventoryItemInstance item)
         {
-            if (item == null || _allItems.Contains(item)) return;
-            _allItems.Add(item);
+            if (item == null) return;
+            DetachFromGrid(item);
+            if (!_allItems.Contains(item))
+                _allItems.Add(item);
         }
 
         public bool TryFindFirstFitAnywhere(

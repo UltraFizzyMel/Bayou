@@ -141,7 +141,7 @@ namespace Bayou.Inventory.Editor
             var controller = Object.FindFirstObjectByType<InventoryController>();
             if (controller == null)
             {
-                var player = GameObject.FindGameObjectWithTag("Player") ?? new GameObject("Player");
+                var player = ResolvePlayerObject();
                 controller = player.GetComponent<InventoryController>();
                 if (controller == null)
                     controller = player.AddComponent<InventoryController>();
@@ -204,7 +204,7 @@ namespace Bayou.Inventory.Editor
             var controller = Object.FindFirstObjectByType<InventoryController>();
             if (controller == null)
             {
-                var player = GameObject.FindGameObjectWithTag("Player") ?? new GameObject("Player");
+                var player = ResolvePlayerObject();
                 controller = player.GetComponent<InventoryController>();
                 if (controller == null)
                     controller = player.AddComponent<InventoryController>();
@@ -231,6 +231,23 @@ namespace Bayou.Inventory.Editor
             panel.SetActive(false);
             Selection.activeGameObject = canvasGo;
             Debug.Log("[Bayou] Attaché case UI created. Grid fills the panel; items clip and snap to cells. Assign Toggle/Rotate InputActionReferences.");
+        }
+
+        private static GameObject ResolvePlayerObject()
+        {
+            var tagged = GameObject.FindGameObjectWithTag("Player");
+            if (tagged != null)
+                return tagged;
+
+            var byName = GameObject.Find("Player");
+            if (byName != null)
+                return byName;
+
+            var motor = Object.FindFirstObjectByType<Bayou.Player.BayouCharacterMotor>();
+            if (motor != null)
+                return motor.gameObject;
+
+            return new GameObject("Player");
         }
 
         private const string ShelvedUpgradeMenu = "Bayou/Inventory/(Shelved) Create Sample Backpack Upgrades";

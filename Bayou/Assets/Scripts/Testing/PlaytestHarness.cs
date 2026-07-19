@@ -50,11 +50,16 @@ namespace Bayou.Testing
 
             RefreshReferences();
 
+            // Starter fish silently — do not force inventory/shop open.
             if (grantStarterFishOnPlay && _inventory != null && _inventory.GetFishItems().Count == 0)
-            {
-                for (var i = 0; i < starterFishCount; i++)
-                    AddFish();
-            }
+                StartCoroutine(GrantStarterFishNextFrame());
+        }
+
+        private System.Collections.IEnumerator GrantStarterFishNextFrame()
+        {
+            yield return null;
+            for (var i = 0; i < starterFishCount; i++)
+                AddFish();
         }
 
         private void Update()
@@ -80,7 +85,7 @@ namespace Bayou.Testing
             else if (WasDigitPressed(2)) AddMoney(100);
             else if (WasDigitPressed(3)) TeleportTo(shopTeleportPoint);
             else if (WasDigitPressed(4)) TeleportTo(bonfireTeleportPoint);
-            else if (WasDigitPressed(5)) ForceOpenShop();
+            else if (WasDigitPressed(5)) ToggleShop();
             else if (WasDigitPressed(6)) ForceOpenBonfire();
             else if (WasDigitPressed(7)) DeleteSave();
             else if (WasDigitPressed(8)) LoadSave();
@@ -91,10 +96,13 @@ namespace Bayou.Testing
         {
             if (!enableInPlayMode || !showHud) return;
 
-            // Only consume IMGUI input inside the panel so uGUI inventory stays clickable elsewhere.
-            var area = new Rect(12f, 12f, 460f, 420f);
+            // Keep HUD off the inventory grid so uGUI drag/raycasts are never blocked by IMGUI.
+            var area = new Rect(Screen.width - 472f, 12f, 460f, 420f);
             var current = Event.current;
-            if (current != null && current.type == EventType.MouseDown && !area.Contains(current.mousePosition))
+            if (current != null &&
+                (current.type == EventType.MouseDown || current.type == EventType.MouseDrag ||
+                 current.type == EventType.MouseUp) &&
+                !area.Contains(current.mousePosition))
                 return;
 
             GUILayout.BeginArea(area, GUI.skin.box);
@@ -103,7 +111,8 @@ namespace Bayou.Testing
             GUILayout.Label(StatusLine());
             GUILayout.Space(4f);
             GUILayout.Label("Gameplay:  I inventory  |  E interact  |  R rotate item");
-            GUILayout.Label("Keys:  ` hide panel  |  Shift+1..9 shortcuts below");
+            GUILayout.Label("Fishing: LMB cast/charge/reel  |  Esc/Q/RMB cancel");
+            GUILayout.Label("Keys:  ` hide panel  |  Shift+1..9 (5=shop toggle)");
             GUILayout.Space(6f);
 
             _hudScroll = GUILayout.BeginScrollView(_hudScroll, GUILayout.Height(260f));
@@ -111,7 +120,7 @@ namespace Bayou.Testing
             DrawActionButton("Shift+2 — Add $100", () => AddMoney(100));
             DrawActionButton("Shift+3 — Go to shop", () => TeleportTo(shopTeleportPoint));
             DrawActionButton("Shift+4 — Go to bonfire", () => TeleportTo(bonfireTeleportPoint));
-            DrawActionButton("Shift+5 — Open shop UI", ForceOpenShop);
+            DrawActionButton("Shift+5 — Toggle shop UI", ToggleShop);
             DrawActionButton("Shift+6 — Open bonfire UI", ForceOpenBonfire);
             DrawActionButton("Shift+7 — Delete save", DeleteSave);
             DrawActionButton("Shift+8 — Reload save", LoadSave);
@@ -155,15 +164,23 @@ namespace Bayou.Testing
 
         public void AddFish()
         {
+            Debug.Log($"Test fish reference: {testFishItem}");
+
             var fish = ResolveFishItem();
-            if (fish == null || _inventory == null)
+            if (fish == null)
             {
-                Debug.LogWarning("[Playtest] No fish item assigned/found.");
+                Debug.LogWarning("[Playtest] No fish item available.");
+                return;
+            }
+
+            if (_inventory == null)
+            {
+                Debug.LogWarning("[Playtest] No InventoryController found.");
                 return;
             }
 
             if (!_inventory.TryAddItem(fish))
-                Debug.LogWarning("[Playtest] Inventory full — could not add fish.");
+                Debug.LogWarning("[Playtest] Could not add fish item to inventory.");
         }
 
         public void AddMoney(int amount)
@@ -197,15 +214,29 @@ namespace Bayou.Testing
                 Quaternion.LookRotation(point.forward, Vector3.up));
         }
 
-        public void ForceOpenShop()
+        public void ToggleShop()
         {
             RefreshReferences();
 
+            _shopUi ??= ShopUiBuilder.EnsureInScene(testShop);
             if (_shopUi == null)
             {
-                Debug.LogWarning("[Playtest] Shop UI missing. Run Bayou/Test/Setup Playtest Scene.");
+                Debug.LogWarning("[Playtest] Could not create Shop UI.");
                 return;
             }
+
+            if (_shopUi.IsOpen)
+            {
+                _shopUi.CloseShop();
+                return;
+            }
+
+            ForceOpenShop();
+        }
+
+        public void ForceOpenShop()
+        {
+            RefreshReferences();
 
             var shop = testShop;
             if (shop == null)
@@ -214,8 +245,26 @@ namespace Bayou.Testing
                 shop = keeper != null ? keeper.ShopDefinition : null;
             }
 
+            // Build MockUI-styled shop at runtime if the scene has none (InventoryTest).
+            _shopUi = ShopUiBuilder.EnsureInScene(shop);
+            if (_shopUi == null)
+            {
+                Debug.LogWarning("[Playtest] Could not create Shop UI.");
+                return;
+            }
+
+            if (_shopUi.IsOpen)
+                return;
+
             if (shop == null)
                 shop = _shopUi.ShopDefinition;
+
+            if (FindFirstObjectByType<PlayerWallet>() == null && _inventory != null)
+                _inventory.gameObject.AddComponent<PlayerWallet>();
+
+            var handmade = InventoryDisplayUI.Active ?? FindFirstObjectByType<InventoryDisplayUI>();
+            if (handmade != null)
+                _shopUi.AssignHandmadeInventory(handmade);
 
             _shopUi.OpenShop(shop);
         }
@@ -256,6 +305,19 @@ namespace Bayou.Testing
 
         public void ToggleInventory()
         {
+            var handmade = InventoryDisplayUI.Active ?? FindFirstObjectByType<InventoryDisplayUI>();
+            if (handmade != null)
+            {
+                if (handmade.IsLockedByShop)
+                {
+                    Debug.Log("[Playtest] Inventory is locked while the shop is open. Use Close Deal or Cancel.");
+                    return;
+                }
+
+                handmade.Toggle();
+                return;
+            }
+
             var ui = FindFirstObjectByType<InventoryUIController>();
             if (ui == null)
             {

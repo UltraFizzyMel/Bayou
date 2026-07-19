@@ -1,3 +1,4 @@
+using Bayou.Inventory;
 using Bayou.Inventory.Shop;
 using Bayou.Inventory.UI;
 using Bayou.Save;
@@ -18,6 +19,7 @@ namespace Bayou
         {
             var shouldPause =
                 IsInventoryOpen() ||
+                CaughtFishPresenter.IsBusy ||
                 (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) ||
                 (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen);
 
@@ -37,8 +39,12 @@ namespace Bayou
 
         private static bool IsInventoryOpen()
         {
+            if (InventoryDisplayUI.Active != null && InventoryDisplayUI.Active.IsOpen)
+                return true;
+
             var ui = Object.FindFirstObjectByType<InventoryUIController>();
             return ui != null && ui.IsOpen;
         }
+
     }
 }

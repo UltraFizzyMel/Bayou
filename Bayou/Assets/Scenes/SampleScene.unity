@@ -3563,6 +3563,7 @@ MonoBehaviour:
   playerPanel: {fileID: 1500330767}
   merchantPanel: {fileID: 79721075}
   playerInventoryUi: {fileID: 0}
+  handmadePlayerInventoryUi: {fileID: 0}
   merchantNameLabel: {fileID: 2018870858}
   balanceLabel: {fileID: 228485305}
   dealSummaryLabel: {fileID: 1693596064}
