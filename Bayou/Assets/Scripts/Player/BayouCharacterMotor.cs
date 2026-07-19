@@ -44,6 +44,8 @@ namespace Bayou.Player
         private Vector2 moveInput;
         private bool isGrounded;
 
+        public Animator animator;
+
         /// <summary>Horizontal speed used by locomotion SFX.</summary>
         public float PlanarSpeed
         {
@@ -119,8 +121,18 @@ namespace Bayou.Player
             var accel = acceleration * (inWater ? waterAccelerationMultiplier : 1f);
 
             var wishDir = GetWishDirection(moveInput);
+
             var vel = rb.linearVelocity;
             var planar = new Vector3(vel.x, 0f, vel.z);
+            if (vel.x <= 0.001f  && vel.x >= -0.001f && vel.z <= 0.001f && vel.z >= -0.001f)
+            {
+                animator.SetBool("isMoving", false);
+            }
+            else
+            {
+                animator.SetBool("isMoving", true);
+            }
+
 
             if (wishDir.sqrMagnitude > 0.0001f)
             {
@@ -132,6 +144,7 @@ namespace Bayou.Player
                 rb.AddForce(new Vector3(change.x, 0f, change.z), ForceMode.VelocityChange);
 
                 RotateTowards(wishDir);
+
             }
             else
             {
@@ -139,6 +152,7 @@ namespace Bayou.Player
                 var maxDelta = braking * Time.fixedDeltaTime;
                 var change = Vector3.ClampMagnitude(-planar, maxDelta);
                 rb.AddForce(new Vector3(change.x, 0f, change.z), ForceMode.VelocityChange);
+                
             }
 
             if (inWater)
@@ -157,7 +171,11 @@ namespace Bayou.Player
 
         private Vector3 GetWishDirection(Vector2 input)
         {
-            if (input.sqrMagnitude < 0.0001f) return Vector3.zero;
+            if (input.sqrMagnitude < 0.0001f)
+            {
+               
+                return Vector3.zero;
+            }
 
             var forward = viewTransform != null ? viewTransform.forward : transform.forward;
             forward.y = 0f;
@@ -169,6 +187,8 @@ namespace Bayou.Player
 
             var wish = forward * input.y + right * input.x;
             wish.y = 0f;
+
+            
             return wish.sqrMagnitude < 0.0001f ? Vector3.zero : wish.normalized;
         }
 
