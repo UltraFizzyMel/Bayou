@@ -29,6 +29,10 @@ namespace Bayou.Inventory
         {
             if (item?.definition == null) return false;
             item.definition.shape.GetOccupiedOffsets(rotation, _offsetBuffer);
+            // Empty footprint must never be treated as placeable — that allows infinite stacking.
+            if (_offsetBuffer.Count == 0)
+                return false;
+
             foreach (var o in _offsetBuffer)
             {
                 var x = anchorX + o.x;

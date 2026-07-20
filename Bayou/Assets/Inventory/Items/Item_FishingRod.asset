@@ -16,9 +16,9 @@ MonoBehaviour:
   description: A proper bayou rod. Buy from Caliste. Press 1 to hold.
   icon: {fileID: 0}
   shape:
-    width: 3
-    height: 1
-    cells: 111
+    width: 4
+    height: 2
+    cells: 0101010101010101
   maxStack: 1
   buyPrice: 120
   sellPrice: 40

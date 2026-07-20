@@ -16,9 +16,9 @@ MonoBehaviour:
   description: A small lively molly. Scoop with a hand net.
   icon: {fileID: 21300000, guid: 702f392d02b218c4b90dd0fd8547c8b7, type: 3}
   shape:
-    width: 1
+    width: 2
     height: 1
-    cells: 1
+    cells: 0101
   maxStack: 1
   buyPrice: 60
   sellPrice: 30

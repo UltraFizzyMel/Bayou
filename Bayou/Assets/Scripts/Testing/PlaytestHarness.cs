@@ -109,7 +109,7 @@ namespace Bayou.Testing
             if (!enableInPlayMode || !showHud) return;
 
             // Keep HUD off the inventory grid so uGUI drag/raycasts are never blocked by IMGUI.
-            var area = new Rect(Screen.width - 472f, 12f, 460f, 420f);
+            var area = new Rect(Screen.width - 472f, 12f, 460f, Mathf.Min(Screen.height - 24f, 560f));
             var current = Event.current;
             if (current != null &&
                 (current.type == EventType.MouseDown || current.type == EventType.MouseDrag ||
@@ -128,11 +128,10 @@ namespace Bayou.Testing
             GUILayout.Label("Keys:  ` hide panel  |  Shift+3 Caliste  |  Shift+5 shop UI");
             GUILayout.Space(6f);
 
-            _hudScroll = GUILayout.BeginScrollView(_hudScroll, GUILayout.Height(260f));
+            _hudScroll = GUILayout.BeginScrollView(_hudScroll, GUILayout.ExpandHeight(true));
             DrawActionButton("V — Toggle volume settings", ToggleAudioSettings);
             DrawActionButton("Shift+0 — Go to church pond / fish", TeleportToPond);
             DrawActionButton("Shift+1 — Add fish", AddFish);
-            DrawActionButton("Add Red Snapper (inventory preview)", AddRedSnapper);
             DrawActionButton("Shift+2 — Add $100", () => AddMoney(100));
             DrawActionButton("Shift+3 — Go to Caliste", TeleportToCaliste);
             DrawActionButton("Shift+4 — Go to bonfire", () => TeleportTo(bonfireTeleportPoint));
@@ -141,7 +140,11 @@ namespace Bayou.Testing
             DrawActionButton("Shift+7 — Delete save", DeleteSave);
             DrawActionButton("Shift+8 — Reload save", LoadSave);
             DrawActionButton("Shift+9 — Toggle inventory", ToggleInventory);
-            DrawActionButton("Grant Landry graveyard key", GrantLandryKey);
+
+            GUILayout.Space(8f);
+            GUILayout.Label("Add inventory item (preview)");
+            DrawActionButton("Add ALL catalog items", AddAllCatalogItems);
+            DrawCatalogItemButtons();
             GUILayout.EndScrollView();
 
             if (_saveSystem != null)
@@ -193,32 +196,90 @@ namespace Bayou.Testing
             TryAddPlaytestItem(fish);
         }
 
-        public void AddRedSnapper()
+        public void AddRedSnapper() => AddCatalogItemById("Item_RedSnapper");
+
+        public void AddAllCatalogItems()
         {
-            var snapper = ResolveCatalogItem("Item_RedSnapper");
-            if (snapper == null)
+            var catalog = ResolveCatalog();
+            if (catalog == null)
             {
-                Debug.LogWarning("[Playtest] Item_RedSnapper missing from ItemCatalog.");
+                Debug.LogWarning("[Playtest] ItemCatalog missing.");
                 return;
             }
 
-            TryAddPlaytestItem(snapper);
+            var added = 0;
+            foreach (var item in catalog.AllDefinitions)
+            {
+                if (item == null) continue;
+                if (TryAddPlaytestItem(item))
+                    added++;
+            }
+
+            SyncKeysAfterItemGrant();
+            Debug.Log($"[Playtest] Added {added} catalog item(s).");
         }
 
-        private void TryAddPlaytestItem(ItemDefinition item)
+        private void DrawCatalogItemButtons()
         {
-            if (item == null) return;
+            var catalog = ResolveCatalog();
+            if (catalog == null)
+            {
+                GUILayout.Label("(ItemCatalog missing — assign on GameSaveSystem)");
+                return;
+            }
+
+            foreach (var item in catalog.AllDefinitions)
+            {
+                if (item == null) continue;
+                var label = string.IsNullOrWhiteSpace(item.displayName) ? item.name : item.displayName;
+                DrawActionButton($"+ {label}", () => AddCatalogItem(item));
+            }
+        }
+
+        public void AddCatalogItemById(string itemId)
+        {
+            var item = ResolveCatalogItem(itemId);
+            if (item == null)
+            {
+                Debug.LogWarning($"[Playtest] {itemId} missing from ItemCatalog.");
+                return;
+            }
+
+            AddCatalogItem(item);
+        }
+
+        public void AddCatalogItem(ItemDefinition item)
+        {
+            if (!TryAddPlaytestItem(item))
+                return;
+
+            SyncKeysAfterItemGrant();
+        }
+
+        private bool TryAddPlaytestItem(ItemDefinition item)
+        {
+            if (item == null) return false;
 
             if (_inventory == null)
             {
                 Debug.LogWarning("[Playtest] No InventoryController found.");
-                return;
+                return false;
             }
 
             if (!_inventory.TryAddItem(item) && !_inventory.TryHoldNewItem(item, out _))
+            {
                 Debug.LogWarning($"[Playtest] Could not add {item.displayName} — bag full?");
-            else
-                Debug.Log($"[Playtest] Added {item.displayName}.");
+                return false;
+            }
+
+            Debug.Log($"[Playtest] Added {item.displayName}.");
+            return true;
+        }
+
+        private static void SyncKeysAfterItemGrant()
+        {
+            var gates = KeyGateManager.Instance ?? Object.FindFirstObjectByType<KeyGateManager>();
+            gates?.SyncKeysFromInventory();
         }
 
         public void AddMoney(int amount)
@@ -256,24 +317,7 @@ namespace Bayou.Testing
 
         public void GrantLandryKey()
         {
-            var inv = InventoryController.Instance;
-            var catalog = _saveSystem != null ? _saveSystem.ItemCatalog : GameSaveSystem.Instance?.ItemCatalog;
-            var key = catalog != null ? catalog.Resolve("Item_ChurchGraveyardKey") : null;
-            if (key == null)
-            {
-                Debug.LogWarning("[Playtest] Item_ChurchGraveyardKey missing from catalog.");
-                return;
-            }
-
-            if (inv == null || (!inv.TryAddItem(key) && !inv.TryHoldNewItem(key, out _)))
-            {
-                Debug.LogWarning("[Playtest] Could not add graveyard key.");
-                return;
-            }
-
-            var gates = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
-            gates?.GrantKeyFlag("hasKeyChurchToGraveyard");
-            Debug.Log("[Playtest] Granted Church Graveyard Key.");
+            AddCatalogItemById("Item_ChurchGraveyardKey");
         }
 
         public void TeleportToCaliste()
