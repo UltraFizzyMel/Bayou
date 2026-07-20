@@ -102,13 +102,14 @@ Be careful out there.
  ->Agree
  
  ===Agreed ===
- Excellent! To venture into the bayou's depths, you'll need to first fetch a lantern a lantern for me. 
+ Excellent! To venture into the bayou's depths, you'll need to first fetch a lantern for me. 
  ~StartQuest(CollectLanternQuestId)
  Take this key, it will unlock the NorthWest gate to the graveyard.
  ~ GiveItem("Item_ChurchGraveyardKey", 1)
  ~ GrantKey("hasKeyChurchToGraveyard")
  What better place to do some soul searching?
- Be careful out there. Not everything is as it seems… Your eyes and ears will be your greatest deceivers.
+ Be careful out there. Not everything is as it seems… 
+ Your eyes and ears will be your greatest deceivers.
  ->END
  
 === knownName ===
