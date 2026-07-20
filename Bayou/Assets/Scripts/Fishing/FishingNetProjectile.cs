@@ -1,4 +1,5 @@
 using Bayou.Environment;
+using Bayou.Quests;
 using UnityEngine;
 
 namespace Bayou.Fishing
@@ -13,6 +14,7 @@ namespace Bayou.Fishing
 
     /// <summary>
     /// Thrown net: flies, then plants statically in water. Fish swim toward it during attract.
+    /// Can also scoop a <see cref="PondShinyCollectible"/> when planted near one.
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody))]
@@ -24,6 +26,11 @@ namespace Bayou.Fishing
         [Tooltip("Auto-destroy only if the net never lands in water. 0 = never.")]
         [SerializeField] private float missLifetimeSeconds = 8f;
         [SerializeField] private bool stickOnDryLand = true;
+        [Tooltip("Ignore non-water collisions for this long after launch (avoids sticking at the player's feet).")]
+        [SerializeField] private float launchGraceSeconds = 0.35f;
+        [Tooltip("Must travel at least this far before dry-land stick is allowed.")]
+        [SerializeField] private float minFlightDistance = 2f;
+        [SerializeField] private float shinyScoopRadius = 2.4f;
 
         [Header("Water")]
         [SerializeField] private LayerMask waterLayers;
@@ -32,8 +39,11 @@ namespace Bayou.Fishing
         [SerializeField] private float plantDepth = 0.15f;
 
         private Rigidbody _rb;
+        private Collider _col;
         private bool _hasLanded;
         private FishingNetVisual _visual;
+        private Vector3 _launchPos;
+        private float _launchTime;
 
         public FishingNetPhase Phase { get; private set; } = FishingNetPhase.Flying;
         public Vector3 PlantPosition => transform.position;
@@ -41,6 +51,7 @@ namespace Bayou.Fishing
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
+            _col = GetComponent<Collider>();
             _rb.interpolation = RigidbodyInterpolation.Interpolate;
             _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
 
@@ -69,16 +80,24 @@ namespace Bayou.Fishing
                 attract.AttractComplete -= OnAttractCompleteFromPhase;
         }
 
-        public void Launch(Vector3 initialVelocity)
+        public void Launch(Vector3 initialVelocity) => Launch(initialVelocity, null);
+
+        public void Launch(Vector3 initialVelocity, GameObject casterRoot)
         {
             Phase = FishingNetPhase.Flying;
             _hasLanded = false;
+            _launchPos = transform.position;
+            _launchTime = Time.time;
+
             if (ActiveInWater == this)
                 ActiveInWater = null;
+
+            IgnoreCollisionsWith(casterRoot, true);
 
             _rb.isKinematic = false;
             _rb.useGravity = true;
             _rb.linearVelocity = initialVelocity;
+            _rb.angularVelocity = Vector3.zero;
 
             EnsurePhases();
             EnsureVisual();
@@ -90,6 +109,17 @@ namespace Bayou.Fishing
                 attract.enabled = false;
                 attract.AttractComplete -= OnAttractCompleteFromPhase;
                 attract.AttractComplete += OnAttractCompleteFromPhase;
+            }
+        }
+
+        private void IgnoreCollisionsWith(GameObject root, bool ignore)
+        {
+            if (root == null || _col == null) return;
+
+            foreach (var other in root.GetComponentsInChildren<Collider>(true))
+            {
+                if (other != null && other != _col)
+                    Physics.IgnoreCollision(_col, other, ignore);
             }
         }
 
@@ -143,7 +173,6 @@ namespace Bayou.Fishing
 
         private void DestroyAfterMissLifetime()
         {
-            // Only despawn misses — planted nets stay until cancel / catch / reel end.
             if (Phase == FishingNetPhase.LandedInWater || Phase == FishingNetPhase.AttractComplete)
                 return;
             Destroy(gameObject);
@@ -152,6 +181,15 @@ namespace Bayou.Fishing
         private void CancelMissLifetime()
         {
             CancelInvoke(nameof(DestroyAfterMissLifetime));
+        }
+
+        private bool StillInLaunchGrace()
+        {
+            if (Time.time - _launchTime < launchGraceSeconds)
+                return true;
+
+            var traveled = Vector3.Distance(transform.position, _launchPos);
+            return traveled < minFlightDistance;
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -163,6 +201,10 @@ namespace Bayou.Fishing
                 LandInWater(collision);
                 return;
             }
+
+            // Don't stick to the player / ground right at the cast origin.
+            if (StillInLaunchGrace())
+                return;
 
             LandOnDry(collision);
         }
@@ -203,6 +245,13 @@ namespace Bayou.Fishing
 
             Bayou.Audio.FishingAudio.Resolve()?.PlayLanding();
 
+            // Scoop shiny quest item if the net lands on / near it.
+            if (PondShinyCollectible.TryScoopNear(transform.position, shinyScoopRadius))
+            {
+                Destroy(gameObject);
+                return;
+            }
+
             var attract = GetComponent<FishingAttractPhase>();
             if (attract != null)
                 attract.BeginAttract();
@@ -219,6 +268,8 @@ namespace Bayou.Fishing
             _rb.linearVelocity = Vector3.zero;
             _rb.angularVelocity = Vector3.zero;
             _rb.isKinematic = true;
+            EnsureVisual();
+            _visual?.ShowPlanted();
         }
 
         private bool IsWater(Collider other)

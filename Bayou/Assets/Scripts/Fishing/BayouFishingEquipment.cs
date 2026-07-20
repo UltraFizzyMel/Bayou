@@ -8,19 +8,27 @@ using UnityEngine.Serialization;
 
 namespace Bayou.Fishing
 {
+    /// <summary>What the player is currently holding.</summary>
+    public enum BayouHeldItem
+    {
+        None = 0,
+        Rod = 1,
+        Net = 2,
+        Lantern = 3
+    }
+
+    // Keep old name so existing scene scripts that reference the type still compile if any.
     public enum BayouFishingTool
     {
-        Rod,
-        Net
+        None = BayouHeldItem.None,
+        Rod = BayouHeldItem.Rod,
+        Net = BayouHeldItem.Net,
+        Lantern = BayouHeldItem.Lantern
     }
 
     /// <summary>
-    /// Switches between two distinct tools:
-    /// <list type="bullet">
-    /// <item><see cref="BayouFishingTool.Rod"/> — long cast / attract / reel (<see cref="FishingNetCaster"/>)</item>
-    /// <item><see cref="BayouFishingTool.Net"/> — short-range scoop net (<see cref="HandNetAreaController"/>)</item>
-    /// </list>
-    /// Also toggles held rod/net visuals (assign your meshes, or placeholders are created).
+    /// Cycles / selects held item: nothing, rod, net, lantern.
+    /// Keys (defaults): Tab cycle · 0 none · 1 rod · 2 net · 3 lantern.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BayouFishingEquipment : MonoBehaviour
@@ -30,26 +38,38 @@ namespace Bayou.Fishing
         [SerializeField] private FishingNetCaster rodCaster;
         [SerializeField] private HandNetAreaController handNet;
 
-        [Header("Held visuals (two different objects)")]
-        [Tooltip("Mesh/object held when Rod is equipped. Leave empty to spawn a placeholder.")]
+        [Header("Held visuals (separate objects)")]
         [SerializeField] private GameObject heldRod;
-
-        [Tooltip("Mesh/object held when Net is equipped. Leave empty to spawn a placeholder.")]
         [SerializeField] private GameObject heldNet;
-
+        [SerializeField] private GameObject heldLantern;
         [SerializeField] private Transform heldAttachPoint;
         [SerializeField] private bool createPlaceholdersIfMissing = true;
 
         [Header("Input")]
-        [Tooltip("Cycle Rod ↔ Net. Default fallback: Tab.")]
         [SerializeField] private InputActionReference switchToolAction;
-
+        [SerializeField] private InputActionReference selectNoneAction;
         [SerializeField] private InputActionReference selectRodAction;
         [SerializeField] private InputActionReference selectNetAction;
+        [SerializeField] private InputActionReference selectLanternAction;
 
-        [SerializeField] private BayouFishingTool startingTool = BayouFishingTool.Rod;
+        [SerializeField] private BayouHeldItem startingItem = BayouHeldItem.Rod;
 
-        public BayouFishingTool CurrentTool { get; private set; } = BayouFishingTool.Rod;
+        private static readonly BayouHeldItem[] CycleOrder =
+        {
+            BayouHeldItem.None,
+            BayouHeldItem.Rod,
+            BayouHeldItem.Net,
+            BayouHeldItem.Lantern
+        };
+
+        private HeldLantern _lantern;
+
+        public BayouHeldItem CurrentItem { get; private set; } = BayouHeldItem.None;
+
+        /// <summary>Alias for older call sites / HUD.</summary>
+        public BayouFishingTool CurrentTool => (BayouFishingTool)CurrentItem;
+
+        public bool IsHolding(BayouHeldItem item) => CurrentItem == item;
 
         private void Reset()
         {
@@ -70,62 +90,102 @@ namespace Bayou.Fishing
         private void OnEnable()
         {
             switchToolAction?.action?.Enable();
+            selectNoneAction?.action?.Enable();
             selectRodAction?.action?.Enable();
             selectNetAction?.action?.Enable();
-            ApplyTool(startingTool);
+            selectLanternAction?.action?.Enable();
+            ApplyItem(startingItem);
         }
 
         private void OnDisable()
         {
             switchToolAction?.action?.Disable();
+            selectNoneAction?.action?.Disable();
             selectRodAction?.action?.Disable();
             selectNetAction?.action?.Disable();
+            selectLanternAction?.action?.Disable();
         }
 
         private void Update()
         {
-            if (WasSelectRod())
+            if (WasSelect(selectNoneAction, Key.Digit0, Key.Backquote))
             {
-                ApplyTool(BayouFishingTool.Rod);
+                ApplyItem(BayouHeldItem.None);
                 return;
             }
 
-            if (WasSelectNet())
+            if (WasSelect(selectRodAction, Key.Digit1))
             {
-                ApplyTool(BayouFishingTool.Net);
+                ApplyItem(BayouHeldItem.Rod);
+                return;
+            }
+
+            if (WasSelect(selectNetAction, Key.Digit2))
+            {
+                ApplyItem(BayouHeldItem.Net);
+                return;
+            }
+
+            if (WasSelect(selectLanternAction, Key.Digit3))
+            {
+                ApplyItem(BayouHeldItem.Lantern);
                 return;
             }
 
             if (WasSwitch())
-            {
-                ApplyTool(CurrentTool == BayouFishingTool.Rod
-                    ? BayouFishingTool.Net
-                    : BayouFishingTool.Rod);
-            }
+                CycleNext();
         }
 
-        public void ApplyTool(BayouFishingTool tool)
+        public void CycleNext()
         {
-            // Don't switch mid-cast / while a net is planted.
-            if (rodCaster != null && (rodCaster.Phase != FishingCastPhase.Idle || rodCaster.HasActiveNet))
+            var idx = 0;
+            for (var i = 0; i < CycleOrder.Length; i++)
             {
-                if (tool != BayouFishingTool.Rod && CurrentTool == BayouFishingTool.Rod)
-                    return;
+                if (CycleOrder[i] == CurrentItem)
+                {
+                    idx = i;
+                    break;
+                }
             }
 
-            CurrentTool = tool;
+            ApplyItem(CycleOrder[(idx + 1) % CycleOrder.Length]);
+        }
+
+        /// <summary>Prefer <see cref="ApplyItem"/>.</summary>
+        public void ApplyTool(BayouFishingTool tool) => ApplyItem((BayouHeldItem)tool);
+
+        public void ApplyItem(BayouHeldItem item)
+        {
+            // Don't leave the rod mid-cast / while a line is out.
+            if (CurrentItem == BayouHeldItem.Rod && item != BayouHeldItem.Rod &&
+                rodCaster != null &&
+                (rodCaster.Phase != FishingCastPhase.Idle || rodCaster.HasActiveNet))
+            {
+                return;
+            }
+
+            CurrentItem = item;
 
             if (rodCaster != null)
-                rodCaster.enabled = tool == BayouFishingTool.Rod;
+                rodCaster.enabled = item == BayouHeldItem.Rod;
 
             if (handNet != null)
-                handNet.enabled = tool == BayouFishingTool.Net;
+                handNet.enabled = item == BayouHeldItem.Net;
 
             if (heldRod != null)
-                heldRod.SetActive(tool == BayouFishingTool.Rod);
+                heldRod.SetActive(item == BayouHeldItem.Rod);
 
             if (heldNet != null)
-                heldNet.SetActive(tool == BayouFishingTool.Net);
+                heldNet.SetActive(item == BayouHeldItem.Net);
+
+            if (heldLantern != null)
+                heldLantern.SetActive(item == BayouHeldItem.Lantern);
+
+            if (_lantern == null && heldLantern != null)
+                _lantern = heldLantern.GetComponent<HeldLantern>() ??
+                           heldLantern.GetComponentInChildren<HeldLantern>(true);
+
+            _lantern?.SetLit(item == BayouHeldItem.Lantern);
         }
 
         private void EnsureHeldVisuals()
@@ -137,6 +197,16 @@ namespace Bayou.Fishing
 
             if (heldNet == null && createPlaceholdersIfMissing)
                 heldNet = CreateNetPlaceholder(attach);
+
+            if (heldLantern == null && createPlaceholdersIfMissing)
+                heldLantern = CreateLanternPlaceholder(attach);
+
+            if (heldLantern != null)
+            {
+                _lantern = heldLantern.GetComponent<HeldLantern>();
+                if (_lantern == null)
+                    _lantern = heldLantern.AddComponent<HeldLantern>();
+            }
         }
 
         private static GameObject CreateRodPlaceholder(Transform parent)
@@ -151,7 +221,7 @@ namespace Bayou.Fishing
             pole.transform.SetParent(root.transform, false);
             pole.transform.localScale = new Vector3(0.06f, 0.85f, 0.06f);
             pole.transform.localPosition = new Vector3(0f, 0.6f, 0f);
-            Destroy(pole.GetComponent<Collider>());
+            Object.Destroy(pole.GetComponent<Collider>());
             Tint(pole, new Color(0.45f, 0.28f, 0.14f, 1f));
 
             return root;
@@ -168,7 +238,7 @@ namespace Bayou.Fishing
             hoop.name = "Hoop";
             hoop.transform.SetParent(root.transform, false);
             hoop.transform.localScale = new Vector3(0.55f, 0.03f, 0.55f);
-            Destroy(hoop.GetComponent<Collider>());
+            Object.Destroy(hoop.GetComponent<Collider>());
             Tint(hoop, new Color(0.2f, 0.35f, 0.4f, 1f));
 
             var bag = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -176,7 +246,7 @@ namespace Bayou.Fishing
             bag.transform.SetParent(root.transform, false);
             bag.transform.localScale = new Vector3(0.45f, 0.35f, 0.45f);
             bag.transform.localPosition = new Vector3(0f, -0.15f, 0f);
-            Destroy(bag.GetComponent<Collider>());
+            Object.Destroy(bag.GetComponent<Collider>());
             Tint(bag, new Color(0.3f, 0.55f, 0.6f, 0.7f));
 
             var handle = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -184,9 +254,43 @@ namespace Bayou.Fishing
             handle.transform.SetParent(root.transform, false);
             handle.transform.localScale = new Vector3(0.05f, 0.35f, 0.05f);
             handle.transform.localPosition = new Vector3(0f, 0.35f, 0f);
-            Destroy(handle.GetComponent<Collider>());
+            Object.Destroy(handle.GetComponent<Collider>());
             Tint(handle, new Color(0.4f, 0.25f, 0.12f, 1f));
 
+            return root;
+        }
+
+        private static GameObject CreateLanternPlaceholder(Transform parent)
+        {
+            var root = new GameObject("HeldLantern_Placeholder");
+            root.transform.SetParent(parent, false);
+            root.transform.localPosition = new Vector3(0.28f, 0.85f, 0.28f);
+            root.transform.localRotation = Quaternion.identity;
+
+            var body = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            body.name = "Body";
+            body.transform.SetParent(root.transform, false);
+            body.transform.localScale = new Vector3(0.22f, 0.18f, 0.22f);
+            Object.Destroy(body.GetComponent<Collider>());
+            Tint(body, new Color(0.55f, 0.35f, 0.15f, 1f));
+
+            var glass = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            glass.name = "Glass";
+            glass.transform.SetParent(root.transform, false);
+            glass.transform.localScale = new Vector3(0.2f, 0.22f, 0.2f);
+            glass.transform.localPosition = new Vector3(0f, 0.12f, 0f);
+            Object.Destroy(glass.GetComponent<Collider>());
+            Tint(glass, new Color(1f, 0.85f, 0.4f, 0.85f));
+
+            var handle = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            handle.name = "Handle";
+            handle.transform.SetParent(root.transform, false);
+            handle.transform.localScale = new Vector3(0.04f, 0.12f, 0.04f);
+            handle.transform.localPosition = new Vector3(0f, 0.32f, 0f);
+            Object.Destroy(handle.GetComponent<Collider>());
+            Tint(handle, new Color(0.35f, 0.35f, 0.38f, 1f));
+
+            root.AddComponent<HeldLantern>();
             return root;
         }
 
@@ -211,22 +315,20 @@ namespace Bayou.Fishing
             return kb != null && kb.tabKey.wasPressedThisFrame;
         }
 
-        private bool WasSelectRod()
+        private static bool WasSelect(InputActionReference actionRef, params Key[] keys)
         {
-            if (selectRodAction?.action != null && selectRodAction.action.WasPressedThisFrame())
+            if (actionRef?.action != null && actionRef.action.WasPressedThisFrame())
                 return true;
 
             var kb = Keyboard.current;
-            return kb != null && kb.digit1Key.wasPressedThisFrame;
-        }
+            if (kb == null) return false;
+            foreach (var key in keys)
+            {
+                if (kb[key].wasPressedThisFrame)
+                    return true;
+            }
 
-        private bool WasSelectNet()
-        {
-            if (selectNetAction?.action != null && selectNetAction.action.WasPressedThisFrame())
-                return true;
-
-            var kb = Keyboard.current;
-            return kb != null && kb.digit2Key.wasPressedThisFrame;
+            return false;
         }
     }
 }

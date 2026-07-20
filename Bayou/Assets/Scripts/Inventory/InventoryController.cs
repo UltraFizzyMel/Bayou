@@ -254,5 +254,83 @@ namespace Bayou.Inventory
 
             return result;
         }
+
+        public int CountItems(ItemDefinition definition)
+        {
+            if (definition == null || Bag == null) return 0;
+            var count = 0;
+            foreach (var item in Bag.AllItems)
+            {
+                if (item?.definition == definition)
+                    count++;
+            }
+
+            return count;
+        }
+
+        public int CountItemsById(string itemId)
+        {
+            if (string.IsNullOrWhiteSpace(itemId) || Bag == null) return 0;
+            var count = 0;
+            foreach (var item in Bag.AllItems)
+            {
+                if (item?.definition != null &&
+                    string.Equals(item.definition.name, itemId, StringComparison.OrdinalIgnoreCase))
+                    count++;
+            }
+
+            return count;
+        }
+
+        public bool HasItems(ItemDefinition definition, int count = 1) =>
+            CountItems(definition) >= Mathf.Max(1, count);
+
+        public bool HasItemsById(string itemId, int count = 1) =>
+            CountItemsById(itemId) >= Mathf.Max(1, count);
+
+        /// <summary>Removes up to <paramref name="count"/> matching items. Returns false if not enough.</summary>
+        public bool TryRemoveItems(ItemDefinition definition, int count = 1)
+        {
+            if (definition == null || Bag == null) return false;
+            count = Mathf.Max(1, count);
+            if (CountItems(definition) < count) return false;
+
+            var removed = 0;
+            var snapshot = new List<InventoryItemInstance>(Bag.AllItems);
+            foreach (var item in snapshot)
+            {
+                if (item?.definition != definition) continue;
+                Bag.Remove(item);
+                removed++;
+                if (removed >= count) break;
+            }
+
+            if (removed > 0)
+                NotifyChanged();
+            return removed >= count;
+        }
+
+        public bool TryRemoveItemsById(string itemId, int count = 1)
+        {
+            if (string.IsNullOrWhiteSpace(itemId) || Bag == null) return false;
+            count = Mathf.Max(1, count);
+            if (CountItemsById(itemId) < count) return false;
+
+            var removed = 0;
+            var snapshot = new List<InventoryItemInstance>(Bag.AllItems);
+            foreach (var item in snapshot)
+            {
+                if (item?.definition == null) continue;
+                if (!string.Equals(item.definition.name, itemId, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                Bag.Remove(item);
+                removed++;
+                if (removed >= count) break;
+            }
+
+            if (removed > 0)
+                NotifyChanged();
+            return removed >= count;
+        }
     }
 }

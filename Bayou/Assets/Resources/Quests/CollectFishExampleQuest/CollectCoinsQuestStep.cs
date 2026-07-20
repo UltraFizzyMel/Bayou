@@ -1,23 +1,40 @@
+using Bayou.Inventory;
 using UnityEngine;
 
-public class CollectCoinsQuestStep : QuestStep
+/// <summary>
+/// Example collect step: completes when the player has enough fish in the bag.
+/// </summary>
+public sealed class CollectCoinsQuestStep : QuestStep
 {
-    private int fishCollected = 0;
-    private int fishToComplete = 1;
+    [SerializeField] private int fishToComplete = 1;
 
-    //GameEventManager.instance.
-
-
-    /*
-     private void UpdateState()
+    private void OnEnable()
     {
-        string state = xxx.ToString();
-        ChangeState(state);
+        var inv = InventoryController.Instance;
+        if (inv != null)
+            inv.InventoryChanged += OnInventoryChanged;
+        CheckProgress();
     }
-     
-     */
-    protected override void SetQuestStepState(string state)
+
+    private void OnDisable()
     {
-       //UpdateState();
+        var inv = InventoryController.Instance;
+        if (inv != null)
+            inv.InventoryChanged -= OnInventoryChanged;
     }
+
+    private void OnInventoryChanged() => CheckProgress();
+
+    private void CheckProgress()
+    {
+        var inv = InventoryController.Instance;
+        if (inv == null) return;
+
+        var have = inv.GetFishItems().Count;
+        ChangeState($"{have}/{Mathf.Max(1, fishToComplete)}");
+        if (have >= Mathf.Max(1, fishToComplete))
+            FinishQuestStep();
+    }
+
+    protected override void SetQuestStepState(string state) => CheckProgress();
 }
