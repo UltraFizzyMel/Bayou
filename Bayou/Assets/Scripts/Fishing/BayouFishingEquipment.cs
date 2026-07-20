@@ -53,6 +53,7 @@ namespace Bayou.Fishing
         [SerializeField] private InputActionReference selectLanternAction;
 
         [SerializeField] private BayouHeldItem startingItem = BayouHeldItem.Rod;
+        [SerializeField] private Animator animator;
 
         private static readonly BayouHeldItem[] CycleOrder =
         {
@@ -111,23 +112,31 @@ namespace Bayou.Fishing
             if (WasSelect(selectNoneAction, Key.Digit0, Key.Backquote))
             {
                 ApplyItem(BayouHeldItem.None);
+                animator.SetBool("isHoldingRod", false);
+                animator.SetBool("isHoldingLantern", false);
                 return;
             }
 
             if (WasSelect(selectRodAction, Key.Digit1))
             {
+                animator.SetBool("isHoldingRod", true);
+                animator.SetBool("isHoldingLantern", false);
                 ApplyItem(BayouHeldItem.Rod);
                 return;
             }
 
             if (WasSelect(selectNetAction, Key.Digit2))
             {
+                animator.SetBool("isHoldingRod", true);
+                animator.SetBool("isHoldingLantern", false);
                 ApplyItem(BayouHeldItem.Net);
                 return;
             }
 
             if (WasSelect(selectLanternAction, Key.Digit3))
             {
+                animator.SetBool("isHoldingRod", false);
+                animator.SetBool("isHoldingLantern", true);
                 ApplyItem(BayouHeldItem.Lantern);
                 return;
             }
