@@ -1,9 +1,32 @@
  INCLUDE globals.ink
- EXTERNAL OpenShop()
-
- #portrait: caliste_ardoin_neutral #layout: left #background: merchant
- {caliste_known == "":-> main |-> knownName}
  
+ EXTERNAL OpenShop()
+ EXTERNAL StartQuest(questId)
+ EXTERNAL AdvanceQuest(questId)
+ EXTERNAL FinishQuest(questId)
+ 
+ 
+#portrait: caliste_ardoin_neutral #layout: left #background: merchant
+->SnapperAndMollyQuestStart
+
+=== SnapperAndMollyQuestStart ===
+#portrait: caliste_ardoin_neutral #layout: left #background: merchant
+{ SnapperAndMollyQuestState :
+    - "CAN_START": -> main
+    
+    - "IN_PROGRESS": -> main
+    - "CAN_FINISH": -> main
+    - "FINISHED":  {caliste_known == "":-> notKnown |-> knownName}
+    - else: -> END
+ }
+
+
+ 
+=== notKnown ===
+<b>DON'T...</b> Oh it's you.
+You want to see my wares?
+-> questions
+
 === knownName ===
 #speaker: Caliste
 <b>DON'T...</b> Oh it's you.
@@ -15,6 +38,8 @@ You want to see my wares?
 -> calm
 
 === calm ===
++ {HasItem("Item_ShinyPond", 1)} [I have the fish!] ->DeliveredItem 
+   ~FinishQuest(SnapperAndMollyQuestId)
 +[I just want to talk.]
 -> speak
 +[I'll give you your space.]->END
@@ -22,8 +47,14 @@ You want to see my wares?
 === speak ===
 Talk...
 You seem... 
-We can talk.
-My wares may be of interest.
+Fetch me a Snapper and a Molly, then I'll talk.
+My wares may be of interest...
+   ~StartQuest(SnapperAndMollyQuestId)
+-> END
+
+===DeliveredItem
+You might just be the real deal sonny.
+I'll let you peek at my wares.
 -> questions
 
 === questions ===
@@ -46,7 +77,7 @@ My wares may be of interest.
  
  === shop ===
  #speaker: Caliste
- Fine. Take a look — but don't touch what you can't pay for.
+ Take a look, but don't touch what you can't pay for.
  ~ OpenShop()
  -> END
 

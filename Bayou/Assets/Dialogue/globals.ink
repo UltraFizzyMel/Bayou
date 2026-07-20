@@ -15,6 +15,11 @@ VAR olivier_known = ""
 //Caliste Variables
 VAR caliste_known = ""
 
+VAR SnapperAndMollyQuestId = "SnapperAndMollyQuest"
+
+//quest states (questId + "State" for variable name)
+VAR SnapperAndMollyQuestState = "CAN_START"
+
 
 
 

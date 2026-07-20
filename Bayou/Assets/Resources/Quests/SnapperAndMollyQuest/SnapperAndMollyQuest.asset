@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ac2964dc728fb04590f57e327aed7c3, type: 3}
+  m_Name: SnapperAndMollyQuest
+  m_EditorClassIdentifier: Assembly-CSharp::QuestInfoSO
+  <id>k__BackingField: SnapperAndMollyQuest
+  displayName: A Snapper & A Molly
+  netLevelRequirement: 0
+  rodLevelRequirement: 0
+  mainQuestLevel: 0
+  questPrerequistes:
+  - {fileID: 11400000, guid: 497a731e2fcc72a418cffd12b3cbd33c, type: 2}
+  questStepPrefabs:
+  - {fileID: 7010378617243886321, guid: 338d873d27b58c04abf16b633d736567, type: 3}
+  moneyReward: 0
+  MiscReward: 
