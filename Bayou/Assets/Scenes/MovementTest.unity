@@ -9673,6 +9673,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Graveyard Gate
       objectReference: {fileID: 0}
+    - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
+      propertyPath: keyName
+      value: hasKeyGraveyardOne
+      objectReference: {fileID: 0}
+    - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
+      propertyPath: keyGateManager
+      value: 
+      objectReference: {fileID: 1456890940}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17237,6 +17245,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 30.75
       objectReference: {fileID: 0}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: keyName
+      value: hasKeyChurchToGraveyard
+      objectReference: {fileID: 0}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: keyGateManager
+      value: 
+      objectReference: {fileID: 1456890940}
     - target: {fileID: 6292213623205623122, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_LocalPosition.x
       value: -24.53
@@ -22887,6 +22903,135 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 7702779526387289552, guid: f0097ed778c5e264fa3f02d5ccf0e71e, type: 3}
+--- !u!1 &880010001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 880010002}
+  - component: {fileID: 880010003}
+  - component: {fileID: 880010004}
+  - component: {fileID: 880010005}
+  - component: {fileID: 880010006}
+  m_Layer: 0
+  m_Name: ShinyPondPickup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &880010002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880010001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -20.5, y: 0.12, z: -42}
+  m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &880010003
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880010001}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &880010004
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880010001}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!135 &880010005
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880010001}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &880010006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880010001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8d9e0f1a2b3456789abcdef01234567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Quests.PondShinyCollectible
+  item: {fileID: 11400000, guid: a1b2c3d4e5f6789012345678abcde901, type: 2}
+  bobAmplitude: 0.08
+  bobSpeed: 2.2
+  glowColor: {r: 0.35, g: 0.95, b: 0.45, a: 1}
 --- !u!1001 &885422019
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33357,6 +33502,8 @@ MonoBehaviour:
   testBonfireName: Bayou Bonfire
   shopTeleportPoint: {fileID: 1894075470}
   bonfireTeleportPoint: {fileID: 440194413}
+  pondTeleportPoint: {fileID: 0}
+  pondTeleportFallback: {x: -14, y: 1.6, z: -40}
 --- !u!4 &1276397455
 Transform:
   m_ObjectHideFlags: 0
@@ -37428,6 +37575,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2832835446313167682, guid: eb69b10eb41e2d9498401b1a20b54e08, type: 3}
   m_PrefabInstance: {fileID: 1455967877}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1456890938
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1456890939}
+  - component: {fileID: 1456890940}
+  m_Layer: 0
+  m_Name: KeyGateManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1456890939
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1456890938}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5400867291487443028}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1456890940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1456890938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa818dc030a69c84a9cbcac4f070a9b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KeyGateManager
+  hasKeyChurchToGraveyard: 0
+  hasKeyChurchToFoggyMarsh: 0
+  hasKeyChurchToBrackishShore: 0
+  hasKeyGraveyardOne: 0
+  hasKeyGraveyardTwo: 0
 --- !u!1 &1458496435
 GameObject:
   m_ObjectHideFlags: 0
@@ -40931,6 +41127,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 31.669
       objectReference: {fileID: 0}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: keyName
+      value: hasKeyChurchToFoggyMarsh
+      objectReference: {fileID: 0}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: keyGateManager
+      value: 
+      objectReference: {fileID: 1456890940}
     - target: {fileID: 5123198821984407101, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -52317,6 +52521,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 31.669
       objectReference: {fileID: 0}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: keyName
+      value: hasKeyChurchToBrackishShore
+      objectReference: {fileID: 0}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: keyGateManager
+      value: 
+      objectReference: {fileID: 1456890940}
     - target: {fileID: 5123198821984407101, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -54596,11 +54808,14 @@ MonoBehaviour:
   handNet: {fileID: 2078946143}
   heldRod: {fileID: 0}
   heldNet: {fileID: 0}
+  heldLantern: {fileID: 0}
   heldAttachPoint: {fileID: 0}
   createPlaceholdersIfMissing: 1
   switchToolAction: {fileID: 0}
+  selectNoneAction: {fileID: 0}
   selectRodAction: {fileID: 0}
   selectNetAction: {fileID: 0}
+  selectLanternAction: {fileID: 0}
   startingItem: 1
 --- !u!114 &2078946142 stripped
 MonoBehaviour:
@@ -60354,6 +60569,7 @@ Transform:
   - {fileID: 5592079777243455112}
   - {fileID: 2046602337}
   - {fileID: 737769076}
+  - {fileID: 1456890939}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &5411540879281688235
@@ -63063,129 +63279,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &880010001
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 880010002}
-  - component: {fileID: 880010003}
-  - component: {fileID: 880010004}
-  - component: {fileID: 880010005}
-  - component: {fileID: 880010006}
-  m_Layer: 0
-  m_Name: ShinyPondPickup
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &880010002
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 880010001}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20.5, y: 0.12, z: -42}
-  m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &880010003
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 880010001}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &880010004
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 880010001}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &880010005
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 880010001}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &880010006
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 880010001}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8d9e0f1a2b3456789abcdef01234567, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Quests.PondShinyCollectible
-  item: {fileID: 11400000, guid: a1b2c3d4e5f6789012345678abcde901, type: 2}
-  bobAmplitude: 0.08
-  bobSpeed: 2.2
-  glowColor: {r: 0.35, g: 0.95, b: 0.45, a: 1}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

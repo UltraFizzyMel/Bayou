@@ -17,6 +17,11 @@ public class InteractTrigger : MonoBehaviour
         //visualCue.SetActive(false);
     }
 
+    private void Start()
+    {
+        keyGateManager = Object.FindFirstObjectByType<KeyGateManager>();
+    }
+
     private void Update()
     {
         if (playerInRange)
