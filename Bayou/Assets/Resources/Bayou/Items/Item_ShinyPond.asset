@@ -10,24 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4e429c1b295b544aa482834494c3959, type: 3}
-  m_Name: Item_FishingRod
+  m_Name: Item_ShinyPond
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.ItemDefinition
-  displayName: Fishing Rod
-  description: A proper bayou rod. Buy from Caliste. Press 1 to hold.
-  icon: {fileID: 0}
+  displayName: Shiny Pond Trinket
+  description: Something glinting from the church pond. Father Landry will want this.
+  icon: {fileID: 21300000, guid: c19bc11997487bf4dab07ba9acbd0552, type: 3}
   shape:
-    width: 4
-    height: 2
-    cells:
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
+    width: 1
+    height: 1
+    cells: 01
   maxStack: 1
-  buyPrice: 120
-  sellPrice: 40
+  buyPrice: 0
+  sellPrice: 0
   isFish: 0

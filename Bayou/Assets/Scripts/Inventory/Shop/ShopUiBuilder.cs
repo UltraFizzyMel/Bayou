@@ -126,10 +126,16 @@ namespace Bayou.Inventory.Shop
         private static GameObject LoadPrefab(string assetPath)
         {
 #if UNITY_EDITOR
-            return AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
-#else
-            return null;
+            var fromEditor = AssetDatabase.LoadAssetAtPath<GameObject>(assetPath);
+            if (fromEditor != null)
+                return fromEditor;
 #endif
+            // Player builds cannot use AssetDatabase — prefer Resources copies.
+            if (assetPath.EndsWith("InventoryCell.prefab", System.StringComparison.OrdinalIgnoreCase))
+                return Resources.Load<GameObject>("Bayou/UI/InventoryCell");
+            if (assetPath.EndsWith("InventoryItemView.prefab", System.StringComparison.OrdinalIgnoreCase))
+                return Resources.Load<GameObject>("Bayou/UI/InventoryItemView");
+            return null;
         }
 
         private static GameObject CreateCasePanel(string name, Transform parent, string title, Vector2 anchorMin, Vector2 anchorMax)
