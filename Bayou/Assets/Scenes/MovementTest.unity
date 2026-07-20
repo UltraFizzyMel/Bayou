@@ -23973,9 +23973,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
   spotName: Graveyard_Entrance_Net
   requiredTool: 0
-  radius: 5
+  radius: 3.8793342
   spawnY: 0.2
-  waterBounds: {fileID: 1118709243}
+  waterBounds: {fileID: 1350302560}
   shoreMargin: 0.45
   fishSpawns:
   - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
@@ -24012,7 +24012,7 @@ Transform:
   m_GameObject: {fileID: 910000140}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -153.1, y: 0.15, z: 29.9}
+  m_LocalPosition: {x: -152.51, y: 0.15, z: 31.52}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -24032,9 +24032,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
   spotName: Graveyard_TreePond
   requiredTool: 0
-  radius: 3.8793342
+  radius: 8.169644
   spawnY: 0.2
-  waterBounds: {fileID: 1350302560}
+  waterBounds: {fileID: 961348459}
   shoreMargin: 0.45
   fishSpawns:
   - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
