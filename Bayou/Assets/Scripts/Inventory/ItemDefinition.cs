@@ -21,5 +21,21 @@ namespace Bayou.Inventory
         [Header("Bonfire")]
         [Tooltip("Fish caught in the bayou can be cooked at a bonfire to save the game.")]
         public bool isFish;
+
+        private void OnEnable()
+        {
+            var s = shape;
+            s.EnsureValid();
+            shape = s;
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            var s = shape;
+            s.EnsureValid();
+            shape = s;
+        }
+#endif
     }
 }

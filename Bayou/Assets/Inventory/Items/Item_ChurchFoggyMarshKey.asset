@@ -18,7 +18,7 @@ MonoBehaviour:
   shape:
     width: 1
     height: 1
-    cells: 1
+    cells: 01
   maxStack: 1
   buyPrice: 90
   sellPrice: 20

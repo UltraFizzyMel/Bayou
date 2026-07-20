@@ -15,6 +15,23 @@ namespace Bayou.Inventory
         [Tooltip("Row-major: index = y * width + x")]
         public bool[] cells;
 
+        /// <summary>
+        /// Ensures width/height are valid and <see cref="cells"/> matches a solid rectangle when
+        /// missing, wrong-sized, or empty (common with bad YAML like <c>cells: 0101</c>).
+        /// </summary>
+        public void EnsureValid()
+        {
+            width = Mathf.Max(1, width);
+            height = Mathf.Max(1, height);
+            var needed = width * height;
+            if (cells == null || cells.Length != needed || OccupiedCellCount == 0)
+            {
+                cells = new bool[needed];
+                for (var i = 0; i < needed; i++)
+                    cells[i] = true;
+            }
+        }
+
         public bool IsOccupied(int x, int y)
         {
             if (x < 0 || y < 0 || x >= width || y >= height) return false;
@@ -38,6 +55,7 @@ namespace Bayou.Inventory
         public void GetOccupiedOffsets(int rotation, List<Vector2Int> into)
         {
             into.Clear();
+            EnsureValid();
             rotation = ((rotation % 4) + 4) % 4;
             var w = width;
             var h = height;
@@ -55,6 +73,7 @@ namespace Bayou.Inventory
 
         public void GetBounds(int rotation, out int boundW, out int boundH)
         {
+            EnsureValid();
             rotation = ((rotation % 4) + 4) % 4;
             if (rotation % 2 == 0)
             {
@@ -82,6 +101,8 @@ namespace Bayou.Inventory
 
         public static ItemShape Rectangle(int w, int h)
         {
+            w = Mathf.Max(1, w);
+            h = Mathf.Max(1, h);
             var cells = new bool[w * h];
             for (var i = 0; i < cells.Length; i++)
                 cells[i] = true;

@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Item_ChurchGraveyardKey
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.ItemDefinition
   displayName: Church Graveyard Key
-  description: Father Landry's key to the northwest gate between the church and the graveyard.
+  description: Father Landry's key to the northwest gate between the church and the
+    graveyard.
   icon: {fileID: 21300000, guid: 1a3fe3c4d2803d645bd33b1ff88e4f0a, type: 3}
   shape:
     width: 1
     height: 1
-    cells: 1
+    cells: 01
   maxStack: 1
   buyPrice: 0
   sellPrice: 0
