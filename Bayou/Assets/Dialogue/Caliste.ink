@@ -24,7 +24,6 @@
 }
 
 === notKnown ===
-#speaker: Caliste
 <b>DON'T...</b> Oh it's you.
 You want to see my wares?
 -> questions
