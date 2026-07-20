@@ -345,7 +345,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1992703244}
     m_Modifications:
     - target: {fileID: 2316209851784035671, guid: 9f1a4302324f70b438b2d9cb82e49d15, type: 3}
       propertyPath: m_Name
@@ -353,15 +353,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3129724914180335597, guid: 9f1a4302324f70b438b2d9cb82e49d15, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -55.81586
+      value: 3.9347267
       objectReference: {fileID: 0}
     - target: {fileID: 3129724914180335597, guid: 9f1a4302324f70b438b2d9cb82e49d15, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.11199956
+      value: 0.031199567
       objectReference: {fileID: 0}
     - target: {fileID: 3129724914180335597, guid: 9f1a4302324f70b438b2d9cb82e49d15, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 84.76892
+      value: 0.0043792725
       objectReference: {fileID: 0}
     - target: {fileID: 3129724914180335597, guid: 9f1a4302324f70b438b2d9cb82e49d15, type: 3}
       propertyPath: m_LocalRotation.w
@@ -369,15 +369,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3129724914180335597, guid: 9f1a4302324f70b438b2d9cb82e49d15, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3129724914180335597, guid: 9f1a4302324f70b438b2d9cb82e49d15, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3129724914180335597, guid: 9f1a4302324f70b438b2d9cb82e49d15, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 3129724914180335597, guid: 9f1a4302324f70b438b2d9cb82e49d15, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2512,6 +2512,7 @@ MonoBehaviour:
   sfxVolume: {fileID: 673474461}
   musicVolumeLabel: {fileID: 1065443149}
   musicVolume: {fileID: 1535395716}
+  handleHotkeys: 1
 --- !u!1001 &100639296
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10252,6 +10253,11 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 5244915625381210605, guid: b104b86ca07d051418fdb6c7c5ec85bc, type: 3}
+--- !u!4 &419014845 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5058319257741969905, guid: 468c1b460e3edf447a6c7ca11cced616, type: 3}
+  m_PrefabInstance: {fileID: 648927837}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &421731630
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11385,7 +11391,8 @@ Transform:
   m_LocalPosition: {x: 122.52, y: 0.04, z: -76.04}
   m_LocalScale: {x: 1.5544173, y: 1, z: 1.3237466}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1992703244}
   m_Father: {fileID: 1665766736}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &448350091
@@ -16186,7 +16193,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gate Pillar Pivot (3)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5814389696707125535, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -16687,19 +16695,19 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1992703244}
     m_Modifications:
     - target: {fileID: 5058319257741969905, guid: 468c1b460e3edf447a6c7ca11cced616, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -65.13543
+      value: -5.384842
       objectReference: {fileID: 0}
     - target: {fileID: 5058319257741969905, guid: 468c1b460e3edf447a6c7ca11cced616, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.11200054
+      value: 0.03120055
       objectReference: {fileID: 0}
     - target: {fileID: 5058319257741969905, guid: 468c1b460e3edf447a6c7ca11cced616, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 92.83944
+      value: 8.074898
       objectReference: {fileID: 0}
     - target: {fileID: 5058319257741969905, guid: 468c1b460e3edf447a6c7ca11cced616, type: 3}
       propertyPath: m_LocalRotation.w
@@ -16707,15 +16715,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5058319257741969905, guid: 468c1b460e3edf447a6c7ca11cced616, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5058319257741969905, guid: 468c1b460e3edf447a6c7ca11cced616, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5058319257741969905, guid: 468c1b460e3edf447a6c7ca11cced616, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 5058319257741969905, guid: 468c1b460e3edf447a6c7ca11cced616, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -23753,6 +23761,529 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1638070245639809799, guid: a2294af47d2635b4a9ff8ec9bba5b863, type: 3}
   m_PrefabInstance: {fileID: 8716673428477802961}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &910000100
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000101}
+  m_Layer: 0
+  m_Name: FishingSpots
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000101
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000100}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 910000111}
+  - {fileID: 910000121}
+  - {fileID: 910000131}
+  - {fileID: 910000141}
+  - {fileID: 910000151}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &910000110
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000111}
+  - component: {fileID: 910000112}
+  m_Layer: 0
+  m_Name: Tutorial_Net_Snappers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000111
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000110}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.9851, y: 0.15, z: -86.28513}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 910000101}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Tutorial_Net_Snappers
+  requiredTool: 0
+  radius: 5.9249544
+  spawnY: 0.2
+  waterBounds: {fileID: 1937929245}
+  shoreMargin: 0.45
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
+    tool: 0
+    count: 2
+    moving: 1
+    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &910000120
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000121}
+  - component: {fileID: 910000122}
+  m_Layer: 0
+  m_Name: Church_Net
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000121
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000120}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -22.0449, y: 0.15, z: -43.58513}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 910000101}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Church_Net
+  requiredTool: 0
+  radius: 9
+  spawnY: 0.2
+  waterBounds: {fileID: 2091402745}
+  shoreMargin: 0.45
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
+    tool: 0
+    count: 2
+    moving: 1
+    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
+  oneTimeLoot:
+  - item: {fileID: 11400000, guid: c4a2b3c4d5e6789012345678abcdef04, type: 2}
+    glowColor: {r: 0.95, g: 0.85, b: 0.3, a: 1}
+    localOffset: {x: 1.2, y: 0, z: -0.8}
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &910000130
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000131}
+  - component: {fileID: 910000132}
+  m_Layer: 0
+  m_Name: Graveyard_Entrance_Net
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000131
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000130}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -68.1, y: 0.15, z: 46.6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 910000101}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Graveyard_Entrance_Net
+  requiredTool: 0
+  radius: 3.8793342
+  spawnY: 0.2
+  waterBounds: {fileID: 1350302560}
+  shoreMargin: 0.45
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &910000140
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000141}
+  - component: {fileID: 910000142}
+  m_Layer: 0
+  m_Name: Graveyard_TreePond
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000141
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000140}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -152.7, y: 0.15, z: 29.85}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 910000101}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Graveyard_TreePond
+  requiredTool: 0
+  radius: 8.169644
+  spawnY: 0.2
+  waterBounds: {fileID: 961348459}
+  shoreMargin: 0.45
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
+    tool: 0
+    count: 2
+    moving: 1
+    tint: {r: 0.35, g: 0.65, b: 0.95, a: 1}
+  - item: {fileID: 11400000, guid: c3a2b3c4d5e6789012345678abcdef03, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.25, g: 0.25, b: 0.3, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &910000150
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000151}
+  - component: {fileID: 910000152}
+  m_Layer: 0
+  m_Name: CalistePond_Net
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000151
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000150}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -60.78, y: 0.15, z: 89.26}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 910000101}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: CalistePond_Net
+  requiredTool: 0
+  radius: 6.1687365
+  spawnY: 0.2
+  waterBounds: {fileID: 448350092}
+  shoreMargin: 0.45
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
+    tool: 0
+    count: 2
+    moving: 1
+    tint: {r: 0.35, g: 0.65, b: 0.95, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &910000200
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000201}
+  - component: {fileID: 910000202}
+  - component: {fileID: 910000203}
+  - component: {fileID: 910000204}
+  - component: {fileID: 910000205}
+  m_Layer: 0
+  m_Name: LanternPickup
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000201
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000200}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.37, y: 0.6, z: 119.3}
+  m_LocalScale: {x: 0.45, y: 0.7, z: 0.45}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!33 &910000202
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000200}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &910000203
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000200}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &910000204
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000200}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.2, y: 2.2, z: 2.2}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &910000205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c3d4e5f6a7890123456789abcdef01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Quests.QuestItemPickup
+  item: {fileID: 11400000, guid: d3a2b3c4d5e6789012345678abcdef03, type: 2}
+  playerTag: Player
+  destroyOnPickup: 1
+  visualCue: {fileID: 0}
+  pickupPrompt: Pick up lantern
+  endDemoOnPickup: 1
+--- !u!1 &910000400
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000401}
+  - component: {fileID: 910000402}
+  m_Layer: 0
+  m_Name: GameplayMusic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000401
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000400}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8c4e2f19b7d4e6a9c0d1e2f3a4b5c6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Audio.GameplayMusicBootstrap
+  churchMusic: {fileID: 8300000, guid: c5fc681e76b359846bb177bb594bab1b, type: 3}
+  churchAmbient: {fileID: 8300000, guid: 0acbbb12aae08b7489db81832fb481d8, type: 3}
+  graveyardMusic: {fileID: 8300000, guid: 9c64d1ce71ad65f49844059042ba617d, type: 3}
+  graveyardAmbient: {fileID: 8300000, guid: bfdd454de13e7794f86a32dfe3dbdba4, type: 3}
+  musicGroup: {fileID: 2506030541703638831, guid: 312109c978c74d140a536bd1d851b28f, type: 2}
+  churchZoneCenter: {x: 0, y: 8, z: -20}
+  churchZoneSize: {x: 140, y: 50, z: 140}
+  graveyardZoneCenter: {x: -70, y: 8, z: 80}
+  graveyardZoneSize: {x: 110, y: 50, z: 110}
 --- !u!1001 &911699246
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23821,7 +24352,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1992703244}
     m_Modifications:
     - target: {fileID: 1195072598758215104, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_Name
@@ -23829,15 +24360,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -59.750587
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.08079999
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 84.76454
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -23845,15 +24376,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -26954,6 +27485,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 358770787759813749, guid: 417f8422a21fbe3428306558a97aa26b, type: 3}
   m_PrefabInstance: {fileID: 1051759434}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1051912606 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 358770787759813749, guid: 417f8422a21fbe3428306558a97aa26b, type: 3}
+  m_PrefabInstance: {fileID: 1698530177}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1053856769
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27253,7 +27789,7 @@ PrefabInstance:
       objectReference: {fileID: 4900000, guid: f0c65883855f5194fb5a956ea5966d71, type: 3}
     - target: {fileID: 7022074137386077316, guid: bddb85869df395a4b83b60dd4ac030ed, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 50.6
+      value: 12.26
       objectReference: {fileID: 0}
     - target: {fileID: 7022074137386077316, guid: bddb85869df395a4b83b60dd4ac030ed, type: 3}
       propertyPath: m_LocalPosition.y
@@ -27261,7 +27797,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7022074137386077316, guid: bddb85869df395a4b83b60dd4ac030ed, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 148.1
+      value: 120.72
       objectReference: {fileID: 0}
     - target: {fileID: 7022074137386077316, guid: bddb85869df395a4b83b60dd4ac030ed, type: 3}
       propertyPath: m_LocalRotation.w
@@ -28931,7 +29467,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1115866861
 Transform:
   m_ObjectHideFlags: 0
@@ -29396,6 +29932,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4457145576227965664, guid: d42fdb603a060fa4ab784d51dce29d59, type: 3}
   m_PrefabInstance: {fileID: 1129383568}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1132244482 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
+  m_PrefabInstance: {fileID: 1970935837}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1132290172
 PrefabInstance:
@@ -33479,7 +34020,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1276397454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41134,13 +41675,13 @@ PrefabInstance:
       value: hasKeyChurchToFoggyMarsh
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
-      propertyPath: requiredItemId
-      value: Item_ChurchFoggyMarshKey
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: keyGateManager
       value: 
       objectReference: {fileID: 1456890940}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: requiredItemId
+      value: Item_ChurchFoggyMarshKey
+      objectReference: {fileID: 0}
     - target: {fileID: 5123198821984407101, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -43381,19 +43922,19 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1992703244}
     m_Modifications:
     - target: {fileID: 358770787759813749, guid: 417f8422a21fbe3428306558a97aa26b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -57.192253
+      value: 2.5583344
       objectReference: {fileID: 0}
     - target: {fileID: 358770787759813749, guid: 417f8422a21fbe3428306558a97aa26b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.15620564
+      value: 0.07540565
       objectReference: {fileID: 0}
     - target: {fileID: 358770787759813749, guid: 417f8422a21fbe3428306558a97aa26b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 92.67608
+      value: 7.911537
       objectReference: {fileID: 0}
     - target: {fileID: 358770787759813749, guid: 417f8422a21fbe3428306558a97aa26b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -43401,15 +43942,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 358770787759813749, guid: 417f8422a21fbe3428306558a97aa26b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 358770787759813749, guid: 417f8422a21fbe3428306558a97aa26b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 358770787759813749, guid: 417f8422a21fbe3428306558a97aa26b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 358770787759813749, guid: 417f8422a21fbe3428306558a97aa26b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -47136,6 +47677,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 47192702444170979, guid: 684db506d049ef949aaca24c90654083, type: 3}
   m_PrefabInstance: {fileID: 1828833843}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1829391925 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3129724914180335597, guid: 9f1a4302324f70b438b2d9cb82e49d15, type: 3}
+  m_PrefabInstance: {fileID: 11762930}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1832785544
 GameObject:
   m_ObjectHideFlags: 0
@@ -49127,6 +49673,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 881219941890173705, guid: 2d6655dba269f9e4882b3f6b3f28a103, type: 3}
   m_PrefabInstance: {fileID: 1903968349}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1905065066 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
+  m_PrefabInstance: {fileID: 914672241}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1905903282
 PrefabInstance:
@@ -51695,7 +52246,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1992703244}
     m_Modifications:
     - target: {fileID: 1195072598758215104, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_Name
@@ -51703,15 +52254,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -63.56
+      value: -3.809414
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.080801114
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 86.55
+      value: 1.7854614
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -51719,15 +52270,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -52157,6 +52708,42 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1991187102}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1992703243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1992703244}
+  m_Layer: 0
+  m_Name: Lilypads
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1992703244
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992703243}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.662249, y: 0.04079999, z: -3.3960128}
+  m_LocalScale: {x: 0.6433279, y: 1, z: 0.7554316}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1051912606}
+  - {fileID: 1132244482}
+  - {fileID: 1829391925}
+  - {fileID: 419014845}
+  - {fileID: 1905065066}
+  m_Father: {fileID: 448350090}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1998890177
 GameObject:
   m_ObjectHideFlags: 0
@@ -53770,8 +54357,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f76d2fa7384d21641bcb04ab505fc32e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameEventManager
-  questEvents: {fileID: 0}
-  dialogueEvents: {fileID: 0}
 --- !u!4 &2046602337
 Transform:
   m_ObjectHideFlags: 0
@@ -63291,522 +63876,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &910000100
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910000101}
-  m_Layer: 0
-  m_Name: FishingSpots
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910000101
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000100}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 910000111}
-  - {fileID: 910000121}
-  - {fileID: 910000131}
-  - {fileID: 910000141}
-  - {fileID: 910000151}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &910000110
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910000111}
-  - component: {fileID: 910000112}
-  m_Layer: 0
-  m_Name: Tutorial_Net_Snappers
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910000111
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000110}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.9851, y: 0.15, z: -86.28513}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 910000101}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000112
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000110}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
-  spotName: Tutorial_Net_Snappers
-  requiredTool: 0
-  radius: 7
-  spawnY: 0.2
-  waterBounds: {fileID: 1937929245}
-  shoreMargin: 0.45
-  fishSpawns:
-  - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
-    tool: 0
-    count: 2
-    moving: 1
-    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
-  oneTimeLoot: []
-  fishPrefab: {fileID: 0}
-  spawnOnStart: 1
---- !u!1 &910000120
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910000121}
-  - component: {fileID: 910000122}
-  m_Layer: 0
-  m_Name: Church_Net
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910000121
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000120}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -22.0449, y: 0.15, z: -43.58513}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 910000101}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000122
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000120}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
-  spotName: Church_Net
-  requiredTool: 0
-  radius: 9
-  spawnY: 0.2
-  waterBounds: {fileID: 2091402745}
-  shoreMargin: 0.45
-  fishSpawns:
-  - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
-    tool: 0
-    count: 2
-    moving: 1
-    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
-  oneTimeLoot:
-  - item: {fileID: 11400000, guid: c4a2b3c4d5e6789012345678abcdef04, type: 2}
-    glowColor: {r: 0.95, g: 0.85, b: 0.3, a: 1}
-    localOffset: {x: 1.2, y: 0, z: -0.8}
-  fishPrefab: {fileID: 0}
-  spawnOnStart: 1
---- !u!1 &910000130
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910000131}
-  - component: {fileID: 910000132}
-  m_Layer: 0
-  m_Name: Graveyard_Entrance_Net
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910000131
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000130}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -146, y: 0.15, z: 102.3}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 910000101}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000132
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
-  spotName: Graveyard_Entrance_Net
-  requiredTool: 0
-  radius: 5
-  spawnY: 0.2
-  waterBounds: {fileID: 1118709243}
-  shoreMargin: 0.45
-  fishSpawns:
-  - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
-    tool: 0
-    count: 1
-    moving: 1
-    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
-  oneTimeLoot: []
-  fishPrefab: {fileID: 0}
-  spawnOnStart: 1
---- !u!1 &910000140
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910000141}
-  - component: {fileID: 910000142}
-  m_Layer: 0
-  m_Name: Graveyard_TreePond
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910000141
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000140}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -68.09, y: 0.15, z: 46.55}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 910000101}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000140}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
-  spotName: Graveyard_TreePond
-  requiredTool: 0
-  radius: 10
-  spawnY: 0.2
-  waterBounds: {fileID: 1350302560}
-  shoreMargin: 0.45
-  fishSpawns:
-  - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
-    tool: 0
-    count: 2
-    moving: 1
-    tint: {r: 0.35, g: 0.65, b: 0.95, a: 1}
-  - item: {fileID: 11400000, guid: c3a2b3c4d5e6789012345678abcdef03, type: 2}
-    tool: 1
-    count: 1
-    moving: 1
-    tint: {r: 0.25, g: 0.25, b: 0.3, a: 1}
-  oneTimeLoot: []
-  fishPrefab: {fileID: 0}
-  spawnOnStart: 1
---- !u!1 &910000150
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910000151}
-  - component: {fileID: 910000152}
-  m_Layer: 0
-  m_Name: CalistePond_Net
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910000151
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000150}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -60.78, y: 0.15, z: 89.26}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 910000101}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000150}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
-  spotName: CalistePond_Net
-  requiredTool: 0
-  radius: 9
-  spawnY: 0.2
-  waterBounds: {fileID: 448350092}
-  shoreMargin: 0.45
-  fishSpawns:
-  - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
-    tool: 0
-    count: 2
-    moving: 1
-    tint: {r: 0.35, g: 0.65, b: 0.95, a: 1}
-  oneTimeLoot: []
-  fishPrefab: {fileID: 0}
-  spawnOnStart: 1
---- !u!1 &910000200
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910000201}
-  - component: {fileID: 910000202}
-  - component: {fileID: 910000203}
-  - component: {fileID: 910000204}
-  - component: {fileID: 910000205}
-  m_Layer: 0
-  m_Name: LanternPickup
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910000201
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000200}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 38, y: 0.6, z: 148}
-  m_LocalScale: {x: 0.45, y: 0.7, z: 0.45}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &910000202
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000200}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &910000203
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000200}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 1
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &910000204
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000200}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2.2, y: 2.2, z: 2.2}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &910000205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000200}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2c3d4e5f6a7890123456789abcdef01, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Quests.QuestItemPickup
-  item: {fileID: 11400000, guid: d3a2b3c4d5e6789012345678abcdef03, type: 2}
-  playerTag: Player
-  destroyOnPickup: 1
-  visualCue: {fileID: 0}
-  pickupPrompt: Pick up lantern
-  endDemoOnPickup: 1
---- !u!1 &910000400
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910000401}
-  - component: {fileID: 910000402}
-  m_Layer: 0
-  m_Name: GameplayMusic
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910000401
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000400}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8c4e2f19b7d4e6a9c0d1e2f3a4b5c6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Audio.GameplayMusicBootstrap
-  churchMusic: {fileID: 8300000, guid: c5fc681e76b359846bb177bb594bab1b, type: 3}
-  churchAmbient: {fileID: 8300000, guid: 0acbbb12aae08b7489db81832fb481d8, type: 3}
-  graveyardMusic: {fileID: 8300000, guid: 9c64d1ce71ad65f49844059042ba617d, type: 3}
-  graveyardAmbient: {fileID: 8300000, guid: bfdd454de13e7794f86a32dfe3dbdba4, type: 3}
-  musicGroup: {fileID: 2506030541703638831, guid: 312109c978c74d140a536bd1d851b28f, type: 2}
-  churchZoneCenter: {x: 0, y: 8, z: -20}
-  churchZoneSize: {x: 140, y: 50, z: 140}
-  graveyardZoneCenter: {x: -70, y: 8, z: 80}
-  graveyardZoneSize: {x: 110, y: 50, z: 110}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -63841,8 +63910,3 @@ SceneRoots:
   - {fileID: 1276397455}
   - {fileID: 1257830424}
   - {fileID: 461988587}
-  - {fileID: 1698530177}
-  - {fileID: 1970935837}
-  - {fileID: 11762930}
-  - {fileID: 648927837}
-  - {fileID: 914672241}
