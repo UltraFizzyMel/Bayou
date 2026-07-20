@@ -25,7 +25,7 @@ public class Quest
     public Quest(QuestInfoSO questInfo, QuestState questState, int currentQuestStepIndex, QuestStepState[] questStepStates)
     {
         this.info = questInfo;
-        this.state = QuestState.REQUIREMENTS_NOT_MET;
+        this.state = questState;
         this.currentQuestStepIndex = currentQuestStepIndex;
         this.questStepStates = questStepStates;
 
@@ -37,6 +37,25 @@ public class Quest
                 + "This indicates something changed with the QuestInfo and the saved data is now out of sync."
                 + "Reset your data - as this might cause issues. QuestId" + this.info.id);
         }
+    }
+
+    public int CurrentQuestStepIndex => currentQuestStepIndex;
+
+    public bool IsActiveForHud =>
+        state == QuestState.IN_PROGRESS || state == QuestState.CAN_FINISH;
+
+    /// <summary>Progress text for the current (or last) step — used by the gameplay quest log.</summary>
+    public string GetHudObjectiveText()
+    {
+        if (questStepStates == null || questStepStates.Length == 0)
+            return state == QuestState.CAN_FINISH ? "Ready to turn in" : "";
+
+        var index = Mathf.Clamp(currentQuestStepIndex, 0, questStepStates.Length - 1);
+        if (state == QuestState.CAN_FINISH)
+            return "Ready to turn in";
+
+        var step = questStepStates[index];
+        return step != null && !string.IsNullOrWhiteSpace(step.state) ? step.state : "In progress";
     }
 
     public void MoveToNextStep()

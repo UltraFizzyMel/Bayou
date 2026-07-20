@@ -4,7 +4,7 @@ using UnityEngine;
 
 /// <summary>
 /// Stand near a locked gate and press Interact (E). Opens if the matching key flag is set
-/// or the required key item is in the bag (from Landry, etc.).
+/// or the required key item is in the bag (from Landry / Caliste, etc.).
 /// </summary>
 public sealed class InteractTrigger : MonoBehaviour
 {
@@ -16,6 +16,8 @@ public sealed class InteractTrigger : MonoBehaviour
     [SerializeField] private KeyGateManager keyGateManager;
     [SerializeField] private bool consumeKeyOnOpen;
     [SerializeField] private Collider[] disableCollidersOnOpen;
+    [Tooltip("If the player already has the key when entering the trigger, open without waiting for E.")]
+    [SerializeField] private bool autoOpenWhenUnlocked = true;
 
     private bool _isOpen;
 
@@ -24,6 +26,10 @@ public sealed class InteractTrigger : MonoBehaviour
         playerInRange = false;
         if (animator == null)
             animator = GetComponentInParent<Animator>();
+
+        // Prefab may leave this empty — collect solid blockers under the gate root.
+        if (disableCollidersOnOpen == null || disableCollidersOnOpen.Length == 0)
+            AutoCollectBlockingColliders();
     }
 
     private void Start()
@@ -31,8 +37,7 @@ public sealed class InteractTrigger : MonoBehaviour
         if (keyGateManager == null)
             keyGateManager = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
 
-        // Already unlocked this session / from save later.
-        if (keyGateManager != null && keyGateManager.GetFlag(keyName))
+        if (CanUnlock())
             OpenGate(playLog: false);
     }
 
@@ -54,22 +59,20 @@ public sealed class InteractTrigger : MonoBehaviour
         if (keyGateManager == null)
             keyGateManager = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
 
-        var itemId = string.IsNullOrWhiteSpace(requiredItemId)
-            ? KeyGateManager.GetItemIdForFlag(keyName)
-            : requiredItemId;
-
-        var unlockedByFlag = keyGateManager != null && keyGateManager.GetFlag(keyName);
-        var inv = InventoryController.Instance;
-        var hasItem = !string.IsNullOrWhiteSpace(itemId) && inv != null && inv.HasItemsById(itemId, 1);
-
-        if (!unlockedByFlag && !hasItem)
+        if (!CanUnlock())
         {
-            Debug.Log($"[Gate] Locked — need key ({itemId ?? keyName}).");
+            Debug.Log($"[Gate] Locked — need key ({ResolveItemId() ?? keyName}).");
             return;
         }
 
+        var itemIdForConsume = ResolveItemId();
+        var inv = InventoryController.Instance;
+        var hasItem = !string.IsNullOrWhiteSpace(itemIdForConsume) &&
+                      inv != null &&
+                      inv.HasItemsById(itemIdForConsume, 1);
+
         if (hasItem && consumeKeyOnOpen && inv != null)
-            inv.TryRemoveItemsById(itemId, 1);
+            inv.TryRemoveItemsById(itemIdForConsume, 1);
 
         if (keyGateManager != null && !string.IsNullOrWhiteSpace(keyName))
             keyGateManager.SetFlag(keyName, true);
@@ -77,12 +80,32 @@ public sealed class InteractTrigger : MonoBehaviour
         OpenGate(playLog: true);
     }
 
+    private bool CanUnlock()
+    {
+        if (keyGateManager == null)
+            keyGateManager = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
+
+        var itemId = ResolveItemId();
+        var unlockedByFlag = keyGateManager != null && keyGateManager.GetFlag(keyName);
+        var inv = InventoryController.Instance;
+        var hasItem = !string.IsNullOrWhiteSpace(itemId) && inv != null && inv.HasItemsById(itemId, 1);
+        return unlockedByFlag || hasItem;
+    }
+
+    private string ResolveItemId() =>
+        string.IsNullOrWhiteSpace(requiredItemId)
+            ? KeyGateManager.GetItemIdForFlag(keyName)
+            : requiredItemId;
+
     private void OpenGate(bool playLog)
     {
         _isOpen = true;
 
         if (animator != null)
+        {
             animator.SetBool("isOpen", true);
+            animator.CrossFade("Open", 0.05f, 0, 0f);
+        }
 
         if (disableCollidersOnOpen != null)
         {
@@ -97,15 +120,37 @@ public sealed class InteractTrigger : MonoBehaviour
             Debug.Log($"[Gate] Opened ({keyName}).");
     }
 
+    private void AutoCollectBlockingColliders()
+    {
+        var root = GetComponentInParent<Animator>() != null
+            ? GetComponentInParent<Animator>().transform
+            : transform.root;
+        var found = new System.Collections.Generic.List<Collider>();
+        foreach (var col in root.GetComponentsInChildren<Collider>(true))
+        {
+            if (col == null || col.isTrigger) continue;
+            found.Add(col);
+        }
+
+        disableCollidersOnOpen = found.ToArray();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponentInParent<BayouCharacterMotor>() != null)
-            playerInRange = true;
+        if (!IsPlayer(other)) return;
+
+        playerInRange = true;
+        if (autoOpenWhenUnlocked && !_isOpen && CanUnlock())
+            TryUnlock();
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.GetComponentInParent<BayouCharacterMotor>() != null)
+        if (IsPlayer(other))
             playerInRange = false;
     }
+
+    private static bool IsPlayer(Collider other) =>
+        other != null &&
+        (other.CompareTag("Player") || other.GetComponentInParent<BayouCharacterMotor>() != null);
 }

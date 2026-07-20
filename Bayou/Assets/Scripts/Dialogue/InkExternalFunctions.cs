@@ -35,17 +35,31 @@ public class InkExternalFunctions
 
     private void StartQuest(string questId)
     {
-        GameEventManager.Instance.questEvents.StartQuest(questId);
+        if (string.IsNullOrWhiteSpace(questId))
+        {
+            Debug.LogWarning("[Ink] StartQuest called with empty id.");
+            return;
+        }
+
+        // Prefer a direct call — event-bus subscribe order has missed this before.
+        var manager = QuestManager.Resolve();
+        if (manager != null)
+        {
+            manager.StartQuest(questId);
+            return;
+        }
+
+        GameEventManager.Instance?.questEvents?.StartQuest(questId);
     }
 
     private void AdvanceQuest(string questId)
     {
-        GameEventManager.Instance.questEvents.AdvanceQuest(questId);
+        GameEventManager.Instance?.questEvents?.AdvanceQuest(questId);
     }
 
     private void FinishQuest(string questId)
     {
-        GameEventManager.Instance.questEvents.FinishQuest(questId);
+        GameEventManager.Instance?.questEvents?.FinishQuest(questId);
     }
 
     private static bool HasItem(string itemId, int count)

@@ -5,6 +5,7 @@ using TMPro;
 
 /// <summary>
 /// Volume sliders → AudioMixer (Master / SFX / Music) with PlayerPrefs persistence.
+/// V / Esc are handled by <see cref="AudioSettingsHotkeys"/> (works without PlaytestHarness).
 /// </summary>
 public class AudioSettings : MonoBehaviour
 {
@@ -23,6 +24,9 @@ public class AudioSettings : MonoBehaviour
 
     [SerializeField] TMP_Text musicVolumeLabel;
     [SerializeField] Slider musicVolume;
+
+    [Tooltip("Unused — hotkeys are handled by AudioSettingsHotkeys (always active).")]
+    [SerializeField] private bool handleHotkeys = true;
 
     public static bool IsOpen { get; private set; }
     public static AudioSettings Instance { get; private set; }
@@ -55,7 +59,11 @@ public class AudioSettings : MonoBehaviour
     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void ApplySavedOnSceneLoad() => ApplySavedVolumesIfPresent();
+    private static void ApplySavedOnSceneLoad()
+    {
+        ApplySavedVolumesIfPresent();
+        AudioSettingsHotkeys.EnsureInstalled();
+    }
 
     /// <summary>
     /// Apply saved volumes even when the settings UI GameObject is inactive.

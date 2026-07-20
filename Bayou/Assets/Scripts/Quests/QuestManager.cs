@@ -6,174 +6,278 @@ public class QuestManager : MonoBehaviour
     [Header("Config")]
     [SerializeField] private bool loadQuestState = true;
 
-    private Dictionary<string, Quest>  questMap;
+    private Dictionary<string, Quest> questMap;
+    private bool _subscribed;
 
     //quest start requirements
     public int netLevel = 0;
     public int rodLevel = 0;
     public int currentMainQuestLevel = 0;
 
+    public static QuestManager Instance { get; private set; }
+
     private void Awake()
     {
+        Instance = this;
         questMap = CreateQuestMap();
-
-        Quest quest = GetQuestByID("CollectFishExampleQuest");
-       
     }
 
-    private void OnEnable()
-    {
-        GameEventManager.Instance.questEvents.onStartQuest += StartQuest;
-        GameEventManager.Instance.questEvents.onAdvanceQuest += AdvanceQuest;
-        GameEventManager.Instance.questEvents.onFinishQuest += FinishQuest;
-
-        GameEventManager.Instance.questEvents.onQuestStepStateChange += QuestStepStateChange;
-    }
+    private void OnEnable() => TrySubscribe();
 
     private void OnDisable()
     {
-        GameEventManager.Instance.questEvents.onStartQuest -= StartQuest;
-        GameEventManager.Instance.questEvents.onAdvanceQuest -= AdvanceQuest;
-        GameEventManager.Instance.questEvents.onFinishQuest -= FinishQuest;
+        Unsubscribe();
+        _subscribed = false;
+    }
 
-        GameEventManager.Instance.questEvents.onQuestStepStateChange -= QuestStepStateChange;
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
     }
 
     private void Start()
     {
+        TrySubscribe();
+
         foreach (Quest quest in questMap.Values)
         {
-            //initialize any loaded quest steps.
-            if(quest.state == QuestState.IN_PROGRESS)
-            {
+            if (quest == null) continue;
+
+            if (quest.state == QuestState.IN_PROGRESS)
                 quest.InstantiateCurrentQuestStep(this.transform);
-            }
 
-            //braodcast initial state of all quests on startup
-            GameEventManager.Instance.questEvents.QuestStateChange(quest);
+            GameEventManager.Instance?.questEvents?.QuestStateChange(quest);
         }
-    }
-
-    private void ChangeQuestState(string id, QuestState state)
-    {
-        Quest quest = GetQuestByID(id);
-        quest.state = state;
-        GameEventManager.Instance.questEvents.QuestStateChange(quest);
-    }
-
-    private bool CheckRequirementsMet(Quest quest)
-    {
-        //start true and prove to be false
-        bool meetsRequirements = true;
-
-        //check Level Requirements
-        if (netLevel < quest.info.netLevelRequirement || rodLevel < quest.info.rodLevelRequirement || currentMainQuestLevel < quest.info.mainQuestLevel )
-        {
-            meetsRequirements = false;
-        }
-
-        //check quest prerequisites for completion
-        foreach (QuestInfoSO prerequisiteQuestInfo in quest.info.questPrerequistes) 
-        { 
-            if(GetQuestByID(prerequisiteQuestInfo.id).state != QuestState.FINISHED)
-            {
-                meetsRequirements = false;
-            }
-        }
-        return meetsRequirements;
-
     }
 
     private void Update()
     {
-        //loop through All quests to see if the quests can start.
-        foreach(Quest quest in questMap.Values)
-        { if (quest.state == QuestState.REQUIREMENTS_NOT_MET && CheckRequirementsMet(quest))
-            { ChangeQuestState(quest.info.id, QuestState.CAN_START); }
+        if (!_subscribed)
+            TrySubscribe();
+
+        foreach (Quest quest in questMap.Values)
+        {
+            if (quest != null &&
+                quest.state == QuestState.REQUIREMENTS_NOT_MET &&
+                CheckRequirementsMet(quest))
+            {
+                ChangeQuestState(quest.info.id, QuestState.CAN_START);
+            }
         }
     }
 
-    private void StartQuest(string id)
+    private void TrySubscribe()
     {
-        Quest quest = GetQuestByID(id);
-        quest.InstantiateCurrentQuestStep(this.transform);
+        var events = GameEventManager.Instance != null ? GameEventManager.Instance.questEvents : null;
+        if (events == null || _subscribed) return;
+
+        events.onStartQuest += HandleStartQuestEvent;
+        events.onAdvanceQuest += AdvanceQuest;
+        events.onFinishQuest += FinishQuest;
+        events.onQuestStepStateChange += QuestStepStateChange;
+        _subscribed = true;
+    }
+
+    private void Unsubscribe()
+    {
+        var events = GameEventManager.Instance != null ? GameEventManager.Instance.questEvents : null;
+        if (events == null) return;
+
+        events.onStartQuest -= HandleStartQuestEvent;
+        events.onAdvanceQuest -= AdvanceQuest;
+        events.onFinishQuest -= FinishQuest;
+        events.onQuestStepStateChange -= QuestStepStateChange;
+    }
+
+    private void HandleStartQuestEvent(string id) => StartQuest(id);
+
+    private void ChangeQuestState(string id, QuestState state)
+    {
+        if (!TryGetQuest(id, out var quest))
+        {
+            Debug.LogError($"[QuestManager] Unknown quest id '{id}'.");
+            return;
+        }
+
+        quest.state = state;
+        GameEventManager.Instance?.questEvents?.QuestStateChange(quest);
+        Debug.Log($"[QuestManager] {id} → {state}");
+    }
+
+    private bool CheckRequirementsMet(Quest quest)
+    {
+        bool meetsRequirements = true;
+
+        if (netLevel < quest.info.netLevelRequirement ||
+            rodLevel < quest.info.rodLevelRequirement ||
+            currentMainQuestLevel < quest.info.mainQuestLevel)
+        {
+            meetsRequirements = false;
+        }
+
+        if (quest.info.questPrerequistes != null)
+        {
+            foreach (QuestInfoSO prerequisiteQuestInfo in quest.info.questPrerequistes)
+            {
+                if (prerequisiteQuestInfo == null) continue;
+                if (!TryGetQuest(prerequisiteQuestInfo.id, out var prereq) ||
+                    prereq.state != QuestState.FINISHED)
+                {
+                    meetsRequirements = false;
+                }
+            }
+        }
+
+        return meetsRequirements;
+    }
+
+    /// <summary>Called from Ink / gameplay. Safe to call even if the event bus missed the subscribe.</summary>
+    public void StartQuest(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            Debug.LogError("[QuestManager] StartQuest failed — empty id.");
+            return;
+        }
+
+        id = id.Trim();
+        if (!TryGetQuest(id, out var quest))
+        {
+            Debug.LogError($"[QuestManager] StartQuest failed — unknown id '{id}'.");
+            return;
+        }
+
+        if (quest.state == QuestState.IN_PROGRESS || quest.state == QuestState.CAN_FINISH)
+        {
+            // Already active — still notify HUD.
+            GameEventManager.Instance?.questEvents?.QuestStateChange(quest);
+            return;
+        }
+
+        if (quest.state == QuestState.FINISHED)
+        {
+            Debug.Log($"[QuestManager] StartQuest ignored — '{id}' already finished.");
+            return;
+        }
+
+        // Allow start from CAN_START or REQUIREMENTS_NOT_MET (Ink can ask before Update promotes state).
         ChangeQuestState(quest.info.id, QuestState.IN_PROGRESS);
+        quest.InstantiateCurrentQuestStep(this.transform);
     }
 
     private void AdvanceQuest(string id)
     {
-        Quest quest = GetQuestByID(id);
+        if (!TryGetQuest(id, out var quest)) return;
 
-        //move to next step
         quest.MoveToNextStep();
 
-        //if there are more steps then instantiate the next step.
-        if(quest.CurrentStepExists())
-        {
+        if (quest.CurrentStepExists())
             quest.InstantiateCurrentQuestStep(this.transform);
-        }
-        //if there are no more quest steps
         else
-        {
             ChangeQuestState(quest.info.id, QuestState.CAN_FINISH);
-        }
     }
 
     private void FinishQuest(string id)
     {
-        Quest quest = GetQuestByID(id);
+        if (!TryGetQuest(id, out var quest)) return;
         ClaimRewards(quest);
         ChangeQuestState(quest.info.id, QuestState.FINISHED);
     }
 
     private void ClaimRewards(Quest quest)
     {
-        //TODO!!!!!!!!!!!!!!!
-        //gain money
-        //gain upgrade?
-
+        // Rewards currently granted from Ink (money) / shop unlock via dialogue.
     }
 
     private void QuestStepStateChange(string id, int stepIndex, QuestStepState questStepState)
     {
-        Quest quest = GetQuestByID(id);
+        if (!TryGetQuest(id, out var quest)) return;
         quest.StoreQuestStateData(questStepState, stepIndex);
-        ChangeQuestState(id, quest.state);
+        // Notify HUD of progress without re-firing onQuestStepStateChange (would recurse).
+        GameEventManager.Instance?.questEvents?.QuestStateChange(quest);
     }
 
-    private Dictionary<string,Quest> CreateQuestMap()
-    { 
-        //Loads all QuestInfoSO Scriptable Objects under the Assets/Resources/Quests Folder
-        QuestInfoSO[] allQuests = Resources.LoadAll<QuestInfoSO>("Quests"); 
+    private Dictionary<string, Quest> CreateQuestMap()
+    {
+        QuestInfoSO[] allQuests = Resources.LoadAll<QuestInfoSO>("Quests");
+        var idToQuestMap = new Dictionary<string, Quest>();
 
-        //create the quest Map
-        Dictionary<string, Quest> idToQuestMap = new Dictionary<string, Quest>();
-        foreach(QuestInfoSO questInfo in allQuests)
+        foreach (QuestInfoSO questInfo in allQuests)
         {
-            if(idToQuestMap.ContainsKey(questInfo.id))
+            if (questInfo == null || string.IsNullOrWhiteSpace(questInfo.id)) continue;
+
+            if (idToQuestMap.ContainsKey(questInfo.id))
             {
-                Debug.LogWarning("Duplicate ID found when creating  quest map: " + questInfo.id);
+                Debug.LogWarning("Duplicate ID found when creating quest map: " + questInfo.id);
+                continue;
             }
-            idToQuestMap.Add(questInfo.id, LoadQuest(questInfo));
+
+            var loaded = LoadQuest(questInfo);
+            if (loaded != null)
+                idToQuestMap.Add(questInfo.id, loaded);
         }
+
+        Debug.Log($"[QuestManager] Loaded {idToQuestMap.Count} quests.");
         return idToQuestMap;
     }
 
     private Quest GetQuestByID(string id)
     {
-        Quest quest = questMap[id];
-        if(quest == null)
-        {
-            Debug.LogError("ID not found in the quest Map:" + id);
-        }
+        TryGetQuest(id, out var quest);
         return quest;
     }
 
+    public bool TryGetPrimaryActiveQuest(out Quest quest)
+    {
+        quest = null;
+        if (questMap == null) return false;
+
+        if (questMap.TryGetValue("SnapperAndMollyQuest", out var caliste) &&
+            caliste != null && caliste.IsActiveForHud)
+        {
+            quest = caliste;
+            return true;
+        }
+
+        foreach (var candidate in questMap.Values)
+        {
+            if (candidate != null && candidate.state == QuestState.IN_PROGRESS)
+            {
+                quest = candidate;
+                return true;
+            }
+        }
+
+        foreach (var candidate in questMap.Values)
+        {
+            if (candidate != null && candidate.state == QuestState.CAN_FINISH)
+            {
+                quest = candidate;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool TryGetQuest(string id, out Quest quest)
+    {
+        quest = null;
+        if (questMap == null || string.IsNullOrWhiteSpace(id)) return false;
+        return questMap.TryGetValue(id, out quest) && quest != null;
+    }
+
+    public static QuestManager Resolve() =>
+        Instance != null ? Instance : Object.FindFirstObjectByType<QuestManager>();
+
     private void OnApplicationQuit()
     {
+        if (questMap == null) return;
         foreach (Quest quest in questMap.Values)
         {
-           SaveQuest(quest);
+            if (quest != null)
+                SaveQuest(quest);
         }
     }
 
@@ -181,41 +285,34 @@ public class QuestManager : MonoBehaviour
     {
         try
         {
-            QuestData QuestData = quest.GetQuestData();
-            //temporary two lines depending on save system specifics
-            string serializedData = JsonUtility.ToJson(QuestData);
+            QuestData questData = quest.GetQuestData();
+            string serializedData = JsonUtility.ToJson(questData);
             PlayerPrefs.SetString(quest.info.id, serializedData);
         }
-        catch(System.Exception e) 
+        catch (System.Exception e)
         {
             Debug.LogError("Failed to save quest with id: " + quest.info.id + ": " + e);
         }
     }
 
-    private  Quest LoadQuest(QuestInfoSO questInfo)
+    private Quest LoadQuest(QuestInfoSO questInfo)
     {
-        Quest quest = null;
         try
         {
-            //Load quest from saved data
-            if(PlayerPrefs.HasKey(questInfo.id) && loadQuestState)
+            if (PlayerPrefs.HasKey(questInfo.id) && loadQuestState)
             {
                 string serializedData = PlayerPrefs.GetString(questInfo.id);
                 QuestData questData = JsonUtility.FromJson<QuestData>(serializedData);
-                quest = new Quest(questInfo, questData.state, questData.questStepIndex, questData.questStepStates);
+                if (questData != null)
+                    return new Quest(questInfo, questData.state, questData.questStepIndex, questData.questStepStates);
             }
-            //otherwise, initialize new quest
-            else
-            {
-                quest = new Quest(questInfo);
-            }
-        }
-        catch (System.Exception e) 
-        {
-            Debug.LogError("Failed to save quest with id: " + quest.info.id + ": " + e);
-        }
-        return quest;
-        
-    }
 
+            return new Quest(questInfo);
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError("Failed to load quest with id: " + questInfo.id + ": " + e);
+            return new Quest(questInfo);
+        }
+    }
 }

@@ -49,7 +49,7 @@ public class DialogueManager : MonoBehaviour
     private const string BACKGROUND_TAG = "background";
 
     private DialogueVariables dialogueVariables;
-   
+    private bool _eventsSubscribed;
 
     private void Awake()
     {
@@ -86,24 +86,62 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    private void OnEnable()
-    {
-        GameEventManager.Instance.dialogueEvents.onUpdateDialogueVariable += UpdateDialogueVariable;
-        GameEventManager.Instance.questEvents.onQuestStateChange += QuestStateChange;
-    }
+    private void OnEnable() => TrySubscribeEvents();
 
     private void OnDisable()
     {
-        GameEventManager.Instance.dialogueEvents.onUpdateDialogueVariable -= UpdateDialogueVariable;
-        GameEventManager.Instance.questEvents.onQuestStateChange -= QuestStateChange;
+        UnsubscribeEvents();
+        _eventsSubscribed = false;
+    }
+
+    private void TrySubscribeEvents()
+    {
+        var events = GameEventManager.Instance;
+        if (events == null || _eventsSubscribed) return;
+        events.dialogueEvents.onUpdateDialogueVariable += UpdateDialogueVariable;
+        events.questEvents.onQuestStateChange += QuestStateChange;
+        _eventsSubscribed = true;
+    }
+
+    private void UnsubscribeEvents()
+    {
+        var events = GameEventManager.Instance;
+        if (events == null || !_eventsSubscribed) return;
+        events.dialogueEvents.onUpdateDialogueVariable -= UpdateDialogueVariable;
+        events.questEvents.onQuestStateChange -= QuestStateChange;
     }
 
     private void QuestStateChange(Quest quest)
     {
-        GameEventManager.Instance.dialogueEvents.UpdateDialogueVariable(
-            quest.info.id + "State",
-            new StringValue(quest.state.ToString())
-            );
+        if (quest?.info == null) return;
+        ApplyQuestStateToDialogue(quest.info.id, quest.state);
+    }
+
+    private void SyncQuestStatesIntoDialogueVariables()
+    {
+        var manager = QuestManager.Resolve();
+        if (manager == null) return;
+
+        // Known quest ids from globals.ink — push live QuestManager state into Ink.
+        string[] ids =
+        {
+            "CollectPondItemQuest",
+            "CollectLanternQuest",
+            "SnapperAndMollyQuest"
+        };
+
+        foreach (var id in ids)
+        {
+            if (manager.TryGetQuest(id, out var quest) && quest != null)
+                ApplyQuestStateToDialogue(id, quest.state);
+        }
+    }
+
+    private void ApplyQuestStateToDialogue(string questId, QuestState state)
+    {
+        var value = new StringValue(state.ToString());
+        dialogueVariables?.VariableChanged(questId + "State", value);
+        GameEventManager.Instance?.dialogueEvents?.UpdateDialogueVariable(questId + "State", value);
     }
 
     private void UpdateDialogueVariable(string name, Ink.Runtime.Object value)
@@ -114,6 +152,9 @@ public class DialogueManager : MonoBehaviour
 
     public void Update()
     {
+        if (!_eventsSubscribed)
+            TrySubscribeEvents();
+
         //Debug.Log(dialogueIsPlaying);
         //return right away if dialogue isn't playing
         if (!dialogueIsPlaying)
@@ -138,6 +179,9 @@ public class DialogueManager : MonoBehaviour
 
         inkExternalFunctions = new InkExternalFunctions();
         inkExternalFunctions.Bind(currentStory);
+
+        // Keep Ink quest*State vars in sync with QuestManager (Start() order can miss this).
+        SyncQuestStatesIntoDialogueVariables();
 
         if (knotName != "")
         {

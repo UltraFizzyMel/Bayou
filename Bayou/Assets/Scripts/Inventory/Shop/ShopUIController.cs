@@ -231,7 +231,7 @@ namespace Bayou.Inventory.Shop
                 return;
             }
 
-            _merchantBag = shopDefinition.CreateStockBag();
+            _merchantBag = shopDefinition.CreateStockBag(_playerInventory);
             _scratchBag = InventoryBagModel.Single(1, 1, "scratch");
             _transaction.BeginSession(_playerInventory.Bag, _merchantBag);
 
@@ -464,6 +464,12 @@ namespace Bayou.Inventory.Shop
                 return false;
 
             var item = view.Item;
+            if (ShopDefinition.IsUniqueAlreadyOwned(item.definition, _playerInventory))
+            {
+                Debug.Log($"[Shop] Already own {item.definition.displayName}.");
+                return false;
+            }
+
             var playerBag = _playerInventory.Bag;
             var grabOffset = merchantPanel?.CurrentDragGrabOffset ?? Vector2Int.zero;
 

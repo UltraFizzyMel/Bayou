@@ -19,7 +19,7 @@ namespace Bayou.Testing
         [Header("Enable")]
         [SerializeField] private bool enableInPlayMode = true;
         [SerializeField] private bool showHud = true;
-        [SerializeField] private bool grantStarterFishOnPlay = true;
+        [SerializeField] private bool grantStarterFishOnPlay;
         [SerializeField] private int starterFishCount = 2;
 
         [Header("References (auto-filled by Bayou/Test setup menu)")]
@@ -84,9 +84,8 @@ namespace Bayou.Testing
             var kb = Keyboard.current;
             if (kb == null) return;
 #endif
-            // ` toggles panel. V = volume. Esc closes volume. Shift+1–9 are playtest actions.
+            // ` toggles panel. Esc closes volume (AudioSettingsHotkeys owns V).
             if (WasBackquotePressed()) showHud = !showHud;
-            if (WasKeyPressed(KeyCode.V)) ToggleAudioSettings();
             if (AudioSettings.IsOpen && WasKeyPressed(KeyCode.Escape))
                 AudioSettings.CloseIfOpen();
 

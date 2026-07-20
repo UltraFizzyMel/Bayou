@@ -47,12 +47,14 @@ You want to see my wares?
 +[I'll give you your space.]->END
 
 === speak ===
+// Start as soon as this knot runs (same Continue as the first line),
+// so the quest log updates even if the player skips the last line.
+~ StartQuest("SnapperAndMollyQuest")
 #speaker: Caliste
 Talk...
 You seem...
 Fetch me a Snapper and a Molly, then I'll talk.
 My wares may be of interest...
-   ~StartQuest(SnapperAndMollyQuestId)
 -> END
 
 === DeliveredItem ===

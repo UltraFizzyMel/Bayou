@@ -5,6 +5,7 @@ namespace Bayou.Audio
 {
     /// <summary>
     /// Trigger volume for area music/ambient. Drag clips, add a trigger collider.
+    /// Plays on enter, and also if the player already stands inside when the zone loads.
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Collider))]
@@ -17,6 +18,7 @@ namespace Bayou.Audio
         [SerializeField] private float ambientVolume = 0.55f;
         [SerializeField] private bool playOnEnter = true;
         [SerializeField] private bool stopOnExit;
+        [SerializeField] private bool playIfPlayerAlreadyInside = true;
 
         [Header("Mixer")]
         [SerializeField] private AudioMixerGroup musicGroup;
@@ -36,6 +38,13 @@ namespace Bayou.Audio
         {
             musicSource = EnsureSource(musicSource, "MusicSource", musicVolume);
             ambientSource = EnsureSource(ambientSource, "AmbientSource", ambientVolume);
+        }
+
+        private void Start()
+        {
+            if (!playIfPlayerAlreadyInside || !playOnEnter) return;
+            if (IsPlayerInside())
+                PlayZone();
         }
 
         private AudioSource EnsureSource(AudioSource existing, string childName, float volume)
@@ -107,6 +116,46 @@ namespace Bayou.Audio
                 musicSource.Stop();
             if (ambientSource != null)
                 ambientSource.Stop();
+        }
+
+        public void Configure(
+            string name,
+            AudioClip musicClip,
+            AudioClip ambientClip,
+            AudioMixerGroup group,
+            bool enterPlay = true,
+            bool exitStop = false)
+        {
+            zoneName = name;
+            music = musicClip;
+            ambient = ambientClip;
+            musicGroup = group;
+            playOnEnter = enterPlay;
+            stopOnExit = exitStop;
+            playIfPlayerAlreadyInside = true;
+
+            if (musicSource != null)
+                ConfigureSource(musicSource, musicVolume);
+            if (ambientSource != null)
+                ConfigureSource(ambientSource, ambientVolume);
+        }
+
+        private bool IsPlayerInside()
+        {
+            var col = GetComponent<Collider>();
+            if (col == null) return false;
+
+            var players = Object.FindObjectsByType<Bayou.Player.BayouCharacterMotor>(
+                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            foreach (var motor in players)
+            {
+                if (motor == null) continue;
+                var p = motor.transform.position;
+                if (col.bounds.Contains(p))
+                    return true;
+            }
+
+            return false;
         }
 
         private static bool IsPlayer(Collider other) =>

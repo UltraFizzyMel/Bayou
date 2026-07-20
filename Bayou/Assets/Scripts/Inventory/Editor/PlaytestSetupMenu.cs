@@ -275,8 +275,8 @@ namespace Bayou.Inventory.Editor
             var so = new SerializedObject(harness);
             so.FindProperty("enableInPlayMode").boolValue = true;
             so.FindProperty("showHud").boolValue = true;
-            so.FindProperty("grantStarterFishOnPlay").boolValue = true;
-            so.FindProperty("starterFishCount").intValue = 2;
+            so.FindProperty("grantStarterFishOnPlay").boolValue = false;
+            so.FindProperty("starterFishCount").intValue = 0;
             so.FindProperty("testFishItem").objectReferenceValue = fish;
             so.FindProperty("testShop").objectReferenceValue = shop;
             so.FindProperty("shopTeleportPoint").objectReferenceValue = shopPoint;

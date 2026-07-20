@@ -17,20 +17,18 @@ public abstract class QuestStep : MonoBehaviour
     }
 
     protected void FinishQuestStep()
-    { if (!isFinished)
-        {
-            isFinished = true;
+    {
+        if (isFinished) return;
+        isFinished = true;
 
-            GameEventManager.Instance.questEvents.AdvanceQuest(questId);
-
-            Destroy(this.gameObject);
-        }
-
+        GameEventManager.Instance?.questEvents?.AdvanceQuest(questId);
+        Destroy(this.gameObject);
     }
 
     protected void ChangeState(string newState)
     {
-        GameEventManager.Instance.questEvents.QuestStepStateChange(questId, stepIndex, new QuestStepState(newState));
+        GameEventManager.Instance?.questEvents?.QuestStepStateChange(
+            questId, stepIndex, new QuestStepState(newState));
     }
 
     protected abstract void SetQuestStepState(string state);

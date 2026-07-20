@@ -33494,8 +33494,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Testing.PlaytestHarness
   enableInPlayMode: 1
   showHud: 1
-  grantStarterFishOnPlay: 1
-  starterFishCount: 2
+  grantStarterFishOnPlay: 0
+  starterFishCount: 0
   testFishItem: {fileID: 11400000, guid: e15fe0c9a3c00d843866a682e73bca64, type: 2}
   testShop: {fileID: 11400000, guid: 3effb848bf2d2c7479ccdee705dba45d, type: 2}
   testBonfireId: bonfire_bayou_01
@@ -41132,6 +41132,10 @@ PrefabInstance:
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: keyName
       value: hasKeyChurchToFoggyMarsh
+      objectReference: {fileID: 0}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: requiredItemId
+      value: Item_ChurchFoggyMarshKey
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: keyGateManager
@@ -54957,9 +54961,7 @@ MonoBehaviour:
   gridHeight: 6
   enableCompartmentUpgrades: 0
   startingUpgrades: []
-  startingItems:
-  - {fileID: 11400000, guid: e15fe0c9a3c00d843866a682e73bca64, type: 2}
-  - {fileID: 11400000, guid: dba47288da7522a4d915f7c31973216b, type: 2}
+  startingItems: []
 --- !u!114 &2078946153
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63752,10 +63754,64 @@ MonoBehaviour:
   visualCue: {fileID: 0}
   pickupPrompt: Pick up lantern
   endDemoOnPickup: 1
+--- !u!1 &910000400
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000401}
+  - component: {fileID: 910000402}
+  m_Layer: 0
+  m_Name: GameplayMusic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000401
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000400}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8c4e2f19b7d4e6a9c0d1e2f3a4b5c6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Audio.GameplayMusicBootstrap
+  churchMusic: {fileID: 8300000, guid: c5fc681e76b359846bb177bb594bab1b, type: 3}
+  churchAmbient: {fileID: 8300000, guid: 0acbbb12aae08b7489db81832fb481d8, type: 3}
+  graveyardMusic: {fileID: 8300000, guid: 9c64d1ce71ad65f49844059042ba617d, type: 3}
+  graveyardAmbient: {fileID: 8300000, guid: bfdd454de13e7794f86a32dfe3dbdba4, type: 3}
+  musicGroup: {fileID: 2506030541703638831, guid: 312109c978c74d140a536bd1d851b28f, type: 2}
+  churchZoneCenter: {x: 0, y: 8, z: -20}
+  churchZoneSize: {x: 140, y: 50, z: 140}
+  graveyardZoneCenter: {x: -70, y: 8, z: 80}
+  graveyardZoneSize: {x: 110, y: 50, z: 110}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 910000401}
   - {fileID: 910000201}
   - {fileID: 910000101}
   - {fileID: 1322098990}
