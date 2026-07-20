@@ -20,6 +20,7 @@ namespace Bayou
             var shouldPause =
                 IsInventoryOpen() ||
                 CaughtFishPresenter.IsBusy ||
+                AudioSettings.IsOpen ||
                 (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) ||
                 (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen);
 

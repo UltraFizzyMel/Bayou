@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Bayou.Audio
 {
@@ -16,6 +17,9 @@ namespace Bayou.Audio
         [SerializeField] private float ambientVolume = 0.55f;
         [SerializeField] private bool playOnEnter = true;
         [SerializeField] private bool stopOnExit;
+
+        [Header("Mixer")]
+        [SerializeField] private AudioMixerGroup musicGroup;
 
         [Header("Sources (auto-created if empty)")]
         [SerializeField] private AudioSource musicSource;
@@ -38,10 +42,7 @@ namespace Bayou.Audio
         {
             if (existing != null)
             {
-                existing.playOnAwake = false;
-                existing.loop = true;
-                existing.spatialBlend = 0f;
-                existing.volume = volume;
+                ConfigureSource(existing, volume);
                 return existing;
             }
 
@@ -51,11 +52,18 @@ namespace Bayou.Audio
                 go.transform.SetParent(transform, false);
 
             var src = go.GetComponent<AudioSource>() ?? go.AddComponent<AudioSource>();
+            ConfigureSource(src, volume);
+            return src;
+        }
+
+        private void ConfigureSource(AudioSource src, float volume)
+        {
             src.playOnAwake = false;
             src.loop = true;
             src.spatialBlend = 0f;
             src.volume = volume;
-            return src;
+            if (musicGroup != null)
+                src.outputAudioMixerGroup = musicGroup;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -76,6 +84,8 @@ namespace Bayou.Audio
             {
                 musicSource.clip = music;
                 musicSource.volume = musicVolume;
+                if (musicGroup != null)
+                    musicSource.outputAudioMixerGroup = musicGroup;
                 if (!musicSource.isPlaying)
                     musicSource.Play();
             }
@@ -84,6 +94,8 @@ namespace Bayou.Audio
             {
                 ambientSource.clip = ambient;
                 ambientSource.volume = ambientVolume;
+                if (musicGroup != null)
+                    ambientSource.outputAudioMixerGroup = musicGroup;
                 if (!ambientSource.isPlaying)
                     ambientSource.Play();
             }

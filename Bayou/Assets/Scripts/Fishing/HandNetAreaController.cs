@@ -3,6 +3,7 @@
 #endif
 
 using Bayou.Fish;
+using Bayou.Quests;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -103,6 +104,11 @@ namespace Bayou.Fishing
 
             _lastUseTime = Time.time;
             Bayou.Audio.FishingAudio.Resolve()?.PlayHandNetScoop();
+
+            // Quest shiny in the pond can be scooped with the hand net too.
+            if (PondShinyCollectible.TryScoopNear(center, coverageRadius))
+                return;
+
             TryCatchFishInArea(center, coverageRadius);
         }
 

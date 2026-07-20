@@ -22,6 +22,8 @@ namespace Bayou.Fishing
     {
         [Header("References (top-down / isometric)")]
         [SerializeField] private Transform castOrigin;
+        [Tooltip("Raise spawn above the player root so the net doesn't instantly hit the ground.")]
+        [SerializeField] private float castHeightOffset = 1.45f;
         [Tooltip("Isometric camera: forward is flattened to XZ for aim.")]
         [SerializeField] private Transform aimTransform;
         [SerializeField] private FishingNetProjectile netPrefab;
@@ -403,7 +405,7 @@ namespace Bayou.Fishing
 
             var net = Instantiate(netPrefab, origin, Quaternion.identity);
             _activeNet = net;
-            net.Launch(velocity);
+            net.Launch(velocity, gameObject);
             Bayou.Audio.FishingAudio.Resolve()?.PlayThrowNet();
         }
 
@@ -469,7 +471,7 @@ namespace Bayou.Fishing
 
         private void UpdateDirectionSweepVisual()
         {
-            var origin = castOrigin != null ? castOrigin.position : transform.position + Vector3.up * 1.2f;
+            var origin = GetLaunchOrigin();
             var center = GetCenterForwardXZ();
             var half = Mathf.Max(0.5f, sectorAngleDegrees * 0.5f);
             var dirA = RotateAroundY(center, -half);
@@ -517,11 +519,17 @@ namespace Bayou.Fishing
                 _lockedCastDirection = center;
         }
 
+        private Vector3 GetLaunchOrigin()
+        {
+            var root = castOrigin != null ? castOrigin.position : transform.position;
+            return root + Vector3.up * Mathf.Max(0.5f, castHeightOffset);
+        }
+
         private (Vector3 origin, Vector3 velocity) ComputeLaunch(float charge01, Vector3 flatForward)
         {
             charge01 = Mathf.Clamp01(charge01);
 
-            var origin = castOrigin != null ? castOrigin.position : transform.position + Vector3.up * 1.2f;
+            var origin = GetLaunchOrigin();
             var fwd = flatForward;
             fwd.y = 0f;
             if (fwd.sqrMagnitude < 0.001f) fwd = GetCenterForwardXZ();
