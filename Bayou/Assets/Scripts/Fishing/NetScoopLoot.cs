@@ -77,11 +77,7 @@ namespace Bayou.Fishing
         {
             var rend = GetComponentInChildren<Renderer>();
             if (rend == null) return;
-            var shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color");
-            var mat = new Material(shader);
-            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", glowColor);
-            else if (mat.HasProperty("_Color")) mat.SetColor("_Color", glowColor);
-            rend.sharedMaterial = mat;
+            rend.sharedMaterial = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(glowColor);
         }
     }
 }

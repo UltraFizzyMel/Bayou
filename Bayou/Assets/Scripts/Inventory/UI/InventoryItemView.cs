@@ -75,7 +75,7 @@ namespace Bayou.Inventory.UI
                 iconImage.enabled = true;
                 iconImage.raycastTarget = true;
                 if (Item.definition.icon == null)
-                    iconImage.color = new Color(1f, 1f, 1f, 0.001f);
+                    iconImage.color = new Color(0.35f, 0.55f, 0.95f, 0.95f);
                 else
                     iconImage.color = Color.white;
             }

@@ -34,7 +34,8 @@ namespace Bayou.Inventory.Shop
                 if (entry?.item == null) continue;
 
                 var instance = new InventoryItemInstance(entry.item, entry.rotation);
-                if (entry.gridX >= 0 && entry.gridY >= 0 &&
+                var useExplicitSlot = entry.gridX >= 0 && entry.gridY >= 0;
+                if (useExplicitSlot &&
                     bag.TryPlace(instance, ResolveCompartment(bag, entry.compartmentId), entry.gridX, entry.gridY, instance.rotation))
                     continue;
 

@@ -83,18 +83,8 @@ namespace Bayou.Fishing
 
         private static Material CreateTrailMaterial(Color color)
         {
-            var shader =
-                Shader.Find("Universal Render Pipeline/Particles/Unlit")
-                ?? Shader.Find("Particles/Standard Unlit")
-                ?? Shader.Find("Sprites/Default")
-                ?? Shader.Find("Unlit/Color");
-
-            var mat = new Material(shader);
-            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", color);
-            else if (mat.HasProperty("_Color")) mat.SetColor("_Color", color);
-            else if (mat.HasProperty("_TintColor")) mat.SetColor("_TintColor", color);
-
-            return mat;
+            // Particle Unlit is often stripped in builds; fall back to Resources-backed URP Unlit.
+            return Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(color);
         }
     }
 }
