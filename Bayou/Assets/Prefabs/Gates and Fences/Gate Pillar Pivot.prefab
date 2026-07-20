@@ -102,6 +102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7786829281421853786}
   - component: {fileID: 6288123988765975276}
+  - component: {fileID: 3660983268424807966}
   m_Layer: 0
   m_Name: Gate Trigger
   m_TagString: Untagged
@@ -145,6 +146,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.08922865, y: 0.011640088, z: 0.0554603}
   m_Center: {x: -0.0499428, y: 0.0075075687, z: 0.006778381}
+--- !u!114 &3660983268424807966
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6284793422768218053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f19f84b8f4bf8fd49bb4b19450946443, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InteractTrigger
+  keyName: 
+  playerInRange: 0
+  animator: {fileID: 5814389696707125535}
+  keyGateManager: {fileID: 0}
 --- !u!1 &8839605162766245494
 GameObject:
   m_ObjectHideFlags: 0
