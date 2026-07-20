@@ -8,6 +8,11 @@ using UnityEngine;
 /// </summary>
 public sealed class KeyGateManager : MonoBehaviour
 {
+    public const string FoggyMarshKeyFlag = "hasKeyChurchToFoggyMarsh";
+    public const string FoggyMarshKeyItemId = "Item_ChurchFoggyMarshKey";
+    public const string GraveyardKeyFlag = "hasKeyChurchToGraveyard";
+    public const string GraveyardKeyItemId = "Item_ChurchGraveyardKey";
+
     public static KeyGateManager Instance { get; private set; }
 
     public bool hasKeyChurchToGraveyard;
@@ -18,8 +23,8 @@ public sealed class KeyGateManager : MonoBehaviour
 
     private static readonly Dictionary<string, string> FlagToItemId = new()
     {
-        { "hasKeyChurchToGraveyard", "Item_ChurchGraveyardKey" },
-        { "hasKeyChurchToFoggyMarsh", "Item_ChurchFoggyMarshKey" },
+        { GraveyardKeyFlag, GraveyardKeyItemId },
+        { FoggyMarshKeyFlag, FoggyMarshKeyItemId },
         { "hasKeyChurchToBrackishShore", "Item_ChurchBrackishShoreKey" },
         { "hasKeyGraveyardOne", "Item_GraveyardKeyOne" },
         { "hasKeyGraveyardTwo", "Item_GraveyardKeyTwo" }
@@ -105,8 +110,8 @@ public sealed class KeyGateManager : MonoBehaviour
         if (string.IsNullOrWhiteSpace(flagName)) return false;
         return flagName switch
         {
-            "hasKeyChurchToGraveyard" => hasKeyChurchToGraveyard,
-            "hasKeyChurchToFoggyMarsh" => hasKeyChurchToFoggyMarsh,
+            GraveyardKeyFlag => hasKeyChurchToGraveyard,
+            FoggyMarshKeyFlag => hasKeyChurchToFoggyMarsh,
             "hasKeyChurchToBrackishShore" => hasKeyChurchToBrackishShore,
             "hasKeyGraveyardOne" => hasKeyGraveyardOne,
             "hasKeyGraveyardTwo" => hasKeyGraveyardTwo,
@@ -119,10 +124,10 @@ public sealed class KeyGateManager : MonoBehaviour
         if (string.IsNullOrWhiteSpace(flagName)) return;
         switch (flagName)
         {
-            case "hasKeyChurchToGraveyard":
+            case GraveyardKeyFlag:
                 hasKeyChurchToGraveyard = value;
                 break;
-            case "hasKeyChurchToFoggyMarsh":
+            case FoggyMarshKeyFlag:
                 hasKeyChurchToFoggyMarsh = value;
                 break;
             case "hasKeyChurchToBrackishShore":

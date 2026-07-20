@@ -3,14 +3,20 @@ using Bayou.Player;
 using UnityEngine;
 
 /// <summary>
-/// Stand near a locked gate and press Interact (E). Opens if the matching key flag is set
-/// or the required key item is in the bag (from Landry / Caliste, etc.).
+/// Stand near a locked gate and press Interact (E). Opens only for this gate's key
+/// (flag and/or required item id) — never another gate's key.
 /// </summary>
 public sealed class InteractTrigger : MonoBehaviour
 {
-    [SerializeField] private string keyName = "hasKeyChurchToGraveyard";
-    [Tooltip("Inventory item asset name. Leave empty to use KeyGateManager mapping for keyName.")]
+    [Tooltip("KeyGateManager flag for THIS gate only. Empty = never unlock via flag.")]
+    [SerializeField] private string keyName = "";
+
+    [Tooltip("Inventory item id for THIS gate only (e.g. Item_ChurchFoggyMarshKey).")]
     [SerializeField] private string requiredItemId;
+
+    [Tooltip("Optional direct reference — preferred when set (avoids id/name mixups).")]
+    [SerializeField] private ItemDefinition requiredKeyItem;
+
     [SerializeField] private bool playerInRange;
     [SerializeField] private Animator animator;
     [SerializeField] private KeyGateManager keyGateManager;
@@ -29,9 +35,12 @@ public sealed class InteractTrigger : MonoBehaviour
         if (animator == null)
             animator = GetComponentInParent<Animator>();
 
-        // Prefab may leave this empty — collect solid blockers under the gate root.
         if (disableCollidersOnOpen == null || disableCollidersOnOpen.Length == 0)
             AutoCollectBlockingColliders();
+
+        // Prefer the ScriptableObject's stable id when assigned.
+        if (requiredKeyItem != null && string.IsNullOrWhiteSpace(requiredItemId))
+            requiredItemId = requiredKeyItem.Id;
     }
 
     private void Start()
@@ -39,9 +48,75 @@ public sealed class InteractTrigger : MonoBehaviour
         if (keyGateManager == null)
             keyGateManager = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
 
+        // Player builds: if the scene lost the SO reference, recover from catalog / Resources by id.
+        EnsureRequiredKeyResolved();
+
         TrySubscribeInventory();
         if (CanUnlock())
             OpenGate(playLog: false);
+    }
+
+    private void EnsureRequiredKeyResolved()
+    {
+        if (requiredKeyItem != null)
+        {
+            if (string.IsNullOrWhiteSpace(requiredItemId))
+                requiredItemId = requiredKeyItem.Id;
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(requiredItemId))
+            requiredItemId = KeyGateManager.GetItemIdForFlag(keyName);
+
+        if (string.IsNullOrWhiteSpace(requiredItemId))
+            return;
+
+        requiredKeyItem = ResolveKeyDefinition(requiredItemId);
+        if (requiredKeyItem != null && string.IsNullOrWhiteSpace(requiredItemId))
+            requiredItemId = requiredKeyItem.Id;
+    }
+
+    private static ItemDefinition ResolveKeyDefinition(string itemId)
+    {
+        if (string.IsNullOrWhiteSpace(itemId)) return null;
+
+        var catalog = Bayou.Save.GameSaveSystem.Instance != null
+            ? Bayou.Save.GameSaveSystem.Instance.ItemCatalog
+            : null;
+        var fromCatalog = catalog != null ? catalog.Resolve(itemId) : null;
+        if (fromCatalog != null) return fromCatalog;
+
+        var fromResources = Resources.Load<ItemDefinition>($"Bayou/Items/{itemId}");
+        if (fromResources != null) return fromResources;
+
+        foreach (var def in Resources.LoadAll<ItemDefinition>("Bayou/Items"))
+        {
+            if (def != null && def.MatchesId(itemId))
+                return def;
+        }
+
+        return null;
+    }
+
+    private bool PlayerHasThisGateKey(InventoryController inv)
+    {
+        if (inv == null) return false;
+
+        // Prefer stable string id — works across editor/build and duplicate SO instances.
+        var itemId = ResolveItemId();
+        if (!string.IsNullOrWhiteSpace(itemId) && inv.HasItemsById(itemId, 1))
+            return true;
+
+        return requiredKeyItem != null && inv.HasItems(requiredKeyItem, 1);
+    }
+
+    private string ResolveItemId()
+    {
+        if (!string.IsNullOrWhiteSpace(requiredItemId))
+            return requiredItemId;
+        if (requiredKeyItem != null)
+            return requiredKeyItem.Id;
+        return KeyGateManager.GetItemIdForFlag(keyName);
     }
 
     private void OnEnable() => TrySubscribeInventory();
@@ -71,17 +146,15 @@ public sealed class InteractTrigger : MonoBehaviour
 
         if (!CanUnlock())
         {
-            Debug.Log($"[Gate] Locked — need key ({ResolveItemId() ?? keyName}).");
+            Debug.Log($"[Gate] Locked — need '{ResolveItemId() ?? keyName}' (this gate only).");
             return;
         }
 
         var itemIdForConsume = ResolveItemId();
         var inv = InventoryController.Instance;
-        var hasItem = !string.IsNullOrWhiteSpace(itemIdForConsume) &&
-                      inv != null &&
-                      inv.HasItemsById(itemIdForConsume, 1);
+        var hasItem = PlayerHasThisGateKey(inv);
 
-        if (hasItem && consumeKeyOnOpen && inv != null)
+        if (hasItem && consumeKeyOnOpen && inv != null && !string.IsNullOrWhiteSpace(itemIdForConsume))
             inv.TryRemoveItemsById(itemIdForConsume, 1);
 
         if (keyGateManager != null && !string.IsNullOrWhiteSpace(keyName))
@@ -104,17 +177,18 @@ public sealed class InteractTrigger : MonoBehaviour
         if (keyGateManager == null)
             keyGateManager = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
 
+        // Empty keyName + empty item = decorative / never unlockable.
         var itemId = ResolveItemId();
-        var unlockedByFlag = keyGateManager != null && keyGateManager.GetFlag(keyName);
-        var inv = InventoryController.Instance;
-        var hasItem = !string.IsNullOrWhiteSpace(itemId) && inv != null && inv.HasItemsById(itemId, 1);
+        if (string.IsNullOrWhiteSpace(keyName) && string.IsNullOrWhiteSpace(itemId) && requiredKeyItem == null)
+            return false;
+
+        var unlockedByFlag = !string.IsNullOrWhiteSpace(keyName) &&
+                             keyGateManager != null &&
+                             keyGateManager.GetFlag(keyName);
+
+        var hasItem = PlayerHasThisGateKey(InventoryController.Instance);
         return unlockedByFlag || hasItem;
     }
-
-    private string ResolveItemId() =>
-        string.IsNullOrWhiteSpace(requiredItemId)
-            ? KeyGateManager.GetItemIdForFlag(keyName)
-            : requiredItemId;
 
     private void OpenGate(bool playLog)
     {
@@ -136,7 +210,7 @@ public sealed class InteractTrigger : MonoBehaviour
         }
 
         if (playLog)
-            Debug.Log($"[Gate] Opened ({keyName}).");
+            Debug.Log($"[Gate] Opened ({keyName} / {ResolveItemId()}).");
     }
 
     private void AutoCollectBlockingColliders()
@@ -174,7 +248,6 @@ public sealed class InteractTrigger : MonoBehaviour
     private void OnInventoryChanged()
     {
         if (_isOpen) return;
-        // Open when the matching key arrives in the bag (shop Close Deal).
         if (autoOpenWhenUnlocked && CanUnlock())
             TryUnlock();
     }

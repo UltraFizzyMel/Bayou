@@ -33,7 +33,8 @@
 
 === LanternReminder ===
 The lantern waits past the Foggy Marsh gate — north-east of here.
-Caliste in the graveyard may sell the key… if you earn her trust.
+My graveyard key will not open that gate.
+Buy the Foggy Marsh Key from Caliste once she trusts you.
 Be careful out there.
 -> END
 

@@ -19,6 +19,8 @@ namespace Bayou.Inventory
             {
                 if (item == null) continue;
                 _lookup[item.name] = item;
+                if (!string.IsNullOrWhiteSpace(item.Id))
+                    _lookup[item.Id] = item;
             }
         }
 
