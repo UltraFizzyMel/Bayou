@@ -98,7 +98,7 @@ namespace Bayou.Fishing
                 var col = OverlapBuffer.Colliders[i];
                 if (col == null) continue;
                 var fish = col.GetComponentInParent<BayouFish>();
-                if (fish == null || fish.IsCaught) continue;
+                if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod)) continue;
                 fish.Catch();
                 caughtAny = true;
             }
@@ -109,7 +109,7 @@ namespace Bayou.Fishing
                 var radiusSq = catchRadius * catchRadius;
                 foreach (var fish in Object.FindObjectsByType<BayouFish>(FindObjectsSortMode.None))
                 {
-                    if (fish == null || fish.IsCaught) continue;
+                    if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod)) continue;
                     var delta = fish.transform.position - center;
                     delta.y = 0f;
                     if (delta.sqrMagnitude <= radiusSq)

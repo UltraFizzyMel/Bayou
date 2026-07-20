@@ -1,3 +1,4 @@
+using Bayou.Fishing;
 using Bayou.Inventory;
 using Bayou.Inventory.Shop;
 using Bayou.Inventory.UI;
@@ -32,6 +33,9 @@ namespace Bayou.Testing
         [SerializeField] private Transform pondTeleportPoint;
         [Tooltip("Used when pondTeleportPoint is unset (church pond / fish area).")]
         [SerializeField] private Vector3 pondTeleportFallback = new Vector3(-14f, 1.6f, -40f);
+        [SerializeField] private Transform calisteTeleportPoint;
+        [Tooltip("Used when calisteTeleportPoint is unset.")]
+        [SerializeField] private Vector3 calisteTeleportFallback = new Vector3(-81.5f, 1.6f, 93.4f);
 
         private InventoryController _inventory;
         private PlayerWallet _wallet;
@@ -49,6 +53,9 @@ namespace Bayou.Testing
 
         private void Start()
         {
+            // Spots are world content, not a playtest-only cheat.
+            FishingSpotBootstrap.EnsureInScene();
+
             if (!enableInPlayMode) return;
 
             RefreshReferences();
@@ -91,7 +98,7 @@ namespace Bayou.Testing
 
             if (WasDigitPressed(1)) AddFish();
             else if (WasDigitPressed(2)) AddMoney(100);
-            else if (WasDigitPressed(3)) TeleportTo(shopTeleportPoint);
+            else if (WasDigitPressed(3)) TeleportToCaliste();
             else if (WasDigitPressed(4)) TeleportTo(bonfireTeleportPoint);
             else if (WasDigitPressed(5)) ToggleShop();
             else if (WasDigitPressed(6)) ForceOpenBonfire();
@@ -120,9 +127,9 @@ namespace Bayou.Testing
             GUILayout.Label(StatusLine());
             GUILayout.Space(4f);
             GUILayout.Label("Gameplay:  I inventory  |  E interact  |  R rotate item");
-            GUILayout.Label("Fishing: LMB cast/charge/reel  |  Esc/Q/RMB cancel");
+            GUILayout.Label("Fishing: 2=net scoop  |  1=rod cast  |  Esc/Q/RMB cancel");
             GUILayout.Label("Audio:  V volume settings  |  Esc close");
-            GUILayout.Label("Keys:  ` hide panel  |  Shift+1..9 (5=shop toggle)");
+            GUILayout.Label("Keys:  ` hide panel  |  Shift+3 Caliste  |  Shift+5 shop UI");
             GUILayout.Space(6f);
 
             _hudScroll = GUILayout.BeginScrollView(_hudScroll, GUILayout.Height(260f));
@@ -130,13 +137,14 @@ namespace Bayou.Testing
             DrawActionButton("Shift+0 — Go to church pond / fish", TeleportToPond);
             DrawActionButton("Shift+1 — Add fish", AddFish);
             DrawActionButton("Shift+2 — Add $100", () => AddMoney(100));
-            DrawActionButton("Shift+3 — Go to shop", () => TeleportTo(shopTeleportPoint));
+            DrawActionButton("Shift+3 — Go to Caliste", TeleportToCaliste);
             DrawActionButton("Shift+4 — Go to bonfire", () => TeleportTo(bonfireTeleportPoint));
             DrawActionButton("Shift+5 — Toggle shop UI", ToggleShop);
             DrawActionButton("Shift+6 — Open bonfire UI", ForceOpenBonfire);
             DrawActionButton("Shift+7 — Delete save", DeleteSave);
             DrawActionButton("Shift+8 — Reload save", LoadSave);
             DrawActionButton("Shift+9 — Toggle inventory", ToggleInventory);
+            DrawActionButton("Grant Landry graveyard key", GrantLandryKey);
             GUILayout.EndScrollView();
 
             if (_saveSystem != null)
@@ -228,6 +236,88 @@ namespace Bayou.Testing
             TeleportPlayer(pondTeleportFallback, Vector3.forward);
         }
 
+        public void GrantLandryKey()
+        {
+            var inv = InventoryController.Instance;
+            var catalog = _saveSystem != null ? _saveSystem.ItemCatalog : GameSaveSystem.Instance?.ItemCatalog;
+            var key = catalog != null ? catalog.Resolve("Item_ChurchGraveyardKey") : null;
+            if (key == null)
+            {
+                Debug.LogWarning("[Playtest] Item_ChurchGraveyardKey missing from catalog.");
+                return;
+            }
+
+            if (inv == null || (!inv.TryAddItem(key) && !inv.TryHoldNewItem(key, out _)))
+            {
+                Debug.LogWarning("[Playtest] Could not add graveyard key.");
+                return;
+            }
+
+            var gates = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
+            gates?.GrantKeyFlag("hasKeyChurchToGraveyard");
+            Debug.Log("[Playtest] Granted Church Graveyard Key.");
+        }
+
+        public void TeleportToCaliste()
+        {
+            if (calisteTeleportPoint != null)
+            {
+                TeleportTo(calisteTeleportPoint);
+                return;
+            }
+
+            if (TryResolveCaliste(out var calistePos, out var faceDir))
+            {
+                TeleportPlayer(calistePos, faceDir);
+                return;
+            }
+
+            Debug.LogWarning("[Playtest] Caliste not found — using fallback position.");
+            TeleportPlayer(calisteTeleportFallback, Vector3.forward);
+        }
+
+        private static bool TryResolveCaliste(out Vector3 standPos, out Vector3 faceDir)
+        {
+            standPos = default;
+            faceDir = Vector3.forward;
+
+            Transform caliste = null;
+
+            var byName = GameObject.Find("Caliste");
+            if (byName != null)
+                caliste = byName.transform;
+
+            if (caliste == null)
+            {
+                foreach (var trigger in Object.FindObjectsByType<DialogueTrigger>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                {
+                    if (trigger == null) continue;
+                    // Caliste dialogue asset, or object named Caliste in the hierarchy.
+                    var n = trigger.gameObject.name;
+                    var rootName = trigger.transform.root != null ? trigger.transform.root.name : n;
+                    if (n.IndexOf("Caliste", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                        rootName.IndexOf("Caliste", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        caliste = trigger.transform.root != null ? trigger.transform.root : trigger.transform;
+                        break;
+                    }
+                }
+            }
+
+            if (caliste == null)
+                return false;
+
+            // Stand slightly offset on XZ so we land in her interact trigger.
+            var origin = caliste.position;
+            standPos = origin + new Vector3(2.2f, 0f, 0f);
+            standPos.y = Mathf.Max(origin.y + 1.1f, 1.2f);
+            faceDir = origin - standPos;
+            faceDir.y = 0f;
+            if (faceDir.sqrMagnitude < 0.01f)
+                faceDir = Vector3.forward;
+            return true;
+        }
+
         private static void TeleportPlayer(Vector3 position, Vector3 forward)
         {
             var player = GameObject.FindGameObjectWithTag("Player");
@@ -240,9 +330,28 @@ namespace Bayou.Testing
             if (forward.sqrMagnitude < 0.01f)
                 forward = Vector3.forward;
 
-            player.transform.SetPositionAndRotation(
-                position,
-                Quaternion.LookRotation(forward.normalized, Vector3.up));
+            var rot = Quaternion.LookRotation(forward.normalized, Vector3.up);
+
+            // Player uses a Rigidbody motor — transform-only teleports get overwritten next FixedUpdate.
+            var rb = player.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.position = position;
+                rb.rotation = rot;
+            }
+
+            var cc = player.GetComponent<CharacterController>();
+            if (cc != null)
+                cc.enabled = false;
+
+            player.transform.SetPositionAndRotation(position, rot);
+
+            if (cc != null)
+                cc.enabled = true;
+
+            Debug.Log($"[Playtest] Teleported player to {position}");
         }
 
         public void ToggleShop()

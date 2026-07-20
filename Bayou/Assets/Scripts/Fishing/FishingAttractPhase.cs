@@ -121,7 +121,11 @@ namespace Bayou.Fishing
         {
             foreach (var fish in FindObjectsByType<BayouFish>(FindObjectsSortMode.None))
             {
-                if (fish == null || fish.IsCaught) continue;
+                if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod))
+                {
+                    fish?.ClearAttractTarget();
+                    continue;
+                }
 
                 var flat = fish.transform.position - netPos;
                 flat.y = 0f;
@@ -131,7 +135,6 @@ namespace Bayou.Fishing
                     continue;
                 }
 
-                // Stronger wiggle → stronger swim pull.
                 var pull = Mathf.Lerp(0.35f, 1f, strength01);
                 fish.SetAttractTarget(netPos, pull);
             }
@@ -142,7 +145,7 @@ namespace Bayou.Fishing
             var radiusSq = radius * radius;
             foreach (var fish in FindObjectsByType<BayouFish>(FindObjectsSortMode.None))
             {
-                if (fish == null || fish.IsCaught) continue;
+                if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod)) continue;
                 var flat = fish.transform.position - netPos;
                 flat.y = 0f;
                 if (flat.sqrMagnitude <= radiusSq)

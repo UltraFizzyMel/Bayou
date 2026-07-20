@@ -157,19 +157,93 @@ public class DialogueManager : MonoBehaviour
         ContinueStory();
     }
 
-    private IEnumerator  ExitDialogueMode()
+    private IEnumerator ExitDialogueMode()
     {
-        yield return new WaitForSeconds(0.2f);
-        inkExternalFunctions.Unbind(currentStory);
-        dialogueVariables.StopListening(currentStory);
+        // Small delay so the last line can finish reading, then tear the UI down.
+        yield return new WaitForSeconds(0.05f);
+        ForceExitDialogueImmediate();
+    }
+
+    /// <summary>
+    /// Immediately ends dialogue and hides the dialogue UI.
+    /// </summary>
+    public void ForceExitDialogueImmediate()
+    {
+        HideDialogueUi();
+
+        if (currentStory != null)
+        {
+            try
+            {
+                inkExternalFunctions?.Unbind(currentStory);
+            }
+            catch (System.Exception)
+            {
+                // Already unbound.
+            }
+
+            dialogueVariables?.StopListening(currentStory);
+            currentStory = null;
+        }
+    }
+
+    /// <summary>Hides panels/choices without unbinding Ink mid-external-call.</summary>
+    private void HideDialogueUi()
+    {
+        if (displayLineCoroutine != null)
+        {
+            StopCoroutine(displayLineCoroutine);
+            displayLineCoroutine = null;
+        }
 
         dialogueIsPlaying = false;
-        dialoguePanel.SetActive(false);
-        dialogueText.text = "";
+        canContinueToNextLine = false;
+        HideChoices();
+        if (continueIcon != null)
+            continueIcon.SetActive(false);
+        if (dialogueText != null)
+            dialogueText.text = "";
+        if (displayNameText != null)
+            displayNameText.text = "";
+
+        if (portraitAnimator != null)
+            portraitAnimator.Play("default");
+        if (layoutAnimator != null)
+            layoutAnimator.Play("default");
+        if (backgroundAnimator != null)
+            backgroundAnimator.Play("default");
+
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
+    }
+
+    private Coroutine _openShopRoutine;
+
+    /// <summary>Ink <c>OpenShop()</c> — close dialogue UI now, open shop next frame.</summary>
+    public void QueueOpenShop()
+    {
+        // Hide immediately (don't Unbind yet — we're still inside the Ink external).
+        HideDialogueUi();
+
+        if (_openShopRoutine != null)
+            StopCoroutine(_openShopRoutine);
+        _openShopRoutine = StartCoroutine(OpenShopAfterDialogueRoutine());
+    }
+
+    private IEnumerator OpenShopAfterDialogueRoutine()
+    {
+        // Let the Ink external call stack unwind, then fully tear down + open shop.
+        yield return null;
+        _openShopRoutine = null;
+        ForceExitDialogueImmediate();
+        InkExternalFunctions.OpenShopImmediate();
     }
 
     private void ContinueStory()
     {
+        if (currentStory == null || !dialogueIsPlaying)
+            return;
+
         if (currentStory.canContinue)
         {
             //set Text for the current dialogue line
@@ -177,16 +251,12 @@ public class DialogueManager : MonoBehaviour
             {
                 StopCoroutine(displayLineCoroutine);
             }
-            /*string dialogueLine = currentStory.Continue();
-            while (IsLineBlank(dialogueLine) && currentStory.canContinue)
-            {
-                dialogueLine = currentStory.Continue();
-            }*/
 
-                displayLineCoroutine = StartCoroutine(DisplayLine(currentStory.Continue()));
+            displayLineCoroutine = StartCoroutine(DisplayLine(currentStory.Continue()));
 
             //handle tags
-            HandleTags(currentStory.currentTags);
+            if (currentStory != null)
+                HandleTags(currentStory.currentTags);
         }
         else
         {
@@ -253,6 +323,10 @@ public class DialogueManager : MonoBehaviour
                 yield return new WaitForSeconds(typingSpeed);
             }
         }
+
+        // Dialogue may have been force-closed (e.g. OpenShop) while this line was typing.
+        if (!dialogueIsPlaying || currentStory == null)
+            yield break;
 
         //actions to take after line has finished displaying
         continueIcon.SetActive(true);

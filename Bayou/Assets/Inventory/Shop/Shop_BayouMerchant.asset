@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40b094bf5eff826459b4f0b012668fe9, type: 3}
   m_Name: Shop_BayouMerchant
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.Shop.ShopDefinition
-  merchantName: Bayou Trader
+  merchantName: Caliste
   layout: {fileID: 11400000, guid: 03f59b81f9cc81547af6e0713d4551fa, type: 2}
   stock:
   - item: {fileID: 11400000, guid: dba47288da7522a4d915f7c31973216b, type: 2}

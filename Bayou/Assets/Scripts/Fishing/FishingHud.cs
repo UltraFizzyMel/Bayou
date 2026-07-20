@@ -82,11 +82,11 @@ namespace Bayou.Fishing
             }
             else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Rod)
             {
-                GUILayout.Label("LMB — cast into pond (land on green shiny)", _labelStyle);
+                GUILayout.Label("LMB — cast (ROD fish / shiny). Catfish needs rod.", _labelStyle);
             }
             else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Net)
             {
-                GUILayout.Label("LMB — scoop shiny / fish in the ring", _labelStyle);
+                GUILayout.Label("LMB — scoop NET fish / rosary / shiny", _labelStyle);
             }
             else if (_equipment != null)
             {

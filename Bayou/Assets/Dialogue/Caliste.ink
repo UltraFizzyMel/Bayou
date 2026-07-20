@@ -1,5 +1,6 @@
  INCLUDE globals.ink
- 
+ EXTERNAL OpenShop()
+
  #portrait: caliste_ardoin_neutral #layout: left #background: merchant
  {caliste_known == "":-> main |-> knownName}
  
@@ -44,11 +45,11 @@ My wares may be of interest.
  ->questions
  
  === shop ===
- (CALL FUNCTION TO OPEN SHOP HERE!!!)
- (AFTER EXITING SHOP RETURN HERE!!!)
- -> questions
+ #speaker: Caliste
+ Fine. Take a look — but don't touch what you can't pay for.
+ ~ OpenShop()
+ -> END
+
  === goodbye ===
  I'll be seeing you.
  -> END
- 
- 

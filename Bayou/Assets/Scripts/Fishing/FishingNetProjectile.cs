@@ -1,4 +1,5 @@
 using Bayou.Environment;
+using Bayou.Fish;
 using Bayou.Quests;
 using UnityEngine;
 
@@ -245,16 +246,38 @@ namespace Bayou.Fishing
 
             Bayou.Audio.FishingAudio.Resolve()?.PlayLanding();
 
-            // Scoop shiny quest item if the net lands on / near it.
-            if (PondShinyCollectible.TryScoopNear(transform.position, shinyScoopRadius))
+            // Scoop one-time loot (shiny / rosary) if the net lands on it.
+            if (PondShinyCollectible.TryScoopNear(transform.position, shinyScoopRadius) ||
+                NetScoopLoot.TryScoopNear(transform.position, shinyScoopRadius))
             {
                 Destroy(gameObject);
+                return;
+            }
+
+            // Rod attract only makes sense if a rod-fish is nearby.
+            if (!HasRodFishNearby(transform.position, 22f))
+            {
+                Debug.Log("[Fishing] Net planted — no rod fish here (use hand net for NET spots).");
                 return;
             }
 
             var attract = GetComponent<FishingAttractPhase>();
             if (attract != null)
                 attract.BeginAttract();
+        }
+
+        private static bool HasRodFishNearby(Vector3 pos, float radius)
+        {
+            var rSq = radius * radius;
+            foreach (var fish in Object.FindObjectsByType<BayouFish>(FindObjectsSortMode.None))
+            {
+                if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod)) continue;
+                var d = fish.transform.position - pos;
+                d.y = 0f;
+                if (d.sqrMagnitude <= rSq) return true;
+            }
+
+            return false;
         }
 
         private void LandOnDry(Collision _)

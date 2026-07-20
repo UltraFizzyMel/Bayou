@@ -159,9 +159,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractTrigger
   keyName: 
+  requiredItemId: 
   playerInRange: 0
   animator: {fileID: 5814389696707125535}
   keyGateManager: {fileID: 0}
+  consumeKeyOnOpen: 0
+  disableCollidersOnOpen: []
 --- !u!1 &8839605162766245494
 GameObject:
   m_ObjectHideFlags: 0

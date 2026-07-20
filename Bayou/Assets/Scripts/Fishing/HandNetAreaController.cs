@@ -105,8 +105,10 @@ namespace Bayou.Fishing
             _lastUseTime = Time.time;
             Bayou.Audio.FishingAudio.Resolve()?.PlayHandNetScoop();
 
-            // Quest shiny in the pond can be scooped with the hand net too.
+            // One-time pond loot (shiny, rosary, etc.) then fish.
             if (PondShinyCollectible.TryScoopNear(center, coverageRadius))
+                return;
+            if (NetScoopLoot.TryScoopNear(center, coverageRadius))
                 return;
 
             TryCatchFishInArea(center, coverageRadius);

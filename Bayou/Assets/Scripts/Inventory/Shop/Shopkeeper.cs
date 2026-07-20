@@ -2,6 +2,10 @@ using UnityEngine;
 
 namespace Bayou.Inventory.Shop
 {
+    /// <summary>
+    /// Holds Caliste's <see cref="ShopDefinition"/>. Prefer opening via dialogue (<c>OpenShop()</c> in Ink).
+    /// Optional proximity interact is off by default so talking to Caliste is the trigger.
+    /// </summary>
     [DisallowMultipleComponent]
     public sealed class Shopkeeper : MonoBehaviour
     {
@@ -10,6 +14,8 @@ namespace Bayou.Inventory.Shop
         [SerializeField] private GameObject visualCue;
         [SerializeField] private float interactRadius = 3f;
         [SerializeField] private string playerTag = "Player";
+        [Tooltip("If on, pressing Interact near this object opens the shop (debug). Prefer Caliste dialogue.")]
+        [SerializeField] private bool openOnInteract;
 
         public ShopDefinition ShopDefinition => shop;
 
@@ -31,7 +37,7 @@ namespace Bayou.Inventory.Shop
 
         private void Update()
         {
-            if (shopUi == null || shop == null) return;
+            if (!openOnInteract || shopUi == null || shop == null) return;
 
             if (_player != null)
             {
@@ -49,7 +55,24 @@ namespace Bayou.Inventory.Shop
 
             var input = InputManager.GetInstance();
             if (input != null && input.GetInteractPressed())
-                shopUi.OpenShop(shop);
+                Open();
+        }
+
+        public void Open()
+        {
+            if (shopUi == null)
+                shopUi = ShopUiBuilder.EnsureInScene(shop) ?? FindFirstObjectByType<ShopUIController>();
+            if (shopUi == null || shop == null)
+            {
+                Debug.LogWarning("[Shopkeeper] Missing shop UI or ShopDefinition.");
+                return;
+            }
+
+            var handmade = InventoryDisplayUI.Active ?? FindFirstObjectByType<InventoryDisplayUI>();
+            if (handmade != null)
+                shopUi.AssignHandmadeInventory(handmade);
+
+            shopUi.OpenShop(shop);
         }
 
         private void OnDrawGizmosSelected()

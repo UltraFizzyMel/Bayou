@@ -4,6 +4,8 @@
  EXTERNAL FinishQuest(questId)
  EXTERNAL HasItem(itemId, count)
  EXTERNAL HandOverItem(itemId, count)
+ EXTERNAL GiveItem(itemId, count)
+ EXTERNAL GrantKey(flagName)
 
  #portrait: father_landry_neutral #layout: left #background: church
 ->collectPondItemStart
@@ -78,6 +80,8 @@
  ===Agreed ===
  Excellent! To venture into the bayou's depths, you'll need to first fetch a lantern a lantern for me.
  Take this key, it will unlock the NorthWest gate to the graveyard.
+ ~ GiveItem("Item_ChurchGraveyardKey", 1)
+ ~ GrantKey("hasKeyChurchToGraveyard")
  What better place to do some soul searching?
  Be careful out there. Not everything is as it seems… Your eyes and ears will be your greatest deceivers.
  ->END

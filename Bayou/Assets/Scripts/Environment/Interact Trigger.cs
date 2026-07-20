@@ -1,69 +1,111 @@
+using Bayou.Inventory;
 using Bayou.Player;
 using UnityEngine;
-using System.Reflection;
 
-public class InteractTrigger : MonoBehaviour
+/// <summary>
+/// Stand near a locked gate and press Interact (E). Opens if the matching key flag is set
+/// or the required key item is in the bag (from Landry, etc.).
+/// </summary>
+public sealed class InteractTrigger : MonoBehaviour
 {
-    [Header("Visual Cue")]
-    // [SerializeField] private GameObject visualCue;
-    [SerializeField] private string keyName;
+    [SerializeField] private string keyName = "hasKeyChurchToGraveyard";
+    [Tooltip("Inventory item asset name. Leave empty to use KeyGateManager mapping for keyName.")]
+    [SerializeField] private string requiredItemId;
     [SerializeField] private bool playerInRange;
     [SerializeField] private Animator animator;
-    [SerializeField] KeyGateManager keyGateManager;
+    [SerializeField] private KeyGateManager keyGateManager;
+    [SerializeField] private bool consumeKeyOnOpen;
+    [SerializeField] private Collider[] disableCollidersOnOpen;
+
+    private bool _isOpen;
 
     private void Awake()
     {
         playerInRange = false;
-        //visualCue.SetActive(false);
+        if (animator == null)
+            animator = GetComponentInParent<Animator>();
     }
 
     private void Start()
     {
-        keyGateManager = Object.FindFirstObjectByType<KeyGateManager>();
+        if (keyGateManager == null)
+            keyGateManager = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
+
+        // Already unlocked this session / from save later.
+        if (keyGateManager != null && keyGateManager.GetFlag(keyName))
+            OpenGate(playLog: false);
     }
 
     private void Update()
     {
-        if (playerInRange)
-        {
-            //visualCue.SetActive(true);
-            //Debug.Log(InputManager.GetInstance().GetInteractPressed());
-            if (InputManager.GetInstance().GetInteractPressed())
-            {
-               bool key = bool.Parse(keyName);
-                FieldInfo field = keyGateManager.GetType().GetField(keyName);
-                if (field.GetValue(keyName).Equals(true))
-                animator.SetBool("isOpen", true);
+        if (_isOpen || !playerInRange) return;
 
-            }
-        }
-        //else { visualCue.SetActive(false); }
+        var input = InputManager.GetInstance();
+        if (input == null || !input.GetInteractPressed())
+            return;
+
+        TryUnlock();
     }
 
-    public void ChangeBoolByName(string name, bool newValue)
+    public void TryUnlock()
     {
-        FieldInfo field = keyGateManager.GetType().GetField(name);
+        if (_isOpen) return;
 
-        if (field != null && field.FieldType == typeof(bool))
+        if (keyGateManager == null)
+            keyGateManager = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
+
+        var itemId = string.IsNullOrWhiteSpace(requiredItemId)
+            ? KeyGateManager.GetItemIdForFlag(keyName)
+            : requiredItemId;
+
+        var unlockedByFlag = keyGateManager != null && keyGateManager.GetFlag(keyName);
+        var inv = InventoryController.Instance;
+        var hasItem = !string.IsNullOrWhiteSpace(itemId) && inv != null && inv.HasItemsById(itemId, 1);
+
+        if (!unlockedByFlag && !hasItem)
         {
-            field.SetValue(keyGateManager, newValue);
-            //Debug.Log($)
+            Debug.Log($"[Gate] Locked — need key ({itemId ?? keyName}).");
+            return;
         }
+
+        if (hasItem && consumeKeyOnOpen && inv != null)
+            inv.TryRemoveItemsById(itemId, 1);
+
+        if (keyGateManager != null && !string.IsNullOrWhiteSpace(keyName))
+            keyGateManager.SetFlag(keyName, true);
+
+        OpenGate(playLog: true);
+    }
+
+    private void OpenGate(bool playLog)
+    {
+        _isOpen = true;
+
+        if (animator != null)
+            animator.SetBool("isOpen", true);
+
+        if (disableCollidersOnOpen != null)
+        {
+            foreach (var col in disableCollidersOnOpen)
+            {
+                if (col != null)
+                    col.enabled = false;
+            }
+        }
+
+        if (playLog)
+            Debug.Log($"[Gate] Opened ({keyName}).");
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<BayouCharacterMotor>(out BayouCharacterMotor bayouCharacterMotor))
-        {
+        if (other.GetComponentInParent<BayouCharacterMotor>() != null)
             playerInRange = true;
-        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.TryGetComponent<BayouCharacterMotor>(out BayouCharacterMotor bayouCharacterMotor))
-        {
+        if (other.GetComponentInParent<BayouCharacterMotor>() != null)
             playerInRange = false;
-        }
     }
 }

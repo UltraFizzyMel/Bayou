@@ -33504,6 +33504,8 @@ MonoBehaviour:
   bonfireTeleportPoint: {fileID: 440194413}
   pondTeleportPoint: {fileID: 0}
   pondTeleportFallback: {x: -14, y: 1.6, z: -40}
+  calisteTeleportPoint: {fileID: 1894075470}
+  calisteTeleportFallback: {x: -81.5, y: 1.6, z: 93.4}
 --- !u!4 &1276397455
 Transform:
   m_ObjectHideFlags: 0
@@ -41994,6 +41996,7 @@ MonoBehaviour:
   visualCue: {fileID: 0}
   interactRadius: 3
   playerTag: Player
+  openOnInteract: 0
 --- !u!4 &1633303697
 Transform:
   m_ObjectHideFlags: 0
@@ -42860,7 +42863,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1675342414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42881,6 +42884,8 @@ MonoBehaviour:
   fleeSpeed: 2.8
   fleeRadius: 3.5
   roamRadius: 5
+  requiredTool: 0
+  isStatic: 0
   player: {fileID: 2078946140}
   inventoryItemWhenCaught: {fileID: 11400000, guid: e15fe0c9a3c00d843866a682e73bca64, type: 2}
   attractSwimSpeed: 2.4
@@ -48653,7 +48658,7 @@ Transform:
   m_GameObject: {fileID: 1894075469}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.0600004, y: 1.6, z: -92.71001}
+  m_LocalPosition: {x: -81.5, y: 1.6, z: 93.4}
   m_LocalScale: {x: 0.6, y: 0.05, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children: []
