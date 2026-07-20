@@ -16186,7 +16186,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gate Pillar Pivot (3)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5814389696707125535, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
