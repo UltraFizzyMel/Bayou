@@ -9,8 +9,18 @@ VAR CollectPondItemQuestId = "CollectPondItemQuest"
 //quest states (questId + "State" for variable name)
 VAR CollectPondItemQuestState = "CAN_START"
 
+ //quest ids(questID + "Id" for variable name
+VAR CollectLanternQuestId = "CollectLanternQuest"
+
+//quest states (questId + "State" for variable name)
+VAR CollectLanternQuestState = "CAN_START"
+
+
+
 //Olivier Variables
 VAR olivier_known = ""
+
+
 
 //Caliste Variables
 VAR caliste_known = ""

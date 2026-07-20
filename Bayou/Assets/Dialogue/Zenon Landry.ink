@@ -18,6 +18,15 @@
     
     - "IN_PROGRESS": -> DeliverItem
     - "CAN_FINISH": -> DeliverItem
+    - "FINISHED":  ->CollectLanternStart
+    - else: -> END
+ }
+ 
+ === CollectLanternStart ===
+{ CollectLanternQuestState :
+    
+    - "IN_PROGRESS": {priest_name == "":-> service|-> knownName}
+    - "CAN_FINISH": {priest_name == "":-> service|-> knownName}
     - "FINISHED":  {priest_name == "":-> service|-> knownName}
     - else: -> END
  }
@@ -78,7 +87,8 @@
  ->Agree
  
  ===Agreed ===
- Excellent! To venture into the bayou's depths, you'll need to first fetch a lantern a lantern for me.
+ Excellent! To venture into the bayou's depths, you'll need to first fetch a lantern a lantern for me. 
+ ~StartQuest(CollectLanternQuestId)
  Take this key, it will unlock the NorthWest gate to the graveyard.
  ~ GiveItem("Item_ChurchGraveyardKey", 1)
  ~ GrantKey("hasKeyChurchToGraveyard")
