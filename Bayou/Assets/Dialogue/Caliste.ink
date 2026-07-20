@@ -9,11 +9,11 @@
  EXTERNAL GiveMoney(amount)
  
  
-#portrait: caliste_ardoin_neutral #layout: left #background: merchant #speaker: Caliste
+#portrait: caliste_ardoin_neutral #layout: left #background: merchant 
 ->SnapperAndMollyQuestStart
 
 === SnapperAndMollyQuestStart ===
-#portrait: caliste_ardoin_neutral #layout: left #background: merchant #speaker: Caliste
+#portrait: caliste_ardoin_neutral #layout: left #background: merchant 
 { SnapperAndMollyQuestState :
     - "REQUIREMENTS_NOT_MET": -> main
     - "CAN_START": -> main
@@ -24,8 +24,7 @@
 }
 
 === notKnown ===
-#speaker: Caliste
-<b>DON'T...</b> Oh it's you.
+<b>DON'T...</b> Oh it's you...
 You want to see my wares?
 -> questions
 
@@ -36,7 +35,6 @@ You want to see my wares?
 -> questions
 
 === main ===
-#speaker: Caliste
 <b>DON'T COME ANY CLOSER!!!</b>
 -> calm
 
@@ -50,7 +48,6 @@ You want to see my wares?
 // Start as soon as this knot runs (same Continue as the first line),
 // so the quest log updates even if the player skips the last line.
 ~ StartQuest("SnapperAndMollyQuest")
-#speaker: Caliste
 Talk...
 You seem...
 Fetch me a Snapper and a Molly, then I'll talk.
@@ -63,12 +60,10 @@ My wares may be of interest...
 { handedSnapper && handedMolly:
     ~ FinishQuest(SnapperAndMollyQuestId)
     ~ GiveMoney(150)
-    #speaker: Caliste
     You might just be the real deal sonny.
     I'll let you peek at my wares.
     -> questions
 - else:
-    #speaker: Caliste
     Hmm. Bring me one Snapper and one Molly.
     -> END
 }
@@ -93,7 +88,6 @@ My wares may be of interest...
  ->questions
 
 === shop ===
- #speaker: Caliste
  Take a look, but don't touch what you can't pay for.
  I've got a proper rod… and a key for the Foggy Marsh gate.
  ~ OpenShop()

@@ -82,7 +82,8 @@ Be careful out there.
  { handed:
     ~ FinishQuest(CollectPondItemQuestId)
     Excellent! Teach a man to fish and they'll fish indeed.
-    Take this cross. As long as you wear it, you'll be protected from that which lurks in the Bayou's shadows.
+    Take this cross. 
+    As long as you wear it, you'll be protected from that which lurks in the Bayou's shadows.
     ->Agree
  - else:
     Hmm… I don't see anything shiny on you. Come back when you have it.
