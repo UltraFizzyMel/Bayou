@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace Bayou.Audio
 {
@@ -10,6 +11,7 @@ namespace Bayou.Audio
     {
         [SerializeField] private AudioClip startMenuMusic;
         [SerializeField] private AudioSource source;
+        [SerializeField] private AudioMixerGroup musicGroup;
         [SerializeField] private float volume = 0.75f;
         [SerializeField] private bool playOnEnable = true;
 
@@ -21,6 +23,8 @@ namespace Bayou.Audio
             source.loop = true;
             source.spatialBlend = 0f;
             source.volume = volume;
+            if (musicGroup != null)
+                source.outputAudioMixerGroup = musicGroup;
         }
 
         private void OnEnable()
@@ -34,6 +38,8 @@ namespace Bayou.Audio
             if (startMenuMusic == null || source == null) return;
             source.clip = startMenuMusic;
             source.volume = volume;
+            if (musicGroup != null)
+                source.outputAudioMixerGroup = musicGroup;
             if (!source.isPlaying)
                 source.Play();
         }

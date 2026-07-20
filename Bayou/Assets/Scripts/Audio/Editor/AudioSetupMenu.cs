@@ -111,6 +111,7 @@ namespace Bayou.Audio.Editor
             foreach (var zone in zones)
             {
                 Undo.RegisterCompleteObjectUndo(zone, "Wire Area Music Zone");
+                AssignSerialized(zone, "musicGroup", musicGroup);
                 var name = zone.gameObject.name.ToLowerInvariant();
                 if (name.Contains("church"))
                 {
@@ -134,10 +135,9 @@ namespace Bayou.Audio.Editor
             if (menu != null)
             {
                 AssignClip(menu, "startMenuMusic", music, "Start Menu #01");
+                AssignSerialized(menu, "musicGroup", musicGroup);
                 EditorUtility.SetDirty(menu);
             }
-
-            _ = musicGroup; // reserved for future mixer wiring on zone sources
         }
 
         private static Dictionary<string, AudioClip> LoadClipsByName(string folder)

@@ -29,6 +29,9 @@ namespace Bayou.Testing
         [SerializeField] private string testBonfireName = "Bayou Bonfire";
         [SerializeField] private Transform shopTeleportPoint;
         [SerializeField] private Transform bonfireTeleportPoint;
+        [SerializeField] private Transform pondTeleportPoint;
+        [Tooltip("Used when pondTeleportPoint is unset (church pond / fish area).")]
+        [SerializeField] private Vector3 pondTeleportFallback = new Vector3(-14f, 1.6f, -40f);
 
         private InventoryController _inventory;
         private PlayerWallet _wallet;
@@ -49,6 +52,7 @@ namespace Bayou.Testing
             if (!enableInPlayMode) return;
 
             RefreshReferences();
+            AudioSettings.ApplySavedVolumesIfPresent();
 
             // Starter fish silently — do not force inventory/shop open.
             if (grantStarterFishOnPlay && _inventory != null && _inventory.GetFishItems().Count == 0)
@@ -77,8 +81,12 @@ namespace Bayou.Testing
             var kb = Keyboard.current;
             if (kb == null) return;
 #endif
-            // ` toggles panel. Shift+1–9 are playtest actions (F-keys are captured by Unity Editor).
+            // ` toggles panel. V = volume. Esc closes volume. Shift+1–9 are playtest actions.
             if (WasBackquotePressed()) showHud = !showHud;
+            if (WasKeyPressed(KeyCode.V)) ToggleAudioSettings();
+            if (AudioSettings.IsOpen && WasKeyPressed(KeyCode.Escape))
+                AudioSettings.CloseIfOpen();
+
             if (!IsShiftHeld()) return;
 
             if (WasDigitPressed(1)) AddFish();
@@ -90,6 +98,7 @@ namespace Bayou.Testing
             else if (WasDigitPressed(7)) DeleteSave();
             else if (WasDigitPressed(8)) LoadSave();
             else if (WasDigitPressed(9)) ToggleInventory();
+            else if (WasDigitPressed(0)) TeleportToPond();
         }
 
         private void OnGUI()
@@ -112,10 +121,13 @@ namespace Bayou.Testing
             GUILayout.Space(4f);
             GUILayout.Label("Gameplay:  I inventory  |  E interact  |  R rotate item");
             GUILayout.Label("Fishing: LMB cast/charge/reel  |  Esc/Q/RMB cancel");
+            GUILayout.Label("Audio:  V volume settings  |  Esc close");
             GUILayout.Label("Keys:  ` hide panel  |  Shift+1..9 (5=shop toggle)");
             GUILayout.Space(6f);
 
             _hudScroll = GUILayout.BeginScrollView(_hudScroll, GUILayout.Height(260f));
+            DrawActionButton("V — Toggle volume settings", ToggleAudioSettings);
+            DrawActionButton("Shift+0 — Go to church pond / fish", TeleportToPond);
             DrawActionButton("Shift+1 — Add fish", AddFish);
             DrawActionButton("Shift+2 — Add $100", () => AddMoney(100));
             DrawActionButton("Shift+3 — Go to shop", () => TeleportTo(shopTeleportPoint));
@@ -202,6 +214,22 @@ namespace Bayou.Testing
                 return;
             }
 
+            TeleportPlayer(point.position, point.forward);
+        }
+
+        public void TeleportToPond()
+        {
+            if (pondTeleportPoint != null)
+            {
+                TeleportTo(pondTeleportPoint);
+                return;
+            }
+
+            TeleportPlayer(pondTeleportFallback, Vector3.forward);
+        }
+
+        private static void TeleportPlayer(Vector3 position, Vector3 forward)
+        {
             var player = GameObject.FindGameObjectWithTag("Player");
             if (player == null)
             {
@@ -209,9 +237,12 @@ namespace Bayou.Testing
                 return;
             }
 
+            if (forward.sqrMagnitude < 0.01f)
+                forward = Vector3.forward;
+
             player.transform.SetPositionAndRotation(
-                point.position,
-                Quaternion.LookRotation(point.forward, Vector3.up));
+                position,
+                Quaternion.LookRotation(forward.normalized, Vector3.up));
         }
 
         public void ToggleShop()
@@ -328,6 +359,8 @@ namespace Bayou.Testing
             ui.Toggle();
         }
 
+        public void ToggleAudioSettings() => AudioSettings.ToggleOpen();
+
         private ItemDefinition ResolveFishItem()
         {
             if (testFishItem != null)
@@ -374,22 +407,40 @@ namespace Bayou.Testing
 
         private static bool WasDigitPressed(int digit)
         {
-            if (digit < 1 || digit > 9) return false;
+            if (digit < 0 || digit > 9) return false;
 
             var kb = Keyboard.current;
             if (kb == null) return false;
 
-            var key = (Key)((int)Key.Digit1 + (digit - 1));
+            var key = digit == 0 ? Key.Digit0 : (Key)((int)Key.Digit1 + (digit - 1));
             return kb[key].wasPressedThisFrame;
+        }
+
+        private static bool WasKeyPressed(KeyCode keyCode)
+        {
+            var kb = Keyboard.current;
+            if (kb == null) return false;
+
+            return keyCode switch
+            {
+                KeyCode.V => kb.vKey.wasPressedThisFrame,
+                KeyCode.Escape => kb.escapeKey.wasPressedThisFrame,
+                _ => false
+            };
         }
 #else
         private static void EnsureKeyboardDevice() { }
 
-        private static bool IsShiftHeld() => false;
+        private static bool IsShiftHeld() =>
+            Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-        private static bool WasBackquotePressed() => false;
+        private static bool WasBackquotePressed() => Input.GetKeyDown(KeyCode.BackQuote);
 
-        private static bool WasDigitPressed(int digit) => false;
+        private static bool WasDigitPressed(int digit) =>
+            digit >= 0 && digit <= 9 && Input.GetKeyDown(KeyCode.Alpha0 + digit);
+
+        private static bool WasKeyPressed(KeyCode keyCode) => Input.GetKeyDown(keyCode);
 #endif
     }
 }
+

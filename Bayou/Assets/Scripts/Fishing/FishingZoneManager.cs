@@ -8,7 +8,7 @@ namespace Bayou.Fishing
         public static FishingZoneManager Instance { get; private set; }
 
         [SerializeField] private List<FishingZone> fishingZones = new List<FishingZone>();
-        
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -16,20 +16,20 @@ namespace Bayou.Fishing
                 Destroy(gameObject);
                 return;
             }
-            
+
             Instance = this;
         }
 
         public static bool IsInFishingZone(Vector3 position)
         {
             if (Instance == null) return true; // Allow fishing if no zones exist
-            
+
             foreach (var zone in Instance.fishingZones)
             {
                 if (zone != null && zone.IsPositionInZone(position))
                     return true;
             }
-            
+
             return false;
         }
 
@@ -48,11 +48,11 @@ namespace Bayou.Fishing
     public class FishingZone : MonoBehaviour
     {
         public enum ZoneShape { Sphere, Box }
-        
+
         [SerializeField] private ZoneShape shape = ZoneShape.Sphere;
         [SerializeField] private float radius = 10f;
         [SerializeField] private Vector3 boxSize = new Vector3(10f, 5f, 10f);
-        
+
         private void Start()
         {
             if (FishingZoneManager.Instance != null)
@@ -71,13 +71,13 @@ namespace Bayou.Fishing
             {
                 case ZoneShape.Sphere:
                     return Vector3.Distance(transform.position, position) <= radius;
-                
+
                 case ZoneShape.Box:
                     var localPos = transform.InverseTransformPoint(position);
                     return Mathf.Abs(localPos.x) <= boxSize.x * 0.5f &&
                            Mathf.Abs(localPos.y) <= boxSize.y * 0.5f &&
                            Mathf.Abs(localPos.z) <= boxSize.z * 0.5f;
-                
+
                 default:
                     return false;
             }
@@ -86,13 +86,13 @@ namespace Bayou.Fishing
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = new Color(0f, 1f, 0f, 0.3f);
-            
+
             switch (shape)
             {
                 case ZoneShape.Sphere:
                     Gizmos.DrawWireSphere(transform.position, radius);
                     break;
-                
+
                 case ZoneShape.Box:
                     Gizmos.DrawWireCube(transform.position, boxSize);
                     break;

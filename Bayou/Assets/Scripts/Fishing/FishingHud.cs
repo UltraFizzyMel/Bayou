@@ -4,6 +4,7 @@ namespace Bayou.Fishing
 {
     /// <summary>
     /// Lightweight playtest HUD for fishing phases (attract / reel / cancel).
+    /// Always shows which tool is held so rod casting is not a mystery.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class FishingHud : MonoBehaviour
@@ -27,20 +28,25 @@ namespace Bayou.Fishing
 
             var attract = FindActiveAttract();
             var reel = FindActiveReel();
-            if (_caster == null && attract == null && reel == null)
+            if (_caster == null && _equipment == null && attract == null && reel == null)
                 return;
 
             var casting = _caster != null && _caster.Phase != FishingCastPhase.Idle;
             var hasNet = _caster != null && _caster.HasActiveNet;
-            if (!casting && !hasNet && attract == null && reel == null)
-                return;
+            var activePhase = casting || hasNet || attract != null || reel != null;
 
-            var area = new Rect(16f, Screen.height - 140f, 420f, 120f);
+            // Compact tip while idle; taller box during cast phases.
+            var height = activePhase ? 120f : 52f;
+            var area = new Rect(16f, Screen.height - height - 16f, 460f, height);
             GUI.Box(area, GUIContent.none, _boxStyle);
             GUILayout.BeginArea(new Rect(area.x + 12f, area.y + 10f, area.width - 24f, area.height - 16f));
 
             if (_equipment != null)
-                GUILayout.Label($"Tool: {_equipment.CurrentTool}  (Tab / 1=Rod / 2=Net)", _labelStyle);
+            {
+                GUILayout.Label(
+                    $"Holding: {_equipment.CurrentItem}  (Tab · 0 none · 1 rod · 2 net · 3 lantern)",
+                    _labelStyle);
+            }
 
             if (reel != null && reel.IsActive)
             {
@@ -65,10 +71,26 @@ namespace Bayou.Fishing
                 DrawBar(_caster.CurrentCharge01);
                 GUILayout.Label("Esc / Q / RMB cancel", _labelStyle);
             }
-            else if (hasNet)
+            else if (hasNet && _caster != null)
             {
-                GUILayout.Label("Net in flight…", _labelStyle);
+                var net = FishingNetProjectile.ActiveInWater;
+                if (net != null && net.Phase == FishingNetPhase.LandedInWater)
+                    GUILayout.Label("Net planted — wiggle A/D (or cast onto shiny)", _labelStyle);
+                else
+                    GUILayout.Label("Net in flight…", _labelStyle);
                 GUILayout.Label("Esc / Q / RMB cancel", _labelStyle);
+            }
+            else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Rod)
+            {
+                GUILayout.Label("LMB — cast into pond (land on green shiny)", _labelStyle);
+            }
+            else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Net)
+            {
+                GUILayout.Label("LMB — scoop shiny / fish in the ring", _labelStyle);
+            }
+            else if (_equipment != null)
+            {
+                GUILayout.Label("Press 1 for rod to fish", _labelStyle);
             }
 
             GUILayout.EndArea();

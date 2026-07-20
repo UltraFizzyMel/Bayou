@@ -2,9 +2,9 @@
  EXTERNAL StartQuest(questId)
  EXTERNAL AdvanceQuest(questId)
  EXTERNAL FinishQuest(questId)
- 
- 
- 
+ EXTERNAL HasItem(itemId, count)
+ EXTERNAL HandOverItem(itemId, count)
+
  #portrait: father_landry_neutral #layout: left #background: church
 ->collectPondItemStart
 
@@ -37,29 +37,31 @@
  I might be able to help you if you return the favour.
  Find me something shiny from the church pond. 
  You'll know it when you see it.
- + {CollectPondItemQuestState == "CAN_FINISH"} [Do you mean this?] ->DeliveredItem 
-     ~FinishQuest(CollectPondItemQuestId)
-     //~CollectPondItemQuestState = "FINISHED"
+ + {HasItem("Item_ShinyPond", 1)} [Do you mean this?] ->DeliveredItem
  +[Right away.]
      ~StartQuest(CollectPondItemQuestId)
-     //~CollectPondItemQuestState = "IN_PROGRESS"
      ->END
  
  ===DeliverItem
  Welcome back!
  Did you find it?
     +[Not Yet…] -> UnDeliveredItem
-    +{CollectPondItemQuestState == "CAN_FINISH"}[I have.] ->DeliveredItem
-    ~FinishQuest(CollectPondItemQuestId)
-    //~CollectPondItemQuestState = "FINISHED"
+    +{HasItem("Item_ShinyPond", 1)}[I have.] ->DeliveredItem
  
  ===UnDeliveredItem
  Come back as soon as you have it. ->END
  
  === DeliveredItem ===
- Excellent! Teach a man to fish and they'll fish indeed.
- Take this cross. As long as you wear it, you'll be protected from that which lurks in the Bayou's shadows.
- ->Agree
+ ~ temp handed = HandOverItem("Item_ShinyPond", 1)
+ { handed:
+    ~ FinishQuest(CollectPondItemQuestId)
+    Excellent! Teach a man to fish and they'll fish indeed.
+    Take this cross. As long as you wear it, you'll be protected from that which lurks in the Bayou's shadows.
+    ->Agree
+ - else:
+    Hmm… I don't see anything shiny on you. Come back when you have it.
+    -> END
+ }
  
  
  === Agree ===
@@ -113,5 +115,3 @@ How might I be of service?
  === goodbye ===
  until next time my friend.
  -> END
- 
- 
