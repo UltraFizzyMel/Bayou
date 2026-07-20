@@ -259,9 +259,12 @@ namespace Bayou.Inventory
         {
             if (definition == null || Bag == null) return 0;
             var count = 0;
+            var id = definition.Id;
             foreach (var item in Bag.AllItems)
             {
-                if (item?.definition == definition)
+                if (item?.definition == null) continue;
+                // Builds may hold a different SO instance (Resources vs scene ref) — match by id too.
+                if (item.definition == definition || item.definition.MatchesId(id))
                     count++;
             }
 
@@ -274,8 +277,7 @@ namespace Bayou.Inventory
             var count = 0;
             foreach (var item in Bag.AllItems)
             {
-                if (item?.definition != null &&
-                    string.Equals(item.definition.name, itemId, StringComparison.OrdinalIgnoreCase))
+                if (item?.definition != null && item.definition.MatchesId(itemId))
                     count++;
             }
 
@@ -299,7 +301,9 @@ namespace Bayou.Inventory
             var snapshot = new List<InventoryItemInstance>(Bag.AllItems);
             foreach (var item in snapshot)
             {
-                if (item?.definition != definition) continue;
+                if (item?.definition == null) continue;
+                if (item.definition != definition && !item.definition.MatchesId(definition.Id))
+                    continue;
                 Bag.Remove(item);
                 removed++;
                 if (removed >= count) break;
@@ -320,8 +324,7 @@ namespace Bayou.Inventory
             var snapshot = new List<InventoryItemInstance>(Bag.AllItems);
             foreach (var item in snapshot)
             {
-                if (item?.definition == null) continue;
-                if (!string.Equals(item.definition.name, itemId, StringComparison.OrdinalIgnoreCase))
+                if (item?.definition == null || !item.definition.MatchesId(itemId))
                     continue;
                 Bag.Remove(item);
                 removed++;

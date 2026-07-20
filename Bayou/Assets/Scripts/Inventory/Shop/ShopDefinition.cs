@@ -53,7 +53,7 @@ namespace Bayou.Inventory.Shop
         {
             if (item == null || playerInventory == null) return false;
             if (item.maxStack > 1) return false;
-            return playerInventory.HasItemsById(item.name, 1);
+            return playerInventory.HasItemsById(item.Id, 1);
         }
 
         private static string ResolveCompartment(InventoryBagModel bag, string preferred)

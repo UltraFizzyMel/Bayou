@@ -1,0 +1,9 @@
+<linker>
+  <!-- Keep key / inventory id APIs available under Managed Stripping in player builds. -->
+  <assembly fullname="Assembly-CSharp">
+    <type fullname="KeyGateManager" preserve="all" />
+    <type fullname="InteractTrigger" preserve="all" />
+    <type fullname="Bayou.Inventory.ItemDefinition" preserve="all" />
+    <type fullname="Bayou.Inventory.ItemCatalog" preserve="all" />
+  </assembly>
+</linker>

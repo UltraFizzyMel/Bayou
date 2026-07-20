@@ -136,6 +136,9 @@ public class InkExternalFunctions
     private static ItemDefinition ResolveItem(string itemId)
     {
         var catalog = GameSaveSystem.Instance != null ? GameSaveSystem.Instance.ItemCatalog : null;
+        if (catalog == null)
+            catalog = Resources.Load<ItemCatalog>("Bayou/ItemCatalog");
+
         if (catalog != null)
         {
             var fromCatalog = catalog.Resolve(itemId);
@@ -148,7 +151,7 @@ public class InkExternalFunctions
 
         foreach (var def in Resources.LoadAll<ItemDefinition>("Bayou/Items"))
         {
-            if (def != null && string.Equals(def.name, itemId, System.StringComparison.OrdinalIgnoreCase))
+            if (def != null && def.MatchesId(itemId))
                 return def;
         }
 

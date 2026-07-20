@@ -17258,6 +17258,14 @@ PrefabInstance:
       value: hasKeyChurchToGraveyard
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: requiredItemId
+      value: Item_ChurchGraveyardKey
+      objectReference: {fileID: 0}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: requiredKeyItem
+      value: 
+      objectReference: {fileID: 11400000, guid: b7c8d9e0f1a234567890abcdef123456, type: 2}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: keyGateManager
       value: 
       objectReference: {fileID: 1456890940}
@@ -17303,7 +17311,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6636544843230949352, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Name
-      value: Gate Pillar Pivot
+      value: Church Graveyard Gate
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -41682,6 +41690,26 @@ PrefabInstance:
       propertyPath: requiredItemId
       value: Item_ChurchFoggyMarshKey
       objectReference: {fileID: 0}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: requiredKeyItem
+      value: 
+      objectReference: {fileID: 11400000, guid: d2a2b3c4d5e6789012345678abcdef02, type: 2}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: autoOpenWhenUnlocked
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6288123988765975276, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: m_Size.x
+      value: 0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 6288123988765975276, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: m_Size.y
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 6288123988765975276, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: m_Size.z
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 5123198821984407101, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -41728,7 +41756,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6636544843230949352, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Name
-      value: Gate Pillar Pivot (1)
+      value: Foggy Marsh Gate
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -53125,10 +53153,6 @@ PrefabInstance:
       propertyPath: keyGateManager
       value: 
       objectReference: {fileID: 1456890940}
-    - target: {fileID: 5123198821984407101, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6292213623205623122, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_LocalPosition.x
       value: 41.32
@@ -53175,7 +53199,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6636544843230949352, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
