@@ -142,6 +142,16 @@ public class InkExternalFunctions
             if (fromCatalog != null) return fromCatalog;
         }
 
+        // Build-safe fallbacks (no AssetDatabase).
+        var fromResources = Resources.Load<ItemDefinition>($"Bayou/Items/{itemId}");
+        if (fromResources != null) return fromResources;
+
+        foreach (var def in Resources.LoadAll<ItemDefinition>("Bayou/Items"))
+        {
+            if (def != null && string.Equals(def.name, itemId, System.StringComparison.OrdinalIgnoreCase))
+                return def;
+        }
+
 #if UNITY_EDITOR
         return UnityEditor.AssetDatabase.LoadAssetAtPath<ItemDefinition>(
             $"Assets/Inventory/Items/{itemId}.asset");

@@ -21,7 +21,7 @@ namespace Bayou.UI
             "R  Rotate item\n" +
             "Tab  Cycle tools\n" +
             "1 Rod · 2 Net · 3 Lantern · 0 None\n" +
-            "Cast / scoop with held tool\n" +
+            "Left click  Cast / scoop with tool\n" +
             "Esc / Q  Cancel cast\n" +
             "V  Volume";
 
@@ -355,6 +355,9 @@ namespace Bayou.UI
             tmp.raycastTarget = false;
             tmp.enableWordWrapping = true;
             tmp.overflowMode = TextOverflowModes.Ellipsis;
+            // Builds strip missing fonts — always pin TMP default (LiberationSans SDF).
+            if (TMP_Settings.defaultFontAsset != null)
+                tmp.font = TMP_Settings.defaultFontAsset;
             return tmp;
         }
 

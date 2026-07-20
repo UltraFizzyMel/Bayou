@@ -472,26 +472,34 @@ namespace Bayou.Inventory.Shop
 
             var playerBag = _playerInventory.Bag;
             var grabOffset = merchantPanel?.CurrentDragGrabOffset ?? Vector2Int.zero;
+            System.Func<string, bool> unlocked = _playerInventory.IsCompartmentUnlocked;
 
             // Prefer handmade player inventory (overlay-safe camera).
             var handmade = ResolveHandmadeUnderPoint(eventData.position, null);
             if (handmade != null)
             {
-                if (!handmade.ScreenPointToGrid(eventData.position, null,
-                        out var compartmentId, out var hoverX, out var hoverY))
+                string compartmentId;
+                int gx, gy;
+                if (handmade.ScreenPointToGrid(eventData.position, null,
+                        out compartmentId, out var hoverX, out var hoverY) &&
+                    unlocked(compartmentId))
+                {
+                    ResolveAnchor(playerBag, item, compartmentId, hoverX, hoverY, grabOffset, out gx, out gy);
+                    if (!playerBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&
+                        !playerBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy, unlocked))
+                        return false;
+                }
+                else if (!playerBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy, unlocked))
+                {
                     return false;
-
-                if (!_playerInventory.IsCompartmentUnlocked(compartmentId))
-                    return false;
-
-                ResolveAnchor(playerBag, item, compartmentId, hoverX, hoverY, grabOffset, out var gx, out var gy);
-                if (!playerBag.CanPlace(item, compartmentId, gx, gy, item.rotation))
-                    return false;
+                }
 
                 _merchantBag.Remove(item);
                 if (!_playerInventory.TryPlace(item, compartmentId, gx, gy, item.rotation))
                 {
-                    _merchantBag.HoldItem(item);
+                    if (!_merchantBag.TryFindFirstFitAnywhere(item, out var backId, out var bx, out var by) ||
+                        !_merchantBag.TryPlace(item, backId, bx, by, item.rotation))
+                        _merchantBag.HoldItem(item);
                     return false;
                 }
 
@@ -503,21 +511,28 @@ namespace Bayou.Inventory.Shop
             if (targetUi == null)
                 return false;
 
-            if (!targetUi.ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
-                    out var cId, out var hx, out var hy))
+            string cId;
+            int ax, ay;
+            if (targetUi.ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
+                    out cId, out var hx, out var hy) &&
+                unlocked(cId))
+            {
+                ResolveAnchor(playerBag, item, cId, hx, hy, grabOffset, out ax, out ay);
+                if (!playerBag.CanPlace(item, cId, ax, ay, item.rotation) &&
+                    !playerBag.TryFindFirstFitAnywhere(item, out cId, out ax, out ay, unlocked))
+                    return false;
+            }
+            else if (!playerBag.TryFindFirstFitAnywhere(item, out cId, out ax, out ay, unlocked))
+            {
                 return false;
-
-            if (!_playerInventory.IsCompartmentUnlocked(cId))
-                return false;
-
-            ResolveAnchor(playerBag, item, cId, hx, hy, grabOffset, out var ax, out var ay);
-            if (!playerBag.CanPlace(item, cId, ax, ay, item.rotation))
-                return false;
+            }
 
             _merchantBag.Remove(item);
             if (!targetUi.Inventory.TryPlace(item, cId, ax, ay, item.rotation))
             {
-                _merchantBag.HoldItem(item);
+                if (!_merchantBag.TryFindFirstFitAnywhere(item, out var backId, out var bx, out var by) ||
+                    !_merchantBag.TryPlace(item, backId, bx, by, item.rotation))
+                    _merchantBag.HoldItem(item);
                 return false;
             }
 

@@ -20,6 +20,8 @@ public sealed class InteractTrigger : MonoBehaviour
     [SerializeField] private bool autoOpenWhenUnlocked = true;
 
     private bool _isOpen;
+    private InventoryController _inv;
+    private bool _subscribed;
 
     private void Awake()
     {
@@ -37,12 +39,20 @@ public sealed class InteractTrigger : MonoBehaviour
         if (keyGateManager == null)
             keyGateManager = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
 
+        TrySubscribeInventory();
         if (CanUnlock())
             OpenGate(playLog: false);
     }
 
+    private void OnEnable() => TrySubscribeInventory();
+
+    private void OnDisable() => UnsubscribeInventory();
+
     private void Update()
     {
+        if (!_subscribed)
+            TrySubscribeInventory();
+
         if (_isOpen || !playerInRange) return;
 
         var input = InputManager.GetInstance();
@@ -78,6 +88,15 @@ public sealed class InteractTrigger : MonoBehaviour
             keyGateManager.SetFlag(keyName, true);
 
         OpenGate(playLog: true);
+    }
+
+    /// <summary>Called after buying a key / syncing flags — opens if unlocked and auto-open is on.</summary>
+    public void TryAutoOpenIfUnlocked()
+    {
+        if (_isOpen) return;
+        if (!CanUnlock()) return;
+        if (autoOpenWhenUnlocked || playerInRange)
+            TryUnlock();
     }
 
     private bool CanUnlock()
@@ -133,6 +152,31 @@ public sealed class InteractTrigger : MonoBehaviour
         }
 
         disableCollidersOnOpen = found.ToArray();
+    }
+
+    private void TrySubscribeInventory()
+    {
+        var inv = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
+        if (inv == null || _subscribed) return;
+        _inv = inv;
+        _inv.InventoryChanged += OnInventoryChanged;
+        _subscribed = true;
+    }
+
+    private void UnsubscribeInventory()
+    {
+        if (_inv != null && _subscribed)
+            _inv.InventoryChanged -= OnInventoryChanged;
+        _subscribed = false;
+        _inv = null;
+    }
+
+    private void OnInventoryChanged()
+    {
+        if (_isOpen) return;
+        // Open when the matching key arrives in the bag (shop Close Deal).
+        if (autoOpenWhenUnlocked && CanUnlock())
+            TryUnlock();
     }
 
     private void OnTriggerEnter(Collider other)

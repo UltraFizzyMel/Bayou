@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -31,11 +32,22 @@ namespace Bayou.UI
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void WireSceneModuleOnLoad()
         {
+            // AfterSceneLoad only fires for the first scene (MainMenu in builds).
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            ApplyForActiveScene();
+        }
+
+        private static void OnSceneLoaded(UnityEngine.SceneManagement.Scene scene, LoadSceneMode mode) =>
+            ApplyForActiveScene();
+
+        private static void ApplyForActiveScene()
+        {
             var module = Object.FindFirstObjectByType<InputSystemUIInputModule>();
             if (module != null)
                 Wire(module, null);
 
-            // InventoryTest often has an EventSystem with no bootstrap / no actions asset.
+            // InventoryTest / MainMenu often have an EventSystem with no bootstrap / no actions asset.
             EnsureBootstrapComponent();
         }
 
@@ -113,7 +125,12 @@ namespace Bayou.UI
             if (fromEditor != null)
                 return fromEditor;
 #endif
-            // Prefer any loaded asset that already has a UI map.
+            // Build-safe: Resources/Bayou/Input/InputSystem_Actions
+            var fromResources = Resources.Load<InputActionAsset>("Bayou/Input/InputSystem_Actions");
+            if (fromResources != null)
+                return fromResources;
+
+            // Prefer any loaded asset that already has a UI map (scene-referenced).
             foreach (var asset in Resources.FindObjectsOfTypeAll<InputActionAsset>())
             {
                 if (asset != null && asset.FindActionMap("UI", throwIfNotFound: false) != null)

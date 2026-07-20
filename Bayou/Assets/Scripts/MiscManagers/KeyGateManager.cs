@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using System.Reflection;
 using Bayou.Inventory;
 using UnityEngine;
 
 /// <summary>
 /// Tracks which keys the player has earned and maps flag names → inventory item ids.
+/// Uses explicit flag access (no reflection) so IL2CPP player builds keep working.
 /// </summary>
 public sealed class KeyGateManager : MonoBehaviour
 {
@@ -81,6 +81,17 @@ public sealed class KeyGateManager : MonoBehaviour
             if (inv.HasItemsById(pair.Value, 1))
                 SetFlag(pair.Key, true);
         }
+
+        // Buying a key while standing at the gate (or after Close Deal) should open it.
+        TryOpenReadyGates();
+    }
+
+    /// <summary>Asks every gate to open if its key/flag is now satisfied.</summary>
+    public void TryOpenReadyGates()
+    {
+        var gates = FindObjectsByType<InteractTrigger>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        for (var i = 0; i < gates.Length; i++)
+            gates[i]?.TryAutoOpenIfUnlocked();
     }
 
     public static string GetItemIdForFlag(string flagName)
@@ -92,27 +103,47 @@ public sealed class KeyGateManager : MonoBehaviour
     public bool GetFlag(string flagName)
     {
         if (string.IsNullOrWhiteSpace(flagName)) return false;
-        var field = GetType().GetField(flagName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        if (field == null || field.FieldType != typeof(bool)) return false;
-        return (bool)field.GetValue(this);
+        return flagName switch
+        {
+            "hasKeyChurchToGraveyard" => hasKeyChurchToGraveyard,
+            "hasKeyChurchToFoggyMarsh" => hasKeyChurchToFoggyMarsh,
+            "hasKeyChurchToBrackishShore" => hasKeyChurchToBrackishShore,
+            "hasKeyGraveyardOne" => hasKeyGraveyardOne,
+            "hasKeyGraveyardTwo" => hasKeyGraveyardTwo,
+            _ => false
+        };
     }
 
     public void SetFlag(string flagName, bool value)
     {
         if (string.IsNullOrWhiteSpace(flagName)) return;
-        var field = GetType().GetField(flagName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-        if (field == null || field.FieldType != typeof(bool))
+        switch (flagName)
         {
-            Debug.LogWarning($"[KeyGate] Unknown flag '{flagName}'.");
-            return;
+            case "hasKeyChurchToGraveyard":
+                hasKeyChurchToGraveyard = value;
+                break;
+            case "hasKeyChurchToFoggyMarsh":
+                hasKeyChurchToFoggyMarsh = value;
+                break;
+            case "hasKeyChurchToBrackishShore":
+                hasKeyChurchToBrackishShore = value;
+                break;
+            case "hasKeyGraveyardOne":
+                hasKeyGraveyardOne = value;
+                break;
+            case "hasKeyGraveyardTwo":
+                hasKeyGraveyardTwo = value;
+                break;
+            default:
+                Debug.LogWarning($"[KeyGate] Unknown flag '{flagName}'.");
+                break;
         }
-
-        field.SetValue(this, value);
     }
 
-    /// <summary>Marks the key flag and (optionally) syncs from inventory presence.</summary>
+    /// <summary>Marks the key flag and opens any ready gates.</summary>
     public void GrantKeyFlag(string flagName)
     {
         SetFlag(flagName, true);
+        TryOpenReadyGates();
     }
 }
