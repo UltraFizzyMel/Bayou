@@ -1,12 +1,15 @@
 using Bayou.Player;
 using UnityEngine;
+using System.Reflection;
 
 public class InteractTrigger : MonoBehaviour
 {
     [Header("Visual Cue")]
-   // [SerializeField] private GameObject visualCue;
-
+    // [SerializeField] private GameObject visualCue;
+    [SerializeField] private string keyName;
     [SerializeField] private bool playerInRange;
+    [SerializeField] private Animator animator;
+    [SerializeField] KeyGateManager keyGateManager;
 
     private void Awake()
     {
@@ -22,11 +25,25 @@ public class InteractTrigger : MonoBehaviour
             //Debug.Log(InputManager.GetInstance().GetInteractPressed());
             if (InputManager.GetInstance().GetInteractPressed())
             {
-                
-               
+               bool key = bool.Parse(keyName);
+                FieldInfo field = keyGateManager.GetType().GetField(keyName);
+                if (field.GetValue(keyName).Equals(true))
+                animator.SetBool("isOpen", true);
+
             }
         }
         //else { visualCue.SetActive(false); }
+    }
+
+    public void ChangeBoolByName(string name, bool newValue)
+    {
+        FieldInfo field = keyGateManager.GetType().GetField(name);
+
+        if (field != null && field.FieldType == typeof(bool))
+        {
+            field.SetValue(keyGateManager, newValue);
+            //Debug.Log($)
+        }
     }
 
     private void OnTriggerEnter(Collider other)
