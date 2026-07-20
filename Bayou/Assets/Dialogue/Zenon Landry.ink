@@ -32,8 +32,8 @@
  }
 
 === LanternReminder ===
-The lantern waits past the Foggy Marsh gate — north-east of here.
-My graveyard key will not open that gate.
+The lantern waits past Caliste's maze gate — north-east through the foggy graves.
+My graveyard key will not open her gate.
 Buy the Foggy Marsh Key from Caliste once she trusts you.
 Be careful out there.
 -> END

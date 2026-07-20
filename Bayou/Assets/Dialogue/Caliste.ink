@@ -89,7 +89,8 @@ My wares may be of interest...
 
 === shop ===
  Take a look, but don't touch what you can't pay for.
- I've got a proper rod… and a key for the Foggy Marsh gate.
+ I've got a proper rod… and a key for the maze gate beside me.
+ That path runs north-east through the fog — toward the lantern.
  ~ OpenShop()
  -> END
 

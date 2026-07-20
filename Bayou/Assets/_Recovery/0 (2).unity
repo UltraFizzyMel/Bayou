@@ -9672,40 +9672,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5321449222891687488, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
       propertyPath: m_Name
-      value: Caliste Maze Gate
+      value: Graveyard Gate
       objectReference: {fileID: 0}
     - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
       propertyPath: keyName
-      value: hasKeyChurchToFoggyMarsh
+      value: hasKeyGraveyardOne
       objectReference: {fileID: 0}
-    - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: requiredItemId
-      value: Item_ChurchFoggyMarshKey
-      objectReference: {fileID: 0}
-    - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: requiredKeyItem
-      value: 
-      objectReference: {fileID: 11400000, guid: d2a2b3c4d5e6789012345678abcdef02, type: 2}
     - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
       propertyPath: keyGateManager
       value: 
       objectReference: {fileID: 1456890940}
-    - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: autoOpenWhenUnlocked
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063907619998566049, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: m_Size.x
-      value: 0.22
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063907619998566049, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: m_Size.y
-      value: 0.08
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063907619998566049, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: m_Size.z
-      value: 0.14
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17282,6 +17258,10 @@ PrefabInstance:
       value: hasKeyChurchToGraveyard
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: keyGateManager
+      value: 
+      objectReference: {fileID: 1456890940}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: requiredItemId
       value: Item_ChurchGraveyardKey
       objectReference: {fileID: 0}
@@ -17289,10 +17269,6 @@ PrefabInstance:
       propertyPath: requiredKeyItem
       value: 
       objectReference: {fileID: 11400000, guid: b7c8d9e0f1a234567890abcdef123456, type: 2}
-    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
-      propertyPath: keyGateManager
-      value: 
-      objectReference: {fileID: 1456890940}
     - target: {fileID: 6292213623205623122, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_LocalPosition.x
       value: -24.53
@@ -41704,7 +41680,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: keyName
-      value: 
+      value: hasKeyChurchToFoggyMarsh
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: keyGateManager
@@ -41712,17 +41688,17 @@ PrefabInstance:
       objectReference: {fileID: 1456890940}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: requiredItemId
-      value: 
+      value: Item_ChurchFoggyMarshKey
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: requiredKeyItem
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 11400000, guid: d2a2b3c4d5e6789012345678abcdef02, type: 2}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: autoOpenWhenUnlocked
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+    - target: {fileID: 5123198821984407101, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
@@ -41737,10 +41713,6 @@ PrefabInstance:
     - target: {fileID: 6288123988765975276, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Size.z
       value: 0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 5123198821984407101, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6292213623205623122, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_LocalPosition.x
@@ -41784,7 +41756,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6636544843230949352, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Name
-      value: Church East Gate (unused)
+      value: Foggy Marsh Gate
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
