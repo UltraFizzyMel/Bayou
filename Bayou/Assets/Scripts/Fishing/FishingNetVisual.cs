@@ -104,13 +104,7 @@ namespace Bayou.Fishing
 
         private static Material MakeUnlit(Color color)
         {
-            var shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color");
-            var mat = new Material(shader);
-            if (mat.HasProperty("_BaseColor"))
-                mat.SetColor("_BaseColor", color);
-            else if (mat.HasProperty("_Color"))
-                mat.SetColor("_Color", color);
-            return mat;
+            return Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(color);
         }
     }
 }

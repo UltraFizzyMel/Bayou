@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.ItemDefinition
   displayName: Sailfin Molly
   description: A small lively molly. Scoop with a hand net.
-  icon: {fileID: 21300000, guid: 702f392d02b218c4b90dd0fd8547c8b7, type: 3}
+  icon: {fileID: 21300000, guid: 3c6e57b0b93016644ab5d8bcdb68765b, type: 3}
   shape:
     width: 2
     height: 1

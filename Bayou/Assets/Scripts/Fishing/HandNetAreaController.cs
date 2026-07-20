@@ -184,13 +184,7 @@ namespace Bayou.Fishing
             areaRing.endWidth = 0.06f;
             areaRing.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             areaRing.receiveShadows = false;
-            var shader =
-                Shader.Find("Universal Render Pipeline/Unlit")
-                ?? Shader.Find("Sprites/Default");
-            var mat = new Material(shader);
-            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", ringColor);
-            else if (mat.HasProperty("_Color")) mat.SetColor("_Color", ringColor);
-            areaRing.material = mat;
+            areaRing.material = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(ringColor);
         }
 
         private void HideRing()

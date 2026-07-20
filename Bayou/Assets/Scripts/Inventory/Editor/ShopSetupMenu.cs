@@ -25,25 +25,24 @@ namespace Bayou.Inventory.Editor
             CreateSampleShopDefinition();
 
             var layout = AssetDatabase.LoadAssetAtPath<BackpackLayoutDefinition>("Assets/Inventory/BackpackLayout_Case.asset");
-            var fish = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/Inventory/Items/Item_Fish.asset");
-            var herb = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/Inventory/Items/Item_Herb.asset");
-            var netPatch = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/Inventory/Items/Item_NetPatch.asset");
+            var rod = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/Inventory/Items/Item_FishingRod.asset");
+            var foggyKey = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/Inventory/Items/Item_ChurchFoggyMarshKey.asset");
             var shopDef = AssetDatabase.LoadAssetAtPath<ShopDefinition>("Assets/Inventory/Shop/Shop_BayouMerchant.asset");
 
-            SetItemPrices(fish, buyPrice: 80, sellPrice: 40);
-            SetItemPrices(herb, buyPrice: 25, sellPrice: 12);
-            SetItemPrices(netPatch, buyPrice: 120, sellPrice: 60);
+            SetItemPrices(rod, buyPrice: 120, sellPrice: 40);
+            SetItemPrices(foggyKey, buyPrice: 90, sellPrice: 20);
 
             if (shopDef != null)
             {
                 var shopSo = new SerializedObject(shopDef);
+                shopSo.FindProperty("merchantName").stringValue = "Caliste";
                 shopSo.FindProperty("layout").objectReferenceValue = layout;
                 var stock = shopSo.FindProperty("stock");
                 stock.arraySize = 0;
-                AddStock(stock, herb, 0);
-                AddStock(stock, netPatch, 0);
-                AddStock(stock, fish, 0);
+                AddStock(stock, rod, 0);
+                AddStock(stock, foggyKey, 0);
                 shopSo.ApplyModifiedPropertiesWithoutUndo();
+                EditorUtility.SetDirty(shopDef);
             }
 
             var player = GameObject.FindGameObjectWithTag("Player");
@@ -218,6 +217,9 @@ namespace Bayou.Inventory.Editor
             var entry = stock.GetArrayElementAtIndex(stock.arraySize - 1);
             entry.FindPropertyRelative("item").objectReferenceValue = item;
             entry.FindPropertyRelative("rotation").intValue = rotation;
+            entry.FindPropertyRelative("compartmentId").stringValue = "case";
+            entry.FindPropertyRelative("gridX").intValue = -1;
+            entry.FindPropertyRelative("gridY").intValue = -1;
         }
 
         private static GameObject CreateRect(string name, Transform parent)

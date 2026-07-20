@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Bayou.Rendering;
 using Bayou.Fish;
 using Bayou.Inventory;
 using UnityEngine;
@@ -303,11 +304,7 @@ namespace Bayou.Fishing
         {
             var rend = go.GetComponent<MeshRenderer>();
             if (rend == null) return;
-            var shader = Shader.Find("Universal Render Pipeline/Unlit") ?? Shader.Find("Unlit/Color");
-            var mat = new Material(shader);
-            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", color);
-            else if (mat.HasProperty("_Color")) mat.SetColor("_Color", color);
-            rend.sharedMaterial = mat;
+            rend.sharedMaterial = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(color);
         }
 
         private void OnDrawGizmosSelected()

@@ -193,13 +193,7 @@ namespace Bayou.Fishing
             lr.receiveShadows = false;
             lr.startWidth = startW;
             lr.endWidth = endW;
-            var shader =
-                Shader.Find("Universal Render Pipeline/Unlit")
-                ?? Shader.Find("Sprites/Default");
-            var mat = new Material(shader);
-            if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", c);
-            else if (mat.HasProperty("_Color")) mat.SetColor("_Color", c);
-            lr.material = mat;
+            lr.material = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(c);
         }
 
         private void EnsureTrajectoryLine()
@@ -218,15 +212,7 @@ namespace Bayou.Fishing
             trajectoryLine.receiveShadows = false;
             trajectoryLine.startWidth = 0.07f;
             trajectoryLine.endWidth = 0.02f;
-            var shader =
-                Shader.Find("Universal Render Pipeline/Unlit")
-                ?? Shader.Find("Sprites/Default");
-            var mat = new Material(shader);
-            if (mat.HasProperty("_BaseColor"))
-                mat.SetColor("_BaseColor", new Color(0.3f, 0.95f, 1f, 0.85f));
-            else if (mat.HasProperty("_Color"))
-                mat.SetColor("_Color", new Color(0.3f, 0.95f, 1f, 0.85f));
-            trajectoryLine.material = mat;
+            trajectoryLine.material = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(new Color(0.3f, 0.95f, 1f, 0.85f));
         }
 
         private void Update()
