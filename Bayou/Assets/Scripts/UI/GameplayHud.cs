@@ -2,6 +2,7 @@ using Bayou.Inventory.Shop;
 using Bayou.Save;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Bayou.UI
@@ -40,6 +41,41 @@ namespace Bayou.UI
         public static GameplayHud Instance { get; private set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void Bootstrap()
+        {
+            // AfterSceneLoad only runs for the first loaded scene (MainMenu in builds).
+            // Re-apply on every scene change so the HUD appears in-game, not on the menu.
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            ApplyForActiveScene();
+        }
+
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) => ApplyForActiveScene();
+
+        private static void ApplyForActiveScene()
+        {
+            if (IsGameplayScene())
+                EnsureInScene();
+            else
+                DestroyAllInScene();
+        }
+
+        private static bool IsGameplayScene()
+        {
+            var scene = SceneManager.GetActiveScene();
+            if (!scene.IsValid()) return false;
+
+            var name = scene.name;
+            if (string.Equals(name, "MainMenu", System.StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            // Prefer a real gameplay marker; fall back to known play scenes.
+            if (Object.FindFirstObjectByType<QuestManager>(FindObjectsInactive.Include) != null)
+                return true;
+
+            return string.Equals(name, "MovementTest", System.StringComparison.OrdinalIgnoreCase);
+        }
+
         private static void EnsureInScene()
         {
             if (Object.FindFirstObjectByType<GameplayHud>(FindObjectsInactive.Include) != null)
@@ -47,6 +83,16 @@ namespace Bayou.UI
 
             var go = new GameObject("GameplayHud");
             go.AddComponent<GameplayHud>();
+        }
+
+        private static void DestroyAllInScene()
+        {
+            var existing = Object.FindObjectsByType<GameplayHud>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < existing.Length; i++)
+            {
+                if (existing[i] != null)
+                    Object.Destroy(existing[i].gameObject);
+            }
         }
 
         private void Awake()
