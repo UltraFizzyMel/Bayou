@@ -24,12 +24,27 @@
  
  === CollectLanternStart ===
 { CollectLanternQuestState :
-    
-    - "IN_PROGRESS": {priest_name == "":-> service|-> knownName}
-    - "CAN_FINISH": {priest_name == "":-> service|-> knownName}
-    - "FINISHED":  {priest_name == "":-> service|-> knownName}
+    - "CAN_START": -> LanternReminder
+    - "IN_PROGRESS": -> LanternReminder
+    - "CAN_FINISH": -> LanternFound
+    - "FINISHED": -> LanternFound
     - else: -> END
  }
+
+=== LanternReminder ===
+The lantern waits past the Foggy Marsh gate — north-east of here.
+Caliste in the graveyard may sell the key… if you earn her trust.
+Be careful out there.
+-> END
+
+=== LanternFound ===
+{ HasItem("Item_Lantern", 1):
+    The lantern… you found it.
+    Rest now, child. You've seen enough of this bayou for one night.
+    -> END
+- else:
+    -> LanternReminder
+}
  
  
  === FirstMeeting ===

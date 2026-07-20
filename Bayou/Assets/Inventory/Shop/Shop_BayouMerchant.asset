@@ -15,17 +15,17 @@ MonoBehaviour:
   merchantName: Caliste
   layout: {fileID: 11400000, guid: 03f59b81f9cc81547af6e0713d4551fa, type: 2}
   stock:
-  - item: {fileID: 11400000, guid: dba47288da7522a4d915f7c31973216b, type: 2}
+  - item: {fileID: 11400000, guid: d1a2b3c4d5e6789012345678abcdef01, type: 2}
+    rotation: 0
+    compartmentId: 
+    gridX: 0
+    gridY: 0
+  - item: {fileID: 11400000, guid: d2a2b3c4d5e6789012345678abcdef02, type: 2}
     rotation: 0
     compartmentId: 
     gridX: 0
     gridY: 0
   - item: {fileID: 11400000, guid: 4b8455a457be26141be9a4cb9b449b90, type: 2}
-    rotation: 0
-    compartmentId: 
-    gridX: 0
-    gridY: 0
-  - item: {fileID: 11400000, guid: e15fe0c9a3c00d843866a682e73bca64, type: 2}
     rotation: 0
     compartmentId: 
     gridX: 0

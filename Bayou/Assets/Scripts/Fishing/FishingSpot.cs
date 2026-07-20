@@ -58,6 +58,12 @@ namespace Bayou.Fishing
 
         public static IReadOnlyList<FishingSpot> AllSpots => All;
 
+        private void Awake()
+        {
+            if (waterBounds != null)
+                radius = FitRadiusToWater(radius);
+        }
+
         private void OnEnable()
         {
             if (!All.Contains(this))
@@ -71,6 +77,14 @@ namespace Bayou.Fishing
             if (spawnOnStart)
                 SpawnContents();
         }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (waterBounds != null)
+                radius = FitRadiusToWater(radius);
+        }
+#endif
 
         public bool Contains(Vector3 worldPos)
         {

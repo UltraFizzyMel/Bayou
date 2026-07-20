@@ -2,6 +2,7 @@
 #error BayouFishingEquipment requires the New Input System (ENABLE_INPUT_SYSTEM).
 #endif
 
+using Bayou.Inventory;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -52,7 +53,13 @@ namespace Bayou.Fishing
         [SerializeField] private InputActionReference selectNetAction;
         [SerializeField] private InputActionReference selectLanternAction;
 
-        [SerializeField] private BayouHeldItem startingItem = BayouHeldItem.Rod;
+        [SerializeField] private BayouHeldItem startingItem = BayouHeldItem.Net;
+        [Tooltip("Rod can only be held after buying Item_FishingRod from Caliste.")]
+        [SerializeField] private bool requireRodItem = true;
+        [SerializeField] private string fishingRodItemId = "Item_FishingRod";
+        [Tooltip("Lantern can only be held after picking up Item_Lantern.")]
+        [SerializeField] private bool requireLanternItem = true;
+        [SerializeField] private string lanternItemId = "Item_Lantern";
         [SerializeField] private Animator animator;
 
         private static readonly BayouHeldItem[] CycleOrder =
@@ -119,6 +126,12 @@ namespace Bayou.Fishing
 
             if (WasSelect(selectRodAction, Key.Digit1))
             {
+                if (!CanHold(BayouHeldItem.Rod))
+                {
+                    Debug.Log("[Equipment] Buy a Fishing Rod from Caliste first.");
+                    return;
+                }
+
                 animator.SetBool("isHoldingRod", true);
                 animator.SetBool("isHoldingLantern", false);
                 ApplyItem(BayouHeldItem.Rod);
@@ -135,6 +148,12 @@ namespace Bayou.Fishing
 
             if (WasSelect(selectLanternAction, Key.Digit3))
             {
+                if (!CanHold(BayouHeldItem.Lantern))
+                {
+                    Debug.Log("[Equipment] Find the lantern in the Foggy Marsh first.");
+                    return;
+                }
+
                 animator.SetBool("isHoldingRod", false);
                 animator.SetBool("isHoldingLantern", true);
                 ApplyItem(BayouHeldItem.Lantern);
@@ -157,14 +176,45 @@ namespace Bayou.Fishing
                 }
             }
 
-            ApplyItem(CycleOrder[(idx + 1) % CycleOrder.Length]);
+            for (var step = 1; step <= CycleOrder.Length; step++)
+            {
+                var next = CycleOrder[(idx + step) % CycleOrder.Length];
+                if (CanHold(next))
+                {
+                    ApplyItem(next);
+                    return;
+                }
+            }
         }
 
         /// <summary>Prefer <see cref="ApplyItem"/>.</summary>
         public void ApplyTool(BayouFishingTool tool) => ApplyItem((BayouHeldItem)tool);
 
+        public bool CanHold(BayouHeldItem item)
+        {
+            switch (item)
+            {
+                case BayouHeldItem.Rod:
+                    return !requireRodItem || HasItem(fishingRodItemId);
+                case BayouHeldItem.Lantern:
+                    return !requireLanternItem || HasItem(lanternItemId);
+                default:
+                    return true;
+            }
+        }
+
+        private static bool HasItem(string itemId)
+        {
+            if (string.IsNullOrWhiteSpace(itemId)) return true;
+            var inv = InventoryController.Instance;
+            return inv != null && inv.HasItemsById(itemId, 1);
+        }
+
         public void ApplyItem(BayouHeldItem item)
         {
+            if (!CanHold(item))
+                item = BayouHeldItem.Net;
+
             // Don't leave the rod mid-cast / while a line is out.
             if (CurrentItem == BayouHeldItem.Rod && item != BayouHeldItem.Rod &&
                 rodCaster != null &&

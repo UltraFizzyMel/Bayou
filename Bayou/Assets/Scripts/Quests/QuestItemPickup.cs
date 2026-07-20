@@ -1,3 +1,4 @@
+using Bayou.Demo;
 using Bayou.Inventory;
 using UnityEngine;
 
@@ -15,6 +16,8 @@ namespace Bayou.Quests
         [SerializeField] private bool destroyOnPickup = true;
         [SerializeField] private GameObject visualCue;
         [SerializeField] private string pickupPrompt = "Pick up";
+        [Tooltip("If true, picking this up finishes the demo (lantern).")]
+        [SerializeField] private bool endDemoOnPickup;
 
         private bool _playerInRange;
 
@@ -67,6 +70,9 @@ namespace Bayou.Quests
             }
 
             Debug.Log($"[QuestItemPickup] Picked up {item.displayName} ({pickupPrompt}).");
+
+            if (endDemoOnPickup)
+                DemoEndController.Show();
 
             if (destroyOnPickup)
                 Destroy(gameObject);

@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b87e08a98376a4493fe7b0048bf0b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectLanternQuestStep
+  lanternItemId: Item_Lantern

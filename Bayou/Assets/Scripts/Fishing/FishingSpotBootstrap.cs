@@ -6,12 +6,13 @@ using UnityEngine;
 namespace Bayou.Fishing
 {
     /// <summary>
-    /// Creates MovementTest fishing spots at play start when none exist in the scene.
-    /// Layout: Tutorial / Church / Graveyard entrance / tree pond / Caliste pond.
+    /// Creates fishing spots (Tutorial / Church / Graveyard / Caliste).
+    /// Prefer baking into the scene via Bayou/Fishing/Bake Spots Into MovementTest Scene.
+    /// Runtime <see cref="EnsureInScene"/> is only a fallback if none exist.
     /// </summary>
     public static class FishingSpotBootstrap
     {
-        private const string RootName = "FishingSpots";
+        public const string RootName = "FishingSpots";
 
         private readonly struct WaterAnchor
         {
@@ -25,12 +26,32 @@ namespace Bayou.Fishing
             }
         }
 
+        /// <summary>Play-mode / build fallback when spots were not baked into the scene.</summary>
         public static void EnsureInScene()
         {
             if (Object.FindFirstObjectByType<FishingSpot>() != null)
                 return;
             if (GameObject.Find(RootName) != null)
                 return;
+
+            CreateSpotsInScene(replaceExisting: false);
+        }
+
+        /// <summary>
+        /// Creates the authored spot layout. Returns the root, or null if items are missing.
+        /// </summary>
+        public static GameObject CreateSpotsInScene(bool replaceExisting)
+        {
+            if (replaceExisting)
+                RemoveExistingSpots();
+
+            if (!replaceExisting)
+            {
+                if (Object.FindFirstObjectByType<FishingSpot>() != null)
+                    return GameObject.Find(RootName);
+                if (GameObject.Find(RootName) != null)
+                    return GameObject.Find(RootName);
+            }
 
             var catalog = GameSaveSystem.Instance != null ? GameSaveSystem.Instance.ItemCatalog : null;
             var snapper = Resolve(catalog, "Item_RedSnapper");
@@ -40,18 +61,14 @@ namespace Bayou.Fishing
 
             if (snapper == null || molly == null || catfish == null || rosary == null)
             {
-                Debug.LogWarning("[FishingSpots] Missing fish/rosary items in ItemCatalog — spots not created.");
-                return;
+                Debug.LogWarning("[FishingSpots] Missing fish/rosary items — spots not created.");
+                return null;
             }
 
-            // Replace the old lone church fish (generic Item_Fish, no tool rules).
-            var legacy = GameObject.Find("Fish");
-            if (legacy != null && legacy.GetComponent<FishingSpot>() == null)
-                legacy.SetActive(false);
+            DisableLegacyFish();
 
             var root = new GameObject(RootName);
 
-            // TUTORIAL — 2 Red Snappers (NET)
             CreateSpot(root.transform, "Tutorial_Net_Snappers",
                 ResolveWater("Water (1)", new Vector3(3f, 0.15f, -86f), "Tutorial Area"),
                 7f, FishCatchTool.Net,
@@ -60,7 +77,6 @@ namespace Bayou.Fishing
                     Fish(snapper, FishCatchTool.Net, 2, true, new Color(0.9f, 0.25f, 0.2f))
                 });
 
-            // CHURCH — 2 Red Snappers (NET) + one-time Rosary (NET)
             CreateSpot(root.transform, "Church_Net",
                 ResolveWater("Water", new Vector3(-22f, 0.15f, -43.5f), null),
                 9f, FishCatchTool.Net,
@@ -73,7 +89,6 @@ namespace Bayou.Fishing
                     Loot(rosary, new Color(0.95f, 0.85f, 0.3f), new Vector3(1.2f, 0f, -0.8f))
                 });
 
-            // GRAVEYARD — small entrance: 1 Red Snapper (NET)
             CreateSpot(root.transform, "Graveyard_Entrance_Net",
                 ResolveWater("Water (4)", new Vector3(-100f, 0.15f, 100f), "Graveyard Water Sources"),
                 5f, FishCatchTool.Net,
@@ -82,7 +97,6 @@ namespace Bayou.Fishing
                     Fish(snapper, FishCatchTool.Net, 1, true, new Color(0.9f, 0.25f, 0.2f))
                 });
 
-            // GRAVEYARD — big pond bottom-left (tree): 2 Molly NET + 1 Catfish ROD
             CreateSpot(root.transform, "Graveyard_TreePond",
                 ResolveWater("Water (1)", new Vector3(-68f, 0.15f, 47f), "Graveyard Water Sources"),
                 10f, FishCatchTool.Net,
@@ -92,7 +106,6 @@ namespace Bayou.Fishing
                     Fish(catfish, FishCatchTool.Rod, 1, true, new Color(0.25f, 0.25f, 0.3f))
                 });
 
-            // Big pond next to Caliste — 2 Sailfin Molly (NET)
             CreateSpot(root.transform, "CalistePond_Net",
                 ResolveWater("Water (3)", new Vector3(-70f, 0.15f, 92f), "Graveyard Water Sources"),
                 9f, FishCatchTool.Net,
@@ -102,6 +115,39 @@ namespace Bayou.Fishing
                 });
 
             Debug.Log("[FishingSpots] Created Tutorial / Church / Graveyard / Caliste spots.");
+            return root;
+        }
+
+        public static void RemoveExistingSpots()
+        {
+            var root = GameObject.Find(RootName);
+            if (root != null)
+                DestroyGo(root);
+
+            foreach (var spot in Object.FindObjectsByType<FishingSpot>(FindObjectsSortMode.None))
+            {
+                if (spot != null)
+                    DestroyGo(spot.gameObject);
+            }
+        }
+
+        public static void DisableLegacyFish()
+        {
+            var legacy = GameObject.Find("Fish");
+            if (legacy != null && legacy.GetComponent<FishingSpot>() == null)
+                legacy.SetActive(false);
+        }
+
+        private static void DestroyGo(GameObject go)
+        {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+            {
+                Object.DestroyImmediate(go);
+                return;
+            }
+#endif
+            Object.Destroy(go);
         }
 
         private static ItemDefinition Resolve(ItemCatalog catalog, string id)

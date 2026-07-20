@@ -21,5 +21,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 497a731e2fcc72a418cffd12b3cbd33c, type: 2}
   questStepPrefabs:
   - {fileID: 7010378617243886321, guid: 338d873d27b58c04abf16b633d736567, type: 3}
-  moneyReward: 0
-  MiscReward: 
+  moneyReward: 150
+  MiscReward: Shop unlocked 

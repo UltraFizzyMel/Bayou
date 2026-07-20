@@ -346,6 +346,7 @@ public class DialogueManager : MonoBehaviour
             if (splitTag.Length != 2)             
             {
                 Debug.LogError("Tag could not be appropriately parsed: " + tag);
+                continue;
             }
             //trim method cleans up any whitespace on beginning or end of string
             string tagKey = splitTag[0].Trim();
@@ -389,7 +390,7 @@ public class DialogueManager : MonoBehaviour
         foreach (Choice choice in currentChoices)
         {
             choices[index].gameObject.SetActive(true);
-            choicesText[index].text = choice.text;
+            choicesText[index].text = string.IsNullOrWhiteSpace(choice.text) ? "…" : choice.text.Trim();
             index++;
         }
         //Go through the remaining choices the UI supports and make sure they're hidden
@@ -398,7 +399,8 @@ public class DialogueManager : MonoBehaviour
             choices[i].gameObject.SetActive(false);
         }
 
-        StartCoroutine(SelectFirstChoice());
+        if (index > 0)
+            StartCoroutine(SelectFirstChoice());
     }
 
     private void HideChoices()

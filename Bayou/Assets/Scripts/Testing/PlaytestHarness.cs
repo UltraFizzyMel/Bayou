@@ -1,4 +1,3 @@
-using Bayou.Fishing;
 using Bayou.Inventory;
 using Bayou.Inventory.Shop;
 using Bayou.Inventory.UI;
@@ -53,9 +52,6 @@ namespace Bayou.Testing
 
         private void Start()
         {
-            // Spots are world content, not a playtest-only cheat.
-            FishingSpotBootstrap.EnsureInScene();
-
             if (!enableInPlayMode) return;
 
             RefreshReferences();
@@ -136,6 +132,7 @@ namespace Bayou.Testing
             DrawActionButton("V — Toggle volume settings", ToggleAudioSettings);
             DrawActionButton("Shift+0 — Go to church pond / fish", TeleportToPond);
             DrawActionButton("Shift+1 — Add fish", AddFish);
+            DrawActionButton("Add Red Snapper (inventory preview)", AddRedSnapper);
             DrawActionButton("Shift+2 — Add $100", () => AddMoney(100));
             DrawActionButton("Shift+3 — Go to Caliste", TeleportToCaliste);
             DrawActionButton("Shift+4 — Go to bonfire", () => TeleportTo(bonfireTeleportPoint));
@@ -193,14 +190,35 @@ namespace Bayou.Testing
                 return;
             }
 
+            TryAddPlaytestItem(fish);
+        }
+
+        public void AddRedSnapper()
+        {
+            var snapper = ResolveCatalogItem("Item_RedSnapper");
+            if (snapper == null)
+            {
+                Debug.LogWarning("[Playtest] Item_RedSnapper missing from ItemCatalog.");
+                return;
+            }
+
+            TryAddPlaytestItem(snapper);
+        }
+
+        private void TryAddPlaytestItem(ItemDefinition item)
+        {
+            if (item == null) return;
+
             if (_inventory == null)
             {
                 Debug.LogWarning("[Playtest] No InventoryController found.");
                 return;
             }
 
-            if (!_inventory.TryAddItem(fish))
-                Debug.LogWarning("[Playtest] Could not add fish item to inventory.");
+            if (!_inventory.TryAddItem(item) && !_inventory.TryHoldNewItem(item, out _))
+                Debug.LogWarning($"[Playtest] Could not add {item.displayName} — bag full?");
+            else
+                Debug.Log($"[Playtest] Added {item.displayName}.");
         }
 
         public void AddMoney(int amount)
@@ -475,7 +493,7 @@ namespace Bayou.Testing
             if (testFishItem != null)
                 return testFishItem;
 
-            var catalog = _saveSystem?.ItemCatalog;
+            var catalog = ResolveCatalog();
             if (catalog != null)
             {
                 foreach (var item in catalog.AllDefinitions)
@@ -486,6 +504,22 @@ namespace Bayou.Testing
             }
 
             return null;
+        }
+
+        private ItemDefinition ResolveCatalogItem(string itemId)
+        {
+            var catalog = ResolveCatalog();
+            if (catalog == null) return null;
+            return catalog.Resolve(itemId);
+        }
+
+        private ItemCatalog ResolveCatalog()
+        {
+            if (_saveSystem == null)
+                _saveSystem = GameSaveSystem.Instance;
+            return _saveSystem != null
+                ? _saveSystem.ItemCatalog
+                : GameSaveSystem.Instance?.ItemCatalog;
         }
 
 #if ENABLE_INPUT_SYSTEM

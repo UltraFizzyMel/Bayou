@@ -44,3 +44,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c327829a21814c44ada2dd96eadbbe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SnapperAndMollyQuestStep
+  snapperItemId: Item_RedSnapper
+  mollyItemId: Item_SailfinMolly

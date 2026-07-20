@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Reflection;
+using Bayou.Inventory;
 using UnityEngine;
 
 /// <summary>
@@ -24,15 +25,62 @@ public sealed class KeyGateManager : MonoBehaviour
         { "hasKeyGraveyardTwo", "Item_GraveyardKeyTwo" }
     };
 
+    private InventoryController _inv;
+    private bool _subscribed;
+
     private void Awake()
     {
         Instance = this;
     }
 
+    private void OnEnable() => TrySubscribe();
+
+    private void Start() => SyncKeysFromInventory();
+
+    private void Update()
+    {
+        if (!_subscribed)
+            TrySubscribe();
+    }
+
     private void OnDestroy()
     {
+        Unsubscribe();
         if (Instance == this)
             Instance = null;
+    }
+
+    private void TrySubscribe()
+    {
+        var inv = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
+        if (inv == null || _subscribed) return;
+        _inv = inv;
+        _inv.InventoryChanged += OnInventoryChanged;
+        _subscribed = true;
+        SyncKeysFromInventory();
+    }
+
+    private void Unsubscribe()
+    {
+        if (_inv != null && _subscribed)
+            _inv.InventoryChanged -= OnInventoryChanged;
+        _subscribed = false;
+        _inv = null;
+    }
+
+    private void OnInventoryChanged() => SyncKeysFromInventory();
+
+    /// <summary>Sets key flags for any matching key items currently in the bag (e.g. bought from Caliste).</summary>
+    public void SyncKeysFromInventory()
+    {
+        var inv = _inv ?? InventoryController.Instance;
+        if (inv == null) return;
+
+        foreach (var pair in FlagToItemId)
+        {
+            if (inv.HasItemsById(pair.Value, 1))
+                SetFlag(pair.Key, true);
+        }
     }
 
     public static string GetItemIdForFlag(string flagName)

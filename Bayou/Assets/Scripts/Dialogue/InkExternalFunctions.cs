@@ -11,10 +11,12 @@ public class InkExternalFunctions
         story.BindExternalFunction("StartQuest", (string questId) => StartQuest(questId));
         story.BindExternalFunction("AdvanceQuest", (string questId) => AdvanceQuest(questId));
         story.BindExternalFunction("FinishQuest", (string questId) => FinishQuest(questId));
-        story.BindExternalFunction("HasItem", (string itemId, int count) => HasItem(itemId, count));
+        // Choice conditions evaluate HasItem during Ink lookahead — must be lookahead-safe.
+        story.BindExternalFunction("HasItem", (string itemId, int count) => HasItem(itemId, count), lookaheadSafe: true);
         story.BindExternalFunction("HandOverItem", (string itemId, int count) => HandOverItem(itemId, count));
         story.BindExternalFunction("GiveItem", (string itemId, int count) => GiveItem(itemId, count));
         story.BindExternalFunction("GrantKey", (string flagName) => GrantKey(flagName));
+        story.BindExternalFunction("GiveMoney", (int amount) => GiveMoney(amount));
         story.BindExternalFunction("OpenShop", () => OpenShop());
     }
 
@@ -27,6 +29,7 @@ public class InkExternalFunctions
         story.UnbindExternalFunction("HandOverItem");
         story.UnbindExternalFunction("GiveItem");
         story.UnbindExternalFunction("GrantKey");
+        story.UnbindExternalFunction("GiveMoney");
         story.UnbindExternalFunction("OpenShop");
     }
 
@@ -100,6 +103,20 @@ public class InkExternalFunctions
 
         mgr.GrantKeyFlag(flagName);
         Debug.Log($"[Ink] Granted key flag '{flagName}'.");
+    }
+
+    private static void GiveMoney(int amount)
+    {
+        if (amount == 0) return;
+        var wallet = PlayerWallet.Instance ?? UnityEngine.Object.FindFirstObjectByType<PlayerWallet>();
+        if (wallet == null)
+        {
+            Debug.LogWarning("[Ink] GiveMoney: no PlayerWallet.");
+            return;
+        }
+
+        wallet.Add(amount);
+        Debug.Log($"[Ink] Gave ${amount}.");
     }
 
     private static ItemDefinition ResolveItem(string itemId)

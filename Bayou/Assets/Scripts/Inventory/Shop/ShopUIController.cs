@@ -343,6 +343,10 @@ namespace Bayou.Inventory.Shop
             _merchantBag = null;
             _playerInventory.NotifyChanged();
             handmadePlayerInventoryUi?.Refresh();
+
+            // Buying Caliste's Foggy Marsh key (etc.) should unlock matching gates.
+            var gates = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
+            gates?.SyncKeysFromInventory();
         }
 
         private void ApplySplitLayout(bool active)
