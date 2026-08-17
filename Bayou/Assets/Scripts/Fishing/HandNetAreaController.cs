@@ -2,15 +2,26 @@
 #error HandNetAreaController requires the New Input System (ENABLE_INPUT_SYSTEM).
 #endif
 
+using Bayou.Creatures;
 using Bayou.Fish;
+using Bayou.Player;
 using Bayou.Quests;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace Bayou.Fishing
 {
+    /// <summary>Hand-net behavior: fishing scoop when safe, melee when pursued.</summary>
+    public enum HandNetMode
+    {
+        Fishing,
+        Combat
+    }
+
     /// <summary>
-    /// Short-range hand net: shows coverage on the ground/water and on use overlaps fish in that area.
+    /// Short-range hand net. Context switches automatically:
+    /// safe → scoop fish/loot; pursued → melee swing against creatures.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class HandNetAreaController : MonoBehaviour
@@ -19,33 +30,37 @@ namespace Bayou.Fishing
         [SerializeField] private Transform aimTransform;
         [SerializeField] private Transform netOrigin;
 
-        [Header("Reach & coverage")]
+        [Header("Fishing scoop")]
         [Tooltip("Max horizontal distance from player to net center (short throw).")]
         [SerializeField] private float maxReach = 2.8f;
-
         [Tooltip("Radius of the catch / preview circle on the surface.")]
         [SerializeField] private float coverageRadius = 1.6f;
+        [SerializeField] private float fishingCooldown = 0.55f;
+        [SerializeField] private Color fishingRingColor = new(0.95f, 0.75f, 0.15f, 0.85f);
 
+        [Header("Combat melee (when pursued)")]
+        [SerializeField] private float meleeReach = 2.1f;
+        [SerializeField] private float meleeRadius = 1.35f;
+        [SerializeField] private float meleeCooldown = 0.35f;
+        [SerializeField] private Color combatRingColor = new(0.95f, 0.25f, 0.2f, 0.9f);
+        [Tooltip("How far away a hunting creature can be for combat mode to engage.")]
+        [SerializeField] private float pursuitDetectRange = 45f;
+
+        [Header("Shared")]
         [SerializeField] private LayerMask surfaceMask = ~0;
-
-        [Tooltip("Layers that contain fish colliders (prefer a dedicated Fish layer). Default: all layers for prototyping.")]
         [SerializeField] private LayerMask fishMask = ~0;
-
-        [Header("Input")]
         [SerializeField] private InputActionReference useNetAction;
-
-        [Header("Timing")]
-        [SerializeField] private float useCooldown = 0.55f;
-
-        [Header("Preview")]
         [SerializeField] private LineRenderer areaRing;
         [SerializeField] private bool autoCreateAreaRing = true;
         [SerializeField] private int ringSegments = 28;
-        [SerializeField] private Color ringColor = new(0.95f, 0.75f, 0.15f, 0.85f);
 
         private float _lastUseTime = -999f;
         private Vector3 _lastCenter;
         private bool _hasCenter;
+        private HandNetMode _mode = HandNetMode.Fishing;
+
+        public HandNetMode Mode => _mode;
+        public bool IsCombatMode => _mode == HandNetMode.Combat;
 
         private void Reset()
         {
@@ -77,6 +92,8 @@ namespace Bayou.Fishing
         {
             if (!enabled) return;
 
+            RefreshMode();
+
             if (!TryGetNetCenter(out var center))
             {
                 _hasCenter = false;
@@ -93,10 +110,13 @@ namespace Bayou.Fishing
         {
             if (!enabled) return;
 
+            RefreshMode();
+
             if (!WasUsePressed())
                 return;
 
-            if (Time.time - _lastUseTime < useCooldown)
+            var cooldown = _mode == HandNetMode.Combat ? meleeCooldown : fishingCooldown;
+            if (Time.time - _lastUseTime < cooldown)
                 return;
 
             if (!_hasCenter || !TryGetNetCenter(out var center))
@@ -105,13 +125,28 @@ namespace Bayou.Fishing
             _lastUseTime = Time.time;
             Bayou.Audio.FishingAudio.Resolve()?.PlayHandNetScoop();
 
-            // One-time pond loot (shiny, rosary, etc.) then fish.
+            if (_mode == HandNetMode.Combat)
+            {
+                TryMeleeSwing(center, meleeRadius);
+                return;
+            }
+
+            // Fishing: loot → creatures (passive catch/stun) → fish.
             if (PondShinyCollectible.TryScoopNear(center, coverageRadius))
                 return;
             if (NetScoopLoot.TryScoopNear(center, coverageRadius))
                 return;
 
+            if (TryHitCreaturesInArea(center, coverageRadius, NetHitSource.HandNet))
+                return;
+
             TryCatchFishInArea(center, coverageRadius);
+        }
+
+        private void RefreshMode()
+        {
+            var pursued = CreatureThreat.IsPlayerPursued(transform, pursuitDetectRange);
+            _mode = pursued ? HandNetMode.Combat : HandNetMode.Fishing;
         }
 
         private bool WasUsePressed()
@@ -120,7 +155,6 @@ namespace Bayou.Fishing
             if (act != null && act.WasPressedThisFrame())
                 return true;
 
-            // Same Cast / LMB as the rod when no dedicated scoop action is wired.
             var mouse = Mouse.current;
             return mouse != null && mouse.leftButton.wasPressedThisFrame;
         }
@@ -130,7 +164,8 @@ namespace Bayou.Fishing
             center = default;
             var origin = netOrigin != null ? netOrigin.position : transform.position + Vector3.up * 0.1f;
             var flat = GetFlatForward();
-            var horizontal = origin + flat * maxReach;
+            var reach = _mode == HandNetMode.Combat ? meleeReach : maxReach;
+            var horizontal = origin + flat * reach;
 
             if (Physics.Raycast(horizontal + Vector3.up * 4f, Vector3.down, out var hit, 12f, surfaceMask,
                     QueryTriggerInteraction.Collide))
@@ -143,13 +178,34 @@ namespace Bayou.Fishing
             return true;
         }
 
-        private Vector3 GetFlatForward()
+        private Vector3 GetFlatForward() => BayouFacing.GetCardinalForward8(transform);
+
+        private void TryMeleeSwing(Vector3 center, float radius)
         {
-            var aim = aimTransform != null ? aimTransform : transform;
-            var f = aim.forward;
-            f.y = 0f;
-            if (f.sqrMagnitude < 0.0001f) f = transform.forward;
-            return f.normalized;
+            TryHitCreaturesInArea(center, radius, NetHitSource.MeleeNet);
+        }
+
+        private bool TryHitCreaturesInArea(Vector3 center, float radius, NetHitSource source)
+        {
+            var count = Physics.OverlapSphereNonAlloc(
+                center,
+                radius,
+                BayouFishNetOverlapBuffer.Colliders,
+                fishMask,
+                QueryTriggerInteraction.Collide);
+
+            var hitAny = false;
+            for (var i = 0; i < count; i++)
+            {
+                var c = BayouFishNetOverlapBuffer.Colliders[i];
+                if (c == null) continue;
+                var hittable = c.GetComponentInParent<INetHittable>();
+                if (hittable == null || !hittable.IsNetHittable) continue;
+                hittable.OnNetHit(new NetHitInfo(center, source));
+                hitAny = true;
+            }
+
+            return hitAny;
         }
 
         private void TryCatchFishInArea(Vector3 center, float radius)
@@ -184,7 +240,7 @@ namespace Bayou.Fishing
             areaRing.endWidth = 0.06f;
             areaRing.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             areaRing.receiveShadows = false;
-            areaRing.material = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(ringColor);
+            areaRing.material = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(fishingRingColor);
         }
 
         private void HideRing()
@@ -197,14 +253,21 @@ namespace Bayou.Fishing
         {
             if (areaRing == null) return;
 
+            var radius = _mode == HandNetMode.Combat ? meleeRadius : coverageRadius;
+            var color = _mode == HandNetMode.Combat ? combatRingColor : fishingRingColor;
+            if (areaRing.material != null)
+                areaRing.material.color = color;
+            areaRing.startColor = color;
+            areaRing.endColor = color;
+
             var n = Mathf.Clamp(ringSegments, 8, 64);
             areaRing.positionCount = n;
 
             for (var i = 0; i < n; i++)
             {
                 var t = (i / (float)n) * Mathf.PI * 2f;
-                var x = center.x + Mathf.Cos(t) * coverageRadius;
-                var z = center.z + Mathf.Sin(t) * coverageRadius;
+                var x = center.x + Mathf.Cos(t) * radius;
+                var z = center.z + Mathf.Sin(t) * radius;
                 areaRing.SetPosition(i, new Vector3(x, center.y + 0.03f, z));
             }
         }

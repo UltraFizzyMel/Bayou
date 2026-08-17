@@ -2,6 +2,7 @@
 #error FishingNetCaster requires the New Input System (ENABLE_INPUT_SYSTEM). Project Settings > Player > Active Input Handling must include Input System, or add scripting define.
 #endif
 
+using Bayou.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
 #if UNITY_EDITOR
@@ -32,8 +33,10 @@ namespace Bayou.Fishing
         [Tooltip("If no LineRenderer is assigned, create runtime trajectory preview.")]
         [SerializeField] private bool autoCreateTrajectoryLine = true;
 
-        [Header("Phase 1 — direction wedge (30° sector, sweep, then lock)")]
-        [Tooltip("Total angle between the two boundary rays (fanned in front of the player).")]
+        [Header("Aim — 8 cardinal facing")]
+        [Tooltip("Cast along the player's facing, snapped to N/NE/E/SE/S/SW/W/NW. Skips the old sweep minigame.")]
+        [SerializeField] private bool useFacingCardinals = true;
+        [Tooltip("Legacy: total angle of the sweep wedge when useFacingCardinals is off.")]
         [SerializeField] private float sectorAngleDegrees = 30f;
         [SerializeField] private float directionGizmoRadius = 3.5f;
         [Tooltip("Seconds for one full sweep left→right→left along the arc.")]
@@ -231,9 +234,26 @@ namespace Bayou.Fishing
 
                     if (TryBeginDirectionSweepFromInput())
                     {
-                        _phase = FishingCastPhase.DirectionSweep;
-                        _directionSweepStartTime = Time.time;
-                        ShowDirectionGizmo(true);
+                        if (useFacingCardinals)
+                        {
+                            // Facing → 8-way lock → power charge (no sweep minigame).
+                            _lockedCastDirection = GetCenterForwardXZ();
+                            _phase = FishingCastPhase.ChargingTrajectory;
+                            ShowDirectionGizmo(false);
+                            _charging = false;
+                            if (trajectoryLine != null)
+                            {
+                                trajectoryLine.enabled = false;
+                                trajectoryLine.positionCount = 0;
+                            }
+                        }
+                        else
+                        {
+                            _phase = FishingCastPhase.DirectionSweep;
+                            _directionSweepStartTime = Time.time;
+                            ShowDirectionGizmo(true);
+                        }
+
                         Bayou.Audio.FishingAudio.Resolve()?.PlayCastConfirm();
                     }
                     break;
@@ -355,6 +375,10 @@ namespace Bayou.Fishing
                 _directionSweepStartTime = Time.time;
             }
 
+            // Keep aim aligned with current facing while charging (8-way).
+            if (useFacingCardinals)
+                _lockedCastDirection = GetCenterForwardXZ();
+
             CurrentCharge01 = SampleCharge01();
             UpdateChargeMeterUi(CurrentCharge01);
             var (origin, velocity) = ComputeLaunch(CurrentCharge01, _lockedCastDirection);
@@ -424,6 +448,10 @@ namespace Bayou.Fishing
 
         private Vector3 GetCenterForwardXZ()
         {
+            // Prefer the player's body facing (not the camera) so aim matches movement.
+            if (useFacingCardinals)
+                return BayouFacing.GetCardinalForward8(transform);
+
             var aim = aimTransform != null ? aimTransform : transform;
             var fwd = aim.forward;
             fwd.y = 0f;

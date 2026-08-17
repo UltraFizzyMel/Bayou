@@ -2,6 +2,7 @@
 #error BayouFishingEquipment requires the New Input System (ENABLE_INPUT_SYSTEM).
 #endif
 
+using Bayou.Creatures;
 using Bayou.Inventory;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -60,6 +61,10 @@ namespace Bayou.Fishing
         [Tooltip("Lantern can only be held after picking up Item_Lantern.")]
         [SerializeField] private bool requireLanternItem = true;
         [SerializeField] private string lanternItemId = "Item_Lantern";
+        [Header("Combat context")]
+        [Tooltip("When a creature is actively chasing you, auto-switch to the net (melee).")]
+        [SerializeField] private bool autoEquipNetWhenPursued = true;
+        [SerializeField] private float pursuitDetectRange = 45f;
         [SerializeField] private Animator animator;
 
         private static readonly BayouHeldItem[] CycleOrder =
@@ -71,6 +76,7 @@ namespace Bayou.Fishing
         };
 
         private HeldLantern _lantern;
+        private bool _wasPursued;
 
         public BayouHeldItem CurrentItem { get; private set; } = BayouHeldItem.None;
 
@@ -78,6 +84,14 @@ namespace Bayou.Fishing
         public BayouFishingTool CurrentTool => (BayouFishingTool)CurrentItem;
 
         public bool IsHolding(BayouHeldItem item) => CurrentItem == item;
+
+        /// <summary>True when a creature is actively hunting the player.</summary>
+        public bool IsPursued { get; private set; }
+
+        /// <summary>Hand-net fishing vs combat mode (only meaningful while holding Net).</summary>
+        public HandNetMode NetMode =>
+            handNet != null ? handNet.Mode :
+            (IsPursued ? HandNetMode.Combat : HandNetMode.Fishing);
 
         private void Reset()
         {
@@ -116,6 +130,8 @@ namespace Bayou.Fishing
 
         private void Update()
         {
+            UpdatePursuitContext();
+
             if (WasSelect(selectNoneAction, Key.Digit0, Key.Backquote))
             {
                 ApplyItem(BayouHeldItem.None);
@@ -162,6 +178,36 @@ namespace Bayou.Fishing
 
             if (WasSwitch())
                 CycleNext();
+        }
+
+        private void UpdatePursuitContext()
+        {
+            IsPursued = CreatureThreat.IsPlayerPursued(transform, pursuitDetectRange);
+
+            if (!autoEquipNetWhenPursued)
+            {
+                _wasPursued = IsPursued;
+                return;
+            }
+
+            // Entering chase: pull out the net for melee (don't interrupt an active rod cast).
+            if (IsPursued && !_wasPursued && CurrentItem != BayouHeldItem.Net)
+            {
+                var rodBusy = rodCaster != null &&
+                              (rodCaster.Phase != FishingCastPhase.Idle || rodCaster.HasActiveNet);
+                if (!rodBusy)
+                {
+                    if (animator != null)
+                    {
+                        animator.SetBool("isHoldingRod", true);
+                        animator.SetBool("isHoldingLantern", false);
+                    }
+
+                    ApplyItem(BayouHeldItem.Net);
+                }
+            }
+
+            _wasPursued = IsPursued;
         }
 
         public void CycleNext()

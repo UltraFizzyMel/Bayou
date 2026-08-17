@@ -1,3 +1,4 @@
+using Bayou.Creatures;
 using Bayou.Environment;
 using Bayou.Fish;
 using Bayou.Quests;
@@ -32,6 +33,8 @@ namespace Bayou.Fishing
         [Tooltip("Must travel at least this far before dry-land stick is allowed.")]
         [SerializeField] private float minFlightDistance = 2f;
         [SerializeField] private float shinyScoopRadius = 2.4f;
+        [Tooltip("Radius used to stun/catch creatures when the net plants or strikes them in flight.")]
+        [SerializeField] private float creatureHitRadius = 2.2f;
 
         [Header("Water")]
         [SerializeField] private LayerMask waterLayers;
@@ -197,6 +200,9 @@ namespace Bayou.Fishing
         {
             if (_hasLanded) return;
 
+            if (TryHitCreatureCollider(collision.collider))
+                return;
+
             if (IsWater(collision.collider))
             {
                 LandInWater(collision);
@@ -213,8 +219,51 @@ namespace Bayou.Fishing
         private void OnTriggerEnter(Collider other)
         {
             if (_hasLanded) return;
+
+            if (TryHitCreatureCollider(other))
+                return;
+
             if (!IsWater(other)) return;
             LandInWater(null);
+        }
+
+        private bool TryHitCreatureCollider(Collider other)
+        {
+            if (other == null || StillInLaunchGrace()) return false;
+            var hittable = other.GetComponentInParent<INetHittable>();
+            if (hittable == null || !hittable.IsNetHittable) return false;
+
+            var result = hittable.OnNetHit(new NetHitInfo(transform.position, NetHitSource.ThrownNet));
+            if (result == NetHitResult.Ignored) return false;
+
+            // Caught snake: consume the net. Stunned croc: don't plant on the body — keep flying.
+            if (result == NetHitResult.Caught)
+            {
+                _hasLanded = true;
+                CancelMissLifetime();
+                Destroy(gameObject);
+            }
+
+            return true;
+        }
+
+        private void TryHitCreaturesNearPlant()
+        {
+            var count = Physics.OverlapSphereNonAlloc(
+                transform.position,
+                creatureHitRadius,
+                CreatureNetOverlapBuffer.Colliders,
+                ~0,
+                QueryTriggerInteraction.Collide);
+
+            for (var i = 0; i < count; i++)
+            {
+                var c = CreatureNetOverlapBuffer.Colliders[i];
+                if (c == null) continue;
+                var hittable = c.GetComponentInParent<INetHittable>();
+                if (hittable == null || !hittable.IsNetHittable) continue;
+                hittable.OnNetHit(new NetHitInfo(transform.position, NetHitSource.ThrownNet));
+            }
         }
 
         private void LandInWater(Collision collision)
@@ -253,6 +302,8 @@ namespace Bayou.Fishing
                 Destroy(gameObject);
                 return;
             }
+
+            TryHitCreaturesNearPlant();
 
             // Rod attract only makes sense if a rod-fish is nearby.
             if (!HasRodFishNearby(transform.position, 22f))
@@ -293,6 +344,7 @@ namespace Bayou.Fishing
             _rb.isKinematic = true;
             EnsureVisual();
             _visual?.ShowPlanted();
+            TryHitCreaturesNearPlant();
         }
 
         private bool IsWater(Collider other)
@@ -317,5 +369,10 @@ namespace Bayou.Fishing
 
             return acceptWaterTagFallback && other.CompareTag("Water");
         }
+    }
+
+    internal static class CreatureNetOverlapBuffer
+    {
+        public static readonly Collider[] Colliders = new Collider[32];
     }
 }

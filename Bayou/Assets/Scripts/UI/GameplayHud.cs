@@ -21,7 +21,7 @@ namespace Bayou.UI
             "R  Rotate item\n" +
             "Tab  Cycle tools\n" +
             "1 Rod · 2 Net · 3 Lantern · 0 None\n" +
-            "Left click  Cast / scoop with tool\n" +
+            "Left click  Scoop / cast (or melee if chased)\n" +
             "Esc / Q  Cancel cast\n" +
             "V  Volume";
 

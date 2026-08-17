@@ -67,9 +67,9 @@ namespace Bayou.Fishing
             }
             else if (_caster != null && _caster.Phase == FishingCastPhase.ChargingTrajectory)
             {
-                GUILayout.Label("POWER — hold LMB, release to cast", _labelStyle);
+                GUILayout.Label("POWER — face a direction, hold LMB, release to cast", _labelStyle);
                 DrawBar(_caster.CurrentCharge01);
-                GUILayout.Label("Esc / Q / RMB cancel", _labelStyle);
+                GUILayout.Label("8-way facing · Esc / Q / RMB cancel", _labelStyle);
             }
             else if (hasNet && _caster != null)
             {
@@ -86,7 +86,14 @@ namespace Bayou.Fishing
             }
             else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Net)
             {
-                GUILayout.Label("LMB — scoop NET fish / rosary / shiny", _labelStyle);
+                if (_equipment.NetMode == HandNetMode.Combat)
+                    GUILayout.Label("COMBAT — LMB swing net (catch snake / stun croc)", _labelStyle);
+                else
+                    GUILayout.Label("FISHING — LMB scoop NET fish / rosary / shiny", _labelStyle);
+            }
+            else if (_equipment != null && _equipment.IsPursued)
+            {
+                GUILayout.Label("Pursued! Press 2 for net melee", _labelStyle);
             }
             else if (_equipment != null)
             {
