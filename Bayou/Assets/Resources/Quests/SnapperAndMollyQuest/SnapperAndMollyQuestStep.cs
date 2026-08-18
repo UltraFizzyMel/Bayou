@@ -28,6 +28,28 @@ public sealed class SnapperAndMollyQuestStep : QuestStep
         CheckProgress();
     }
 
+    public override bool TryGetObjectiveWorldPosition(out Vector3 worldPosition, out string label)
+    {
+        var near = transform.position;
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) near = player.transform.position;
+
+        var inv = ResolveInventory();
+        var needSnapper = inv == null || !inv.HasItemsById(snapperItemId, 1);
+        var needMolly = inv == null || !inv.HasItemsById(mollyItemId, 1);
+
+        // Point at whichever fish is still missing (prefer nearest missing type).
+        if (needSnapper || needMolly)
+        {
+            if (QuestObjectiveLocator.TryFindNearestNeededFish(near, out worldPosition, out label))
+                return true;
+        }
+
+        worldPosition = default;
+        label = null;
+        return false;
+    }
+
     private void TrySubscribe()
     {
         var inv = ResolveInventory();
@@ -64,7 +86,7 @@ public sealed class SnapperAndMollyQuestStep : QuestStep
         if (state == _lastState) return;
         _lastState = state;
         try { ChangeState(state); }
-        catch (System.Exception) { /* quest events may not be ready */ }
+        catch (System.Exception) { }
     }
 
     private static InventoryController ResolveInventory() =>

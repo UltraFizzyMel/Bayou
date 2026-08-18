@@ -106,6 +106,9 @@ namespace Bayou.Fishing
             if (handNet == null)
                 handNet = gameObject.AddComponent<HandNetAreaController>();
 
+            if (GetComponent<FishingInteractionPromptSource>() == null)
+                gameObject.AddComponent<FishingInteractionPromptSource>();
+
             EnsureHeldVisuals();
         }
 

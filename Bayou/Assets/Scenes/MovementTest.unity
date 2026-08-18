@@ -17282,6 +17282,10 @@ PrefabInstance:
       value: hasKeyChurchToGraveyard
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: keyGateManager
+      value: 
+      objectReference: {fileID: 1456890940}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: requiredItemId
       value: Item_ChurchGraveyardKey
       objectReference: {fileID: 0}
@@ -17289,10 +17293,6 @@ PrefabInstance:
       propertyPath: requiredKeyItem
       value: 
       objectReference: {fileID: 11400000, guid: b7c8d9e0f1a234567890abcdef123456, type: 2}
-    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
-      propertyPath: keyGateManager
-      value: 
-      objectReference: {fileID: 1456890940}
     - target: {fileID: 6292213623205623122, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_LocalPosition.x
       value: -24.53
@@ -22956,6 +22956,7 @@ GameObject:
   - component: {fileID: 880010004}
   - component: {fileID: 880010005}
   - component: {fileID: 880010006}
+  - component: {fileID: 880010007}
   m_Layer: 0
   m_Name: ShinyPondPickup
   m_TagString: Untagged
@@ -23072,6 +23073,24 @@ MonoBehaviour:
   bobAmplitude: 0.08
   bobSpeed: 2.2
   glowColor: {r: 0.35, g: 0.95, b: 0.45, a: 1}
+--- !u!114 &880010007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880010001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
+  questIds:
+  - CollectPondItemQuest
+  role: 0
+  itemId: Item_ShinyPond
+  labelOverride: Pond shiny
+  markerOffset: {x: 0, y: 0.9, z: 0}
 --- !u!1001 &885422019
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24145,6 +24164,7 @@ GameObject:
   - component: {fileID: 910000203}
   - component: {fileID: 910000204}
   - component: {fileID: 910000205}
+  - component: {fileID: 910000206}
   m_Layer: 0
   m_Name: LanternPickup
   m_TagString: Untagged
@@ -24263,6 +24283,24 @@ MonoBehaviour:
   visualCue: {fileID: 0}
   pickupPrompt: Pick up lantern
   endDemoOnPickup: 1
+--- !u!114 &910000206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
+  questIds:
+  - CollectLanternQuest
+  role: 0
+  itemId: Item_Lantern
+  labelOverride: Lantern
+  markerOffset: {x: 0, y: 1.4, z: 0}
 --- !u!1 &910000400
 GameObject:
   m_ObjectHideFlags: 0
@@ -41726,6 +41764,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5123198821984407101, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6288123988765975276, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Size.x
       value: 0.45
@@ -41737,10 +41779,6 @@ PrefabInstance:
     - target: {fileID: 6288123988765975276, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Size.z
       value: 0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 5123198821984407101, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6292213623205623122, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_LocalPosition.x
@@ -46697,8 +46735,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7704442045392199539, guid: bddb85869df395a4b83b60dd4ac030ed, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1785772423}
   m_SourcePrefab: {fileID: 100100000, guid: bddb85869df395a4b83b60dd4ac030ed, type: 3}
+--- !u!1 &1785772422 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7704442045392199539, guid: bddb85869df395a4b83b60dd4ac030ed, type: 3}
+  m_PrefabInstance: {fileID: 1785772421}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1785772423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1785772422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
+  questIds:
+  - SnapperAndMollyQuest
+  role: 1
+  itemId: 
+  labelOverride: Caliste
+  markerOffset: {x: 0, y: 1.9, z: 0}
 --- !u!1001 &1786045405
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -61887,13 +61951,41 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 465335184801767288, guid: bc985bcfd13182445b44f51951292a77, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6489237518138751179}
   m_SourcePrefab: {fileID: 100100000, guid: bc985bcfd13182445b44f51951292a77, type: 3}
 --- !u!4 &6489237518138751177 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 954450095416919490, guid: bc985bcfd13182445b44f51951292a77, type: 3}
   m_PrefabInstance: {fileID: 6489237518138751176}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6489237518138751178 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 465335184801767288, guid: bc985bcfd13182445b44f51951292a77, type: 3}
+  m_PrefabInstance: {fileID: 6489237518138751176}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6489237518138751179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6489237518138751178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
+  questIds:
+  - CollectPondItemQuest
+  - CollectLanternQuest
+  - VisitGravesQuest
+  role: 1
+  itemId: 
+  labelOverride: Father Landry
+  markerOffset: {x: 0, y: 1.9, z: 0}
 --- !u!4 &6659237562312185512
 Transform:
   m_ObjectHideFlags: 0

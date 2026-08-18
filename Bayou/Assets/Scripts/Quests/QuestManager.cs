@@ -268,6 +268,27 @@ public class QuestManager : MonoBehaviour
         return questMap.TryGetValue(id, out quest) && quest != null;
     }
 
+    /// <summary>Live QuestStep instance for an in-progress quest (child of this manager).</summary>
+    public bool TryGetActiveStep(string questId, out QuestStep step)
+    {
+        step = null;
+        if (string.IsNullOrWhiteSpace(questId)) return false;
+
+        var steps = GetComponentsInChildren<QuestStep>(true);
+        for (var i = 0; i < steps.Length; i++)
+        {
+            var s = steps[i];
+            if (s == null || s.IsFinished) continue;
+            if (string.Equals(s.QuestId, questId, System.StringComparison.OrdinalIgnoreCase))
+            {
+                step = s;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static QuestManager Resolve() =>
         Instance != null ? Instance : Object.FindFirstObjectByType<QuestManager>();
 

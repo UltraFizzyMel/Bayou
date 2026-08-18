@@ -1,4 +1,5 @@
 using Bayou.Inventory;
+using Bayou.Quests;
 using UnityEngine;
 
 /// <summary>
@@ -24,6 +25,27 @@ public sealed class CollectLanternQuestStep : QuestStep
         if (!_subscribed)
             TrySubscribe();
         CheckProgress();
+    }
+
+    public override bool TryGetObjectiveWorldPosition(out Vector3 worldPosition, out string label)
+    {
+        var near = transform.position;
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) near = player.transform.position;
+
+        if (QuestMarkerTarget.TryFind(QuestId, turnIn: false, lanternItemId, near, out var beacon))
+        {
+            worldPosition = beacon.MarkerWorldPosition;
+            label = beacon.Label;
+            return true;
+        }
+
+        if (QuestObjectiveLocator.TryFindPickupByItemId(lanternItemId, near, out worldPosition, out label))
+            return true;
+
+        worldPosition = default;
+        label = null;
+        return false;
     }
 
     private void TrySubscribe()

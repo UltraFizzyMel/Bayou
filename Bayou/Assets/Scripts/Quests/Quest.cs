@@ -76,11 +76,16 @@ public class Quest
     public void InstantiateCurrentQuestStep(Transform parentTransform)
     {
         GameObject questStepPrefab = GetCurrentQuestStepPrefab();
-        if (questStepPrefab != null) 
-        { 
-           QuestStep questStep = Object.Instantiate<GameObject>(questStepPrefab, parentTransform).GetComponent<QuestStep>();
+        if (questStepPrefab == null)
+            return;
+
+        // Instantiate in world space first so authored prefab positions (graves, etc.) stay put,
+        // then parent under QuestManager for lifecycle without shifting the target.
+        var go = Object.Instantiate(questStepPrefab);
+        go.transform.SetParent(parentTransform, worldPositionStays: true);
+        var questStep = go.GetComponent<QuestStep>();
+        if (questStep != null)
             questStep.InitializeQuestStep(info.id, currentQuestStepIndex, questStepStates[currentQuestStepIndex].state);
-        }
     }
 
     private GameObject GetCurrentQuestStepPrefab()

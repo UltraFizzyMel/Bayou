@@ -25,6 +25,14 @@ public sealed class CollectCoinsQuestStep : QuestStep
 
     private void OnInventoryChanged() => CheckProgress();
 
+    public override bool TryGetObjectiveWorldPosition(out Vector3 worldPosition, out string label) =>
+        QuestObjectiveLocator.TryFindNearestNeededFish(
+            GameObject.FindGameObjectWithTag("Player") != null
+                ? GameObject.FindGameObjectWithTag("Player").transform.position
+                : transform.position,
+            out worldPosition,
+            out label);
+
     private void CheckProgress()
     {
         var inv = InventoryController.Instance;
