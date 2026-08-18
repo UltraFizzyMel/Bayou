@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Bayou;
 using Bayou.Inventory.Shop;
 using Bayou.Inventory.UI;
+using Bayou.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -20,7 +21,7 @@ namespace Bayou.Inventory
     /// Handles open/close, refresh, drag host callbacks, and shop cross-panel drops.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class InventoryDisplayUI : MonoBehaviour
+    public sealed class InventoryDisplayUI : MonoBehaviour, IInteractionPromptSource
     {
         public static InventoryDisplayUI Active { get; private set; }
 
@@ -102,12 +103,28 @@ namespace Bayou.Inventory
             toggleInventoryAction?.action?.Enable();
             rotateItemAction?.action?.Enable();
             ResolveToggleFromControlsIfNeeded();
+            InteractionPromptBroker.Register(this);
         }
 
         private void OnDisable()
         {
             if (inventory != null)
                 inventory.InventoryChanged -= Refresh;
+            InteractionPromptBroker.Unregister(this);
+        }
+
+        public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
+        {
+            prompt = default;
+            if (!_isOpen) return false;
+
+            if (_dragging != null)
+            {
+                prompt = new InteractionPrompt("R", "Rotate item", 80);
+                return true;
+            }
+
+            return false;
         }
 
         private void OnDestroy()

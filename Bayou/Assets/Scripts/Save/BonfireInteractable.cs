@@ -1,15 +1,17 @@
 using Bayou.Player;
+using Bayou.UI;
 using UnityEngine;
 
 namespace Bayou.Save
 {
     [DisallowMultipleComponent]
-    public sealed class BonfireInteractable : MonoBehaviour
+    public sealed class BonfireInteractable : MonoBehaviour, IInteractionPromptSource
     {
         [SerializeField] private string bonfireId = "bonfire_01";
         [SerializeField] private string displayName = "Bayou Bonfire";
         [SerializeField] private BonfireUIController bonfireUi;
         [SerializeField] private GameObject visualCue;
+        [SerializeField] private string restPrompt = "Rest / cook";
 
         private bool _playerInRange;
 
@@ -21,6 +23,9 @@ namespace Bayou.Save
             if (bonfireUi == null)
                 bonfireUi = FindFirstObjectByType<BonfireUIController>();
         }
+
+        private void OnEnable() => InteractionPromptBroker.Register(this);
+        private void OnDisable() => InteractionPromptBroker.Unregister(this);
 
         private void Update()
         {
@@ -39,15 +44,36 @@ namespace Bayou.Save
                 bonfireUi.Open(bonfireId, displayName);
         }
 
+        public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
+        {
+            prompt = default;
+            if (!_playerInRange) return false;
+            if (bonfireUi != null && bonfireUi.IsOpen) return false;
+
+            var p = GameObject.FindGameObjectWithTag("Player");
+            var dist = 0f;
+            if (p != null)
+            {
+                var d = transform.position - p.transform.position;
+                d.y = 0f;
+                dist = d.sqrMagnitude;
+            }
+
+            prompt = new InteractionPrompt("E", restPrompt, 55, dist);
+            return true;
+        }
+
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent<BayouCharacterMotor>(out _))
+            if (other.TryGetComponent<BayouCharacterMotor>(out _) ||
+                other.GetComponentInParent<BayouCharacterMotor>() != null)
                 _playerInRange = true;
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.TryGetComponent<BayouCharacterMotor>(out _))
+            if (other.TryGetComponent<BayouCharacterMotor>(out _) ||
+                other.GetComponentInParent<BayouCharacterMotor>() != null)
                 _playerInRange = false;
         }
 

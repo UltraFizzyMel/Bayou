@@ -1,12 +1,13 @@
 using Bayou.Inventory;
 using Bayou.Player;
+using Bayou.UI;
 using UnityEngine;
 
 /// <summary>
 /// Stand near a locked gate and press Interact (E). Opens only for this gate's key
 /// (flag and/or required item id) — never another gate's key.
 /// </summary>
-public sealed class InteractTrigger : MonoBehaviour
+public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
 {
     [Tooltip("KeyGateManager flag for THIS gate only. Empty = never unlock via flag.")]
     [SerializeField] private string keyName = "";
@@ -24,6 +25,8 @@ public sealed class InteractTrigger : MonoBehaviour
     [SerializeField] private Collider[] disableCollidersOnOpen;
     [Tooltip("If the player already has the key when entering the trigger, open without waiting for E.")]
     [SerializeField] private bool autoOpenWhenUnlocked = true;
+    [SerializeField] private string openPrompt = "Open gate";
+    [SerializeField] private string lockedPrompt = "Locked — need key";
 
     private bool _isOpen;
     private InventoryController _inv;
@@ -38,9 +41,20 @@ public sealed class InteractTrigger : MonoBehaviour
         if (disableCollidersOnOpen == null || disableCollidersOnOpen.Length == 0)
             AutoCollectBlockingColliders();
 
-        // Prefer the ScriptableObject's stable id when assigned.
         if (requiredKeyItem != null && string.IsNullOrWhiteSpace(requiredItemId))
             requiredItemId = requiredKeyItem.Id;
+    }
+
+    private void OnEnable()
+    {
+        TrySubscribeInventory();
+        InteractionPromptBroker.Register(this);
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeInventory();
+        InteractionPromptBroker.Unregister(this);
     }
 
     private void Start()
@@ -119,9 +133,30 @@ public sealed class InteractTrigger : MonoBehaviour
         return KeyGateManager.GetItemIdForFlag(keyName);
     }
 
-    private void OnEnable() => TrySubscribeInventory();
+    public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
+    {
+        prompt = default;
+        if (_isOpen || !playerInRange) return false;
 
-    private void OnDisable() => UnsubscribeInventory();
+        var dist = DistToPlayerSq();
+        if (CanUnlock())
+        {
+            prompt = new InteractionPrompt("E", openPrompt, 55, dist);
+            return true;
+        }
+
+        prompt = new InteractionPrompt("E", lockedPrompt, 45, dist);
+        return true;
+    }
+
+    private float DistToPlayerSq()
+    {
+        var p = GameObject.FindGameObjectWithTag("Player");
+        if (p == null) return 0f;
+        var d = transform.position - p.transform.position;
+        d.y = 0f;
+        return d.sqrMagnitude;
+    }
 
     private void Update()
     {

@@ -1,3 +1,4 @@
+using Bayou.UI;
 using UnityEngine;
 
 namespace Bayou.Inventory.Shop
@@ -7,7 +8,7 @@ namespace Bayou.Inventory.Shop
     /// Optional proximity interact is off by default so talking to Caliste is the trigger.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class Shopkeeper : MonoBehaviour
+    public sealed class Shopkeeper : MonoBehaviour, IInteractionPromptSource
     {
         [SerializeField] private ShopDefinition shop;
         [SerializeField] private ShopUIController shopUi;
@@ -16,11 +17,15 @@ namespace Bayou.Inventory.Shop
         [SerializeField] private string playerTag = "Player";
         [Tooltip("If on, pressing Interact near this object opens the shop (debug). Prefer Caliste dialogue.")]
         [SerializeField] private bool openOnInteract;
+        [SerializeField] private string shopPrompt = "Open shop";
 
         public ShopDefinition ShopDefinition => shop;
 
         private Transform _player;
         private bool _playerInRange;
+
+        private void OnEnable() => InteractionPromptBroker.Register(this);
+        private void OnDisable() => InteractionPromptBroker.Unregister(this);
 
         private void Start()
         {
@@ -37,13 +42,13 @@ namespace Bayou.Inventory.Shop
 
         private void Update()
         {
-            if (!openOnInteract || shopUi == null || shop == null) return;
-
             if (_player != null)
             {
                 var dist = Vector3.Distance(transform.position, _player.position);
                 _playerInRange = dist <= interactRadius;
             }
+
+            if (!openOnInteract || shopUi == null || shop == null) return;
 
             var blocked = shopUi.IsOpen ||
                           (DialogueManager.GetInstance() != null && DialogueManager.GetInstance().dialogueIsPlaying);
@@ -56,6 +61,24 @@ namespace Bayou.Inventory.Shop
             var input = InputManager.GetInstance();
             if (input != null && input.GetInteractPressed())
                 Open();
+        }
+
+        public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
+        {
+            prompt = default;
+            if (!openOnInteract || !_playerInRange || shop == null) return false;
+            if (shopUi != null && shopUi.IsOpen) return false;
+
+            var dist = 0f;
+            if (_player != null)
+            {
+                var d = transform.position - _player.position;
+                d.y = 0f;
+                dist = d.sqrMagnitude;
+            }
+
+            prompt = new InteractionPrompt("E", shopPrompt, 50, dist);
+            return true;
         }
 
         public void Open()

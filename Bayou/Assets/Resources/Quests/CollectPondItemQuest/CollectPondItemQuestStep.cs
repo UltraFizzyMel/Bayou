@@ -1,4 +1,5 @@
 using Bayou.Inventory;
+using Bayou.Quests;
 using UnityEngine;
 
 /// <summary>
@@ -24,11 +25,36 @@ public sealed class CollectPondItemQuestStep : QuestStep
 
     private void Update()
     {
-        // Backup: Instance may appear after this step spawns, or an event may be missed.
         if (!_subscribed)
             TrySubscribe();
 
         CheckProgress();
+    }
+
+    public override bool TryGetObjectiveWorldPosition(out Vector3 worldPosition, out string label)
+    {
+        var near = transform.position;
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null) near = player.transform.position;
+
+        if (QuestMarkerTarget.TryFind(QuestId, turnIn: false, requiredItemId, near, out var beacon))
+        {
+            worldPosition = beacon.MarkerWorldPosition;
+            label = beacon.Label;
+            return true;
+        }
+
+        var shiny = Object.FindFirstObjectByType<PondShinyCollectible>();
+        if (shiny != null)
+        {
+            worldPosition = shiny.transform.position + Vector3.up * 0.8f;
+            label = "Shiny in the pond";
+            return true;
+        }
+
+        worldPosition = default;
+        label = null;
+        return false;
     }
 
     private void TrySubscribe()
@@ -61,7 +87,6 @@ public sealed class CollectPondItemQuestStep : QuestStep
 
         if (have >= need)
         {
-            // Finish first — this advances the quest to CAN_FINISH.
             FinishQuestStep();
             return;
         }
@@ -70,15 +95,8 @@ public sealed class CollectPondItemQuestStep : QuestStep
         if (state == _lastState) return;
         _lastState = state;
 
-        // Optional UI/debug state; never block finishing.
-        try
-        {
-            ChangeState(state);
-        }
-        catch (System.Exception)
-        {
-            // Ignore if quest events aren't ready yet.
-        }
+        try { ChangeState(state); }
+        catch (System.Exception) { }
     }
 
     private int CountOwned(InventoryController inv)
@@ -92,7 +110,6 @@ public sealed class CollectPondItemQuestStep : QuestStep
         var byId = inv.CountItemsById(requiredItemId);
         if (byId > 0) return byId;
 
-        // Fallback: match name containing "Shiny" (asset rename / missing id).
         if (inv.Bag == null) return 0;
         var count = 0;
         foreach (var item in inv.Bag.AllItems)

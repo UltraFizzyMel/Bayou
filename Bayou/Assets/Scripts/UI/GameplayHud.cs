@@ -17,13 +17,10 @@ namespace Bayou.UI
         private const string ControlsText =
             "<b>Controls</b>\n" +
             "I  Inventory\n" +
-            "E  Interact\n" +
-            "R  Rotate item\n" +
             "Tab  Cycle tools\n" +
             "1 Rod · 2 Net · 3 Lantern · 0 None\n" +
-            "Left click  Cast / scoop with tool\n" +
-            "Esc / Q  Cancel cast\n" +
-            "V  Volume";
+            "V  Volume\n" +
+            "<size=85%><color=#C8C8C0>Action prompts show when available</color></size>";
 
         [SerializeField] private bool buildUiIfMissing = true;
         [SerializeField] private Canvas rootCanvas;
@@ -78,11 +75,14 @@ namespace Bayou.UI
 
         private static void EnsureInScene()
         {
-            if (Object.FindFirstObjectByType<GameplayHud>(FindObjectsInactive.Include) != null)
-                return;
+            if (Object.FindFirstObjectByType<GameplayHud>(FindObjectsInactive.Include) == null)
+            {
+                var go = new GameObject("GameplayHud");
+                go.AddComponent<GameplayHud>();
+            }
 
-            var go = new GameObject("GameplayHud");
-            go.AddComponent<GameplayHud>();
+            QuestMarkerHud.EnsureInScene();
+            InteractionPromptHud.EnsureInScene();
         }
 
         private static void DestroyAllInScene()
@@ -92,6 +92,20 @@ namespace Bayou.UI
             {
                 if (existing[i] != null)
                     Object.Destroy(existing[i].gameObject);
+            }
+
+            var markers = Object.FindObjectsByType<QuestMarkerHud>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < markers.Length; i++)
+            {
+                if (markers[i] != null)
+                    Object.Destroy(markers[i].gameObject);
+            }
+
+            var prompts = Object.FindObjectsByType<InteractionPromptHud>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < prompts.Length; i++)
+            {
+                if (prompts[i] != null)
+                    Object.Destroy(prompts[i].gameObject);
             }
         }
 
