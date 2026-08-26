@@ -3,7 +3,27 @@ guid: e1026bbf51f141c46bababa42e13bab5
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Baked Landry Lamps
+    second: {fileID: 2100000, guid: 4d1c8211faba0024dafd4cec8283e167, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Baked Small Pillars
+    second: {fileID: 2100000, guid: 37338e5a844a5b54f911ee92a379a25e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Landry Base Baked
+    second: {fileID: 2100000, guid: a8e30e4991817cd43a2c9e0b04dff9c0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Landy Big Pillars Baked.002
+    second: {fileID: 2100000, guid: 0d1213eefd52dde499da925f941cd8cf, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

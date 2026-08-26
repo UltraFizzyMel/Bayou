@@ -3,7 +3,12 @@ guid: 534e3cf1ca524de438781d6836c303fe
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Baked Tomb One
+    second: {fileID: 2100000, guid: f933eb74eef1cf9429065f690d03913c, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
