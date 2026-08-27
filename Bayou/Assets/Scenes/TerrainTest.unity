@@ -56037,6 +56037,7 @@ MonoBehaviour:
   areaRing: {fileID: 0}
   autoCreateAreaRing: 1
   ringSegments: 28
+  animator: {fileID: 1254550542}
 --- !u!114 &2078946150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63990,6 +63991,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2256531683429934156, guid: a2294af47d2635b4a9ff8ec9bba5b863, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 1254550542}
     - target: {fileID: 2256531683429934156, guid: a2294af47d2635b4a9ff8ec9bba5b863, type: 3}
       propertyPath: netPrefab
       value: 

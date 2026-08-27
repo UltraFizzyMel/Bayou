@@ -62,6 +62,9 @@ namespace Bayou.Fishing
         public HandNetMode Mode => _mode;
         public bool IsCombatMode => _mode == HandNetMode.Combat;
 
+        public Animator animator;
+
+
         private void Reset()
         {
             netOrigin = transform;
@@ -108,6 +111,7 @@ namespace Bayou.Fishing
 
         private void Update()
         {
+            animator.SetBool("isSwinging", false);
             if (!enabled) return;
 
             RefreshMode();
@@ -121,6 +125,8 @@ namespace Bayou.Fishing
 
             if (!_hasCenter || !TryGetNetCenter(out var center))
                 return;
+
+            animator.SetBool("isSwinging", true);
 
             _lastUseTime = Time.time;
             Bayou.Audio.FishingAudio.Resolve()?.PlayHandNetScoop();

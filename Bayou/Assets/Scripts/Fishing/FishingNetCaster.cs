@@ -86,6 +86,8 @@ namespace Bayou.Fishing
         public FishingCastPhase Phase => _phase;
         public bool HasActiveNet => _activeNet != null;
 
+        public Animator animator;
+
         private void Reset()
         {
             castOrigin = transform;
@@ -223,6 +225,7 @@ namespace Bayou.Fishing
             switch (_phase)
             {
                 case FishingCastPhase.Idle:
+                    animator.SetBool("isCasting", false);
                     // Cancel an in-flight / landed net even while caster is idle.
                     if (_activeNet != null)
                     {
@@ -375,6 +378,7 @@ namespace Bayou.Fishing
                 _directionSweepStartTime = Time.time;
             }
 
+            animator.SetBool("isCasting", true);
             // Keep aim aligned with current facing while charging (8-way).
             if (useFacingCardinals)
                 _lockedCastDirection = GetCenterForwardXZ();
@@ -425,6 +429,8 @@ namespace Bayou.Fishing
             HideAllVisuals();
             _charging = false;
             CurrentCharge01 = 0f;
+            animator.SetBool("isSwinging", false);
+            animator.SetBool("isCasting", false);
         }
 
         private float SampleCharge01()
