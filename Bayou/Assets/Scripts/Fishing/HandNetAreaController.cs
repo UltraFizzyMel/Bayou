@@ -111,7 +111,7 @@ namespace Bayou.Fishing
 
         private void Update()
         {
-            animator.SetBool("isSwinging", false);
+            
             if (!enabled) return;
 
             RefreshMode();
@@ -210,7 +210,7 @@ namespace Bayou.Fishing
                 hittable.OnNetHit(new NetHitInfo(center, source));
                 hitAny = true;
             }
-
+            animator.SetBool("isSwinging", false);
             return hitAny;
         }
 
@@ -231,6 +231,7 @@ namespace Bayou.Fishing
                 if (fish != null)
                     fish.TryCatchFromNet(center, radius);
             }
+            animator.SetBool("isSwinging", false);
         }
 
         private void EnsureRing()
