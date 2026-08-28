@@ -142,8 +142,14 @@ namespace Bayou.Inventory
 
         private void Update()
         {
-            if (WasTogglePressed())
+            if (_isOpen && WasClosePressed())
+            {
+                Close();
+            }
+            else if (WasTogglePressed())
+            {
                 Toggle();
+            }
 
             if (_dragging != null && InventoryDragInput.WasRotatePressedThisFrame(rotateItemAction))
                 RotateDraggedItem();
@@ -701,6 +707,12 @@ namespace Bayou.Inventory
 
             var kb = Keyboard.current;
             return kb != null && kb.iKey.wasPressedThisFrame;
+        }
+
+        private static bool WasClosePressed()
+        {
+            var kb = Keyboard.current;
+            return kb != null && kb.escapeKey.wasPressedThisFrame;
         }
     }
 }

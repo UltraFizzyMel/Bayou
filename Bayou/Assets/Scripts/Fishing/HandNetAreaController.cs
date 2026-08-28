@@ -4,6 +4,7 @@
 
 using Bayou.Creatures;
 using Bayou.Fish;
+using Bayou.Inventory;
 using Bayou.Player;
 using Bayou.Quests;
 using UnityEngine;
@@ -109,6 +110,10 @@ namespace Bayou.Fishing
         private void Update()
         {
             if (!enabled) return;
+            if (DialogueManager.GetInstance() != null && DialogueManager.GetInstance().dialogueIsPlaying)
+                return;
+            if (InventoryDisplayUI.Active != null && InventoryDisplayUI.Active.IsOpen)
+                return;
 
             RefreshMode();
 

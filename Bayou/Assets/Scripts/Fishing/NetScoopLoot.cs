@@ -59,16 +59,11 @@ namespace Bayou.Fishing
 
         private bool Collect()
         {
-            var inv = InventoryController.Instance;
-            if (inv == null) return false;
-            if (!inv.TryAddItem(item) && !inv.TryHoldNewItem(item, out _))
-            {
-                Debug.LogWarning($"[NetScoop] Bag full — could not add {item.displayName}.");
-                return false;
-            }
+            if (item == null) return false;
 
             _collected = true;
             Debug.Log($"[NetScoop] Collected {item.displayName}.");
+            CaughtFishPresenter.Present(item);
             Destroy(gameObject);
             return true;
         }

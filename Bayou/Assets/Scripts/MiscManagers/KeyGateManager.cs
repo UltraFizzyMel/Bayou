@@ -87,8 +87,7 @@ public sealed class KeyGateManager : MonoBehaviour
                 SetFlag(pair.Key, true);
         }
 
-        // Buying a key while standing at the gate (or after Close Deal) should open it.
-        TryOpenReadyGates();
+        // Obtaining a key unlocks the matching gate; the player still opens it with Interact.
     }
 
     /// <summary>Asks every gate to open if its key/flag is now satisfied.</summary>

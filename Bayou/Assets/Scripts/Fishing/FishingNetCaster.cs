@@ -2,6 +2,7 @@
 #error FishingNetCaster requires the New Input System (ENABLE_INPUT_SYSTEM). Project Settings > Player > Active Input Handling must include Input System, or add scripting define.
 #endif
 
+using Bayou.Inventory;
 using Bayou.Player;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -220,6 +221,12 @@ namespace Bayou.Fishing
 
         private void Update()
         {
+            var dialogue = DialogueManager.GetInstance();
+            if (dialogue != null && dialogue.dialogueIsPlaying)
+                return;
+            if (InventoryDisplayUI.Active != null && InventoryDisplayUI.Active.IsOpen)
+                return;
+
             switch (_phase)
             {
                 case FishingCastPhase.Idle:

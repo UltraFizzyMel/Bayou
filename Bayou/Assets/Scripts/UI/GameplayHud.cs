@@ -16,8 +16,8 @@ namespace Bayou.UI
     {
         private const string ControlsText =
             "<b>Controls</b>\n" +
-            "I  Inventory\n" +
-            "E  Interact\n" +
+            "I  Inventory  ·  Esc close bag\n" +
+            "E  Interact  ·  Space / click  Dialogue\n" +
             "R  Rotate item\n" +
             "Tab  Cycle tools\n" +
             "1 Rod · 2 Net · 3 Lantern · 0 None\n" +
@@ -78,11 +78,15 @@ namespace Bayou.UI
 
         private static void EnsureInScene()
         {
-            if (Object.FindFirstObjectByType<GameplayHud>(FindObjectsInactive.Include) != null)
-                return;
+            if (Object.FindFirstObjectByType<GameplayHud>(FindObjectsInactive.Include) == null)
+            {
+                var go = new GameObject("GameplayHud");
+                go.AddComponent<GameplayHud>();
+            }
 
-            var go = new GameObject("GameplayHud");
-            go.AddComponent<GameplayHud>();
+            // Always ensure these — even if GameplayHud already exists in the scene.
+            QuestMarkerHud.EnsureInScene();
+            InteractionPromptHud.EnsureInScene();
         }
 
         private static void DestroyAllInScene()
@@ -92,6 +96,20 @@ namespace Bayou.UI
             {
                 if (existing[i] != null)
                     Object.Destroy(existing[i].gameObject);
+            }
+
+            var markers = Object.FindObjectsByType<QuestMarkerHud>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < markers.Length; i++)
+            {
+                if (markers[i] != null)
+                    Object.Destroy(markers[i].gameObject);
+            }
+
+            var prompts = Object.FindObjectsByType<InteractionPromptHud>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < prompts.Length; i++)
+            {
+                if (prompts[i] != null)
+                    Object.Destroy(prompts[i].gameObject);
             }
         }
 

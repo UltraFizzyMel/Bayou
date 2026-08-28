@@ -23,8 +23,8 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
     [SerializeField] private KeyGateManager keyGateManager;
     [SerializeField] private bool consumeKeyOnOpen;
     [SerializeField] private Collider[] disableCollidersOnOpen;
-    [Tooltip("If the player already has the key when entering the trigger, open without waiting for E.")]
-    [SerializeField] private bool autoOpenWhenUnlocked = true;
+    [Tooltip("Legacy field — gates never auto-open. Player must press Interact (E) after they have the key.")]
+    [SerializeField] private bool autoOpenWhenUnlocked = false;
     [SerializeField] private string openPrompt = "Open gate";
     [SerializeField] private string lockedPrompt = "Locked — need key";
 
@@ -66,8 +66,6 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
         EnsureRequiredKeyResolved();
 
         TrySubscribeInventory();
-        if (CanUnlock())
-            OpenGate(playLog: false);
     }
 
     private void EnsureRequiredKeyResolved()
@@ -165,6 +163,10 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
 
         if (_isOpen || !playerInRange) return;
 
+        var dialogue = DialogueManager.GetInstance();
+        if (dialogue != null && dialogue.dialogueIsPlaying)
+            return;
+
         var input = InputManager.GetInstance();
         if (input == null || !input.GetInteractPressed())
             return;
@@ -198,13 +200,10 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
         OpenGate(playLog: true);
     }
 
-    /// <summary>Called after buying a key / syncing flags — opens if unlocked and auto-open is on.</summary>
+    /// <summary>Kept for callers after buying a key. Gates stay closed until Interact (E).</summary>
     public void TryAutoOpenIfUnlocked()
     {
-        if (_isOpen) return;
-        if (!CanUnlock()) return;
-        if (autoOpenWhenUnlocked || playerInRange)
-            TryUnlock();
+        // Intentional no-op: obtaining a key unlocks the gate, it does not swing it open.
     }
 
     private bool CanUnlock()
@@ -282,18 +281,13 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
 
     private void OnInventoryChanged()
     {
-        if (_isOpen) return;
-        if (autoOpenWhenUnlocked && CanUnlock())
-            TryUnlock();
+        // Key pickup / shop buy only grants unlock — player still presses E at the gate.
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (!IsPlayer(other)) return;
-
         playerInRange = true;
-        if (autoOpenWhenUnlocked && !_isOpen && CanUnlock())
-            TryUnlock();
     }
 
     private void OnTriggerExit(Collider other)

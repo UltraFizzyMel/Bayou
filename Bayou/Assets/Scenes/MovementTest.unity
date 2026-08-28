@@ -9622,6 +9622,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 976841415}
     m_Modifications:
+    - target: {fileID: 4063907619998566049, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
+      propertyPath: m_Size.x
+      value: 0.22
+      objectReference: {fileID: 0}
+    - target: {fileID: 4063907619998566049, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
+      propertyPath: m_Size.y
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 4063907619998566049, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
+      propertyPath: m_Size.z
+      value: 0.14
+      objectReference: {fileID: 0}
     - target: {fileID: 4796972913964913914, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
       propertyPath: m_LocalScale.y
       value: 80.39398
@@ -9679,6 +9691,10 @@ PrefabInstance:
       value: hasKeyChurchToFoggyMarsh
       objectReference: {fileID: 0}
     - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
+      propertyPath: keyGateManager
+      value: 
+      objectReference: {fileID: 1456890940}
+    - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
       propertyPath: requiredItemId
       value: Item_ChurchFoggyMarshKey
       objectReference: {fileID: 0}
@@ -9687,24 +9703,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: d2a2b3c4d5e6789012345678abcdef02, type: 2}
     - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: keyGateManager
-      value: 
-      objectReference: {fileID: 1456890940}
-    - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
       propertyPath: autoOpenWhenUnlocked
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063907619998566049, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: m_Size.x
-      value: 0.22
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063907619998566049, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: m_Size.y
-      value: 0.08
-      objectReference: {fileID: 0}
-    - target: {fileID: 4063907619998566049, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: m_Size.z
-      value: 0.14
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -19422,6 +19422,7 @@ MonoBehaviour:
   displayName: Bayou Bonfire
   bonfireUi: {fileID: 1243787555}
   visualCue: {fileID: 1353711183}
+  restPrompt: Rest / cook
 --- !u!23 &742709536
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -23055,7 +23056,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1
+  m_Radius: 8
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &880010006
 MonoBehaviour:
@@ -31333,8 +31334,36 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 465335184801767288, guid: bc985bcfd13182445b44f51951292a77, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1187385009}
   m_SourcePrefab: {fileID: 100100000, guid: bc985bcfd13182445b44f51951292a77, type: 3}
+--- !u!1 &1187385008 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 465335184801767288, guid: bc985bcfd13182445b44f51951292a77, type: 3}
+  m_PrefabInstance: {fileID: 1187385007}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1187385009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1187385008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
+  questIds:
+  - CollectPondItemQuest
+  - CollectLanternQuest
+  - VisitGravesQuest
+  role: 1
+  itemId: 
+  labelOverride: Father Landry
+  markerOffset: {x: 0, y: 1.9, z: 0}
 --- !u!1 &1190814468
 GameObject:
   m_ObjectHideFlags: 0
@@ -41745,6 +41774,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: keyGateManager
       value: 
       objectReference: {fileID: 1456890940}
@@ -41758,10 +41791,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: autoOpenWhenUnlocked
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
-      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5123198821984407101, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
@@ -42636,6 +42665,7 @@ MonoBehaviour:
   interactRadius: 3
   playerTag: Player
   openOnInteract: 0
+  shopPrompt: Open shop
 --- !u!4 &1633303697
 Transform:
   m_ObjectHideFlags: 0
@@ -55531,6 +55561,8 @@ MonoBehaviour:
   fishingRodItemId: Item_FishingRod
   requireLanternItem: 1
   lanternItemId: Item_Lantern
+  autoEquipNetWhenPursued: 1
+  pursuitDetectRange: 45
   animator: {fileID: 1254550542}
 --- !u!114 &2078946142 stripped
 MonoBehaviour:
@@ -55558,7 +55590,14 @@ MonoBehaviour:
   aimTransform: {fileID: 1322098990}
   netOrigin: {fileID: 2078946140}
   maxReach: 2.8
-  coverageRadius: 1.6
+  coverageRadius: 3
+  fishingCooldown: 0.55
+  fishingRingColor: {r: 0.95, g: 0.75, b: 0.15, a: 0.85}
+  meleeReach: 2.1
+  meleeRadius: 1.35
+  meleeCooldown: 0.35
+  combatRingColor: {r: 0.95, g: 0.25, b: 0.2, a: 0.9}
+  pursuitDetectRange: 45
   surfaceMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -55566,11 +55605,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   useNetAction: {fileID: 0}
-  useCooldown: 0.55
   areaRing: {fileID: 0}
   autoCreateAreaRing: 1
   ringSegments: 28
-  ringColor: {r: 0.95, g: 0.75, b: 0.15, a: 0.85}
 --- !u!114 &2078946150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61429,6 +61466,7 @@ MonoBehaviour:
   visualCue: {fileID: 1931215764008065225}
   inkJSON: {fileID: 4900000, guid: 3c781195057b7a941bf86de918c1034e, type: 3}
   knotName: 
+  talkPrompt: Talk
   playerInRange: 0
 --- !u!1 &5843104989545049052
 GameObject:
