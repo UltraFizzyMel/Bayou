@@ -32,7 +32,7 @@ namespace Bayou.Fishing
         [SerializeField] private float launchGraceSeconds = 0.35f;
         [Tooltip("Must travel at least this far before dry-land stick is allowed.")]
         [SerializeField] private float minFlightDistance = 2f;
-        [SerializeField] private float shinyScoopRadius = 2.4f;
+        [SerializeField] private float shinyScoopRadius = 4.5f;
         [Tooltip("Radius used to stun/catch creatures when the net plants or strikes them in flight.")]
         [SerializeField] private float creatureHitRadius = 2.2f;
 

@@ -79,24 +79,15 @@ namespace Bayou.Quests
         {
             if (!_playerInRange || item == null) return;
 
+            var dialogue = DialogueManager.GetInstance();
+            if (dialogue != null && dialogue.dialogueIsPlaying)
+                return;
+
             var input = InputManager.GetInstance();
             if (input == null || !input.GetInteractPressed())
                 return;
 
-            var inv = InventoryController.Instance;
-            if (inv == null)
-            {
-                Debug.LogWarning("[QuestItemPickup] No InventoryController.");
-                return;
-            }
-
-            if (!inv.TryAddItem(item) && !inv.TryHoldNewItem(item, out _))
-            {
-                Debug.LogWarning($"[QuestItemPickup] Could not add {item.displayName} — bag full?");
-                return;
-            }
-
-            Debug.Log($"[QuestItemPickup] Picked up {item.displayName} ({pickupPrompt}).");
+            CaughtFishPresenter.Present(item);
 
             if (endDemoOnPickup)
                 DemoEndController.Show();

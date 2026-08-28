@@ -205,10 +205,10 @@ namespace Bayou.Inventory
             }
 
             if (revealTitle != null)
-                revealTitle.text = "Caught!";
+                revealTitle.text = fishItem.isFish ? "Caught!" : "Found!";
             if (revealName != null)
                 revealName.text = string.IsNullOrWhiteSpace(fishItem.displayName)
-                    ? "Fish"
+                    ? (fishItem.isFish ? "Fish" : "Item")
                     : fishItem.displayName;
         }
 

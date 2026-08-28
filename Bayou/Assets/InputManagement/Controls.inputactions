@@ -132,6 +132,28 @@
                 },
                 {
                     "name": "",
+                    "id": "b7e2c1a0-4d8f-4c3a-9e11-6f0a2d8c91ab",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c8f3d2b1-5e90-4d4b-af22-7a1b3e9d02bc",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "56585e00-62f1-4fd8-9bea-c2bedceb01ec",
                     "path": "<Keyboard>/i",
                     "interactions": "",

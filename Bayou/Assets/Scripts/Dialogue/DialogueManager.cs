@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -51,6 +52,10 @@ public class DialogueManager : MonoBehaviour
     private DialogueVariables dialogueVariables;
     private bool _eventsSubscribed;
 
+    private InputAction _advanceAction;
+    private bool _advanceLatched;
+    private int _advanceConsumedFrame = -1;
+
     private void Awake()
     {
         if (instance != null)
@@ -60,7 +65,7 @@ public class DialogueManager : MonoBehaviour
         instance = this;
 
         dialogueVariables = new DialogueVariables(loadGlobalsJSON);
-        
+        EnsureAdvanceAction();
     }
 
     public static DialogueManager GetInstance()
@@ -86,12 +91,32 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    private void OnEnable() => TrySubscribeEvents();
+    private void OnEnable()
+    {
+        TrySubscribeEvents();
+        if (dialogueIsPlaying)
+            EnableAdvanceAction();
+    }
 
     private void OnDisable()
     {
         UnsubscribeEvents();
         _eventsSubscribed = false;
+        DisableAdvanceAction();
+    }
+
+    private void OnDestroy()
+    {
+        DisableAdvanceAction();
+        if (_advanceAction != null)
+        {
+            _advanceAction.performed -= OnAdvancePerformed;
+            _advanceAction.Dispose();
+            _advanceAction = null;
+        }
+
+        if (instance == this)
+            instance = null;
     }
 
     private void TrySubscribeEvents()
@@ -162,14 +187,23 @@ public class DialogueManager : MonoBehaviour
             return;
         }
 
-        //handle continuing to the next line in the dialogue when submit is pressed
-        if (canContinueToNextLine 
-            && currentStory.currentChoices.Count == 0 
-            && InputManager.GetInstance().GetInteractPressed())
+        if (!canContinueToNextLine || currentStory == null)
+            return;
+
+        var choiceCount = currentStory.currentChoices.Count;
+        var keyboardConfirm = WasKeyboardConfirmPressed();
+        var advanced = WasAdvancePressed();
+
+        if (choiceCount > 0)
         {
-            ContinueStory();
+            // Mouse clicks hit choice buttons. Space / Enter / E confirm the highlighted choice.
+            if (keyboardConfirm)
+                MakeChoice(SelectedChoiceIndex());
+            return;
         }
-        
+
+        if (advanced)
+            ContinueStory();
     }
 
     public void EnterDialogueMode(TextAsset inkJSON, string knotName)
@@ -190,6 +224,11 @@ public class DialogueManager : MonoBehaviour
         
         dialogueIsPlaying = true;
         dialoguePanel.SetActive(true);
+        EnableAdvanceAction();
+        _advanceLatched = false;
+        // Don't treat the E/click that started this conversation as "advance".
+        _advanceConsumedFrame = Time.frameCount;
+        InputManager.GetInstance()?.RegisterInteractPressed();
 
         dialogueVariables.StartListening(currentStory);
 
@@ -242,6 +281,8 @@ public class DialogueManager : MonoBehaviour
 
         dialogueIsPlaying = false;
         canContinueToNextLine = false;
+        DisableAdvanceAction();
+        _advanceLatched = false;
         HideChoices();
         if (continueIcon != null)
             continueIcon.SetActive(false);
@@ -344,7 +385,8 @@ public class DialogueManager : MonoBehaviour
         foreach (char letter in line.ToCharArray())
         {
             //if the dialogue button is pressed, finish displaying line right away
-            if(InputManager.GetInstance().GetInteractPressed())
+            // Space, left click, or Interact (E) skip typewriter / advance.
+            if (WasAdvancePressed())
             {
                 dialogueText.maxVisibleCharacters = line.Length;
                 break;
@@ -364,7 +406,25 @@ public class DialogueManager : MonoBehaviour
             else
             {
                 dialogueText.maxVisibleCharacters++;
-                yield return new WaitForSeconds(typingSpeed);
+                var waited = 0f;
+                var skip = false;
+                while (waited < typingSpeed)
+                {
+                    if (WasAdvancePressed())
+                    {
+                        skip = true;
+                        break;
+                    }
+
+                    waited += Time.unscaledDeltaTime;
+                    yield return null;
+                }
+
+                if (skip)
+                {
+                    dialogueText.maxVisibleCharacters = line.Length;
+                    break;
+                }
             }
         }
 
@@ -468,7 +528,9 @@ public class DialogueManager : MonoBehaviour
         if (canContinueToNextLine)
         {
             currentStory.ChooseChoiceIndex(choiceIndex);
-            InputManager.GetInstance().RegisterInteractPressed();
+            _advanceLatched = false;
+            _advanceConsumedFrame = Time.frameCount;
+            InputManager.GetInstance()?.RegisterInteractPressed();
             ContinueStory();
         }     
     }
@@ -487,6 +549,120 @@ public class DialogueManager : MonoBehaviour
     private bool IsLineBlank(string dialogueLine)
     {
         return dialogueLine.Trim().Equals("") || dialogueLine.Trim().Equals("\n");
+    }
+
+    private void EnsureAdvanceAction()
+    {
+        if (_advanceAction != null)
+            return;
+
+        // Independent of PlayerInput / Interact. Enabled only while a line is showing
+        // so left click does not fight fishing/scoop outside of dialogue.
+        _advanceAction = new InputAction("DialogueAdvance", InputActionType.Button);
+        _advanceAction.AddBinding("<Keyboard>/space");
+        _advanceAction.AddBinding("<Keyboard>/enter");
+        _advanceAction.AddBinding("<Keyboard>/numpadEnter");
+        _advanceAction.AddBinding("<Mouse>/leftButton");
+        _advanceAction.performed += OnAdvancePerformed;
+    }
+
+    private void EnableAdvanceAction()
+    {
+        EnsureAdvanceAction();
+        if (_advanceAction != null && !_advanceAction.enabled)
+            _advanceAction.Enable();
+    }
+
+    private void DisableAdvanceAction()
+    {
+        if (_advanceAction != null && _advanceAction.enabled)
+            _advanceAction.Disable();
+    }
+
+    private void OnAdvancePerformed(InputAction.CallbackContext context)
+    {
+        if (context.performed && dialogueIsPlaying)
+            _advanceLatched = true;
+    }
+
+    private int SelectedChoiceIndex()
+    {
+        if (choices == null || choices.Length == 0)
+            return 0;
+
+        var selected = EventSystem.current != null
+            ? EventSystem.current.currentSelectedGameObject
+            : null;
+
+        if (selected != null)
+        {
+            for (int i = 0; i < choices.Length; i++)
+            {
+                var choice = choices[i];
+                if (choice == null || !choice.activeSelf)
+                    continue;
+                if (choice == selected || selected.transform.IsChildOf(choice.transform))
+                    return i;
+            }
+        }
+
+        for (int i = 0; i < choices.Length; i++)
+        {
+            if (choices[i] != null && choices[i].activeSelf)
+                return i;
+        }
+
+        return 0;
+    }
+
+    private static bool WasKeyboardConfirmPressed()
+    {
+        var kb = Keyboard.current;
+        return kb != null &&
+               (kb.spaceKey.wasPressedThisFrame ||
+                kb.enterKey.wasPressedThisFrame ||
+                kb.numpadEnterKey.wasPressedThisFrame ||
+                kb.eKey.wasPressedThisFrame);
+    }
+
+    private bool WasAdvancePressed()
+    {
+        // One press must only advance once this frame (don't skip the next line's typewriter).
+        if (_advanceConsumedFrame == Time.frameCount)
+            return false;
+
+        var pressed = _advanceLatched;
+        if (!pressed)
+        {
+            var input = InputManager.GetInstance();
+            if (input != null && input.ConsumeDialogueAdvance())
+                pressed = true;
+        }
+
+        if (!pressed && _advanceAction != null && _advanceAction.WasPressedThisFrame())
+            pressed = true;
+
+        if (!pressed)
+        {
+            var kb = Keyboard.current;
+            if (kb != null && (kb.spaceKey.wasPressedThisFrame || kb.enterKey.wasPressedThisFrame))
+                pressed = true;
+        }
+
+        if (!pressed)
+        {
+            var mouse = Mouse.current;
+            if (mouse != null && mouse.leftButton.wasPressedThisFrame)
+                pressed = true;
+        }
+
+        if (!pressed)
+            return false;
+
+        _advanceLatched = false;
+        _advanceConsumedFrame = Time.frameCount;
+        InputManager.GetInstance()?.RegisterInteractPressed();
+        return true;
     }
 }
 
