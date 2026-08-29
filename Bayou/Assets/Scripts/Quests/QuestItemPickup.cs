@@ -17,7 +17,7 @@ namespace Bayou.Quests
         [SerializeField] private bool destroyOnPickup = true;
         [SerializeField] private GameObject visualCue;
         [SerializeField] private string pickupPrompt = "Pick up";
-        [Tooltip("If true, picking this up finishes the demo (lantern).")]
+        [Tooltip("If true, picking this up finishes the demo. Leave off for the lantern so it can be used.")]
         [SerializeField] private bool endDemoOnPickup;
 
         private bool _playerInRange;

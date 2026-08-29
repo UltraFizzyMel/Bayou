@@ -360,9 +360,7 @@ namespace Bayou.Inventory
             inventory.DetachForDrag(item);
 
             SyncItemLayerToGrid();
-            if (itemLayer != null)
-                ui.transform.SetParent(itemLayer, worldPositionStays: true);
-
+            InventoryDragOverlay.Attach(ui.Rect);
             ui.transform.SetAsLastSibling();
         }
 
@@ -370,10 +368,7 @@ namespace Bayou.Inventory
         {
             if (ui == null || ui != _dragging) return;
 
-            var canvas = ui.GetComponentInParent<Canvas>();
-            if (canvas == null) return;
-
-            ui.Rect.anchoredPosition += eventData.delta / canvas.scaleFactor;
+            InventoryDragOverlay.Follow(ui.Rect, eventData);
             UpdateHoverPreview(eventData);
         }
 
@@ -401,7 +396,9 @@ namespace Bayou.Inventory
             }
 
             if (ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
-                    out var compartmentId, out var hoverX, out var hoverY))
+                    out var compartmentId, out var hoverX, out var hoverY) ||
+                ScreenPointToGrid(eventData.position, null,
+                    out compartmentId, out hoverX, out hoverY))
             {
                 InventoryDragPlacement.TryGetAnchorFromHover(
                     item.definition.shape,
@@ -491,7 +488,9 @@ namespace Bayou.Inventory
                 return;
 
             if (!ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
-                    out var compartmentId, out var hoverX, out var hoverY))
+                    out var compartmentId, out var hoverX, out var hoverY) &&
+                !ScreenPointToGrid(eventData.position, null,
+                    out compartmentId, out hoverX, out hoverY))
             {
                 gridUI.ClearHighlights();
                 return;

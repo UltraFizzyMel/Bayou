@@ -2,6 +2,7 @@
 #error FishingNetCaster requires the New Input System (ENABLE_INPUT_SYSTEM). Project Settings > Player > Active Input Handling must include Input System, or add scripting define.
 #endif
 
+using Bayou.Creatures;
 using Bayou.Inventory;
 using Bayou.Player;
 using UnityEngine;
@@ -72,8 +73,16 @@ namespace Bayou.Fishing
         [SerializeField] private int trajectoryPoints = 32;
         [SerializeField] private float trajectoryTimeStep = 0.05f;
         [SerializeField] private LayerMask collisionMask = ~0;
+        [Tooltip("Ignore hits this close to the rod so the preview doesn't vanish inside the player.")]
+        [SerializeField] private float trajectoryIgnoreRadius = 1.6f;
+
+        [Header("Combat melee (when pursued)")]
+        [SerializeField] private float meleeReach = 2.4f;
+        [SerializeField] private float meleeRadius = 1.25f;
+        [SerializeField] private float meleeCooldown = 0.4f;
 
         private float _lastCastTime = -999f;
+        private float _lastMeleeTime = -999f;
         private FishingCastPhase _phase = FishingCastPhase.Idle;
 
         private Vector3 _lockedCastDirection = Vector3.forward;
@@ -81,11 +90,14 @@ namespace Bayou.Fishing
         private float _directionSweepStartTime;
         private bool _charging;
         private FishingNetProjectile _activeNet;
+        private LineRenderer _fishingLine;
+        private bool _meleeMode;
 
         public float CurrentCharge01 { get; private set; }
 
         public FishingCastPhase Phase => _phase;
         public bool HasActiveNet => _activeNet != null;
+        public bool IsMeleeMode => _meleeMode;
 
         public Animator animator;
 
@@ -95,11 +107,14 @@ namespace Bayou.Fishing
             aimTransform = Camera.main != null ? Camera.main.transform : null;
         }
 
+        private float _ignoreInputUntil;
+
         private void OnEnable()
         {
             castHoldAction?.action?.Enable();
             lockDirectionAction?.action?.Enable();
             cancelCastAction?.action?.Enable();
+            _ignoreInputUntil = Time.unscaledTime + 1f;
         }
 
         private void OnDisable()
@@ -116,6 +131,7 @@ namespace Bayou.Fishing
             EnsureNetPrefab();
             EnsureTrajectoryLine();
             EnsureDirectionLines();
+            EnsureFishingLine();
             HideAllVisuals();
             if (GetComponent<FishingHud>() == null)
                 gameObject.AddComponent<FishingHud>();
@@ -221,24 +237,49 @@ namespace Bayou.Fishing
             trajectoryLine.material = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(new Color(0.3f, 0.95f, 1f, 0.85f));
         }
 
+        private void LateUpdate()
+        {
+            if (_activeNet == null)
+                _activeNet = null;
+            UpdateFishingLine();
+        }
+
         private void Update()
         {
-            var dialogue = DialogueManager.GetInstance();
-            if (dialogue != null && dialogue.dialogueIsPlaying)
+            if (Time.unscaledTime < _ignoreInputUntil)
                 return;
-            if (InventoryDisplayUI.Active != null && InventoryDisplayUI.Active.IsOpen)
+
+            var menusBlockCast =
+                (DialogueManager.GetInstance() != null && DialogueManager.GetInstance().dialogueIsPlaying) ||
+                (InventoryDisplayUI.Active != null && InventoryDisplayUI.Active.IsOpen);
+
+            if (menusBlockCast)
+            {
+                if (_activeNet != null && TryCancelFromInput())
+                    CancelActiveNet();
                 return;
+            }
+
+            _meleeMode = CreatureThreat.IsPlayerPursued(transform) &&
+                         _phase == FishingCastPhase.Idle &&
+                         _activeNet == null;
 
             switch (_phase)
             {
                 case FishingCastPhase.Idle:
-                    animator.SetBool("isCasting", false);
+                    SetAnimBool("isCasting", false);
                     // Cancel an in-flight / landed net even while caster is idle.
                     if (_activeNet != null)
                     {
                         if (TryCancelFromInput())
                             CancelActiveNet();
-                        // Don't start a new cast while a net is still out.
+                        // Don't start a new cast while a line is still out.
+                        break;
+                    }
+
+                    if (_meleeMode)
+                    {
+                        TryRodMelee();
                         break;
                     }
 
@@ -246,16 +287,15 @@ namespace Bayou.Fishing
                     {
                         if (useFacingCardinals)
                         {
-                            // Facing → 8-way lock → power charge (no sweep minigame).
+                            // Facing → 8-way lock → power charge. A tap (Play-mode click) must not cast.
+                            if (!IsCastHeld())
+                                break;
+
                             _lockedCastDirection = GetCenterForwardXZ();
                             _phase = FishingCastPhase.ChargingTrajectory;
+                            _charging = true;
+                            _directionSweepStartTime = Time.time;
                             ShowDirectionGizmo(false);
-                            _charging = false;
-                            if (trajectoryLine != null)
-                            {
-                                trajectoryLine.enabled = false;
-                                trajectoryLine.positionCount = 0;
-                            }
                         }
                         else
                         {
@@ -370,12 +410,14 @@ namespace Bayou.Fishing
             {
                 if (_charging)
                 {
-                    var releaseCharge = SampleCharge01();
+                    var heldFor = Time.time - _directionSweepStartTime;
                     _charging = false;
-                    TryFireNet(releaseCharge);
+                    // Ignore the click that focused the Game view / pressed Play.
+                    if (heldFor >= 0.15f)
+                        TryFireNet(SampleCharge01());
                     ResetToIdle();
                 }
-                // Waiting for hold after aim lock — stay in this phase until hold or cancel.
+
                 return;
             }
 
@@ -385,7 +427,7 @@ namespace Bayou.Fishing
                 _directionSweepStartTime = Time.time;
             }
 
-            animator.SetBool("isCasting", true);
+            SetAnimBool("isCasting", true);
             // Keep aim aligned with current facing while charging (8-way).
             if (useFacingCardinals)
                 _lockedCastDirection = GetCenterForwardXZ();
@@ -426,8 +468,34 @@ namespace Bayou.Fishing
 
             var net = Instantiate(netPrefab, origin, Quaternion.identity);
             _activeNet = net;
-            net.Launch(velocity, gameObject);
+            net.Launch(velocity, gameObject, transform);
             Bayou.Audio.FishingAudio.Resolve()?.PlayThrowNet();
+        }
+
+        private void TryRodMelee()
+        {
+            if (!WasMeleePressedThisFrame()) return;
+            if (Time.time - _lastMeleeTime < meleeCooldown) return;
+
+            _lastMeleeTime = Time.time;
+            SetAnimBool("isSwinging", true);
+            CancelInvoke(nameof(ClearSwingFlag));
+            Invoke(nameof(ClearSwingFlag), 0.28f);
+            Bayou.Audio.FishingAudio.Resolve()?.PlayHandNetScoop();
+
+            var origin = transform.position + Vector3.up * 0.9f;
+            var center = origin + GetCenterForwardXZ() * meleeReach;
+            ToolMelee.TryHitCreatures(center, meleeRadius, NetHitSource.MeleeRod);
+        }
+
+        private bool WasMeleePressedThisFrame()
+        {
+            var a = castHoldAction?.action;
+            if (a != null && a.WasPressedThisFrame())
+                return true;
+
+            var mouse = Mouse.current;
+            return mouse != null && mouse.leftButton.wasPressedThisFrame;
         }
 
         private void ResetToIdle()
@@ -436,9 +504,17 @@ namespace Bayou.Fishing
             HideAllVisuals();
             _charging = false;
             CurrentCharge01 = 0f;
-            animator.SetBool("isSwinging", false);
-            animator.SetBool("isCasting", false);
+            SetAnimBool("isSwinging", false);
+            SetAnimBool("isCasting", false);
         }
+
+        private void SetAnimBool(string param, bool value)
+        {
+            if (animator != null)
+                animator.SetBool(param, value);
+        }
+
+        private void ClearSwingFlag() => SetAnimBool("isSwinging", false);
 
         private float SampleCharge01()
         {
@@ -605,7 +681,8 @@ namespace Bayou.Fishing
                 var nextVel = vel + grav * tStep;
                 var nextPos = pos + vel * tStep + 0.5f * grav * (tStep * tStep);
 
-                if (Physics.Linecast(pos, nextPos, out var hit, collisionMask, QueryTriggerInteraction.Ignore))
+                if (Physics.Linecast(pos, nextPos, out var hit, collisionMask, QueryTriggerInteraction.Ignore) &&
+                    ShouldStopTrajectory(hit, origin))
                 {
                     trajectoryLine.SetPosition(i, hit.point);
                     trajectoryLine.positionCount = i + 1;
@@ -616,6 +693,47 @@ namespace Bayou.Fishing
                 pos = nextPos;
                 vel = nextVel;
             }
+        }
+
+        private bool ShouldStopTrajectory(RaycastHit hit, Vector3 origin)
+        {
+            if (hit.collider == null) return false;
+            if (hit.collider.transform == transform || hit.collider.transform.IsChildOf(transform))
+                return false;
+            if ((hit.point - origin).sqrMagnitude < trajectoryIgnoreRadius * trajectoryIgnoreRadius)
+                return false;
+            return true;
+        }
+
+        private void EnsureFishingLine()
+        {
+            if (_fishingLine != null) return;
+            var go = new GameObject("RodFishingLine");
+            go.transform.SetParent(transform, false);
+            _fishingLine = go.AddComponent<LineRenderer>();
+            SetupAuxLine(_fishingLine, new Color(0.92f, 0.9f, 0.75f, 0.95f), 0.025f, 0.012f);
+            _fishingLine.enabled = false;
+            _fishingLine.positionCount = 0;
+        }
+
+        private void UpdateFishingLine()
+        {
+            EnsureFishingLine();
+            if (_fishingLine == null) return;
+
+            if (_activeNet == null)
+            {
+                _fishingLine.enabled = false;
+                _fishingLine.positionCount = 0;
+                return;
+            }
+
+            var from = GetLaunchOrigin();
+            var to = _activeNet.transform.position;
+            _fishingLine.enabled = true;
+            _fishingLine.positionCount = 2;
+            _fishingLine.SetPosition(0, from);
+            _fishingLine.SetPosition(1, to);
         }
 
 #if UNITY_EDITOR

@@ -110,6 +110,9 @@ namespace Bayou.Fishing
                 gameObject.AddComponent<FishingInteractionPromptSource>();
 
             EnsureHeldVisuals();
+            Bayou.Player.PlayerOcclusionOutline.EnsureOn(gameObject);
+            // Disable tools before the first Update so a Play-mode click cannot auto-cast.
+            ApplyItem(startingItem);
         }
 
         private void OnEnable()
@@ -193,8 +196,10 @@ namespace Bayou.Fishing
                 return;
             }
 
-            // Entering chase: pull out the net for melee (don't interrupt an active rod cast).
-            if (IsPursued && !_wasPursued && CurrentItem != BayouHeldItem.Net)
+            // Entering chase: pull out the net for melee unless already holding rod (rod is also melee).
+            if (IsPursued && !_wasPursued &&
+                CurrentItem != BayouHeldItem.Net &&
+                CurrentItem != BayouHeldItem.Rod)
             {
                 var rodBusy = rodCaster != null &&
                               (rodCaster.Phase != FishingCastPhase.Idle || rodCaster.HasActiveNet);

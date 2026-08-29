@@ -11,6 +11,7 @@ namespace Bayou.Fishing
     {
         private FishingNetCaster _caster;
         private BayouFishingEquipment _equipment;
+        private HandNetAreaController _handNet;
         private GUIStyle _boxStyle;
         private GUIStyle _labelStyle;
 
@@ -18,6 +19,7 @@ namespace Bayou.Fishing
         {
             _caster = GetComponent<FishingNetCaster>() ?? FindFirstObjectByType<FishingNetCaster>();
             _equipment = GetComponent<BayouFishingEquipment>() ?? FindFirstObjectByType<BayouFishingEquipment>();
+            _handNet = GetComponent<HandNetAreaController>() ?? FindFirstObjectByType<HandNetAreaController>();
         }
 
         private void OnGUI()
@@ -33,10 +35,11 @@ namespace Bayou.Fishing
 
             var casting = _caster != null && _caster.Phase != FishingCastPhase.Idle;
             var hasNet = _caster != null && _caster.HasActiveNet;
-            var activePhase = casting || hasNet || attract != null || reel != null;
+            var netCharging = _handNet != null && _handNet.IsCharging;
+            var activePhase = casting || hasNet || attract != null || reel != null || netCharging;
 
             // Compact tip while idle; taller box during cast phases.
-            var height = activePhase ? 120f : 52f;
+            var height = activePhase ? 128f : 64f;
             var area = new Rect(16f, Screen.height - height - 16f, 460f, height);
             GUI.Box(area, GUIContent.none, _boxStyle);
             GUILayout.BeginArea(new Rect(area.x + 12f, area.y + 10f, area.width - 24f, area.height - 16f));
@@ -56,7 +59,7 @@ namespace Bayou.Fishing
             }
             else if (attract != null && attract.IsActive)
             {
-                GUILayout.Label("NET PLANTED — fish swimming in", _labelStyle);
+                GUILayout.Label("BOBBER DOWN — fish swimming in. Bite when the bar fills.", _labelStyle);
                 DrawBar(attract.Progress01);
                 GUILayout.Label("Wiggle A/D to attract  |  Esc cancel", _labelStyle);
             }
@@ -73,27 +76,53 @@ namespace Bayou.Fishing
             }
             else if (hasNet && _caster != null)
             {
-                var net = FishingNetProjectile.ActiveInWater;
-                if (net != null && net.Phase == FishingNetPhase.LandedInWater)
-                    GUILayout.Label("Net planted — wiggle A/D (or cast onto shiny)", _labelStyle);
-                else
-                    GUILayout.Label("Net in flight…", _labelStyle);
+                var net = FishingNetProjectile.Current ?? FishingNetProjectile.ActiveInWater;
+                var hint = net != null && !string.IsNullOrEmpty(net.StatusHint)
+                    ? net.StatusHint
+                    : "Line out — Esc / Q / RMB recast";
+                GUILayout.Label(hint, _labelStyle);
                 GUILayout.Label("Esc / Q / RMB cancel", _labelStyle);
             }
             else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Rod)
             {
-                GUILayout.Label("LMB — cast (ROD fish / shiny). Catfish needs rod.", _labelStyle);
+                if (_caster != null && _caster.IsMeleeMode)
+                    GUILayout.Label("ROD MELEE — LMB swing", _labelStyle);
+                else
+                {
+                    var spot = FishingSpot.FindContaining(_equipment.transform.position);
+                    if (spot != null && spot.RequiredTool == FishCatchTool.Rod)
+                        GUILayout.Label("Rod hole — hold LMB, release to cast. Wiggle A/D after it lands.", _labelStyle);
+                    else if (spot != null && spot.RequiredTool == FishCatchTool.Net)
+                        GUILayout.Label("This hole needs the NET (2), not the rod.", _labelStyle);
+                    else
+                        GUILayout.Label("Hold LMB · release to cast. Look for a rod hole (catfish).", _labelStyle);
+                }
             }
             else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Net)
             {
                 if (_equipment.NetMode == HandNetMode.Combat)
                     GUILayout.Label("COMBAT — LMB swing net (catch snake / stun croc)", _labelStyle);
                 else
-                    GUILayout.Label("FISHING — LMB scoop NET fish / rosary / shiny", _labelStyle);
+                {
+                    if (_handNet != null && _handNet.IsCharging)
+                    {
+                        GUILayout.Label("THROW — release at the BIG circle", _labelStyle);
+                        DrawBar(_handNet.Pulse01);
+                        GUILayout.Label("RMB / Esc cancel  ·  small circle = miss", _labelStyle);
+                    }
+                    else
+                    {
+                        GUILayout.Label("NET — hold LMB, release at the big pulse to throw", _labelStyle);
+                    }
+                }
+            }
+            else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Lantern)
+            {
+                GUILayout.Label("LANTERN — lights the fog. Press 1/2 to switch tools.", _labelStyle);
             }
             else if (_equipment != null && _equipment.IsPursued)
             {
-                GUILayout.Label("Pursued! Press 2 for net melee", _labelStyle);
+                GUILayout.Label("Pursued! 1 rod melee · 2 net melee", _labelStyle);
             }
             else if (_equipment != null)
             {

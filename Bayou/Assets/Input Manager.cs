@@ -24,6 +24,14 @@ public class InputManager : MonoBehaviour
     private void OnEnable()
     {
         BindCast();
+        interactPressed = false;
+        dialogueAdvancePressed = false;
+    }
+
+    private void Start()
+    {
+        interactPressed = false;
+        dialogueAdvancePressed = false;
     }
 
     private void OnDisable()

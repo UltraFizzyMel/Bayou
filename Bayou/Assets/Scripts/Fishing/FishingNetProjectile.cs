@@ -1,7 +1,6 @@
 using Bayou.Creatures;
 using Bayou.Environment;
 using Bayou.Fish;
-using Bayou.Quests;
 using UnityEngine;
 
 namespace Bayou.Fishing
@@ -23,6 +22,7 @@ namespace Bayou.Fishing
     public sealed class FishingNetProjectile : MonoBehaviour
     {
         public static FishingNetProjectile ActiveInWater { get; private set; }
+        public static FishingNetProjectile Current { get; private set; }
 
         [Header("Physics")]
         [Tooltip("Auto-destroy only if the net never lands in water. 0 = never.")]
@@ -32,7 +32,7 @@ namespace Bayou.Fishing
         [SerializeField] private float launchGraceSeconds = 0.35f;
         [Tooltip("Must travel at least this far before dry-land stick is allowed.")]
         [SerializeField] private float minFlightDistance = 2f;
-        [SerializeField] private float shinyScoopRadius = 4.5f;
+        [SerializeField] private float shinyScoopRadius = 1.15f;
         [Tooltip("Radius used to stun/catch creatures when the net plants or strikes them in flight.")]
         [SerializeField] private float creatureHitRadius = 2.2f;
 
@@ -51,6 +51,8 @@ namespace Bayou.Fishing
 
         public FishingNetPhase Phase { get; private set; } = FishingNetPhase.Flying;
         public Vector3 PlantPosition => transform.position;
+        /// <summary>Short hint for HUD / prompts after the bobber lands.</summary>
+        public string StatusHint { get; private set; } = "";
 
         private void Awake()
         {
@@ -74,27 +76,41 @@ namespace Bayou.Fishing
                 Invoke(nameof(DestroyAfterMissLifetime), missLifetimeSeconds);
         }
 
+        private void FixedUpdate()
+        {
+            if (_hasLanded || Phase != FishingNetPhase.Flying) return;
+            if (StillInLaunchGrace()) return;
+            TryLandInNearbyWater();
+        }
+
         private void OnDestroy()
         {
             if (ActiveInWater == this)
                 ActiveInWater = null;
+            if (Current == this)
+                Current = null;
 
             var attract = GetComponent<FishingAttractPhase>();
             if (attract != null)
                 attract.AttractComplete -= OnAttractCompleteFromPhase;
         }
 
-        public void Launch(Vector3 initialVelocity) => Launch(initialVelocity, null);
+        public void Launch(Vector3 initialVelocity) => Launch(initialVelocity, null, null);
 
-        public void Launch(Vector3 initialVelocity, GameObject casterRoot)
+        public void Launch(Vector3 initialVelocity, GameObject casterRoot) =>
+            Launch(initialVelocity, casterRoot, casterRoot != null ? casterRoot.transform : null);
+
+        public void Launch(Vector3 initialVelocity, GameObject casterRoot, Transform lineOrigin)
         {
             Phase = FishingNetPhase.Flying;
             _hasLanded = false;
+            StatusHint = "Line in the air…";
             _launchPos = transform.position;
             _launchTime = Time.time;
 
             if (ActiveInWater == this)
                 ActiveInWater = null;
+            Current = this;
 
             IgnoreCollisionsWith(casterRoot, true);
 
@@ -106,6 +122,7 @@ namespace Bayou.Fishing
             EnsurePhases();
             EnsureVisual();
             _visual?.ShowInFlight();
+            _visual?.SetLineOrigin(lineOrigin);
 
             var attract = GetComponent<FishingAttractPhase>();
             if (attract != null)
@@ -161,6 +178,7 @@ namespace Bayou.Fishing
             Phase = FishingNetPhase.AttractComplete;
             CancelMissLifetime();
 
+            StatusHint = "Bite! Hold LMB to reel.";
             var reel = GetComponent<FishingReelPhase>();
             if (reel == null)
                 reel = gameObject.AddComponent<FishingReelPhase>();
@@ -177,7 +195,8 @@ namespace Bayou.Fishing
 
         private void DestroyAfterMissLifetime()
         {
-            if (Phase == FishingNetPhase.LandedInWater || Phase == FishingNetPhase.AttractComplete)
+            // Only flying casts time out. A planted bobber stays until cancel / catch.
+            if (Phase != FishingNetPhase.Flying)
                 return;
             Destroy(gameObject);
         }
@@ -211,6 +230,9 @@ namespace Bayou.Fishing
 
             // Don't stick to the player / ground right at the cast origin.
             if (StillInLaunchGrace())
+                return;
+
+            if (TryLandInNearbyWater())
                 return;
 
             LandOnDry(collision);
@@ -295,26 +317,69 @@ namespace Bayou.Fishing
 
             Bayou.Audio.FishingAudio.Resolve()?.PlayLanding();
 
-            // Scoop one-time loot (shiny / rosary) if the net lands on it.
-            if (PondShinyCollectible.TryScoopNear(transform.position, shinyScoopRadius) ||
-                NetScoopLoot.TryScoopNear(transform.position, shinyScoopRadius))
+            // Rod bobber only scoops pond loot that is actually under it (rosary, etc.).
+            // The quest shiny is hand-net / Interact only — a stray plant must not vacuum it.
+            if (NetScoopLoot.TryScoopNear(transform.position, shinyScoopRadius))
             {
+                StatusHint = "Scooped!";
                 Destroy(gameObject);
                 return;
             }
 
             TryHitCreaturesNearPlant();
 
-            // Rod attract only makes sense if a rod-fish is nearby.
-            if (!HasRodFishNearby(transform.position, 22f))
+            var spot = FishingSpot.FindContaining(transform.position);
+            var rodFishNearby = HasRodFishNearby(transform.position, 22f);
+            var rodSpot = spot != null && spot.RequiredTool == FishCatchTool.Rod;
+
+            if (spot != null && spot.RequiredTool == FishCatchTool.Net && !rodFishNearby)
             {
-                Debug.Log("[Fishing] Net planted — no rod fish here (use hand net for NET spots).");
+                StatusHint = "Net hole — switch to the hand net (2). Esc recast.";
                 return;
             }
 
+            if (!rodFishNearby && !rodSpot)
+            {
+                StatusHint = "No rod fish here. Cast into a rod hole (catfish). Esc recast.";
+                return;
+            }
+
+            StatusHint = "Fish nearby — wiggle A/D until the bite, then hold LMB.";
             var attract = GetComponent<FishingAttractPhase>();
             if (attract != null)
                 attract.BeginAttract();
+        }
+
+        private bool TryLandInNearbyWater()
+        {
+            if (_hasLanded) return false;
+
+            var pos = transform.position;
+
+            const float probe = 1.1f;
+            var count = Physics.OverlapSphereNonAlloc(pos, probe, CreatureNetOverlapBuffer.Colliders, ~0,
+                QueryTriggerInteraction.Collide);
+            for (var i = 0; i < count; i++)
+            {
+                var c = CreatureNetOverlapBuffer.Colliders[i];
+                if (!IsWater(c)) continue;
+                var snap = c.ClosestPoint(pos);
+                transform.position = snap;
+                LandInWater(null);
+                return true;
+            }
+
+            // Downward probe — water is often a thin trigger plane under the bobber.
+            if (Physics.Raycast(pos + Vector3.up * 1.5f, Vector3.down, out var hit, 6f, ~0,
+                    QueryTriggerInteraction.Collide) &&
+                IsWater(hit.collider))
+            {
+                transform.position = hit.point;
+                LandInWater(null);
+                return true;
+            }
+
+            return false;
         }
 
         private static bool HasRodFishNearby(Vector3 pos, float radius)
@@ -335,6 +400,8 @@ namespace Bayou.Fishing
         {
             _hasLanded = true;
             Phase = FishingNetPhase.LandedOnLand;
+            StatusHint = "Missed the water. Esc / RMB recast.";
+            CancelMissLifetime();
 
             if (!stickOnDryLand)
                 return;

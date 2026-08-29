@@ -7,7 +7,9 @@ namespace Bayou.Creatures
         HandNet,
         ThrownNet,
         /// <summary>Hand net used as a melee swing while pursued.</summary>
-        MeleeNet
+        MeleeNet,
+        /// <summary>Fishing rod used as a melee swing while pursued.</summary>
+        MeleeRod
     }
 
     public enum NetHitResult

@@ -18,8 +18,9 @@ namespace Bayou.Quests
         [SerializeField] private float bobAmplitude = 0.08f;
         [SerializeField] private float bobSpeed = 2.2f;
         [SerializeField] private Color glowColor = new(0.35f, 0.95f, 0.45f, 1f);
-        [SerializeField] private float extraCollectRadius = 3.5f;
+        [SerializeField] private float extraCollectRadius;
         [SerializeField] private string pickupPrompt = "Pick up";
+        [SerializeField] private float interactReach = 1.8f;
 
         private Vector3 _basePos;
         private bool _collected;
@@ -37,7 +38,12 @@ namespace Bayou.Quests
             ApplyGlow();
         }
 
-        private void OnEnable() => InteractionPromptBroker.Register(this);
+        private void OnEnable()
+        {
+            InteractionPromptBroker.Register(this);
+            InputManager.GetInstance()?.RegisterInteractPressed();
+        }
+
         private void OnDisable() => InteractionPromptBroker.Unregister(this);
 
         private void Update()
@@ -47,7 +53,9 @@ namespace Bayou.Quests
             var y = _basePos.y + Mathf.Sin(Time.time * bobSpeed) * bobAmplitude;
             transform.position = new Vector3(_basePos.x, y, _basePos.z);
 
-            if (!_playerInRange)
+            if (!CanCollectNow())
+                return;
+            if (!_playerInRange || DistToPlayerSq() > interactReach * interactReach)
                 return;
 
             var dialogue = DialogueManager.GetInstance();
@@ -62,15 +70,11 @@ namespace Bayou.Quests
         /// <summary>Called by thrown net / hand net. Returns true if this shiny was collected.</summary>
         public bool TryCollectFromNet(Vector3 netPos, float radius)
         {
-            if (_collected) return false;
+            if (_collected || !CanCollectNow()) return false;
             ResolveItem();
             if (item == null) return false;
 
-            var reach = Mathf.Max(radius, extraCollectRadius);
-            var col = GetComponent<Collider>();
-            if (col != null)
-                reach += WorldColliderRadius(col);
-
+            var reach = Mathf.Max(0.35f, radius) + extraCollectRadius;
             var flat = transform.position - netPos;
             flat.y = 0f;
             if (flat.sqrMagnitude > reach * reach)
@@ -78,6 +82,8 @@ namespace Bayou.Quests
 
             return Collect();
         }
+
+        private static bool CanCollectNow() => Time.timeSinceLevelLoad >= 2f;
 
         public static bool TryScoopNear(Vector3 netPos, float radius)
         {
@@ -94,7 +100,9 @@ namespace Bayou.Quests
         public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
         {
             prompt = default;
-            if (!_playerInRange || _collected || item == null)
+            if (!CanCollectNow() || !_playerInRange || _collected || item == null)
+                return false;
+            if (DistToPlayerSq() > interactReach * interactReach)
                 return false;
 
             var name = string.IsNullOrWhiteSpace(item.displayName) ? item.name : item.displayName;
@@ -105,6 +113,9 @@ namespace Bayou.Quests
 
         private bool Collect()
         {
+            if (!CanCollectNow())
+                return false;
+
             ResolveItem();
             if (_collected || item == null)
             {
@@ -122,8 +133,12 @@ namespace Bayou.Quests
 
         private void ResolveItem()
         {
-            if (item != null) return;
-            item = Resources.Load<ItemDefinition>(ResourcesItemPath);
+            if (item != null && item.MatchesId("Item_ShinyPond"))
+                return;
+
+            var loaded = Resources.Load<ItemDefinition>(ResourcesItemPath);
+            if (loaded != null)
+                item = loaded;
         }
 
         private void ApplyGlow()
@@ -158,18 +173,6 @@ namespace Bayou.Quests
             var d = transform.position - p.transform.position;
             d.y = 0f;
             return d.sqrMagnitude;
-        }
-
-        private static float WorldColliderRadius(Collider col)
-        {
-            if (col is SphereCollider sphere)
-            {
-                var s = sphere.transform.lossyScale;
-                return sphere.radius * Mathf.Max(s.x, Mathf.Max(s.y, s.z));
-            }
-
-            var e = col.bounds.extents;
-            return Mathf.Max(e.x, e.z);
         }
 
 #if UNITY_EDITOR

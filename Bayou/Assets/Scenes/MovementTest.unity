@@ -23250,6 +23250,8 @@ MonoBehaviour:
   bobAmplitude: 0.08
   bobSpeed: 2.2
   glowColor: {r: 0.35, g: 0.95, b: 0.45, a: 1}
+  extraCollectRadius: 0
+  pickupPrompt: Pick up
 --- !u!114 &880010007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24459,7 +24461,7 @@ MonoBehaviour:
   destroyOnPickup: 1
   visualCue: {fileID: 0}
   pickupPrompt: Pick up lantern
-  endDemoOnPickup: 1
+  endDemoOnPickup: 0
 --- !u!114 &910000206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -55854,6 +55856,7 @@ MonoBehaviour:
   areaRing: {fileID: 0}
   autoCreateAreaRing: 1
   ringSegments: 28
+  animator: {fileID: 0}
 --- !u!114 &2078946150
 MonoBehaviour:
   m_ObjectHideFlags: 0

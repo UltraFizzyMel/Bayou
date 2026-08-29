@@ -90,8 +90,8 @@ namespace Bayou.Creatures
             if (dist > visionRange)
                 return false;
 
-            // Tall grass hides from vision (not from min sense).
-            if (TallGrassVolume.IsPlayerHidden(player))
+            // Tall grass hides from vision (not from min sense). A lit lantern gives you away.
+            if (TallGrassVolume.IsPlayerHidden(player) && !Bayou.Fishing.HeldLantern.IsAnyLit)
                 return false;
 
             var forward = transform.forward;
