@@ -100,7 +100,7 @@ MonoBehaviour:
   stickOnDryLand: 1
   launchGraceSeconds: 0.35
   minFlightDistance: 2
-  shinyScoopRadius: 4.5
+  shinyScoopRadius: 1.15
   waterLayers:
     serializedVersion: 2
     m_Bits: 16

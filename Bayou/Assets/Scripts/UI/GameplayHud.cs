@@ -21,8 +21,8 @@ namespace Bayou.UI
             "R  Rotate item\n" +
             "Tab  Cycle tools\n" +
             "1 Rod · 2 Net · 3 Lantern · 0 None\n" +
-            "Left click  Scoop / cast (or melee if chased)\n" +
-            "Esc / Q  Cancel cast\n" +
+            "Left click  Cast / scoop  ·  melee with rod or net if chased\n" +
+            "Lantern lights fog  ·  Esc / Q cancel cast\n" +
             "V  Volume";
 
         [SerializeField] private bool buildUiIfMissing = true;

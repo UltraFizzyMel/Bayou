@@ -244,7 +244,7 @@ namespace Bayou.Inventory.UI
             }
 
             DetachForDrag(view.Item);
-            MoveDragViewToCanvas(view);
+            InventoryDragOverlay.Attach(view.RectTransform);
             view.transform.SetAsLastSibling();
             UpdatePlacementPreview(view);
         }
@@ -252,22 +252,7 @@ namespace Bayou.Inventory.UI
         public void Dragging(InventoryItemView view, PointerEventData eventData)
         {
             if (_dragging != view) return;
-
-            var cam = GetCanvasCamera();
-            if (TryGetDragAnchor(eventData.position, cam, view,
-                    out var compartment, out _, out var gx, out var gy))
-            {
-                SnapDragViewToGrid(view, compartment, gx, gy);
-            }
-            else if (_crossPanelDropHandler != null)
-            {
-                FollowPointerOnCanvas(view, eventData);
-            }
-            else
-            {
-                ClampDragToCompartment(view, eventData);
-            }
-
+            InventoryDragOverlay.Follow(view.RectTransform, eventData);
             UpdatePlacementPreview(view);
         }
 

@@ -12,9 +12,11 @@ namespace Bayou.Fishing
         [SerializeField] private int segments = 16;
         [SerializeField] private Color rimColor = new(0.15f, 0.45f, 0.55f, 0.95f);
         [SerializeField] private Color meshColor = new(0.25f, 0.55f, 0.6f, 0.45f);
+        [SerializeField] private Color bobberColor = new(0.92f, 0.22f, 0.18f, 1f);
         [SerializeField] private bool hideUntilPlanted = true;
 
         private GameObject _root;
+        private GameObject _bobber;
         private bool _planted;
 
         private void Awake()
@@ -32,6 +34,13 @@ namespace Bayou.Fishing
         public void ShowInFlight()
         {
             SetVisible(true);
+            if (_bobber != null)
+                _bobber.SetActive(true);
+        }
+
+        public void SetLineOrigin(Transform _)
+        {
+            // Line is drawn by FishingNetCaster so it stays attached to the rod.
         }
 
         private void SetVisible(bool on)
@@ -56,6 +65,15 @@ namespace Bayou.Fishing
             disc.transform.localScale = new Vector3(radius * 2f, 0.02f, radius * 2f);
             Destroy(disc.GetComponent<Collider>());
             ApplyColor(disc, meshColor);
+
+            _bobber = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            _bobber.name = "Bobber";
+            _bobber.transform.SetParent(_root.transform, false);
+            _bobber.transform.localRotation = Quaternion.identity;
+            _bobber.transform.localPosition = new Vector3(0f, 0f, 0.12f);
+            _bobber.transform.localScale = new Vector3(0.22f, 0.28f, 0.22f);
+            Destroy(_bobber.GetComponent<Collider>());
+            ApplyColor(_bobber, bobberColor);
 
             // Rim ring via LineRenderer
             var rimGo = new GameObject("NetRim");

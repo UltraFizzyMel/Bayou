@@ -68,6 +68,7 @@ namespace Bayou.Player
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
             waterSensor = GetComponent<BayouWaterSensor>();
+            PlayerOcclusionOutline.EnsureOn(gameObject);
         }
 
 #if ENABLE_INPUT_SYSTEM

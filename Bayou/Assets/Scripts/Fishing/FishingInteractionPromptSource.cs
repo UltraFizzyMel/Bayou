@@ -51,12 +51,18 @@ namespace Bayou.Fishing
             var attract = FindActiveAttract();
             if (attract != null && attract.IsActive)
             {
-                prompt = new InteractionPrompt("A / D", "Wiggle to attract  ·  Esc cancel", 95);
+                prompt = new InteractionPrompt("A / D", "Wiggle — wait for the bite, then hold LMB", 95);
                 return true;
             }
 
             if (rodCaster != null && rodCaster.enabled)
             {
+                if (rodCaster.IsMeleeMode)
+                {
+                    prompt = new InteractionPrompt("LMB", "Swing rod", 70);
+                    return true;
+                }
+
                 if (rodCaster.Phase == FishingCastPhase.DirectionSweep)
                 {
                     prompt = new InteractionPrompt("LMB", "Lock aim", 90);
@@ -71,13 +77,23 @@ namespace Bayou.Fishing
 
                 if (rodCaster.HasActiveNet)
                 {
-                    prompt = new InteractionPrompt("Esc", "Cancel cast", 85);
+                    var net = FishingNetProjectile.Current ?? FishingNetProjectile.ActiveInWater;
+                    var action = net != null && !string.IsNullOrEmpty(net.StatusHint)
+                        ? net.StatusHint
+                        : "Cancel cast";
+                    prompt = new InteractionPrompt("Esc", action, 85);
                     return true;
                 }
 
                 if (equipment != null && equipment.CurrentItem == BayouHeldItem.Rod)
                 {
-                    prompt = new InteractionPrompt("LMB", "Cast rod", 40);
+                    var spot = FishingSpot.FindContaining(transform.position);
+                    if (spot != null && spot.RequiredTool == FishCatchTool.Net)
+                        prompt = new InteractionPrompt("2", "This hole needs the net", 45);
+                    else if (spot != null && spot.RequiredTool == FishCatchTool.Rod)
+                        prompt = new InteractionPrompt("Hold LMB", "Cast into this rod hole", 50);
+                    else
+                        prompt = new InteractionPrompt("Hold LMB", "Charge · release to cast", 40);
                     return true;
                 }
             }
@@ -85,7 +101,18 @@ namespace Bayou.Fishing
             if (handNet != null && handNet.enabled &&
                 equipment != null && equipment.CurrentItem == BayouHeldItem.Net)
             {
-                prompt = new InteractionPrompt("LMB", "Scoop with net", 40);
+                if (handNet.IsCombatMode)
+                    prompt = new InteractionPrompt("LMB", "Swing net", 40);
+                else if (handNet.IsCharging)
+                    prompt = new InteractionPrompt("Release", "Throw at the big circle", 90);
+                else
+                    prompt = new InteractionPrompt("Hold LMB", "Wind up throw", 40);
+                return true;
+            }
+
+            if (equipment != null && equipment.CurrentItem == BayouHeldItem.Lantern)
+            {
+                prompt = new InteractionPrompt("Lantern", "Lighting the fog", 30);
                 return true;
             }
 

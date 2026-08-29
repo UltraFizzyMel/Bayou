@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Bayou.Rendering;
 using Bayou.Fish;
 using Bayou.Inventory;
+using Bayou.Rendering;
+using Bayou.UI;
 using UnityEngine;
 
 namespace Bayou.Fishing
@@ -11,7 +12,7 @@ namespace Bayou.Fishing
     /// Authoring volume for a fishing hole: required tool (Net or Rod) + fish / one-time loot spawns.
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class FishingSpot : MonoBehaviour
+    public sealed class FishingSpot : MonoBehaviour, IInteractionPromptSource
     {
         [Serializable]
         public sealed class FishSpawn
@@ -69,9 +70,48 @@ namespace Bayou.Fishing
         {
             if (!All.Contains(this))
                 All.Add(this);
+            InteractionPromptBroker.Register(this);
         }
 
-        private void OnDisable() => All.Remove(this);
+        private void OnDisable()
+        {
+            All.Remove(this);
+            InteractionPromptBroker.Unregister(this);
+        }
+
+        public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
+        {
+            prompt = default;
+            var player = GameObject.FindGameObjectWithTag("Player");
+            if (player == null) return false;
+
+            var bag = InventoryDisplayUI.Active;
+            if (bag != null && bag.IsOpen) return false;
+
+            var d = player.transform.position - transform.position;
+            d.y = 0f;
+            var reach = radius + 2.5f;
+            if (d.sqrMagnitude > reach * reach) return false;
+
+            var equipment = player.GetComponent<BayouFishingEquipment>();
+            var held = equipment != null ? equipment.CurrentItem : BayouHeldItem.None;
+            var distSq = d.sqrMagnitude;
+
+            if (requiredTool == FishCatchTool.Rod)
+            {
+                if (held == BayouHeldItem.Rod)
+                    prompt = new InteractionPrompt("Hold LMB", $"Cast into {spotName}", 42, distSq);
+                else
+                    prompt = new InteractionPrompt("1", $"{spotName} needs a rod", 41, distSq);
+                return true;
+            }
+
+            if (held == BayouHeldItem.Net)
+                prompt = new InteractionPrompt("Hold LMB", $"Throw net into {spotName}", 42, distSq);
+            else
+                prompt = new InteractionPrompt("2", $"{spotName} needs a hand net", 41, distSq);
+            return true;
+        }
 
         private void Start()
         {

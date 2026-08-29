@@ -24520,7 +24520,7 @@ MonoBehaviour:
   destroyOnPickup: 1
   visualCue: {fileID: 0}
   pickupPrompt: Pick up lantern
-  endDemoOnPickup: 1
+  endDemoOnPickup: 0
 --- !u!114 &910000206
 MonoBehaviour:
   m_ObjectHideFlags: 0
