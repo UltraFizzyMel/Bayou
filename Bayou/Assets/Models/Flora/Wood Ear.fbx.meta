@@ -3,7 +3,17 @@ guid: a5e5f84b38674034bb3f8a5aaac42e5f
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Fungus_Red_Brown.001
+    second: {fileID: 2100000, guid: 41dfebee11e8597469e3a91b6d69d7b2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Log_Weathered_Grey.001
+    second: {fileID: 2100000, guid: a38d8218bd5831a45a4ac6799c060155, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -91,7 +101,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.004
+    globalScale: 0.4
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

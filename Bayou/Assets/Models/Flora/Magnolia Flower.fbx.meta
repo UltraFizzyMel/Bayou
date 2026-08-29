@@ -3,7 +3,22 @@ guid: fb812394d9a901b44a7b1af2e95f2953
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Magnolia Middle.002
+    second: {fileID: 2100000, guid: 2dae6a0344c3a9a48bc351487efa1ff4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Magnolia Middle.003
+    second: {fileID: 2100000, guid: 7b5a30672daa6d841940c8ce022f6e06, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Magnolia Petals.001
+    second: {fileID: 2100000, guid: dd59d67a397efa94698b10e54fac77b7, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -91,7 +106,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.004
+    globalScale: 0.4
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

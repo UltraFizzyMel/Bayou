@@ -3,7 +3,22 @@ guid: 41d11701c04bd72498797bbfcdb557f2
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bark_Brown.005
+    second: {fileID: 2100000, guid: a4e6950f3b9da6442910cc4eecc78136, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Leaf_Medium_Green.005
+    second: {fileID: 2100000, guid: b3e24c7da9122e147a60801ca60096f6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stem_Green.001
+    second: {fileID: 2100000, guid: ed45c359a2afc904996c3a4cd975c0e3, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -91,7 +106,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.004
+    globalScale: 0.4
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
