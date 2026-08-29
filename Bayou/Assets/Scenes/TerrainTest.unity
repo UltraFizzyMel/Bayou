@@ -31659,7 +31659,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.04
+      value: 7.98
       objectReference: {fileID: 0}
     - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
       propertyPath: m_LocalPosition.y
@@ -31667,7 +31667,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -18.63
+      value: -15.13
       objectReference: {fileID: 0}
     - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
       propertyPath: m_LocalRotation.w
@@ -36949,8 +36949,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
-  m_Color: {r: 0.7096974, g: 0.90784246, b: 0.9924528, a: 1}
-  m_Intensity: 2.5
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 0.9
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -46018,7 +46018,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.39
+      value: -3.32
       objectReference: {fileID: 0}
     - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
       propertyPath: m_LocalPosition.y
@@ -55100,6 +55100,7 @@ GameObject:
   - component: {fileID: 1866950584}
   - component: {fileID: 1866950583}
   - component: {fileID: 1866950582}
+  - component: {fileID: 1866950586}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -55245,6 +55246,23 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1866950586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1866950580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Postprocessing.Runtime::UnityEngine.Rendering.PostProcessing.PostProcessVolume
+  sharedProfile: {fileID: 11400000, guid: fac98fe96cb7ef14f97fa3ea5058cd9d, type: 2}
+  isGlobal: 0
+  blendDistance: 0
+  weight: 1
+  priority: 0
 --- !u!1001 &1870749037
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -57277,7 +57295,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2733512496551183675, guid: db3ae47d9b1c16442a05946d38f85e1f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.13
+      value: 2.21
       objectReference: {fileID: 0}
     - target: {fileID: 2733512496551183675, guid: db3ae47d9b1c16442a05946d38f85e1f, type: 3}
       propertyPath: m_LocalPosition.z
