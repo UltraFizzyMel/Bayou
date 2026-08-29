@@ -18,7 +18,7 @@ MonoBehaviour:
     m_Value: {x: 1, y: 1, z: 1, w: -0.027803455}
   gamma:
     m_OverrideState: 1
-    m_Value: {x: 0.9009742, y: 0.77123123, z: 1, w: 0.11862823}
+    m_Value: {x: 0.9009742, y: 0.77123123, z: 1, w: 0.2965706}
   gain:
     m_OverrideState: 1
     m_Value: {x: 1, y: 1, z: 1, w: 0.07414325}
@@ -45,8 +45,8 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 0.95
   scatter:
-    m_OverrideState: 0
-    m_Value: 0.7
+    m_OverrideState: 1
+    m_Value: 0.8
   clamp:
     m_OverrideState: 0
     m_Value: 65472
@@ -153,6 +153,7 @@ MonoBehaviour:
   - {fileID: 6836931404984280545}
   - {fileID: 3971549068455409275}
   - {fileID: -7323555794903987730}
+  - {fileID: 4405233611718793908}
 --- !u!114 &3971549068455409275
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -174,13 +175,32 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   intensity:
     m_OverrideState: 1
-    m_Value: 0.204
+    m_Value: 0.2
   smoothness:
     m_OverrideState: 1
     m_Value: 0.875
   rounded:
     m_OverrideState: 0
     m_Value: 0
+--- !u!114 &4405233611718793908
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 221518ef91623a7438a71fef23660601, type: 3}
+  m_Name: WhiteBalance
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.WhiteBalance
+  active: 1
+  temperature:
+    m_OverrideState: 0
+    m_Value: 0
+  tint:
+    m_OverrideState: 1
+    m_Value: -15
 --- !u!114 &6836931404984280545
 MonoBehaviour:
   m_ObjectHideFlags: 3
