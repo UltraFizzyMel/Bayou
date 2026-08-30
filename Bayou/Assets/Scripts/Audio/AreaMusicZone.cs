@@ -145,17 +145,8 @@ namespace Bayou.Audio
             var col = GetComponent<Collider>();
             if (col == null) return false;
 
-            var players = Object.FindObjectsByType<Bayou.Player.BayouCharacterMotor>(
-                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            foreach (var motor in players)
-            {
-                if (motor == null) continue;
-                var p = motor.transform.position;
-                if (col.bounds.Contains(p))
-                    return true;
-            }
-
-            return false;
+            var player = Bayou.Player.PlayerLocator.Transform;
+            return player != null && col.bounds.Contains(player.position);
         }
 
         private static bool IsPlayer(Collider other) =>

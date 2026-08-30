@@ -384,8 +384,10 @@ namespace Bayou.Fishing
         private static bool HasRodFishNearby(Vector3 pos, float radius)
         {
             var rSq = radius * radius;
-            foreach (var fish in Object.FindObjectsByType<BayouFish>(FindObjectsSortMode.None))
+            var living = Bayou.Fish.BayouFish.Living;
+            for (var i = 0; i < living.Count; i++)
             {
+                var fish = living[i];
                 if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod)) continue;
                 var d = fish.transform.position - pos;
                 d.y = 0f;

@@ -125,26 +125,14 @@ namespace Bayou.Fishing
 
         private static FishingAttractPhase FindActiveAttract()
         {
-            var all = Object.FindObjectsByType<FishingAttractPhase>(FindObjectsSortMode.None);
-            for (var i = 0; i < all.Length; i++)
-            {
-                if (all[i] != null && all[i].IsActive)
-                    return all[i];
-            }
-
-            return null;
+            var a = FishingAttractPhase.Active;
+            return a != null && a.IsActive ? a : null;
         }
 
         private static FishingReelPhase FindActiveReel()
         {
-            var all = Object.FindObjectsByType<FishingReelPhase>(FindObjectsSortMode.None);
-            for (var i = 0; i < all.Length; i++)
-            {
-                if (all[i] != null && all[i].IsActive)
-                    return all[i];
-            }
-
-            return null;
+            var r = FishingReelPhase.Active;
+            return r != null && r.IsActive ? r : null;
         }
     }
 }

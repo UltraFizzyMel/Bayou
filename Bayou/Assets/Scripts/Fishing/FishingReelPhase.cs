@@ -22,6 +22,8 @@ namespace Bayou.Fishing
         [SerializeField] private float catchRadius = 5f;
         [SerializeField] private LayerMask fishMask = ~0;
 
+        public static FishingReelPhase Active { get; private set; }
+
         public bool IsActive { get; private set; }
         public float Progress01 { get; private set; }
 
@@ -33,8 +35,14 @@ namespace Bayou.Fishing
             enabled = false;
         }
 
+        private void OnDestroy()
+        {
+            if (Active == this) Active = null;
+        }
+
         public void BeginReel()
         {
+            Active = this;
             IsActive = true;
             Progress01 = 0f;
             enabled = true;
@@ -71,6 +79,7 @@ namespace Bayou.Fishing
 
         private void Finish(bool success)
         {
+            if (Active == this) Active = null;
             IsActive = false;
             enabled = false;
             Bayou.Audio.FishingAudio.Resolve()?.StopReelingLoop();
@@ -107,8 +116,10 @@ namespace Bayou.Fishing
             if (!caughtAny)
             {
                 var radiusSq = catchRadius * catchRadius;
-                foreach (var fish in Object.FindObjectsByType<BayouFish>(FindObjectsSortMode.None))
+                var living = BayouFish.Living;
+                for (var i = 0; i < living.Count; i++)
                 {
+                    var fish = living[i];
                     if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod)) continue;
                     var delta = fish.transform.position - center;
                     delta.y = 0f;

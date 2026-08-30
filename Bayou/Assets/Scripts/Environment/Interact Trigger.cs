@@ -21,7 +21,7 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
     [SerializeField] private bool playerInRange;
     [SerializeField] private Animator animator;
     [SerializeField] private KeyGateManager keyGateManager;
-    [SerializeField] private bool consumeKeyOnOpen;
+        [SerializeField] private bool consumeKeyOnOpen = true;
     [SerializeField] private Collider[] disableCollidersOnOpen;
     [Tooltip("Legacy field — gates never auto-open. Player must press Interact (E) after they have the key.")]
     [SerializeField] private bool autoOpenWhenUnlocked = false;
@@ -66,6 +66,12 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
         EnsureRequiredKeyResolved();
 
         TrySubscribeInventory();
+
+        // Flag is set only after this gate has been opened — restore that state.
+        if (keyGateManager != null &&
+            !string.IsNullOrWhiteSpace(keyName) &&
+            keyGateManager.GetFlag(keyName))
+            OpenGate(playLog: false);
     }
 
     private void EnsureRequiredKeyResolved()
@@ -149,9 +155,9 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
 
     private float DistToPlayerSq()
     {
-        var p = GameObject.FindGameObjectWithTag("Player");
+        var p = PlayerLocator.Transform;
         if (p == null) return 0f;
-        var d = transform.position - p.transform.position;
+        var d = transform.position - p.position;
         d.y = 0f;
         return d.sqrMagnitude;
     }
@@ -216,12 +222,7 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
         if (string.IsNullOrWhiteSpace(keyName) && string.IsNullOrWhiteSpace(itemId) && requiredKeyItem == null)
             return false;
 
-        var unlockedByFlag = !string.IsNullOrWhiteSpace(keyName) &&
-                             keyGateManager != null &&
-                             keyGateManager.GetFlag(keyName);
-
-        var hasItem = PlayerHasThisGateKey(InventoryController.Instance);
-        return unlockedByFlag || hasItem;
+        return PlayerHasThisGateKey(InventoryController.Instance);
     }
 
     private void OpenGate(bool playLog)

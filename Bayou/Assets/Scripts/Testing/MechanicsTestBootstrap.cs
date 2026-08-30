@@ -13,8 +13,7 @@ using UnityEngine.InputSystem;
 namespace Bayou.Testing
 {
     /// <summary>
-    /// Play-mode HUD for testing fishing, the pond rosary quest, lantern, and travel.
-    /// In the Editor it auto-spawns when you press Play. Toggle with backtick (`).
+    /// Retired play-mode test HUD. Kept so leftover scene objects destroy themselves.
     /// </summary>
     [DefaultExecutionOrder(-150)]
     [DisallowMultipleComponent]
@@ -33,39 +32,17 @@ namespace Bayou.Testing
 
         public static MechanicsTestBootstrap Instance { get; private set; }
 
-#if UNITY_EDITOR
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void AutoSpawnInEditor()
-        {
-            if (FindFirstObjectByType<MechanicsTestBootstrap>() != null)
-                return;
-
-            var go = new GameObject("MechanicsTestBootstrap");
-            go.AddComponent<MechanicsTestBootstrap>();
-        }
-#endif
-
         public static void EnsureInScene()
         {
-            if (FindFirstObjectByType<MechanicsTestBootstrap>() != null)
-                return;
-            var go = new GameObject("MechanicsTestBootstrap");
-            go.AddComponent<MechanicsTestBootstrap>();
         }
 
         private void Awake()
         {
-            Instance = this;
-            if (skipSaveOnPlay)
-            {
-                GameSaveSystem.SuppressNextLoad = true;
-                _skippedSaveThisPlay = true;
-            }
+            Destroy(gameObject);
         }
 
         private void Start()
         {
-            StartCoroutine(GrantDefaultsNextFrame());
         }
 
         private System.Collections.IEnumerator GrantDefaultsNextFrame()
@@ -102,7 +79,7 @@ namespace Bayou.Testing
 
         private void OnGUI()
         {
-            if (!showHud) return;
+            return;
 
             var w = 300f;
             var h = Mathf.Min(Screen.height - 24f, 620f);

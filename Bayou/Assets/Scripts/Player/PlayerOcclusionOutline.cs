@@ -21,7 +21,7 @@ namespace Bayou.Player
         [SerializeField] private float chestHeight = 1.05f;
         [SerializeField] private LayerMask occlusionMask = ~0;
         [SerializeField] private float checkInterval = 0.04f;
-        [SerializeField] [Range(1, 5)] private int minBlockedSamples = 2;
+        [SerializeField] [Range(1, 5)] private int minBlockedSamples = 3;
 
         private static readonly RaycastHit[] Hits = new RaycastHit[32];
         private readonly Vector3[] _samples = new Vector3[5];
@@ -33,19 +33,20 @@ namespace Bayou.Player
         private float _nextCheck;
         private float _nextMeshRefresh;
         private bool _visible;
+        private int _occludedStreak;
+        private int _clearStreak;
 
         public static void EnsureOn(GameObject player)
         {
             if (player == null) return;
-            if (player.GetComponent<PlayerOcclusionOutline>() == null)
-                player.AddComponent<PlayerOcclusionOutline>();
+            var existing = player.GetComponent<PlayerOcclusionOutline>();
+            if (existing != null)
+                existing.enabled = false;
         }
 
         private void Awake()
         {
-            _outlineMat = CreateOutlineMaterial();
-            BuildOutlineMeshes();
-            SetOutlineVisible(false);
+            enabled = false;
         }
 
         private void OnDestroy()
@@ -56,12 +57,6 @@ namespace Bayou.Player
 
         private void LateUpdate()
         {
-            if (Time.unscaledTime < _nextCheck) return;
-            _nextCheck = Time.unscaledTime + Mathf.Max(0.02f, checkInterval);
-
-            var occluded = IsOccluded();
-            if (occluded != _visible)
-                SetOutlineVisible(occluded);
         }
 
         private bool IsOccluded()
@@ -104,13 +99,42 @@ namespace Bayou.Player
 
             if (PhysicsBlocked(from, dir, dist))
                 return true;
+            return BuildingMeshBlocked(from, dir, dist);
+        }
 
-            return MeshBoundsBlocked(from, dir, dist);
+        private bool BuildingMeshBlocked(Vector3 from, Vector3 dir, float dist)
+        {
+            var ray = new Ray(from, dir);
+            var chest = transform.position + Vector3.up * chestHeight;
+            for (var i = 0; i < _meshOccluders.Count; i++)
+            {
+                var r = _meshOccluders[i];
+                if (r == null || !r.enabled || !r.gameObject.activeInHierarchy)
+                    continue;
+
+                var b = r.bounds;
+                if (b.size.y < 2f)
+                    continue;
+                if (b.Contains(chest) || b.Contains(transform.position))
+                    continue;
+                if (!b.IntersectRay(ray, out var hitDist))
+                    continue;
+                if (hitDist < 1.2f || hitDist >= dist - 0.35f)
+                    continue;
+
+                var along = Vector3.Dot(b.center - from, dir);
+                if (along < 1.2f || along > dist - 0.6f)
+                    continue;
+
+                return true;
+            }
+
+            return false;
         }
 
         private bool PhysicsBlocked(Vector3 from, Vector3 dir, float dist)
         {
-            var count = Physics.RaycastNonAlloc(from, dir, Hits, dist - 0.05f, occlusionMask,
+            var count = Physics.RaycastNonAlloc(from, dir, Hits, dist - 0.08f, occlusionMask,
                 QueryTriggerInteraction.Collide);
 
             var bestDist = float.MaxValue;
@@ -125,6 +149,8 @@ namespace Bayou.Player
                     continue;
                 if (ShouldIgnoreCollider(hit.collider, hit.normal, hit.point))
                     continue;
+                if (!IsSubstantialOccluder(hit.collider, hit.point))
+                    continue;
 
                 bestDist = hit.distance;
                 best = hit.collider;
@@ -135,41 +161,20 @@ namespace Bayou.Player
             if (best == null)
                 return false;
 
-            // Only treat near-horizontal hits as ground when they are at foot height.
             var feetY = transform.position.y;
-            if (bestNormal.y > 0.7f && bestPoint.y < feetY + 0.4f)
+            if (bestNormal.y > 0.4f && bestPoint.y < feetY + 1.35f)
                 return false;
 
             return true;
-        }
-
-        private bool MeshBoundsBlocked(Vector3 from, Vector3 dir, float dist)
-        {
-            var ray = new Ray(from, dir);
-            for (var i = 0; i < _meshOccluders.Count; i++)
-            {
-                var r = _meshOccluders[i];
-                if (r == null || !r.enabled || !r.gameObject.activeInHierarchy)
-                    continue;
-
-                if (!r.bounds.IntersectRay(ray, out var hitDist))
-                    continue;
-                if (hitDist < 0.35f || hitDist >= dist - 0.05f)
-                    continue;
-
-                return true;
-            }
-
-            return false;
         }
 
         private bool ShouldIgnoreCollider(Collider col, Vector3 normal, Vector3 point)
         {
             if (col.transform == transform || col.transform.IsChildOf(transform))
                 return true;
-            if (col is TerrainCollider || col.GetComponent<Terrain>() != null)
+            if (IsWaterCollider(col))
                 return true;
-            if (col.GetComponent<WaterVolume>() != null || col.CompareTag("Water"))
+            if (col is TerrainCollider || col.GetComponent<Terrain>() != null)
                 return true;
             if (col.GetComponentInParent<PondShinyCollectible>() != null)
                 return true;
@@ -180,11 +185,58 @@ namespace Bayou.Player
             if (col.GetComponentInParent<BayouFish>() != null)
                 return true;
 
+            var n = col.gameObject.name;
+            var root = col.transform.root != null ? col.transform.root.name : n;
+            if (ContainsIgnoreToken(n) || ContainsIgnoreToken(root))
+                return true;
+
             var feetY = transform.position.y;
-            if (normal.y > 0.7f && point.y < feetY + 0.4f)
+            // Shore / ground lip between the isometric camera and the feet.
+            var flat = point - transform.position;
+            flat.y = 0f;
+            if (point.y < feetY + 1.2f && (normal.y > 0.35f || flat.sqrMagnitude < 2.6f * 2.6f))
                 return true;
 
             return false;
+        }
+
+        private bool IsSubstantialOccluder(Collider col, Vector3 point)
+        {
+            var n = col.gameObject.name;
+            var root = col.transform.root != null ? col.transform.root.name : n;
+            var namedBuilding = IsBuildingToken(n) || IsBuildingToken(root);
+
+            if (col.isTrigger && !namedBuilding)
+                return false;
+
+            // Huge area volumes (Church Area) that the player is standing inside.
+            if (col.isTrigger && col.bounds.Contains(transform.position + Vector3.up * chestHeight))
+                return false;
+
+            var height = col.bounds.size.y;
+            if (height < 1.4f && !namedBuilding)
+                return false;
+
+            // Nearby low hits are banks and steps, not walls.
+            if (point.y < transform.position.y + 1.15f && height < 2.2f && !namedBuilding)
+                return false;
+
+            return true;
+        }
+
+        private static bool IsWaterCollider(Collider col)
+        {
+            if (col == null) return false;
+            if (col.gameObject.layer == 4)
+                return true;
+            if (col.CompareTag("Water"))
+                return true;
+            if (col.GetComponent<WaterVolume>() != null)
+                return true;
+            if (col.GetComponentInParent<WaterVolume>() != null)
+                return true;
+            var n = col.gameObject.name;
+            return n.IndexOf("water", System.StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         private void RefreshMeshOccludersIfNeeded()
@@ -214,28 +266,53 @@ namespace Bayou.Player
             if (r.name.Contains("OcclusionOutline"))
                 return false;
 
-            var size = r.bounds.size;
-            if (size.y < 1.15f)
-                return false;
-
             var n = r.gameObject.name;
-            if (ContainsIgnoreToken(n) || ContainsIgnoreToken(r.transform.root.name))
+            var root = r.transform.root != null ? r.transform.root.name : n;
+            if (ContainsIgnoreToken(n) || ContainsIgnoreToken(root))
                 return false;
 
-            return true;
+            // Mesh fallback is only for real buildings (churches are often trigger volumes).
+            return IsBuildingToken(n) || IsBuildingToken(root);
+        }
+
+        private static bool IsBuildingToken(string n)
+        {
+            if (string.IsNullOrEmpty(n)) return false;
+            return HasToken(n, "church") ||
+                   HasToken(n, "tomb") ||
+                   HasToken(n, "mausol") ||
+                   HasToken(n, "building") ||
+                   HasToken(n, "house") ||
+                   HasToken(n, "cabin") ||
+                   HasToken(n, "shack") ||
+                   HasToken(n, "wall") ||
+                   HasToken(n, "gate");
         }
 
         private static bool ContainsIgnoreToken(string n)
         {
             if (string.IsNullOrEmpty(n)) return false;
-            return n.IndexOf("tree", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   n.IndexOf("palm", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   n.IndexOf("lily", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   n.IndexOf("grass", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   n.IndexOf("water", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   n.IndexOf("bush", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   n.IndexOf("fern", System.StringComparison.OrdinalIgnoreCase) >= 0;
+            return HasToken(n, "tree") ||
+                   HasToken(n, "palm") ||
+                   HasToken(n, "lily") ||
+                   HasToken(n, "grass") ||
+                   HasToken(n, "water") ||
+                   HasToken(n, "pond") ||
+                   HasToken(n, "bush") ||
+                   HasToken(n, "fern") ||
+                   HasToken(n, "lamp") ||
+                   HasToken(n, "light") ||
+                   HasToken(n, "lantern") ||
+                   HasToken(n, "torch") ||
+                   HasToken(n, "fog") ||
+                   HasToken(n, "ground") ||
+                   HasToken(n, "terrain") ||
+                   HasToken(n, "floor") ||
+                   HasToken(n, "plane");
         }
+
+        private static bool HasToken(string n, string token) =>
+            n.IndexOf(token, System.StringComparison.OrdinalIgnoreCase) >= 0;
 
         private void SetOutlineVisible(bool on)
         {

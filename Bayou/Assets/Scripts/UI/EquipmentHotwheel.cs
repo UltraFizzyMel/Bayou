@@ -46,6 +46,12 @@ namespace Bayou.UI
         private string _pendingAssignId;
         private readonly List<ItemDefinition> _owned = new();
         private InventoryController _boundInv;
+        private BayouFishingEquipment _equipment;
+        private float _bindRetryAt;
+        private bool _assignDirty = true;
+        private bool _assignShown;
+        private BayouHeldItem _hudHeld = BayouHeldItem.None;
+        private bool _hudHidden = true;
 
         public static EquipmentHotwheel Instance { get; private set; }
         public static bool IsOpen => Instance != null && Instance._open;
@@ -148,6 +154,7 @@ namespace Bayou.UI
             EnsureSlotBuffers();
             for (var i = 0; i < _slotItemIds.Length; i++)
                 _slotItemIds[i] = itemIds != null && i < itemIds.Length ? itemIds[i] : null;
+            _assignDirty = true;
             RefreshSlotVisuals();
             RefreshAssignStrip();
         }
@@ -180,6 +187,7 @@ namespace Bayou.UI
         {
             if (index < 0 || index >= _slotItemIds.Length) return;
             _slotItemIds[index] = item != null ? item.Id : null;
+            _assignDirty = true;
             RefreshSlotVisuals();
             RefreshAssignStrip();
         }
@@ -211,7 +219,14 @@ namespace Bayou.UI
 
         private void BindInventory()
         {
-            var inv = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
+            if (_boundInv != null) return;
+            var inv = InventoryController.Instance;
+            if (inv == null)
+            {
+                if (Time.unscaledTime < _bindRetryAt) return;
+                _bindRetryAt = Time.unscaledTime + 1f;
+                inv = FindFirstObjectByType<InventoryController>();
+            }
             if (inv == _boundInv) return;
             UnbindInventory();
             _boundInv = inv;
@@ -229,6 +244,7 @@ namespace Bayou.UI
 
         private void OnInventoryChanged()
         {
+            _assignDirty = true;
             SyncCollectedEquipmentToSlots();
             RefreshSlotVisuals();
             RefreshAssignStrip();
@@ -465,6 +481,11 @@ namespace Bayou.UI
             var hide = ShouldHide();
             var equipment = ResolveEquipment();
             var held = equipment != null ? equipment.CurrentItem : BayouHeldItem.None;
+            if (hide == _hudHidden && held == _hudHeld && _equippedRoot.gameObject.activeSelf == (!hide && held != BayouHeldItem.None))
+                return;
+
+            _hudHidden = hide;
+            _hudHeld = held;
             var def = held == BayouHeldItem.None ? null : ResolveItem(ItemIdForHeld(held));
             var icon = def != null ? def.icon : null;
             var show = !hide && held != BayouHeldItem.None && icon != null;
@@ -496,8 +517,15 @@ namespace Bayou.UI
             var show = bag != null && bag.IsOpen && !_open;
             if (_assignRoot.gameObject.activeSelf != show)
                 _assignRoot.gameObject.SetActive(show);
-            if (!show) return;
+            if (!show)
+            {
+                _assignShown = false;
+                return;
+            }
 
+            if (!_assignDirty && _assignShown) return;
+            _assignShown = true;
+            _assignDirty = false;
             CollectOwnedEquipment();
             RebuildAssignButtons();
         }
@@ -572,16 +600,11 @@ namespace Bayou.UI
             return dialogue != null && dialogue.dialogueIsPlaying;
         }
 
-        private static BayouFishingEquipment ResolveEquipment()
+        private BayouFishingEquipment ResolveEquipment()
         {
-            var player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                var onPlayer = player.GetComponent<BayouFishingEquipment>();
-                if (onPlayer != null) return onPlayer;
-            }
-
-            return Object.FindFirstObjectByType<BayouFishingEquipment>();
+            if (_equipment != null) return _equipment;
+            _equipment = Bayou.Player.PlayerLocator.Equipment;
+            return _equipment;
         }
 
         private static ItemDefinition ResolveItem(string itemId)

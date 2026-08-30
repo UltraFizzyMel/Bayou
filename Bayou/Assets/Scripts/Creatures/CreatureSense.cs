@@ -32,6 +32,8 @@ namespace Bayou.Creatures
         public float VisionRange => visionRange;
         public float VisionAngleDegrees => visionAngleDegrees;
 
+        private static readonly RaycastHit[] Hits = new RaycastHit[16];
+
         private Transform _player;
         private float _lastSensedTime = -999f;
 
@@ -43,15 +45,7 @@ namespace Bayou.Creatures
         public void EnsurePlayer()
         {
             if (_player != null) return;
-            var p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null)
-                _player = p.transform;
-            else
-            {
-                var motor = FindFirstObjectByType<Bayou.Player.BayouCharacterMotor>();
-                if (motor != null)
-                    _player = motor.transform;
-            }
+            _player = Bayou.Player.PlayerLocator.Transform;
         }
 
         /// <summary>True if the player is currently sensed (updates memory).</summary>
@@ -110,18 +104,25 @@ namespace Bayou.Creatures
             var castDist = castDir.magnitude;
             if (castDist > 0.05f)
             {
-                var hits = Physics.RaycastAll(eye, castDir.normalized, castDist, occlusionMask,
+                var hitCount = Physics.RaycastNonAlloc(eye, castDir.normalized, Hits, castDist, occlusionMask,
                     QueryTriggerInteraction.Ignore);
-                System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-                foreach (var hit in hits)
+                RaycastHit closest = default;
+                var found = false;
+                for (var i = 0; i < hitCount; i++)
                 {
+                    var hit = Hits[i];
                     if (hit.collider == null) continue;
                     if (hit.collider.transform == transform || hit.collider.transform.IsChildOf(transform))
                         continue;
-                    if (IsPlayerHit(hit.collider, player))
-                        break;
-                    return false;
+                    if (!found || hit.distance < closest.distance)
+                    {
+                        closest = hit;
+                        found = true;
+                    }
                 }
+
+                if (found && !IsPlayerHit(closest.collider, player))
+                    return false;
             }
 
             return true;

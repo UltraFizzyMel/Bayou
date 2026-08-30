@@ -25,7 +25,7 @@ namespace Bayou.Save
 
         public static string SaveFilePath => Path.Combine(Application.persistentDataPath, SaveFileName);
 
-        /// <summary>When true, the next Start skips loading the save (used by the mechanics test bootstrap).</summary>
+        /// <summary>When true, the next Start skips loading the save.</summary>
         public static bool SuppressNextLoad { get; set; }
 
         public event Action GameSaved;

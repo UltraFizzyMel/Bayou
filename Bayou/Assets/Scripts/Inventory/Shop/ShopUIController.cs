@@ -425,17 +425,7 @@ namespace Bayou.Inventory.Shop
             _playerInventory.NotifyChanged();
             handmadePlayerInventoryUi?.Refresh();
 
-            // Buying Caliste's Foggy Marsh key must unlock that gate specifically
-            // (string id — works in player builds even if SO instances differ).
-            var gates = KeyGateManager.Instance ??
-                        FindFirstObjectByType<KeyGateManager>(FindObjectsInactive.Include);
-            if (gates != null)
-            {
-                if (_playerInventory.HasItemsById(KeyGateManager.FoggyMarshKeyItemId, 1))
-                    gates.GrantKeyFlag(KeyGateManager.FoggyMarshKeyFlag);
-                else
-                    gates.SyncKeysFromInventory();
-            }
+            // Key items stay in the bag until the matching gate consumes them.
         }
 
         private void ApplySplitLayout(bool active)

@@ -13,8 +13,8 @@ namespace Bayou.Creatures
             if (player == null) return false;
 
             var maxSq = maxDistance * maxDistance;
-            var creatures = Object.FindObjectsByType<CreatureController>(FindObjectsSortMode.None);
-            for (var i = 0; i < creatures.Length; i++)
+            var creatures = CreatureController.Living;
+            for (var i = 0; i < creatures.Count; i++)
             {
                 var c = creatures[i];
                 if (c == null || !c.isActiveAndEnabled || c.IsCaught) continue;
@@ -34,8 +34,8 @@ namespace Bayou.Creatures
             if (player == null) return 0;
             var maxSq = maxDistance * maxDistance;
             var n = 0;
-            var creatures = Object.FindObjectsByType<CreatureController>(FindObjectsSortMode.None);
-            for (var i = 0; i < creatures.Length; i++)
+            var creatures = CreatureController.Living;
+            for (var i = 0; i < creatures.Count; i++)
             {
                 var c = creatures[i];
                 if (c == null || !c.isActiveAndEnabled || c.IsCaught || !c.IsActive) continue;

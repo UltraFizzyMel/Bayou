@@ -32,6 +32,7 @@ namespace Bayou.Inventory
         private bool _allocating;
         private bool _revealing;
         private Coroutine _routine;
+        private string _revealTitleOverride;
 
         public static bool IsAllocating =>
             Instance != null && Instance._allocating;
@@ -70,7 +71,7 @@ namespace Bayou.Inventory
         }
 
         /// <summary>Entry point from <see cref="Bayou.Fish.BayouFish.Catch"/>.</summary>
-        public static void Present(ItemDefinition fishItem)
+        public static void Present(ItemDefinition fishItem, string title = null)
         {
             var host = Instance;
             if (host == null)
@@ -79,16 +80,18 @@ namespace Bayou.Inventory
                 host = go.AddComponent<CaughtFishPresenter>();
             }
 
-            host.Begin(fishItem);
+            host.Begin(fishItem, title);
         }
 
-        public void Begin(ItemDefinition fishItem)
+        public void Begin(ItemDefinition fishItem, string title = null)
         {
             if (fishItem == null)
             {
                 Debug.LogWarning("[Catch] No ItemDefinition for caught fish.");
                 return;
             }
+
+            _revealTitleOverride = title;
 
             EnsureUi();
             EnsureInventorySubscription();
@@ -205,7 +208,12 @@ namespace Bayou.Inventory
             }
 
             if (revealTitle != null)
-                revealTitle.text = fishItem.isFish ? "Caught!" : "Found!";
+            {
+                if (!string.IsNullOrWhiteSpace(_revealTitleOverride))
+                    revealTitle.text = _revealTitleOverride;
+                else
+                    revealTitle.text = fishItem.isFish ? "Caught!" : "Found!";
+            }
             if (revealName != null)
                 revealName.text = string.IsNullOrWhiteSpace(fishItem.displayName)
                     ? (fishItem.isFish ? "Fish" : "Item")
@@ -224,8 +232,10 @@ namespace Bayou.Inventory
                 allocateBar.gameObject.SetActive(true);
             if (allocateHint != null)
             {
-                var name = string.IsNullOrWhiteSpace(fishItem.displayName) ? "fish" : fishItem.displayName;
-                allocateHint.text = $"Drag the {name} into your case — or discard it.";
+                var name = string.IsNullOrWhiteSpace(fishItem.displayName) ? "item" : fishItem.displayName;
+                allocateHint.text = string.Equals(_revealTitleOverride, "You've received", System.StringComparison.Ordinal)
+                    ? $"You've received a {name}. Drag it into your case."
+                    : $"Drag the {name} into your case — or discard it.";
             }
         }
 

@@ -41,6 +41,8 @@ namespace Bayou.Fishing
         public bool IsActive { get; private set; }
         public float CurrentAttractRadius { get; private set; }
 
+        public static FishingAttractPhase Active { get; private set; }
+
         private int _lastDirection;
         private bool _hasDirection;
         private FishingNetProjectile _net;
@@ -50,12 +52,13 @@ namespace Bayou.Fishing
 #if ENABLE_INPUT_SYSTEM
             if (moveAction == null)
             {
-                var motor = FindFirstObjectByType<BayouCharacterMotor>();
+                var motor = PlayerLocator.Motor;
                 if (motor != null)
                     moveAction = motor.MoveAction;
             }
 #endif
             _net = GetComponent<FishingNetProjectile>();
+            Active = this;
             IsActive = true;
             Progress01 = 0.1f;
             CurrentAttractRadius = baseAttractRadius;
@@ -67,6 +70,7 @@ namespace Bayou.Fishing
         public void CancelAttract()
         {
             if (!IsActive && !enabled) return;
+            if (Active == this) Active = null;
             IsActive = false;
             Progress01 = 0f;
             enabled = false;
@@ -117,10 +121,18 @@ namespace Bayou.Fishing
                 CompleteAttract();
         }
 
+        private void OnDestroy()
+        {
+            if (Active == this) Active = null;
+        }
+
         private void PullFishTowardNet(Vector3 netPos, float radius, float strength01)
         {
-            foreach (var fish in FindObjectsByType<BayouFish>(FindObjectsSortMode.None))
+            var living = BayouFish.Living;
+            var radiusSq = radius * radius;
+            for (var i = 0; i < living.Count; i++)
             {
+                var fish = living[i];
                 if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod))
                 {
                     fish?.ClearAttractTarget();
@@ -129,7 +141,7 @@ namespace Bayou.Fishing
 
                 var flat = fish.transform.position - netPos;
                 flat.y = 0f;
-                if (flat.sqrMagnitude > radius * radius)
+                if (flat.sqrMagnitude > radiusSq)
                 {
                     fish.ClearAttractTarget();
                     continue;
@@ -143,8 +155,10 @@ namespace Bayou.Fishing
         private bool TryBite(Vector3 netPos, float radius)
         {
             var radiusSq = radius * radius;
-            foreach (var fish in FindObjectsByType<BayouFish>(FindObjectsSortMode.None))
+            var living = BayouFish.Living;
+            for (var i = 0; i < living.Count; i++)
             {
+                var fish = living[i];
                 if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod)) continue;
                 var flat = fish.transform.position - netPos;
                 flat.y = 0f;
@@ -157,13 +171,15 @@ namespace Bayou.Fishing
 
         private void ClearFishTargets()
         {
-            foreach (var fish in FindObjectsByType<BayouFish>(FindObjectsSortMode.None))
-                fish?.ClearAttractTarget();
+            var living = BayouFish.Living;
+            for (var i = 0; i < living.Count; i++)
+                living[i]?.ClearAttractTarget();
         }
 
         private void CompleteAttract()
         {
             if (!IsActive) return;
+            if (Active == this) Active = null;
             IsActive = false;
             Progress01 = 1f;
             enabled = false;

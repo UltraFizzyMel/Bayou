@@ -92,6 +92,7 @@ namespace Bayou.Fishing
         private FishingNetProjectile _activeNet;
         private LineRenderer _fishingLine;
         private bool _meleeMode;
+        private float _nextMeleeCheck;
 
         public float CurrentCharge01 { get; private set; }
 
@@ -260,9 +261,13 @@ namespace Bayou.Fishing
                 return;
             }
 
-            _meleeMode = CreatureThreat.IsPlayerPursued(transform) &&
-                         _phase == FishingCastPhase.Idle &&
-                         _activeNet == null;
+            if (Time.unscaledTime >= _nextMeleeCheck)
+            {
+                _nextMeleeCheck = Time.unscaledTime + 0.15f;
+                _meleeMode = CreatureThreat.IsPlayerPursued(transform) &&
+                             _phase == FishingCastPhase.Idle &&
+                             _activeNet == null;
+            }
 
             switch (_phase)
             {

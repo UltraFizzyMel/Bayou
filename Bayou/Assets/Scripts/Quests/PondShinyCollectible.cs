@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Bayou.Inventory;
 using Bayou.Player;
 using Bayou.UI;
@@ -30,6 +31,9 @@ namespace Bayou.Quests
 
         public ItemDefinition Item => item;
         public bool IsCollected => _collected;
+        public static IReadOnlyList<PondShinyCollectible> Living => All;
+
+        private static readonly List<PondShinyCollectible> All = new();
 
         private void Awake()
         {
@@ -41,11 +45,17 @@ namespace Bayou.Quests
 
         private void OnEnable()
         {
+            if (!All.Contains(this))
+                All.Add(this);
             InteractionPromptBroker.Register(this);
             InputManager.GetInstance()?.RegisterInteractPressed();
         }
 
-        private void OnDisable() => InteractionPromptBroker.Unregister(this);
+        private void OnDisable()
+        {
+            All.Remove(this);
+            InteractionPromptBroker.Unregister(this);
+        }
 
         private void Update()
         {
@@ -87,9 +97,10 @@ namespace Bayou.Quests
 
         public static bool TryScoopNear(Vector3 netPos, float radius)
         {
-            var all = FindObjectsByType<PondShinyCollectible>(FindObjectsSortMode.None);
-            foreach (var shiny in all)
+            var all = Living;
+            for (var i = 0; i < all.Count; i++)
             {
+                var shiny = all[i];
                 if (shiny != null && shiny.TryCollectFromNet(netPos, radius))
                     return true;
             }
@@ -170,9 +181,9 @@ namespace Bayou.Quests
 
         private float DistToPlayerSq()
         {
-            var p = GameObject.FindGameObjectWithTag("Player");
+            var p = PlayerLocator.Transform;
             if (p == null) return 0f;
-            var d = transform.position - p.transform.position;
+            var d = transform.position - p.position;
             d.y = 0f;
             return d.sqrMagnitude;
         }

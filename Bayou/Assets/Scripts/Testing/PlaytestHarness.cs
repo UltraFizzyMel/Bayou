@@ -18,7 +18,7 @@ namespace Bayou.Testing
     {
         [Header("Enable")]
         [SerializeField] private bool enableInPlayMode = true;
-        [SerializeField] private bool showHud = true;
+        [SerializeField] private bool showHud;
         [SerializeField] private bool grantStarterFishOnPlay;
         [SerializeField] private int starterFishCount = 2;
 
@@ -42,6 +42,12 @@ namespace Bayou.Testing
         private BonfireUIController _bonfireUi;
         private GameSaveSystem _saveSystem;
         private Vector2 _hudScroll;
+        private float _nextRefCheck;
+
+        private void Awake()
+        {
+            showHud = false;
+        }
 
         private void OnEnable()
         {
@@ -169,8 +175,11 @@ namespace Bayou.Testing
 
         private void RefreshReferencesIfNeeded()
         {
-            if (_inventory == null || _wallet == null || _shopUi == null || _bonfireUi == null || _saveSystem == null)
-                RefreshReferences();
+            if (_inventory != null && _wallet != null && _shopUi != null && _bonfireUi != null && _saveSystem != null)
+                return;
+            if (Time.unscaledTime < _nextRefCheck) return;
+            _nextRefCheck = Time.unscaledTime + 2f;
+            RefreshReferences();
         }
 
         private string StatusLine()

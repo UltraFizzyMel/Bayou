@@ -214,9 +214,7 @@ namespace Bayou.Fishing
             var col = best.GetComponent<Collider>();
             var p = best.position;
             if (col != null)
-                p = new Vector3(col.bounds.center.x, 0.15f, col.bounds.center.z);
-            else
-                p = new Vector3(p.x, 0.15f, p.z);
+                p = new Vector3(col.bounds.center.x, col.bounds.max.y, col.bounds.center.z);
 
             return new WaterAnchor(p, col);
         }

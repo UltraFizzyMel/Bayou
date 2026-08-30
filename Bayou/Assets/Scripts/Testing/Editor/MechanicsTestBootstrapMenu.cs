@@ -12,18 +12,13 @@ namespace Bayou.Testing.Editor
             var existing = Object.FindFirstObjectByType<MechanicsTestBootstrap>();
             if (existing != null)
             {
-                Selection.activeGameObject = existing.gameObject;
-                EditorGUIUtility.PingObject(existing.gameObject);
-                Debug.Log("[Bayou] MechanicsTestBootstrap is already in the scene. Press Play — HUD is top-left.");
-                return;
+                Undo.DestroyObjectImmediate(existing.gameObject);
+                Debug.Log("[Bayou] Removed leftover MechanicsTestBootstrap.");
             }
-
-            var go = new GameObject("MechanicsTestBootstrap");
-            Undo.RegisterCreatedObjectUndo(go, "Add Mechanics Bootstrap");
-            go.AddComponent<MechanicsTestBootstrap>();
-            Selection.activeGameObject = go;
-            EditorSceneManagerMarkDirty(go);
-            Debug.Log("[Bayou] Added MechanicsTestBootstrap. Press Play — HUD is top-left (` to hide).");
+            else
+            {
+                Debug.Log("[Bayou] Mechanics bootstrap is disabled.");
+            }
         }
 
         private static void EditorSceneManagerMarkDirty(GameObject go)

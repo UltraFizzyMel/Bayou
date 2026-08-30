@@ -35,13 +35,16 @@ namespace Bayou.Inventory.Shop
             if (visualCue != null)
                 visualCue.SetActive(false);
 
-            var playerGo = GameObject.FindGameObjectWithTag(playerTag);
-            if (playerGo != null)
-                _player = playerGo.transform;
+            _player = Bayou.Player.PlayerLocator.Transform;
+            if (!openOnInteract)
+                enabled = false;
         }
 
         private void Update()
         {
+            if (_player == null)
+                _player = Bayou.Player.PlayerLocator.Transform;
+
             if (_player != null)
             {
                 var dist = Vector3.Distance(transform.position, _player.position);

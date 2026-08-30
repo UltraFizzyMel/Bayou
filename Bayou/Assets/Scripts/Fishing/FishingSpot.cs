@@ -36,10 +36,12 @@ namespace Bayou.Fishing
         [SerializeField] private string spotName = "Fishing Spot";
         [SerializeField] private FishCatchTool requiredTool = FishCatchTool.Net;
         [SerializeField] private float radius = 8f;
-        [SerializeField] private float spawnY = 0.2f;
+        [SerializeField] private float spawnY = 0.12f;
         [Tooltip("Optional pond collider — fish are hard-clamped inside its XZ bounds.")]
         [SerializeField] private Collider waterBounds;
         [SerializeField] private float shoreMargin = 0.45f;
+        [Tooltip("Move this hole onto its water mesh at play so terrain edits keep fish in the pond.")]
+        [SerializeField] private bool snapToWaterOnPlay = true;
 
         [Header("Spawns")]
         [SerializeField] private List<FishSpawn> fishSpawns = new();
@@ -51,6 +53,8 @@ namespace Bayou.Fishing
 
         private readonly List<BayouFish> _spawned = new();
         private static readonly List<FishingSpot> All = new();
+        private static Transform _cachedPlayer;
+        private static BayouFishingEquipment _cachedEquipment;
 
         public string SpotName => spotName;
         public FishCatchTool RequiredTool => requiredTool;
@@ -62,6 +66,8 @@ namespace Bayou.Fishing
 
         private void Awake()
         {
+            if (snapToWaterOnPlay)
+                AlignToWater();
             if (waterBounds != null)
                 radius = FitRadiusToWater(radius);
         }
@@ -82,18 +88,23 @@ namespace Bayou.Fishing
         public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
         {
             prompt = default;
-            var player = GameObject.FindGameObjectWithTag("Player");
-            if (player == null) return false;
+            if (_cachedPlayer == null)
+            {
+                _cachedPlayer = Bayou.Player.PlayerLocator.Transform;
+                _cachedEquipment = Bayou.Player.PlayerLocator.Equipment;
+            }
+
+            if (_cachedPlayer == null) return false;
 
             var bag = InventoryDisplayUI.Active;
             if (bag != null && bag.IsOpen) return false;
 
-            var d = player.transform.position - transform.position;
+            var d = _cachedPlayer.position - transform.position;
             d.y = 0f;
             var reach = radius + 2.5f;
             if (d.sqrMagnitude > reach * reach) return false;
 
-            var equipment = player.GetComponent<BayouFishingEquipment>();
+            var equipment = _cachedEquipment;
             var held = equipment != null ? equipment.CurrentItem : BayouHeldItem.None;
             var distSq = d.sqrMagnitude;
 
@@ -131,13 +142,33 @@ namespace Bayou.Fishing
         }
 #endif
 
+        /// <summary>Places the hole on the current water mesh (after terrain / pond moves).</summary>
+        public void AlignToWater()
+        {
+            if (waterBounds == null) return;
+            var b = waterBounds.bounds;
+            transform.position = new Vector3(b.center.x, b.max.y, b.center.z);
+            radius = FitRadiusToWater(radius);
+        }
+
+        public float SurfaceYAt(Vector3 worldPos)
+        {
+            var waterY = waterBounds != null ? waterBounds.bounds.max.y : transform.position.y;
+            var swimY = waterY - Mathf.Clamp(spawnY, 0.02f, 0.35f);
+            if (TryGetGroundHeight(worldPos, out var ground))
+                swimY = Mathf.Max(swimY, ground + 0.06f);
+            return swimY;
+        }
+
         public bool Contains(Vector3 worldPos)
         {
             var flat = worldPos - transform.position;
             flat.y = 0f;
             if (flat.sqrMagnitude > radius * radius)
                 return false;
-            return IsInsideWaterBounds(worldPos);
+            if (!IsInsideWaterBounds(worldPos))
+                return false;
+            return !IsLand(worldPos);
         }
 
         /// <summary>Keeps a world point inside the spot circle and (if set) the water mesh AABB.</summary>
@@ -166,14 +197,40 @@ namespace Bayou.Fishing
                 if (minZ <= maxZ) pos.z = Mathf.Clamp(pos.z, minZ, maxZ);
             }
 
-            pos.y = center.y + spawnY;
+            if (IsLand(pos))
+            {
+                var inward = new Vector3(center.x - pos.x, 0f, center.z - pos.z);
+                if (inward.sqrMagnitude > 0.0001f)
+                {
+                    inward.Normalize();
+                    for (var step = 0; step < 8; step++)
+                    {
+                        pos.x += inward.x * 0.45f;
+                        pos.z += inward.z * 0.45f;
+                        if (!IsLand(pos) && IsInsideWaterBounds(pos))
+                            break;
+                    }
+                }
+            }
+
+            pos.y = SurfaceYAt(pos);
             return pos;
         }
 
-        public Vector3 SwimCenter =>
-            waterBounds != null
-                ? new Vector3(waterBounds.bounds.center.x, transform.position.y + spawnY, waterBounds.bounds.center.z)
-                : transform.position + Vector3.up * spawnY;
+        public Vector3 SwimCenter
+        {
+            get
+            {
+                if (waterBounds != null)
+                {
+                    var c = waterBounds.bounds.center;
+                    return new Vector3(c.x, SurfaceYAt(c), c.z);
+                }
+
+                var p = transform.position;
+                return new Vector3(p.x, SurfaceYAt(p), p.z);
+            }
+        }
 
         public bool IsNearShore(Vector3 worldPos, float edgeFraction = 0.85f)
         {
@@ -182,6 +239,9 @@ namespace Bayou.Fishing
             flat.y = 0f;
             var limit = Mathf.Max(0.5f, radius - shoreMargin) * Mathf.Clamp01(edgeFraction);
             if (flat.sqrMagnitude >= limit * limit)
+                return true;
+
+            if (IsLand(worldPos))
                 return true;
 
             if (waterBounds == null) return false;
@@ -269,6 +329,49 @@ namespace Bayou.Fishing
                    worldPos.z >= b.min.z - m && worldPos.z <= b.max.z + m;
         }
 
+        public bool IsLand(Vector3 worldPos)
+        {
+            if (!TryGetGroundHeight(worldPos, out var ground))
+                return false;
+            var waterY = waterBounds != null ? waterBounds.bounds.max.y : transform.position.y;
+            return ground > waterY - 0.04f;
+        }
+
+        public static bool TryGetGroundHeight(Vector3 worldPos, out float y)
+        {
+            var terrains = Terrain.activeTerrains;
+            for (var i = 0; i < terrains.Length; i++)
+            {
+                var terrain = terrains[i];
+                if (terrain == null || terrain.terrainData == null) continue;
+                var local = worldPos - terrain.transform.position;
+                var size = terrain.terrainData.size;
+                if (local.x < 0f || local.z < 0f || local.x > size.x || local.z > size.z)
+                    continue;
+                y = terrain.SampleHeight(worldPos) + terrain.transform.position.y;
+                return true;
+            }
+
+            var origin = new Vector3(worldPos.x, worldPos.y + 40f, worldPos.z);
+            if (Physics.Raycast(origin, Vector3.down, out var hit, 100f, ~0, QueryTriggerInteraction.Ignore) &&
+                !IsWaterCollider(hit.collider))
+            {
+                y = hit.point.y;
+                return true;
+            }
+
+            y = 0f;
+            return false;
+        }
+
+        private static bool IsWaterCollider(Collider col)
+        {
+            if (col == null) return false;
+            if (col.CompareTag("Water")) return true;
+            return col.GetComponent<Bayou.Environment.WaterVolume>() != null ||
+                   col.GetComponentInParent<Bayou.Environment.WaterVolume>() != null;
+        }
+
         public void SpawnContents()
         {
             ClearSpawned();
@@ -333,16 +436,16 @@ namespace Bayou.Fishing
 
         private Vector3 RandomPointInSpot()
         {
-            for (var attempt = 0; attempt < 12; attempt++)
+            for (var attempt = 0; attempt < 16; attempt++)
             {
                 var r = radius * 0.65f;
                 var offset = UnityEngine.Random.insideUnitCircle * r;
                 var candidate = new Vector3(
                     transform.position.x + offset.x,
-                    transform.position.y + spawnY,
+                    transform.position.y,
                     transform.position.z + offset.y);
                 candidate = ClampInside(candidate);
-                if (Contains(candidate) || attempt == 11)
+                if (!IsLand(candidate) && (Contains(candidate) || attempt == 15))
                     return candidate;
             }
 

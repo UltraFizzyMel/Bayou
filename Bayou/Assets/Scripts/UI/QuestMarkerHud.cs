@@ -78,15 +78,7 @@ namespace Bayou.UI
             if (_cam == null)
                 _cam = Camera.main;
             if (_player == null)
-            {
-                var p = GameObject.FindGameObjectWithTag("Player");
-                if (p != null) _player = p.transform;
-                else
-                {
-                    var motor = FindFirstObjectByType<Bayou.Player.BayouCharacterMotor>();
-                    if (motor != null) _player = motor.transform;
-                }
-            }
+                _player = Bayou.Player.PlayerLocator.Transform;
         }
 
         private bool TryResolveTarget()

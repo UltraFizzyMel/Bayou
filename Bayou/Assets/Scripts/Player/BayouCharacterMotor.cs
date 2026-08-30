@@ -68,7 +68,7 @@ namespace Bayou.Player
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
             waterSensor = GetComponent<BayouWaterSensor>();
-            PlayerOcclusionOutline.EnsureOn(gameObject);
+            PlayerLocator.Bind(gameObject);
         }
 
 #if ENABLE_INPUT_SYSTEM
@@ -83,6 +83,11 @@ namespace Bayou.Player
         {
             if (moveAction != null && moveAction.action != null)
                 moveAction.action.Disable();
+        }
+
+        private void OnDestroy()
+        {
+            PlayerLocator.ClearIf(this);
         }
 #endif
 

@@ -32,6 +32,7 @@ public sealed class KeyGateManager : MonoBehaviour
 
     private InventoryController _inv;
     private bool _subscribed;
+    private float _nextSubCheck;
 
     private void Awake()
     {
@@ -44,8 +45,10 @@ public sealed class KeyGateManager : MonoBehaviour
 
     private void Update()
     {
-        if (!_subscribed)
-            TrySubscribe();
+        if (_subscribed) return;
+        if (Time.unscaledTime < _nextSubCheck) return;
+        _nextSubCheck = Time.unscaledTime + 1f;
+        TrySubscribe();
     }
 
     private void OnDestroy()
@@ -81,13 +84,7 @@ public sealed class KeyGateManager : MonoBehaviour
         var inv = _inv ?? InventoryController.Instance;
         if (inv == null) return;
 
-        foreach (var pair in FlagToItemId)
-        {
-            if (inv.HasItemsById(pair.Value, 1))
-                SetFlag(pair.Key, true);
-        }
-
-        // Obtaining a key unlocks the matching gate; the player still opens it with Interact.
+        // Owning a key does not mark the gate as used — that happens when Interact consumes it.
     }
 
     /// <summary>Asks every gate to open if its key/flag is now satisfied.</summary>

@@ -82,6 +82,7 @@ namespace Bayou.Fishing
         private float _displayRadius;
         private Coroutine _swingRoutine;
         private float _ignoreInputUntil;
+        private float _nextModeCheck;
 
         public HandNetMode Mode => _mode;
         public bool IsCombatMode => _mode == HandNetMode.Combat;
@@ -189,6 +190,8 @@ namespace Bayou.Fishing
 
         private void RefreshMode()
         {
+            if (Time.unscaledTime < _nextModeCheck) return;
+            _nextModeCheck = Time.unscaledTime + 0.15f;
             var pursued = CreatureThreat.IsPlayerPursued(transform, pursuitDetectRange);
             _mode = pursued ? HandNetMode.Combat : HandNetMode.Fishing;
         }

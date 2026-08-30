@@ -61,10 +61,15 @@ public class QuestManager : MonoBehaviour
         }
     }
 
+    private float _nextRequirementCheck;
+
     private void Update()
     {
         if (!_subscribed)
             TrySubscribe();
+
+        if (Time.unscaledTime < _nextRequirementCheck) return;
+        _nextRequirementCheck = Time.unscaledTime + 0.25f;
 
         foreach (Quest quest in questMap.Values)
         {

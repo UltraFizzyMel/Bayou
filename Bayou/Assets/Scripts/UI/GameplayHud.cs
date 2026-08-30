@@ -39,6 +39,7 @@ namespace Bayou.UI
         private string _objectiveCache = "";
         private bool _subscribed;
         private bool _wasDialogueOpen;
+        private bool _wasTeachingMove;
 
         public static GameplayHud Instance { get; private set; }
 
@@ -90,6 +91,7 @@ namespace Bayou.UI
             QuestMarkerHud.EnsureInScene();
             InteractionPromptHud.EnsureInScene();
             EquipmentHotwheel.EnsureInScene();
+            OnboardingCoach.EnsureInScene();
         }
 
         private static void DestroyAllInScene()
@@ -113,6 +115,13 @@ namespace Bayou.UI
             {
                 if (prompts[i] != null)
                     Object.Destroy(prompts[i].gameObject);
+            }
+
+            var coaches = Object.FindObjectsByType<OnboardingCoach>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < coaches.Length; i++)
+            {
+                if (coaches[i] != null)
+                    Object.Destroy(coaches[i].gameObject);
             }
         }
 
@@ -160,6 +169,13 @@ namespace Bayou.UI
             if (_wasDialogueOpen && !dialogueOpen)
                 RefreshQuestFromManager();
             _wasDialogueOpen = dialogueOpen;
+
+            var teaching = OnboardingCoach.IsTeachingMove;
+            if (teaching != _wasTeachingMove)
+            {
+                _wasTeachingMove = teaching;
+                RefreshQuestFromManager();
+            }
 
             // Re-poll occasionally — events can fire while the canvas is hidden during dialogue.
             if (!dialogueOpen && (Time.frameCount % 30 == 0))
@@ -286,9 +302,11 @@ namespace Bayou.UI
         private void ApplyEmptyQuest()
         {
             if (questTitleLabel != null)
-                questTitleLabel.text = "No active quest";
+                questTitleLabel.text = OnboardingCoach.IsTeachingMove ? "Welcome to the bayou" : "No active quest";
             if (questObjectiveLabel != null)
-                questObjectiveLabel.text = "Talk to townsfolk to begin.";
+                questObjectiveLabel.text = OnboardingCoach.IsTeachingMove
+                    ? "WASD = Move. Then talk to townsfolk."
+                    : "Talk to townsfolk to begin.";
             ShowQuestPanel(true);
         }
 

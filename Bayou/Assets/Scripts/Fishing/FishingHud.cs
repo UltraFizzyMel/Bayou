@@ -26,23 +26,17 @@ namespace Bayou.Fishing
         {
             if (!Application.isPlaying) return;
 
-            EnsureStyles();
-
             var attract = FindActiveAttract();
             var reel = FindActiveReel();
-            if (_caster == null && _equipment == null && attract == null && reel == null)
-                return;
-
             var casting = _caster != null && _caster.Phase != FishingCastPhase.Idle;
             var hasNet = _caster != null && _caster.HasActiveNet;
             var netCharging = _handNet != null && _handNet.IsCharging;
             var melee = _caster != null && _caster.IsMeleeMode ||
                         _equipment != null && _equipment.NetMode == HandNetMode.Combat;
-            var activePhase = casting || hasNet || attract != null || reel != null ||
-                              netCharging || melee;
-
-            if (!activePhase)
+            if (!casting && !hasNet && attract == null && reel == null && !netCharging && !melee)
                 return;
+
+            EnsureStyles();
 
             // Compact tip while idle; taller box during cast phases.
             var height = casting || hasNet || attract != null || reel != null || netCharging ? 128f : 64f;
@@ -148,22 +142,14 @@ namespace Bayou.Fishing
 
         private static FishingAttractPhase FindActiveAttract()
         {
-            foreach (var a in FindObjectsByType<FishingAttractPhase>(FindObjectsSortMode.None))
-            {
-                if (a != null && a.IsActive) return a;
-            }
-
-            return null;
+            var a = FishingAttractPhase.Active;
+            return a != null && a.IsActive ? a : null;
         }
 
         private static FishingReelPhase FindActiveReel()
         {
-            foreach (var r in FindObjectsByType<FishingReelPhase>(FindObjectsSortMode.None))
-            {
-                if (r != null && r.IsActive) return r;
-            }
-
-            return null;
+            var r = FishingReelPhase.Active;
+            return r != null && r.IsActive ? r : null;
         }
     }
 }

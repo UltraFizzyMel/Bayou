@@ -93,30 +93,25 @@ public class InkExternalFunctions
             return false;
         }
 
-        var given = 0;
-        for (var i = 0; i < count; i++)
+        if (inv.HasItemsById(itemId, count))
+            return true;
+
+        var dialogue = DialogueManager.GetInstance();
+        if (dialogue != null && dialogue.dialogueIsPlaying)
         {
-            if (inv.TryAddItem(def) || inv.TryHoldNewItem(def, out _))
-                given++;
+            for (var i = 0; i < count; i++)
+                dialogue.QueueReceivedItem(def);
+            return true;
         }
 
-        if (given < count)
-            Debug.LogWarning($"[Ink] GiveItem: only added {given}/{count} of {itemId} (bag full?).");
-
-        return given > 0;
+        for (var i = 0; i < count; i++)
+            CaughtFishPresenter.Present(def, "You've received");
+        return true;
     }
 
-    private static void GrantKey(string flagName)
+    private static void GrantKey(string _)
     {
-        var mgr = KeyGateManager.Instance ?? UnityEngine.Object.FindFirstObjectByType<KeyGateManager>();
-        if (mgr == null)
-        {
-            Debug.LogWarning("[Ink] GrantKey: no KeyGateManager in the scene.");
-            return;
-        }
-
-        mgr.GrantKeyFlag(flagName);
-        Debug.Log($"[Ink] Granted key flag '{flagName}'.");
+        // Gate flags are set when the player spends the matching key, not when dialogue grants it.
     }
 
     private static void GiveMoney(int amount)

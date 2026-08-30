@@ -72,7 +72,7 @@ MonoBehaviour:
   playerInRange: 0
   animator: {fileID: 2141153388234718900}
   keyGateManager: {fileID: 0}
-  consumeKeyOnOpen: 0
+  consumeKeyOnOpen: 1
   disableCollidersOnOpen:
   - {fileID: 818460818589029584}
   autoOpenWhenUnlocked: 1

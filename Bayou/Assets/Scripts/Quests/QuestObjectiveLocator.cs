@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Bayou.Fishing;
 using Bayou.Fish;
 using Bayou.Inventory;
@@ -80,7 +81,17 @@ public static class QuestObjectiveLocator
         if (questId.IndexOf("Pond", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
             questId.IndexOf("Shiny", System.StringComparison.OrdinalIgnoreCase) >= 0)
         {
-            var shiny = Object.FindFirstObjectByType<PondShinyCollectible>();
+            PondShinyCollectible shiny = null;
+            var shinies = PondShinyCollectible.Living;
+            for (var i = 0; i < shinies.Count; i++)
+            {
+                if (shinies[i] != null && shinies[i].isActiveAndEnabled && !shinies[i].IsCollected)
+                {
+                    shiny = shinies[i];
+                    break;
+                }
+            }
+
             if (shiny != null)
             {
                 pos = shiny.transform.position + Vector3.up * 0.8f;
@@ -92,7 +103,7 @@ public static class QuestObjectiveLocator
         if (questId.IndexOf("Net", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
             questId.IndexOf("Snapper", System.StringComparison.OrdinalIgnoreCase) < 0)
         {
-            var namedNet = GameObject.Find("NetPickup");
+            var namedNet = FindNamed("NetPickup");
             if (namedNet != null)
             {
                 pos = namedNet.transform.position + Vector3.up * 1.1f;
@@ -108,7 +119,7 @@ public static class QuestObjectiveLocator
         {
             if (TryFindPickupByItemId("Item_Lantern", near, out pos, out label))
                 return true;
-            var byName = GameObject.Find("LanternPickup");
+            var byName = FindNamed("LanternPickup");
             if (byName != null)
             {
                 pos = byName.transform.position + Vector3.up * 1.2f;
@@ -134,12 +145,13 @@ public static class QuestObjectiveLocator
         label = null;
         QuestItemPickup best = null;
         var bestSq = float.MaxValue;
-        var pickups = Object.FindObjectsByType<QuestItemPickup>(FindObjectsSortMode.None);
-        for (var i = 0; i < pickups.Length; i++)
+        var pickups = QuestItemPickup.Living;
+        for (var i = 0; i < pickups.Count; i++)
         {
             var p = pickups[i];
             if (p == null || !p.isActiveAndEnabled) continue;
-            // Item field is private — match via beacon or name; also check QuestMarkerTarget on same object.
+            if (p.Item != null && !string.IsNullOrEmpty(itemId) && !p.Item.MatchesId(itemId))
+                continue;
             var beacon = p.GetComponent<QuestMarkerTarget>();
             if (beacon != null && !beacon.MatchesItem(itemId))
                 continue;
@@ -158,7 +170,7 @@ public static class QuestObjectiveLocator
         if (!string.IsNullOrEmpty(itemId) &&
             itemId.IndexOf("Lantern", System.StringComparison.OrdinalIgnoreCase) >= 0)
         {
-            var named = GameObject.Find("LanternPickup");
+            var named = FindNamed("LanternPickup");
             if (named != null)
             {
                 pos = named.transform.position + Vector3.up * 1.2f;
@@ -180,8 +192,8 @@ public static class QuestObjectiveLocator
 
         BayouFish bestFish = null;
         var bestSq = float.MaxValue;
-        var fish = Object.FindObjectsByType<BayouFish>(FindObjectsSortMode.None);
-        for (var i = 0; i < fish.Length; i++)
+        var fish = BayouFish.Living;
+        for (var i = 0; i < fish.Count; i++)
         {
             var f = fish[i];
             if (f == null || f.IsCaught || !f.isActiveAndEnabled) continue;
@@ -241,16 +253,16 @@ public static class QuestObjectiveLocator
         string[] names;
         if (questId.IndexOf("Snapper", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
             questId.IndexOf("Molly", System.StringComparison.OrdinalIgnoreCase) >= 0)
-            names = new[] { "Caliste", "Caliste NPC", "NPC_Caliste" };
+            names = CalisteNames;
         else
             // Never match the graveyard "Landry" mausoleum — that sent the pond turn-in across the map.
-            names = new[] { "Church NPC", "Zenon Landry", "Father Landry", "NPC_Landry" };
+            names = LandryNames;
 
         Transform best = null;
         var bestSq = float.MaxValue;
         for (var i = 0; i < names.Length; i++)
         {
-            var go = GameObject.Find(names[i]);
+            var go = FindNamed(names[i]);
             if (go == null) continue;
             var d = go.transform.position - near;
             d.y = 0f;
@@ -266,5 +278,30 @@ public static class QuestObjectiveLocator
         if (best == null) return false;
         pos = best.position + Vector3.up * 1.8f;
         return true;
+    }
+
+    private static readonly string[] CalisteNames = { "Caliste", "Caliste NPC", "NPC_Caliste" };
+    private static readonly string[] LandryNames = { "Church NPC", "Zenon Landry", "Father Landry", "NPC_Landry" };
+    private static readonly Dictionary<string, Transform> NamedCache = new();
+    private static readonly Dictionary<string, float> NamedMissUntil = new();
+
+    private static GameObject FindNamed(string objectName)
+    {
+        if (string.IsNullOrEmpty(objectName)) return null;
+        if (NamedCache.TryGetValue(objectName, out var cached) && cached != null)
+            return cached.gameObject;
+        if (NamedMissUntil.TryGetValue(objectName, out var until) && Time.unscaledTime < until)
+            return null;
+
+        var go = GameObject.Find(objectName);
+        if (go != null)
+        {
+            NamedCache[objectName] = go.transform;
+            NamedMissUntil.Remove(objectName);
+            return go;
+        }
+
+        NamedMissUntil[objectName] = Time.unscaledTime + 1f;
+        return null;
     }
 }

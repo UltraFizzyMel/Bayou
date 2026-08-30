@@ -81,6 +81,7 @@ namespace Bayou.Fishing
 
         private HeldLantern _lantern;
         private bool _wasPursued;
+        private float _nextPursuitCheck;
 
         public BayouHeldItem CurrentItem { get; private set; } = BayouHeldItem.None;
 
@@ -114,7 +115,6 @@ namespace Bayou.Fishing
                 gameObject.AddComponent<FishingInteractionPromptSource>();
 
             EnsureHeldVisuals();
-            Bayou.Player.PlayerOcclusionOutline.EnsureOn(gameObject);
             // Disable tools before the first Update so a Play-mode click cannot auto-cast.
             ApplyItem(startingItem);
         }
@@ -256,6 +256,8 @@ namespace Bayou.Fishing
 
         private void UpdatePursuitContext()
         {
+            if (Time.unscaledTime < _nextPursuitCheck) return;
+            _nextPursuitCheck = Time.unscaledTime + 0.15f;
             IsPursued = CreatureThreat.IsPlayerPursued(transform, pursuitDetectRange);
 
             if (!autoEquipNetWhenPursued)

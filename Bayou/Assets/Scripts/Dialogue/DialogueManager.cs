@@ -1,3 +1,4 @@
+using Bayou.Inventory;
 using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
@@ -268,6 +269,35 @@ public class DialogueManager : MonoBehaviour
             dialogueVariables?.StopListening(currentStory);
             currentStory = null;
         }
+
+        FlushReceivedItems();
+    }
+
+    /// <summary>Ink <c>GiveItem</c> — show the slot-in prompt after this conversation ends.</summary>
+    public void QueueReceivedItem(ItemDefinition item)
+    {
+        if (item == null) return;
+        _pendingReceived.Add(item);
+    }
+
+    private void FlushReceivedItems()
+    {
+        if (_pendingReceived.Count == 0) return;
+        if (_receivedRoutine != null)
+            StopCoroutine(_receivedRoutine);
+        _receivedRoutine = StartCoroutine(PresentReceivedAfterDialogueRoutine());
+    }
+
+    private IEnumerator PresentReceivedAfterDialogueRoutine()
+    {
+        yield return null;
+        _receivedRoutine = null;
+        if (_pendingReceived.Count == 0) yield break;
+
+        var item = _pendingReceived[0];
+        _pendingReceived.RemoveAt(0);
+        if (item != null)
+            CaughtFishPresenter.Present(item, "You've received");
     }
 
     /// <summary>Hides panels/choices without unbinding Ink mid-external-call.</summary>
@@ -303,6 +333,8 @@ public class DialogueManager : MonoBehaviour
     }
 
     private Coroutine _openShopRoutine;
+    private readonly List<ItemDefinition> _pendingReceived = new();
+    private Coroutine _receivedRoutine;
 
     /// <summary>Ink <c>OpenShop()</c> — close dialogue UI now, open shop next frame.</summary>
     public void QueueOpenShop()

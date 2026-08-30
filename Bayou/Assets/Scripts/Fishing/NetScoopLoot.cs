@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Bayou.Inventory;
 using UnityEngine;
 
@@ -14,8 +15,12 @@ namespace Bayou.Fishing
         [SerializeField] private float bobSpeed = 2f;
         [SerializeField] private Color glowColor = new(0.9f, 0.8f, 0.25f, 1f);
 
+        private static readonly List<NetScoopLoot> All = new();
+
         private Vector3 _basePos;
         private bool _collected;
+
+        public static IReadOnlyList<NetScoopLoot> Living => All;
 
         public void Configure(ItemDefinition definition, Color glow)
         {
@@ -28,6 +33,17 @@ namespace Bayou.Fishing
         {
             _basePos = transform.position;
             ApplyGlow();
+        }
+
+        private void OnEnable()
+        {
+            if (!All.Contains(this))
+                All.Add(this);
+        }
+
+        private void OnDisable()
+        {
+            All.Remove(this);
         }
 
         private void Update()
@@ -48,9 +64,10 @@ namespace Bayou.Fishing
 
         public static bool TryScoopNear(Vector3 netPos, float radius)
         {
-            foreach (var loot in FindObjectsByType<NetScoopLoot>(FindObjectsSortMode.None))
+            var all = Living;
+            for (var i = 0; i < all.Count; i++)
             {
-                if (loot != null && loot.TryCollectFromNet(netPos, radius))
+                if (all[i] != null && all[i].TryCollectFromNet(netPos, radius))
                     return true;
             }
 

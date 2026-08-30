@@ -50,11 +50,11 @@ namespace Bayou.Save
             if (!_playerInRange) return false;
             if (bonfireUi != null && bonfireUi.IsOpen) return false;
 
-            var p = GameObject.FindGameObjectWithTag("Player");
+            var p = PlayerLocator.Transform;
             var dist = 0f;
             if (p != null)
             {
-                var d = transform.position - p.transform.position;
+                var d = transform.position - p.position;
                 d.y = 0f;
                 dist = d.sqrMagnitude;
             }

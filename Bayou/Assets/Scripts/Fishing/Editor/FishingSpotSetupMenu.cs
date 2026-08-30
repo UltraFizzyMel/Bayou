@@ -37,6 +37,26 @@ namespace Bayou.Fishing.Editor
             BakeIntoMovementTest();
         }
 
+        [MenuItem("Bayou/Fishing/Snap Spots To Current Water")]
+        public static void SnapSpotsToWater()
+        {
+            var spots = Object.FindObjectsByType<FishingSpot>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var n = 0;
+            for (var i = 0; i < spots.Length; i++)
+            {
+                if (spots[i] == null || spots[i].WaterBounds == null) continue;
+                Undo.RecordObject(spots[i].transform, "Snap fishing spot to water");
+                spots[i].AlignToWater();
+                EditorUtility.SetDirty(spots[i]);
+                EditorUtility.SetDirty(spots[i].transform);
+                n++;
+            }
+
+            if (!Application.isPlaying)
+                EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            Debug.Log($"[Bayou] Snapped {n} fishing spots to their water meshes.");
+        }
+
         [MenuItem("Bayou/Fishing/Select FishingSpots Root")]
         private static void SelectRoot()
         {

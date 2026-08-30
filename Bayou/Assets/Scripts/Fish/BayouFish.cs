@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Bayou.Fishing;
 using Bayou.Inventory;
+using Bayou.Player;
 using UnityEngine;
 
 namespace Bayou.Fish
@@ -30,11 +32,14 @@ namespace Bayou.Fish
         [Header("Net attraction")]
         [SerializeField] private float attractSwimSpeed = 2.4f;
 
+        private static readonly List<BayouFish> All = new();
+
         public bool IsCaught { get; private set; }
         public FishCatchTool RequiredTool => requiredTool;
         public bool IsStatic => isStatic;
         public FishingSpot HomeSpot { get; private set; }
         public ItemDefinition InventoryItem => inventoryItemWhenCaught;
+        public static IReadOnlyList<BayouFish> Living => All;
 
         private Vector3 _spawnPosition;
         private Vector3 _currentDirection;
@@ -50,15 +55,22 @@ namespace Bayou.Fish
             _spawnPosition = transform.position;
 
             if (player == null)
-            {
-                var p = GameObject.FindGameObjectWithTag("Player");
-                if (p != null)
-                    player = p.transform;
-            }
+                player = PlayerLocator.Transform;
 
             _wobbleSeed = Random.Range(0f, 1000f);
             PickNewDirection();
             _currentDirection = _targetDirection;
+        }
+
+        private void OnEnable()
+        {
+            if (!All.Contains(this))
+                All.Add(this);
+        }
+
+        private void OnDisable()
+        {
+            All.Remove(this);
         }
 
         public void Configure(ItemDefinition item, FishCatchTool tool, FishingSpot home, bool moving)
@@ -129,10 +141,12 @@ namespace Bayou.Fish
                 }
             }
 
+            if (player == null)
+                player = PlayerLocator.Transform;
+
             if (player != null)
             {
-                var away = Flat(transform.position - player.position);
-                if (away.magnitude < fleeRadius)
+                var away = Flat(transform.position - player.position);                if (away.magnitude < fleeRadius)
                 {
                     // Prefer fleeing along shore rather than onto land.
                     var fleeDir = away.normalized;

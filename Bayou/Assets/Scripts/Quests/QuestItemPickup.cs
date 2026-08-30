@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Bayou.Demo;
 using Bayou.Inventory;
+using Bayou.Player;
 using Bayou.UI;
 using UnityEngine;
 
@@ -23,7 +25,9 @@ namespace Bayou.Quests
         [SerializeField] private bool autoEquipHandNet = true;
 
         public ItemDefinition Item => item;
+        public static IReadOnlyList<QuestItemPickup> Living => All;
 
+        private static readonly List<QuestItemPickup> All = new();
         private bool _playerInRange;
 
         public void Bind(ItemDefinition definition, string prompt = "Pick up")
@@ -41,8 +45,18 @@ namespace Bayou.Quests
                 col.isTrigger = true;
         }
 
-        private void OnEnable() => InteractionPromptBroker.Register(this);
-        private void OnDisable() => InteractionPromptBroker.Unregister(this);
+        private void OnEnable()
+        {
+            if (!All.Contains(this))
+                All.Add(this);
+            InteractionPromptBroker.Register(this);
+        }
+
+        private void OnDisable()
+        {
+            All.Remove(this);
+            InteractionPromptBroker.Unregister(this);
+        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -74,11 +88,11 @@ namespace Bayou.Quests
             var name = string.IsNullOrWhiteSpace(item.displayName) ? item.name : item.displayName;
             var action = string.IsNullOrWhiteSpace(pickupPrompt) ? $"Pick up {name}" : $"{pickupPrompt} {name}";
             var d = transform.position;
-            var player = GameObject.FindGameObjectWithTag("Player");
+            var player = PlayerLocator.Transform;
             var dist = 0f;
             if (player != null)
             {
-                var delta = d - player.transform.position;
+                var delta = d - player.position;
                 delta.y = 0f;
                 dist = delta.sqrMagnitude;
             }
@@ -107,10 +121,7 @@ namespace Bayou.Quests
             if (autoEquipHandNet && item != null && item.IsUniqueEquipment &&
                 item.Id.IndexOf("HandNet", System.StringComparison.OrdinalIgnoreCase) >= 0)
             {
-                var player = GameObject.FindGameObjectWithTag(playerTag);
-                var equipment = player != null
-                    ? player.GetComponent<Bayou.Fishing.BayouFishingEquipment>()
-                    : FindFirstObjectByType<Bayou.Fishing.BayouFishingEquipment>();
+                var equipment = PlayerLocator.Equipment;
                 equipment?.ApplyItem(Bayou.Fishing.BayouHeldItem.Net);
             }
 

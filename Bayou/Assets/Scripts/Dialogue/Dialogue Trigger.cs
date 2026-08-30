@@ -52,9 +52,9 @@ public class DialogueTrigger : MonoBehaviour, IInteractionPromptSource
 
     private float DistToPlayerSq()
     {
-        var p = GameObject.FindGameObjectWithTag("Player");
+        var p = PlayerLocator.Transform;
         if (p == null) return 0f;
-        var d = transform.position - p.transform.position;
+        var d = transform.position - p.position;
         d.y = 0f;
         return d.sqrMagnitude;
     }

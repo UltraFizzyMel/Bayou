@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Bayou.Inventory;
 using UnityEngine;
 
@@ -50,6 +51,8 @@ namespace Bayou.Creatures
         [Header("Chase")]
         [SerializeField] private float stopChaseDistance = 0.9f;
 
+        private static readonly List<CreatureController> All = new();
+
         private CreatureSense _sense;
         private CreatureMode _mode = CreatureMode.Passive;
         private int _patrolIndex;
@@ -65,6 +68,18 @@ namespace Bayou.Creatures
         public bool IsStunned => Time.time < _stunUntil;
         public bool IsCaught => _caught;
         public bool IsNetHittable => !_caught && !IsStunned;
+        public static IReadOnlyList<CreatureController> Living => All;
+
+        private void OnEnable()
+        {
+            if (!All.Contains(this))
+                All.Add(this);
+        }
+
+        private void OnDisable()
+        {
+            All.Remove(this);
+        }
 
         private void Awake()
         {
