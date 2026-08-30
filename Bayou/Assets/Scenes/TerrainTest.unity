@@ -36299,7 +36299,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2ce337c36e93a7f43a904b25551c4749, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -62935,6 +62935,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7fe0be635c7afe44a9aa0fec61d02bd5, type: 3}
       propertyPath: m_Name
       value: char_fixedwalk
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 7fe0be635c7afe44a9aa0fec61d02bd5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
