@@ -12883,7 +12883,7 @@ Transform:
   m_GameObject: {fileID: 449757963}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -154.14, y: 0.64, z: 26.85}
+  m_LocalPosition: {x: -154.14, y: 2.11, z: 26.85}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14477,6 +14477,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1929320926}
+  - {fileID: 916342430}
   - {fileID: 1593197467}
   - {fileID: 539778248}
   - {fileID: 449757964}
@@ -15163,7 +15164,7 @@ Transform:
   m_GameObject: {fileID: 539778247}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -68.1, y: 0.7, z: 46.6}
+  m_LocalPosition: {x: -68.1, y: 1.73, z: 46.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -25018,6 +25019,65 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4454315674264744496, guid: d6b6a1d2340b6af4fa24ee48629337ea, type: 3}
   m_PrefabInstance: {fileID: 1599796178}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &916342429
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 916342430}
+  - component: {fileID: 916342431}
+  m_Layer: 0
+  m_Name: Tutorial_Net_Snappers (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &916342430
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916342429}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 12.69, y: 0.15, z: -95.07}
+  m_LocalScale: {x: 1, y: 1, z: 1.3702}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 516246035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &916342431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916342429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Tutorial_Net_Snappers
+  requiredTool: 0
+  radius: 2.84
+  spawnY: 0.2
+  waterBounds: {fileID: 1556779023}
+  shoreMargin: 0.45
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1 &917591761
 GameObject:
   m_ObjectHideFlags: 0
@@ -25301,7 +25361,7 @@ Transform:
   m_GameObject: {fileID: 943885565}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -60.78, y: 0.31, z: 89.26}
+  m_LocalPosition: {x: -60.78, y: 1.13, z: 89.26}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -46063,7 +46123,7 @@ Transform:
   m_GameObject: {fileID: 1593197466}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -22.0449, y: 0.57, z: -43.58513}
+  m_LocalPosition: {x: -22.0449, y: 0.87, z: -43.58513}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
