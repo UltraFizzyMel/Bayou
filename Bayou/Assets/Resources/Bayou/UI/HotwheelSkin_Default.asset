@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1d2e3f4a5b678901234567890abcdef, type: 3}
   m_Name: HotwheelSkin_Default
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.UI.EquipmentHotwheelSkin
-  wheelDisc: {fileID: 0}
+  wheelDisc: {fileID: 21300000, guid: d61e41f85c0de304fa7b97ce668894d2, type: 3}
   selector: {fileID: 0}
-  hub: {fileID: 0}
-  slotPlate: {fileID: 0}
+  hub: {fileID: 21300000, guid: a192c108c8fdac54c9de0af1e8af88c3, type: 3}
+  slotPlate: {fileID: 21300000, guid: dcea9346983da134da966787bd4e3024, type: 3}
   wheelPrefab: {fileID: 0}
   slotCount: 4
   firstSlotAngle: 90

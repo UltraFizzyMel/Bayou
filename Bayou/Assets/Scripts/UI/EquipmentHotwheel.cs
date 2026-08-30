@@ -39,10 +39,13 @@ namespace Bayou.UI
         private RectTransform _selector;
         private TextMeshProUGUI _hint;
         private TextMeshProUGUI _centerLabel;
+        private RectTransform _equippedRoot;
+        private Image _equippedIcon;
         private bool _open;
         private int _hover = -1;
         private string _pendingAssignId;
         private readonly List<ItemDefinition> _owned = new();
+        private InventoryController _boundInv;
 
         public static EquipmentHotwheel Instance { get; private set; }
         public static bool IsOpen => Instance != null && Instance._open;
@@ -90,6 +93,7 @@ namespace Bayou.UI
             Instance = this;
             ResolveSkin();
             EnsureSlotBuffers();
+            BindInventory();
             if (buildUiIfMissing)
                 BuildUi();
             SetWheelVisible(false);
@@ -98,6 +102,7 @@ namespace Bayou.UI
 
         private void OnDestroy()
         {
+            UnbindInventory();
             if (Instance == this)
                 Instance = null;
         }
@@ -107,13 +112,17 @@ namespace Bayou.UI
             if (ShouldHide())
             {
                 if (_open) Close(selectHover: false);
+                BindInventory();
                 RefreshAssignStrip();
+                RefreshEquippedHud();
                 return;
             }
 
+            BindInventory();
             HandleSlotHotkeys();
             HandleWheelHold();
             RefreshAssignStrip();
+            RefreshEquippedHud();
 
             if (!_open) return;
 
@@ -198,6 +207,79 @@ namespace Bayou.UI
 
             if (_slots.Length != count)
                 _slots = new SlotView[count];
+        }
+
+        private void BindInventory()
+        {
+            var inv = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
+            if (inv == _boundInv) return;
+            UnbindInventory();
+            _boundInv = inv;
+            if (_boundInv == null) return;
+            _boundInv.InventoryChanged += OnInventoryChanged;
+            SyncCollectedEquipmentToSlots();
+        }
+
+        private void UnbindInventory()
+        {
+            if (_boundInv != null)
+                _boundInv.InventoryChanged -= OnInventoryChanged;
+            _boundInv = null;
+        }
+
+        private void OnInventoryChanged()
+        {
+            SyncCollectedEquipmentToSlots();
+            RefreshSlotVisuals();
+            RefreshAssignStrip();
+        }
+
+        /// <summary>Put collected unique gear (rod, net, lantern) onto empty slices so their icons show.</summary>
+        private void SyncCollectedEquipmentToSlots()
+        {
+            EnsureSlotBuffers();
+            CollectOwnedEquipment();
+
+            for (var i = 0; i < _slotItemIds.Length; i++)
+            {
+                var id = _slotItemIds[i];
+                if (string.IsNullOrWhiteSpace(id)) continue;
+                var owned = false;
+                for (var j = 0; j < _owned.Count; j++)
+                {
+                    if (_owned[j] != null && _owned[j].MatchesId(id))
+                    {
+                        owned = true;
+                        break;
+                    }
+                }
+
+                if (!owned)
+                    _slotItemIds[i] = null;
+            }
+
+            for (var j = 0; j < _owned.Count; j++)
+            {
+                var def = _owned[j];
+                if (def == null) continue;
+                var already = false;
+                for (var i = 0; i < _slotItemIds.Length; i++)
+                {
+                    if (def.MatchesId(_slotItemIds[i]))
+                    {
+                        already = true;
+                        break;
+                    }
+                }
+
+                if (already) continue;
+                for (var i = 0; i < _slotItemIds.Length; i++)
+                {
+                    if (!string.IsNullOrWhiteSpace(_slotItemIds[i])) continue;
+                    _slotItemIds[i] = def.Id;
+                    break;
+                }
+            }
         }
 
         private void HandleSlotHotkeys()
@@ -376,6 +458,37 @@ namespace Bayou.UI
             _selector.localRotation = Quaternion.Euler(0f, 0f, skin.SlotCenterAngle(_hover) - 90f);
         }
 
+        private void RefreshEquippedHud()
+        {
+            if (_equippedRoot == null || _equippedIcon == null) return;
+
+            var hide = ShouldHide();
+            var equipment = ResolveEquipment();
+            var held = equipment != null ? equipment.CurrentItem : BayouHeldItem.None;
+            var def = held == BayouHeldItem.None ? null : ResolveItem(ItemIdForHeld(held));
+            var icon = def != null ? def.icon : null;
+            var show = !hide && held != BayouHeldItem.None && icon != null;
+
+            if (_equippedRoot.gameObject.activeSelf != show)
+                _equippedRoot.gameObject.SetActive(show);
+            if (!show) return;
+
+            _equippedIcon.sprite = icon;
+            _equippedIcon.enabled = true;
+            _equippedIcon.preserveAspect = true;
+        }
+
+        private static string ItemIdForHeld(BayouHeldItem held)
+        {
+            switch (held)
+            {
+                case BayouHeldItem.Rod: return "Item_FishingRod";
+                case BayouHeldItem.Net: return "Item_HandNet";
+                case BayouHeldItem.Lantern: return "Item_Lantern";
+                default: return null;
+            }
+        }
+
         private void RefreshAssignStrip()
         {
             if (_assignRoot == null) return;
@@ -532,7 +645,36 @@ namespace Bayou.UI
             _hint.color = skin.labelColor;
 
             BuildAssignStrip(canvasGo.transform);
+            BuildEquippedHud(canvasGo.transform);
             RefreshSlotVisuals();
+            RefreshEquippedHud();
+        }
+
+        private void BuildEquippedHud(Transform canvas)
+        {
+            var plateSize = skin != null ? skin.slotPlateSize : new Vector2(96f, 96f);
+            if (plateSize.x < 72f || plateSize.y < 72f)
+                plateSize = new Vector2(96f, 96f);
+
+            _equippedRoot = CreateRect("EquippedItem", canvas);
+            _equippedRoot.anchorMin = _equippedRoot.anchorMax = new Vector2(0f, 0f);
+            _equippedRoot.pivot = new Vector2(0f, 0f);
+            _equippedRoot.anchoredPosition = new Vector2(28f, 28f);
+            _equippedRoot.sizeDelta = plateSize;
+
+            var plate = _equippedRoot.gameObject.AddComponent<Image>();
+            plate.sprite = skin != null && skin.slotPlate != null ? skin.slotPlate : CircleSprite(96);
+            plate.preserveAspect = true;
+            plate.color = skin != null
+                ? new Color(skin.slotSelected.r, skin.slotSelected.g, skin.slotSelected.b, 0.9f)
+                : new Color(0.12f, 0.1f, 0.08f, 0.88f);
+            plate.raycastTarget = false;
+
+            var iconRt = CreateRect("Icon", _equippedRoot);
+            iconRt.sizeDelta = skin != null ? skin.iconSize : new Vector2(72f, 72f);
+            _equippedIcon = iconRt.gameObject.AddComponent<Image>();
+            _equippedIcon.preserveAspect = true;
+            _equippedIcon.raycastTarget = false;
         }
 
         private void BindTeammatePrefab()

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.ItemDefinition
   displayName: Lantern
   description: An old lantern at the edge of the Foggy Marsh. Ends this demo when found.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 35288a08194bc0e4381fbac3385d4bcd, type: 3}
   shape:
     width: 1
     height: 2

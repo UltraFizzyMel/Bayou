@@ -11,7 +11,18 @@ namespace Bayou.Inventory.Editor
 
         public override void OnInspectorGUI()
         {
-            DrawDefaultInspector();
+            serializedObject.Update();
+            DrawPropertiesExcluding(serializedObject, "icon");
+            EditorGUILayout.Space(6);
+            EditorGUILayout.LabelField("Icon (inventory + hotwheel)", EditorStyles.boldLabel);
+            var icon = serializedObject.FindProperty("icon");
+            icon.objectReferenceValue = EditorGUILayout.ObjectField(
+                "Icon",
+                icon.objectReferenceValue,
+                typeof(Sprite),
+                false,
+                GUILayout.Height(72));
+            serializedObject.ApplyModifiedProperties();
 
             var def = (ItemDefinition)target;
             EditorGUILayout.Space(8);

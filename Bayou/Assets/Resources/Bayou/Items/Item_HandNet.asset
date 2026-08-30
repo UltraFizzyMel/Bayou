@@ -15,15 +15,11 @@ MonoBehaviour:
   itemId: Item_HandNet
   displayName: Hand Net
   description: A small scoop net. Press 2 to hold. Throw it into the shallows.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 659bf3ce6bfb1b64d900f35f3291cf7a, type: 3}
   shape:
     width: 2
     height: 2
-    cells:
-    - 1
-    - 1
-    - 1
-    - 1
+    cells: 01010101
   maxStack: 1
   buyPrice: 0
   sellPrice: 0

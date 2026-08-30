@@ -36,6 +36,7 @@ namespace Bayou.UI.Editor
                 "[Bayou] Hotwheel skin created.\n" +
                 "  Assign Wheel Disc (circular PNG), optional Selector / Hub / Slot Plate,\n" +
                 "  or a prefab with children: Disc, Selector, Hub, Slot_1..Slot_4.\n" +
+                "  Drag item icons on each Item Definition (rod, net, lantern) — those show on the wheel.\n" +
                 "  To override the default, save as Resources/Bayou/UI/HotwheelSkin.asset");
         }
 

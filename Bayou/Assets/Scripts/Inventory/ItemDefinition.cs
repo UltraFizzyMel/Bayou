@@ -10,6 +10,7 @@ namespace Bayou.Inventory
 
         public string displayName = "Item";
         [TextArea(2, 4)] public string description;
+        [Tooltip("Drag a sprite. Shown in the bag and on the hotwheel when this item is collected.")]
         public Sprite icon;
         public ItemShape shape;
         public int maxStack = 1;

@@ -8,7 +8,7 @@ namespace Bayou.UI
     ///
     /// Prefab child names (optional, all centered):
     ///   Disc, Selector, Hub, Slots/Slot_1 .. Slot_4
-    /// Icons are parented into Slot_N at runtime.
+    /// Icons are parented into Slot_N at runtime from each item's Icon field.
     /// </summary>
     [CreateAssetMenu(menuName = "Bayou/UI/Hotwheel Skin", fileName = "HotwheelSkin_")]
     public sealed class EquipmentHotwheelSkin : ScriptableObject

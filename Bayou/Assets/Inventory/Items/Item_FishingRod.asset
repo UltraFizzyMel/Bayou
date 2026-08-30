@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.ItemDefinition
   displayName: Fishing Rod
   description: A proper bayou rod. Buy from Caliste. Press 1 to hold.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: e9665dd31918b034fa842032d5779123, type: 3}
   shape:
     width: 4
     height: 2
