@@ -32,7 +32,7 @@ namespace Bayou.Fishing
         [SerializeField] private float launchGraceSeconds = 0.35f;
         [Tooltip("Must travel at least this far before dry-land stick is allowed.")]
         [SerializeField] private float minFlightDistance = 2f;
-        [SerializeField] private float shinyScoopRadius = 1.15f;
+        [SerializeField] private float shinyScoopRadius = 1.6f;
         [Tooltip("Radius used to stun/catch creatures when the net plants or strikes them in flight.")]
         [SerializeField] private float creatureHitRadius = 2.2f;
 
@@ -317,9 +317,8 @@ namespace Bayou.Fishing
 
             Bayou.Audio.FishingAudio.Resolve()?.PlayLanding();
 
-            // Rod bobber only scoops pond loot that is actually under it (rosary, etc.).
-            // The quest shiny is hand-net / Interact only — a stray plant must not vacuum it.
-            if (NetScoopLoot.TryScoopNear(transform.position, shinyScoopRadius))
+            if (Bayou.Quests.PondShinyCollectible.TryScoopNear(transform.position, shinyScoopRadius) ||
+                NetScoopLoot.TryScoopNear(transform.position, shinyScoopRadius))
             {
                 StatusHint = "Scooped!";
                 Destroy(gameObject);

@@ -101,15 +101,19 @@ namespace Bayou.Fishing
             {
                 if (held == BayouHeldItem.Rod)
                     prompt = new InteractionPrompt("Hold LMB", $"Cast into {spotName}", 42, distSq);
-                else
+                else if (equipment != null && equipment.CanHold(BayouHeldItem.Rod))
                     prompt = new InteractionPrompt("1", $"{spotName} needs a rod", 41, distSq);
+                else
+                    return false;
                 return true;
             }
 
             if (held == BayouHeldItem.Net)
                 prompt = new InteractionPrompt("Hold LMB", $"Throw net into {spotName}", 42, distSq);
-            else
+            else if (equipment != null && equipment.CanHold(BayouHeldItem.Net))
                 prompt = new InteractionPrompt("2", $"{spotName} needs a hand net", 41, distSq);
+            else
+                return false;
             return true;
         }
 
@@ -196,6 +200,28 @@ namespace Bayou.Fishing
             }
 
             return null;
+        }
+
+        public static FishingSpot FindNearby(Vector3 worldPos, float extraReach = 3.5f)
+        {
+            FishingSpot best = null;
+            var bestSq = float.MaxValue;
+            foreach (var spot in All)
+            {
+                if (spot == null || !spot.isActiveAndEnabled) continue;
+                var d = worldPos - spot.transform.position;
+                d.y = 0f;
+                var reach = spot.Radius + extraReach;
+                var sq = d.sqrMagnitude;
+                if (sq > reach * reach) continue;
+                if (sq < bestSq)
+                {
+                    bestSq = sq;
+                    best = spot;
+                }
+            }
+
+            return best;
         }
 
         public static bool AnySpotsExist() => All.Count > 0;

@@ -6,21 +6,22 @@ using UnityEngine;
 namespace Bayou.Quests
 {
     /// <summary>
-    /// Shiny quest item in pond water. Collect with the fishing net (thrown or hand scoop)
-    /// or by standing on it and pressing Interact — both open the fish-style confirm UI.
+    /// Rosary in the church pond. Scoop with the hand net (or a planted rod bobber)
+    /// or stand next to it and press Interact.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class PondShinyCollectible : MonoBehaviour, IInteractionPromptSource
     {
-        private const string ResourcesItemPath = "Bayou/Items/Item_ShinyPond";
+        private const string ResourcesItemPath = "Bayou/Items/Item_RosaryNecklace";
+        private const string CanonicalItemId = "Item_RosaryNecklace";
 
         [SerializeField] private ItemDefinition item;
         [SerializeField] private float bobAmplitude = 0.08f;
         [SerializeField] private float bobSpeed = 2.2f;
-        [SerializeField] private Color glowColor = new(0.35f, 0.95f, 0.45f, 1f);
-        [SerializeField] private float extraCollectRadius;
+        [SerializeField] private Color glowColor = new(0.95f, 0.85f, 0.35f, 1f);
+        [SerializeField] private float extraCollectRadius = 0.85f;
         [SerializeField] private string pickupPrompt = "Pick up";
-        [SerializeField] private float interactReach = 1.8f;
+        [SerializeField] private float interactReach = 2.2f;
 
         private Vector3 _basePos;
         private bool _collected;
@@ -67,14 +68,13 @@ namespace Bayou.Quests
                 Collect();
         }
 
-        /// <summary>Called by thrown net / hand net. Returns true if this shiny was collected.</summary>
         public bool TryCollectFromNet(Vector3 netPos, float radius)
         {
             if (_collected || !CanCollectNow()) return false;
             ResolveItem();
             if (item == null) return false;
 
-            var reach = Mathf.Max(0.35f, radius) + extraCollectRadius;
+            var reach = Mathf.Max(0.6f, radius) + extraCollectRadius;
             var flat = transform.position - netPos;
             flat.y = 0f;
             if (flat.sqrMagnitude > reach * reach)
@@ -83,7 +83,7 @@ namespace Bayou.Quests
             return Collect();
         }
 
-        private static bool CanCollectNow() => Time.timeSinceLevelLoad >= 2f;
+        private static bool CanCollectNow() => Time.timeSinceLevelLoad >= 0.45f;
 
         public static bool TryScoopNear(Vector3 netPos, float radius)
         {
@@ -105,7 +105,7 @@ namespace Bayou.Quests
             if (DistToPlayerSq() > interactReach * interactReach)
                 return false;
 
-            var name = string.IsNullOrWhiteSpace(item.displayName) ? item.name : item.displayName;
+            var name = string.IsNullOrWhiteSpace(item.displayName) ? "rosary" : item.displayName;
             var action = string.IsNullOrWhiteSpace(pickupPrompt) ? $"Pick up {name}" : $"{pickupPrompt} {name}";
             prompt = new InteractionPrompt("E", action.Trim(), 70, DistToPlayerSq());
             return true;
@@ -120,12 +120,12 @@ namespace Bayou.Quests
             if (_collected || item == null)
             {
                 if (item == null)
-                    Debug.LogError("[PondShiny] Cannot collect — Item_ShinyPond is missing.");
+                    Debug.LogError("[PondRosary] Cannot collect — Item_RosaryNecklace is missing.");
                 return false;
             }
 
             _collected = true;
-            Debug.Log($"[PondShiny] Collected {item.displayName}.");
+            Debug.Log($"[PondRosary] Collected {item.displayName}.");
             CaughtFishPresenter.Present(item);
             Destroy(gameObject);
             return true;
@@ -133,10 +133,12 @@ namespace Bayou.Quests
 
         private void ResolveItem()
         {
-            if (item != null && item.MatchesId("Item_ShinyPond"))
+            if (item != null && item.MatchesId(CanonicalItemId))
                 return;
 
             var loaded = Resources.Load<ItemDefinition>(ResourcesItemPath);
+            if (loaded == null)
+                loaded = Resources.Load<ItemDefinition>("Bayou/Items/Item_ShinyPond");
             if (loaded != null)
                 item = loaded;
         }
@@ -178,10 +180,10 @@ namespace Bayou.Quests
 #if UNITY_EDITOR
         private void OnValidate()
         {
-            if (item == null)
+            if (item == null || !item.MatchesId(CanonicalItemId))
             {
                 item = UnityEditor.AssetDatabase.LoadAssetAtPath<ItemDefinition>(
-                    "Assets/Inventory/Items/Item_ShinyPond.asset");
+                    "Assets/Inventory/Items/Item_RosaryNecklace.asset");
             }
         }
 #endif

@@ -8,7 +8,7 @@ namespace Bayou.Inventory
     {
         public static PlayerWallet Instance { get; private set; }
 
-        [SerializeField] private int startingMoney = 500;
+        [SerializeField] private int startingMoney;
 
         public int Balance { get; private set; }
         public event Action BalanceChanged;

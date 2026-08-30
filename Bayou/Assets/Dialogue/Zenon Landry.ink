@@ -62,9 +62,9 @@ Be careful out there.
  Oh my how... unfortunate. It seems the bayou has taken its toll.
  No-one can walk into these waters unscathed.
  I might be able to help you if you return the favour.
- Find me something shiny from the church pond. 
+ Find the rosary in the church pond.
  You'll know it when you see it.
- + {HasItem("Item_ShinyPond", 1)} [Do you mean this?] ->DeliveredItem
+ + {HasItem("Item_RosaryNecklace", 1)} [Do you mean this?] ->DeliveredItem
  +[Right away.]
      ~StartQuest(CollectPondItemQuestId)
      ->END
@@ -73,13 +73,13 @@ Be careful out there.
  Welcome back!
  Did you find it?
     +[Not Yet…] -> UnDeliveredItem
-    +{HasItem("Item_ShinyPond", 1)}[I have.] ->DeliveredItem
+    +{HasItem("Item_RosaryNecklace", 1)}[I have.] ->DeliveredItem
  
  ===UnDeliveredItem
  Come back as soon as you have it. ->END
  
  === DeliveredItem ===
- ~ temp handed = HandOverItem("Item_ShinyPond", 1)
+ ~ temp handed = HandOverItem("Item_RosaryNecklace", 1)
  { handed:
     ~ FinishQuest(CollectPondItemQuestId)
     Excellent! Teach a man to fish and they'll fish indeed.
@@ -87,7 +87,7 @@ Be careful out there.
     As long as you wear it, you'll be protected from that which lurks in the Bayou's shadows.
     ->Agree
  - else:
-    Hmm… I don't see anything shiny on you. Come back when you have it.
+    Hmm… I don't see the rosary on you. Come back when you have it.
     -> END
  }
  

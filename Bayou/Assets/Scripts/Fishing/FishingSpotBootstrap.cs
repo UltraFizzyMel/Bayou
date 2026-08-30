@@ -83,10 +83,6 @@ namespace Bayou.Fishing
                 new List<FishingSpot.FishSpawn>
                 {
                     Fish(snapper, FishCatchTool.Net, 2, true, new Color(0.9f, 0.25f, 0.2f))
-                },
-                new List<FishingSpot.LootSpawn>
-                {
-                    Loot(rosary, new Color(0.95f, 0.85f, 0.3f), new Vector3(1.2f, 0f, -0.8f))
                 });
 
             CreateSpot(root.transform, "Graveyard_Entrance_Net",

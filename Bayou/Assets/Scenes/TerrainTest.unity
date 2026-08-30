@@ -17606,8 +17606,8 @@ MonoBehaviour:
   questIds:
   - CollectPondItemQuest
   role: 0
-  itemId: Item_ShinyPond
-  labelOverride: Pond shiny
+  itemId: Item_RosaryNecklace
+  labelOverride: Pond rosary
   markerOffset: {x: 0, y: 0.9, z: 0}
 --- !u!114 &639309818
 MonoBehaviour:
@@ -17621,13 +17621,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8d9e0f1a2b3456789abcdef01234567, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Quests.PondShinyCollectible
-  item: {fileID: 11400000, guid: a1b2c3d4e5f6789012345678abcde901, type: 2}
+  item: {fileID: 11400000, guid: c4a2b3c4d5e6789012345678abcdef04, type: 2}
   bobAmplitude: 0.08
   bobSpeed: 2.2
-  glowColor: {r: 0.35, g: 0.95, b: 0.45, a: 1}
-  extraCollectRadius: 0
+  glowColor: {r: 0.95, g: 0.85, b: 0.35, a: 1}
+  extraCollectRadius: 0.85
   pickupPrompt: Pick up
-  interactReach: 1.8
+  interactReach: 2.2
 --- !u!135 &639309819
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -17884,7 +17884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05f83582c3078ff4c810d1ef1b4203c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.PlayerWallet
-  startingMoney: 500
+  startingMoney: 0
 --- !u!114 &640752741
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17983,9 +17983,11 @@ MonoBehaviour:
   selectRodAction: {fileID: 0}
   selectNetAction: {fileID: 0}
   selectLanternAction: {fileID: 0}
-  startingItem: 2
+  startingItem: 0
   requireRodItem: 1
   fishingRodItemId: Item_FishingRod
+  requireNetItem: 1
+  handNetItemId: Item_HandNet
   requireLanternItem: 1
   lanternItemId: Item_Lantern
   autoEquipNetWhenPursued: 1
@@ -18005,14 +18007,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.HandNetAreaController
   aimTransform: {fileID: 1866950581}
   netOrigin: {fileID: 640752755}
-  maxReach: 2.8
-  coverageRadius: 1.6
+  maxReach: 3.2
+  coverageRadius: 1.85
   fishingCooldown: 0.55
   fishingRingColor: {r: 0.95, g: 0.75, b: 0.15, a: 0.85}
   pulseMinScale: 0.35
   pulseMaxScale: 1.7
   pulseCycleSeconds: 1.35
-  missBelowQuality: 0.42
+  missBelowQuality: 0.22
   missRingColor: {r: 0.85, g: 0.22, b: 0.18, a: 0.9}
   goodRingColor: {r: 0.35, g: 0.95, b: 0.45, a: 0.95}
   peakRingColor: {r: 0.55, g: 1, b: 0.7, a: 1}
@@ -45305,6 +45307,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1578866835}
   - component: {fileID: 1578866836}
+  - component: {fileID: 1578866840}
   m_Layer: 0
   m_Name: Church NPC
   m_TagString: Untagged
@@ -45312,6 +45315,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1578866840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1578866834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
+  questIds:
+  - CollectPondItemQuest
+  - CollectLanternQuest
+  role: 1
+  itemId: 
+  labelOverride: Father Landry
+  markerOffset: {x: 0, y: 1.9, z: 0}
 --- !u!4 &1578866835
 Transform:
   m_ObjectHideFlags: 0
@@ -46065,10 +46087,7 @@ MonoBehaviour:
     count: 2
     moving: 1
     tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
-  oneTimeLoot:
-  - item: {fileID: 11400000, guid: c4a2b3c4d5e6789012345678abcdef04, type: 2}
-    glowColor: {r: 0.95, g: 0.85, b: 0.3, a: 1}
-    localOffset: {x: 1.2, y: 0, z: -0.8}
+  oneTimeLoot: []
   fishPrefab: {fileID: 0}
   spawnOnStart: 1
 --- !u!1001 &1596674544
@@ -53421,12 +53440,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
   questIds:
-  - CollectPondItemQuest
-  - CollectLanternQuest
   - VisitGravesQuest
   role: 1
   itemId: 
-  labelOverride: Father Landry
+  labelOverride: Landry tomb
   markerOffset: {x: 0, y: 1.9, z: 0}
 --- !u!1001 &1799948744
 PrefabInstance:

@@ -114,7 +114,7 @@ namespace Bayou.Fishing
             castHoldAction?.action?.Enable();
             lockDirectionAction?.action?.Enable();
             cancelCastAction?.action?.Enable();
-            _ignoreInputUntil = Time.unscaledTime + 1f;
+            _ignoreInputUntil = Time.unscaledTime + 0.25f;
         }
 
         private void OnDisable()

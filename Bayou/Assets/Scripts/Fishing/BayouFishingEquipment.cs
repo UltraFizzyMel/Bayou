@@ -54,10 +54,13 @@ namespace Bayou.Fishing
         [SerializeField] private InputActionReference selectNetAction;
         [SerializeField] private InputActionReference selectLanternAction;
 
-        [SerializeField] private BayouHeldItem startingItem = BayouHeldItem.Net;
+        [SerializeField] private BayouHeldItem startingItem = BayouHeldItem.None;
         [Tooltip("Rod can only be held after buying Item_FishingRod from Caliste.")]
         [SerializeField] private bool requireRodItem = true;
         [SerializeField] private string fishingRodItemId = "Item_FishingRod";
+        [Tooltip("Hand net can only be held after picking up Item_HandNet.")]
+        [SerializeField] private bool requireNetItem = true;
+        [SerializeField] private string handNetItemId = "Item_HandNet";
         [Tooltip("Lantern can only be held after picking up Item_Lantern.")]
         [SerializeField] private bool requireLanternItem = true;
         [SerializeField] private string lanternItemId = "Item_Lantern";
@@ -162,6 +165,12 @@ namespace Bayou.Fishing
 
             if (WasSelect(selectNetAction, Key.Digit2))
             {
+                if (!CanHold(BayouHeldItem.Net))
+                {
+                    Debug.Log("[Equipment] Pick up the hand net first.");
+                    return;
+                }
+
                 animator.SetBool("isHoldingRod", true);
                 animator.SetBool("isHoldingLantern", false);
                 ApplyItem(BayouHeldItem.Net);
@@ -199,7 +208,8 @@ namespace Bayou.Fishing
             // Entering chase: pull out the net for melee unless already holding rod (rod is also melee).
             if (IsPursued && !_wasPursued &&
                 CurrentItem != BayouHeldItem.Net &&
-                CurrentItem != BayouHeldItem.Rod)
+                CurrentItem != BayouHeldItem.Rod &&
+                CanHold(BayouHeldItem.Net))
             {
                 var rodBusy = rodCaster != null &&
                               (rodCaster.Phase != FishingCastPhase.Idle || rodCaster.HasActiveNet);
@@ -250,6 +260,8 @@ namespace Bayou.Fishing
             {
                 case BayouHeldItem.Rod:
                     return !requireRodItem || HasItem(fishingRodItemId);
+                case BayouHeldItem.Net:
+                    return !requireNetItem || HasItem(handNetItemId);
                 case BayouHeldItem.Lantern:
                     return !requireLanternItem || HasItem(lanternItemId);
                 default:
@@ -267,7 +279,7 @@ namespace Bayou.Fishing
         public void ApplyItem(BayouHeldItem item)
         {
             if (!CanHold(item))
-                item = BayouHeldItem.Net;
+                item = BayouHeldItem.None;
 
             // Don't leave the rod mid-cast / while a line is out.
             if (CurrentItem == BayouHeldItem.Rod && item != BayouHeldItem.Rod &&

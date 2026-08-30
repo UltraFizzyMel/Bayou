@@ -687,6 +687,9 @@ namespace Bayou.Inventory
 
             var image = go.GetComponent<Image>();
             image.raycastTarget = true;
+            image.sprite = UiWhiteSprite.Get();
+            image.type = Image.Type.Simple;
+            image.preserveAspect = false;
             image.color = Color.white;
 
             var ui = go.AddComponent<InventoryItemUI>();

@@ -24,8 +24,8 @@ namespace Bayou.Quests.Editor
             added += EnsureTarget("ShinyPondPickup",
                 new[] { "CollectPondItemQuest" },
                 QuestMarkerTarget.MarkerRole.Objective,
-                "Item_ShinyPond",
-                "Pond shiny",
+                "Item_RosaryNecklace",
+                "Pond rosary",
                 new Vector3(0f, 0.9f, 0f));
 
             added += EnsureTarget("LanternPickup",
@@ -45,8 +45,8 @@ namespace Bayou.Quests.Editor
                 new Vector3(0f, 1.9f, 0f));
 
             added += EnsureTargetOnFirstMatch(
-                new[] { "Zenon Landry", "Landry", "Father Landry", "Zenon", "NPC_Landry" },
-                new[] { "CollectPondItemQuest", "CollectLanternQuest", "VisitGravesQuest" },
+                new[] { "Church NPC", "Zenon Landry", "Father Landry", "NPC_Landry" },
+                new[] { "CollectPondItemQuest", "CollectLanternQuest" },
                 QuestMarkerTarget.MarkerRole.TurnIn,
                 null,
                 "Father Landry",

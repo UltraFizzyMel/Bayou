@@ -91,6 +91,7 @@ namespace Bayou.Inventory.UI
         public void SnapItemToGrid(InventoryItemInstance item, int anchorX, int anchorY, RectTransform itemRect)
         {
             if (item?.definition == null || itemRect == null) return;
+            InventoryItemView.PrepareGridRect(itemRect);
             itemRect.sizeDelta = GetItemSize(item.definition.shape, item.rotation);
             itemRect.anchoredPosition = GridToAnchoredPosition(anchorX, anchorY, item.definition.shape, item.rotation);
         }

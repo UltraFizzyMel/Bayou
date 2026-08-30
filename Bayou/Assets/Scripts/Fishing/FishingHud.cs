@@ -36,20 +36,19 @@ namespace Bayou.Fishing
             var casting = _caster != null && _caster.Phase != FishingCastPhase.Idle;
             var hasNet = _caster != null && _caster.HasActiveNet;
             var netCharging = _handNet != null && _handNet.IsCharging;
-            var activePhase = casting || hasNet || attract != null || reel != null || netCharging;
+            var melee = _caster != null && _caster.IsMeleeMode ||
+                        _equipment != null && _equipment.NetMode == HandNetMode.Combat;
+            var activePhase = casting || hasNet || attract != null || reel != null ||
+                              netCharging || melee;
+
+            if (!activePhase)
+                return;
 
             // Compact tip while idle; taller box during cast phases.
-            var height = activePhase ? 128f : 64f;
+            var height = casting || hasNet || attract != null || reel != null || netCharging ? 128f : 64f;
             var area = new Rect(16f, Screen.height - height - 16f, 460f, height);
             GUI.Box(area, GUIContent.none, _boxStyle);
             GUILayout.BeginArea(new Rect(area.x + 12f, area.y + 10f, area.width - 24f, area.height - 16f));
-
-            if (_equipment != null)
-            {
-                GUILayout.Label(
-                    $"Holding: {_equipment.CurrentItem}  (Tab · 0 none · 1 rod · 2 net · 3 lantern)",
-                    _labelStyle);
-            }
 
             if (reel != null && reel.IsActive)
             {
@@ -116,17 +115,9 @@ namespace Bayou.Fishing
                     }
                 }
             }
-            else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Lantern)
-            {
-                GUILayout.Label("LANTERN — lights the fog. Press 1/2 to switch tools.", _labelStyle);
-            }
             else if (_equipment != null && _equipment.IsPursued)
             {
                 GUILayout.Label("Pursued! 1 rod melee · 2 net melee", _labelStyle);
-            }
-            else if (_equipment != null)
-            {
-                GUILayout.Label("Press 1 for rod to fish", _labelStyle);
             }
 
             GUILayout.EndArea();

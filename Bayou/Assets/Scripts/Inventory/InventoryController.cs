@@ -279,6 +279,10 @@ namespace Bayou.Inventory
             {
                 if (item?.definition != null && item.definition.MatchesId(itemId))
                     count++;
+                else if (item?.definition != null &&
+                         ItemDefinition.IsPondQuestItem(itemId) &&
+                         ItemDefinition.IsPondQuestItem(item.definition.Id))
+                    count++;
             }
 
             return count;
@@ -324,7 +328,11 @@ namespace Bayou.Inventory
             var snapshot = new List<InventoryItemInstance>(Bag.AllItems);
             foreach (var item in snapshot)
             {
-                if (item?.definition == null || !item.definition.MatchesId(itemId))
+                if (item?.definition == null) continue;
+                var match = item.definition.MatchesId(itemId) ||
+                            (ItemDefinition.IsPondQuestItem(itemId) &&
+                             ItemDefinition.IsPondQuestItem(item.definition.Id));
+                if (!match)
                     continue;
                 Bag.Remove(item);
                 removed++;

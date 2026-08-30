@@ -84,9 +84,24 @@ public static class QuestObjectiveLocator
             if (shiny != null)
             {
                 pos = shiny.transform.position + Vector3.up * 0.8f;
-                label = "Shiny in the pond";
+                label = "Rosary in the pond";
                 return true;
             }
+        }
+
+        if (questId.IndexOf("Net", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
+            questId.IndexOf("Snapper", System.StringComparison.OrdinalIgnoreCase) < 0)
+        {
+            var namedNet = GameObject.Find("NetPickup");
+            if (namedNet != null)
+            {
+                pos = namedNet.transform.position + Vector3.up * 1.1f;
+                label = "Hand net";
+                return true;
+            }
+
+            if (TryFindPickupByItemId("Item_HandNet", near, out pos, out label))
+                return true;
         }
 
         if (questId.IndexOf("Lantern", System.StringComparison.OrdinalIgnoreCase) >= 0)
@@ -228,7 +243,8 @@ public static class QuestObjectiveLocator
             questId.IndexOf("Molly", System.StringComparison.OrdinalIgnoreCase) >= 0)
             names = new[] { "Caliste", "Caliste NPC", "NPC_Caliste" };
         else
-            names = new[] { "Zenon Landry", "Landry", "Father Landry", "Zenon", "NPC_Landry" };
+            // Never match the graveyard "Landry" mausoleum — that sent the pond turn-in across the map.
+            names = new[] { "Church NPC", "Zenon Landry", "Father Landry", "NPC_Landry" };
 
         Transform best = null;
         var bestSq = float.MaxValue;

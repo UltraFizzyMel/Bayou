@@ -9,7 +9,7 @@ namespace Bayou.Quests.Editor
 {
     public static class QuestPickupSetupMenu
     {
-        private const string ShinyPath = "Assets/Inventory/Items/Item_ShinyPond.asset";
+        private const string ShinyPath = "Assets/Inventory/Items/Item_RosaryNecklace.asset";
 
         [MenuItem("Bayou/Quests/Place Shiny In Church Pond (MovementTest)", false, 30)]
         public static void PlaceShinyInChurchPond()
@@ -57,7 +57,7 @@ namespace Bayou.Quests.Editor
 
             Selection.activeGameObject = go;
             EditorSceneManager.MarkSceneDirty(go.scene);
-            Debug.Log("[Bayou] Shiny placed in church pond. Cast the rod net onto it (or scoop with hand net).");
+            Debug.Log("[Bayou] Rosary placed in church pond. Scoop it with the hand net.");
         }
     }
 }

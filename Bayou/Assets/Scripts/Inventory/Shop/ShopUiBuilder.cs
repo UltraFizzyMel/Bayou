@@ -284,7 +284,7 @@ namespace Bayou.Inventory.Shop
             iconRt.offsetMax = new Vector2(-4f, -4f);
             var icon = iconGo.GetComponent<Image>();
             icon.raycastTarget = true;
-            icon.preserveAspect = false;
+            icon.preserveAspect = true;
             icon.sprite = UiWhiteSprite.Get();
 
             var view = go.AddComponent<InventoryItemView>();

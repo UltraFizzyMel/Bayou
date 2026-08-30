@@ -31,3 +31,4 @@ MonoBehaviour:
   buyPrice: 120
   sellPrice: 40
   isFish: 0
+  isEquipment: 1

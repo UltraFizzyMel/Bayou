@@ -10,15 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4e429c1b295b544aa482834494c3959, type: 3}
-  m_Name: Item_Lantern
+  m_Name: Item_HandNet
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.ItemDefinition
-  displayName: Lantern
-  description: An old lantern at the edge of the Foggy Marsh. Ends this demo when found.
+  itemId: Item_HandNet
+  displayName: Hand Net
+  description: A small scoop net. Press 2 to hold. Throw it into the shallows.
   icon: {fileID: 0}
   shape:
-    width: 1
+    width: 2
     height: 2
     cells:
+    - 1
+    - 1
     - 1
     - 1
   maxStack: 1

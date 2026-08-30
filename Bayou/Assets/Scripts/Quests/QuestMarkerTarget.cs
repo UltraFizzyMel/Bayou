@@ -18,7 +18,7 @@ public sealed class QuestMarkerTarget : MonoBehaviour
 
     [SerializeField] private MarkerRole role = MarkerRole.Objective;
 
-    [Tooltip("Optional item id filter (e.g. Item_Lantern, Item_ShinyPond).")]
+    [Tooltip("Optional item id filter (e.g. Item_Lantern, Item_RosaryNecklace).")]
     [SerializeField] private string itemId;
 
     [SerializeField] private string labelOverride;
@@ -31,6 +31,14 @@ public sealed class QuestMarkerTarget : MonoBehaviour
     public string Label => string.IsNullOrWhiteSpace(labelOverride) ? name : labelOverride;
     public MarkerRole Role => role;
     public string ItemId => itemId;
+
+    public void Bind(string questId, string item, string label, MarkerRole markerRole = MarkerRole.Objective)
+    {
+        questIds = string.IsNullOrWhiteSpace(questId) ? System.Array.Empty<string>() : new[] { questId };
+        itemId = item;
+        labelOverride = label;
+        role = markerRole;
+    }
 
     private void OnEnable()
     {

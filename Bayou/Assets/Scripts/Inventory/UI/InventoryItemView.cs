@@ -32,8 +32,7 @@ namespace Bayou.Inventory.UI
             Item = item;
             _compartment = compartment;
             _rt = GetComponent<RectTransform>();
-            _rt.pivot = new Vector2(0, 1);
-            _rt.anchorMin = _rt.anchorMax = new Vector2(0, 1);
+            PrepareGridRect(_rt);
             _canvasGroup = GetComponent<CanvasGroup>();
             if (_canvasGroup == null)
                 _canvasGroup = gameObject.AddComponent<CanvasGroup>();
@@ -69,23 +68,21 @@ namespace Bayou.Inventory.UI
 
             EnsureRaycastGraphic(backgroundImage);
 
-            if (iconImage != null)
+            var shape = Item.definition.shape;
+            if (_rt == null) _rt = GetComponent<RectTransform>();
+            PrepareGridRect(_rt);
+            if (_compartment != null)
             {
-                iconImage.sprite = Item.definition.icon;
-                iconImage.enabled = true;
-                iconImage.raycastTarget = true;
-                if (Item.definition.icon == null)
-                    iconImage.color = new Color(0.35f, 0.55f, 0.95f, 0.95f);
-                else
-                    iconImage.color = Color.white;
+                _rt.sizeDelta = _compartment.GetItemSize(shape, Item.rotation);
+                if (Item.IsPlaced)
+                    _rt.anchoredPosition = _compartment.GridToAnchoredPosition(Item.gridX, Item.gridY, shape, Item.rotation);
             }
 
-            var shape = Item.definition.shape;
-            if (_compartment == null) return;
-
-            _rt.sizeDelta = _compartment.GetItemSize(shape, Item.rotation);
-            if (Item.IsPlaced)
-                _rt.anchoredPosition = _compartment.GridToAnchoredPosition(Item.gridX, Item.gridY, shape, Item.rotation);
+            if (iconImage != null)
+            {
+                FitIcon(iconImage, Item.definition.icon);
+                iconImage.raycastTarget = true;
+            }
         }
 
         public void RotateClockwise()
@@ -114,6 +111,34 @@ namespace Bayou.Inventory.UI
             _ui?.EndDrag(this, eventData);
             if (_canvasGroup != null)
                 _canvasGroup.blocksRaycasts = true;
+        }
+
+        public static void PrepareGridRect(RectTransform rt)
+        {
+            if (rt == null) return;
+            rt.localScale = Vector3.one;
+            rt.localRotation = Quaternion.identity;
+            rt.pivot = new Vector2(0f, 1f);
+            rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
+        }
+
+        public static void FitIcon(Image icon, Sprite sprite)
+        {
+            if (icon == null) return;
+
+            icon.type = Image.Type.Simple;
+            icon.preserveAspect = true;
+            icon.sprite = sprite;
+            icon.enabled = sprite != null;
+            icon.color = Color.white;
+            if (sprite == null) return;
+
+            var fitter = icon.GetComponent<AspectRatioFitter>();
+            if (fitter == null)
+                fitter = icon.gameObject.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            var h = sprite.rect.height;
+            fitter.aspectRatio = h > 0.01f ? sprite.rect.width / h : 1f;
         }
 
         private static void EnsureRaycastGraphic(Image image)

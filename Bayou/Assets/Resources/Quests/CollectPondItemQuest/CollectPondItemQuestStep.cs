@@ -8,7 +8,7 @@ using UnityEngine;
 public sealed class CollectPondItemQuestStep : QuestStep
 {
     [SerializeField] private ItemDefinition requiredItem;
-    [SerializeField] private string requiredItemId = "Item_ShinyPond";
+    [SerializeField] private string requiredItemId = "Item_RosaryNecklace";
     [SerializeField] private int requiredCount = 1;
 
     private InventoryController _inv;
@@ -48,7 +48,7 @@ public sealed class CollectPondItemQuestStep : QuestStep
         if (shiny != null)
         {
             worldPosition = shiny.transform.position + Vector3.up * 0.8f;
-            label = "Shiny in the pond";
+            label = "Rosary in the pond";
             return true;
         }
 
@@ -116,8 +116,11 @@ public sealed class CollectPondItemQuestStep : QuestStep
         {
             var def = item?.definition;
             if (def == null) continue;
-            if (def.name.IndexOf("Shiny", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-                def.displayName.IndexOf("Shiny", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            if (ItemDefinition.IsPondQuestItem(def.Id) ||
+                ItemDefinition.IsPondQuestItem(def.name) ||
+                (def.displayName != null &&
+                 (def.displayName.IndexOf("Rosary", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                  def.displayName.IndexOf("Shiny", System.StringComparison.OrdinalIgnoreCase) >= 0)))
                 count++;
         }
 

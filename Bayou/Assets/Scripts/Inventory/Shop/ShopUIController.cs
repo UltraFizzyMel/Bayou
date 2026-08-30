@@ -3,6 +3,7 @@
 #endif
 
 using System;
+using System.Collections.Generic;
 using Bayou.Inventory;
 using Bayou.Inventory.UI;
 using Bayou;
@@ -38,9 +39,14 @@ namespace Bayou.Inventory.Shop
         private InventoryBagModel _merchantBag;
         private InventoryBagModel _scratchBag;
         private readonly ShopTransaction _transaction = new();
+        private readonly List<ItemDefinition> _extraPlaytestStock = new();
         private InventoryController _playerInventory;
         private PlayerWallet _wallet;
         private bool _isOpen;
+        private string _notice;
+        private float _noticeUntil;
+        private Color _dealSummaryDefaultColor = Color.white;
+        private bool _dealColorCaptured;
 
         public static ShopUIController ActiveShop { get; private set; }
         public bool IsOpen => _isOpen;
@@ -56,6 +62,49 @@ namespace Bayou.Inventory.Shop
         public void AssignHandmadeInventory(InventoryDisplayUI display)
         {
             handmadePlayerInventoryUi = display;
+        }
+
+        /// <summary>
+        /// Adds an item to merchant stock for this play session (does not edit the ShopDefinition asset).
+        /// If the shop is open, the item appears immediately.
+        /// </summary>
+        public bool TryAddPlaytestStock(ItemDefinition item)
+        {
+            if (item == null) return false;
+            _extraPlaytestStock.Add(item);
+            if (!_isOpen || _merchantBag == null)
+                return true;
+            return PlacePlaytestStock(item, refreshUi: true);
+        }
+
+        public void ClearPlaytestStock() => _extraPlaytestStock.Clear();
+
+        private void ApplyPlaytestStock()
+        {
+            foreach (var item in _extraPlaytestStock)
+                PlacePlaytestStock(item, refreshUi: false);
+        }
+
+        private bool PlacePlaytestStock(ItemDefinition item, bool refreshUi)
+        {
+            if (item == null || _merchantBag == null)
+                return false;
+
+            if (!_merchantBag.TryAddItem(item, 0, out _))
+            {
+                Debug.LogWarning($"[Shop] No room in merchant stock for {item.displayName}.");
+                return false;
+            }
+
+            if (refreshUi)
+            {
+                if (_playerInventory?.Bag != null)
+                    _transaction.BeginSession(_playerInventory.Bag, _merchantBag);
+                merchantPanel?.Refresh();
+                merchantPanel?.ForceRebuild();
+            }
+
+            return true;
         }
 
         /// <summary>Called by <see cref="ShopUiBuilder"/> after constructing the MockUI shop chrome.</summary>
@@ -148,6 +197,12 @@ namespace Bayou.Inventory.Shop
         {
             if (!_isOpen) return;
 
+            if (!string.IsNullOrEmpty(_notice) && Time.unscaledTime >= _noticeUntil)
+            {
+                _notice = null;
+                RefreshDealSummary();
+            }
+
             if (WasClosePressed())
                 CloseShop();
 
@@ -157,6 +212,31 @@ namespace Bayou.Inventory.Shop
                 merchantPanel.TryRotateDraggedItem();
                 handmadePlayerInventoryUi?.RotateDraggedItem();
             }
+        }
+
+        private void OnGUI()
+        {
+            if (!_isOpen || string.IsNullOrEmpty(_notice) || Time.unscaledTime >= _noticeUntil)
+                return;
+
+            var style = new GUIStyle(GUI.skin.box)
+            {
+                fontSize = 18,
+                alignment = TextAnchor.MiddleCenter,
+                wordWrap = true,
+                padding = new RectOffset(12, 12, 10, 10)
+            };
+            style.normal.textColor = Color.white;
+            var w = 460f;
+            var h = 64f;
+            GUI.Box(new Rect((Screen.width - w) * 0.5f, Screen.height * 0.16f, w, h), _notice, style);
+        }
+
+        public void ShowNotice(string message, float seconds = 2.8f)
+        {
+            _notice = message;
+            _noticeUntil = Time.unscaledTime + seconds;
+            RefreshDealSummary();
         }
 
         private bool WasClosePressed()
@@ -232,6 +312,7 @@ namespace Bayou.Inventory.Shop
             }
 
             _merchantBag = shopDefinition.CreateStockBag(_playerInventory);
+            ApplyPlaytestStock();
             _scratchBag = InventoryBagModel.Single(1, 1, "scratch");
             _transaction.BeginSession(_playerInventory.Bag, _merchantBag);
 
@@ -474,7 +555,10 @@ namespace Bayou.Inventory.Shop
             var item = view.Item;
             if (ShopDefinition.IsUniqueAlreadyOwned(item.definition, _playerInventory))
             {
-                Debug.Log($"[Shop] Already own {item.definition.displayName}.");
+                var name = string.IsNullOrWhiteSpace(item.definition.displayName)
+                    ? item.definition.name
+                    : item.definition.displayName;
+                ShowNotice($"You already own a {name}.");
                 return false;
             }
 
@@ -620,6 +704,21 @@ namespace Bayou.Inventory.Shop
         private void RefreshDealSummary()
         {
             if (dealSummaryLabel == null) return;
+
+            if (!_dealColorCaptured)
+            {
+                _dealSummaryDefaultColor = dealSummaryLabel.color;
+                _dealColorCaptured = true;
+            }
+
+            if (!string.IsNullOrEmpty(_notice) && Time.unscaledTime < _noticeUntil)
+            {
+                dealSummaryLabel.text = _notice;
+                dealSummaryLabel.color = new Color(0.85f, 0.25f, 0.22f, 1f);
+                return;
+            }
+
+            dealSummaryLabel.color = _dealSummaryDefaultColor;
 
             var buy = _transaction.TotalBuyCost;
             var sell = _transaction.TotalSellCredit;

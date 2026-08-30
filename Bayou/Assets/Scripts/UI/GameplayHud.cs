@@ -31,7 +31,9 @@ namespace Bayou.UI
         [SerializeField] private TextMeshProUGUI questObjectiveLabel;
         [SerializeField] private TextMeshProUGUI controlsLabel;
         [SerializeField] private GameObject questPanel;
+        [SerializeField] private GameObject controlsPanel;
         [SerializeField] private bool hideWhenMenusOpen = true;
+        [SerializeField] private bool showControlsLegend;
 
         private string _trackedQuestId;
         private string _objectiveCache = "";
@@ -118,6 +120,14 @@ namespace Bayou.UI
             Instance = this;
             if (buildUiIfMissing && (rootCanvas == null || questTitleLabel == null || controlsLabel == null))
                 BuildUi();
+            if (controlsPanel == null && rootCanvas != null)
+            {
+                var existing = rootCanvas.transform.Find("Controls");
+                if (existing != null)
+                    controlsPanel = existing.gameObject;
+            }
+            if (controlsPanel != null)
+                controlsPanel.SetActive(showControlsLegend);
         }
 
         private void OnEnable()
@@ -324,11 +334,12 @@ namespace Bayou.UI
                 FontStyles.Normal, TextAlignmentOptions.TopLeft);
             StretchTmp(questObjectiveLabel.rectTransform, 14f, 48f, 14f, 14f);
 
-            var controlsPanel = CreatePanel("Controls", canvasGo.transform,
+            controlsPanel = CreatePanel("Controls", canvasGo.transform,
                 new Vector2(0f, 0f), new Vector2(0f, 0f), new Vector2(24f, 24f), new Vector2(340f, 210f));
             controlsLabel = CreateTmp("ControlsText", controlsPanel.transform, ControlsText, 16f, FontStyles.Normal,
                 TextAlignmentOptions.BottomLeft);
             StretchTmp(controlsLabel.rectTransform, 14f, 12f, 14f, 12f);
+            controlsPanel.SetActive(showControlsLegend);
         }
 
         private static GameObject CreatePanel(

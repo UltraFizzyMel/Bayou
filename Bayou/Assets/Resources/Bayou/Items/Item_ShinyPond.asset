@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Item_ShinyPond
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.ItemDefinition
   itemId: Item_ShinyPond
-  displayName: Shiny Pond Trinket
-  description: Something glinting from the church pond. Father Landry will want this.
+  displayName: Rosary Necklace
+  description: A rosary resting in the church pond. Scoop once with a hand net.
   icon: {fileID: 21300000, guid: c19bc11997487bf4dab07ba9acbd0552, type: 3}
   shape:
     width: 1

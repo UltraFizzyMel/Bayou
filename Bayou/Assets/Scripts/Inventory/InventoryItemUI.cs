@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Bayou.Inventory.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,9 +9,13 @@ namespace Bayou.Inventory
     [RequireComponent(typeof(RectTransform))]
     public sealed class InventoryItemUI : MonoBehaviour
     {
+        private static readonly Color PlateColor = new(0.78f, 0.68f, 0.48f, 0.92f);
+        private static readonly Color PlateEmptyIcon = new(0.32f, 0.48f, 0.78f, 0.92f);
+
         private readonly List<Vector2Int> _offsetBuffer = new(8);
 
         private InventoryItemInstance _item;
+        private Image _plate;
         private Image _icon;
         private RectTransform _rect;
         private LayoutElement _layoutElement;
@@ -20,34 +25,17 @@ namespace Bayou.Inventory
 
         private void Awake()
         {
-            _icon = GetComponent<Image>();
             _rect = GetComponent<RectTransform>();
+            EnsureVisuals();
             EnsureIgnoreLayout();
-            if (_icon != null)
-                _icon.raycastTarget = true;
         }
 
         public void SetItem(InventoryItemInstance inventoryItem)
         {
             _item = inventoryItem;
-            if (_icon == null) _icon = GetComponent<Image>();
             if (_rect == null) _rect = GetComponent<RectTransform>();
-            if (_icon == null) return;
-
-            _icon.raycastTarget = true;
-            // Fill the footprint (2×1 etc.) — preserveAspect would shrink a square icon to one cell.
-            _icon.preserveAspect = false;
-            _icon.type = Image.Type.Simple;
-            if (_item?.definition?.icon != null)
-            {
-                _icon.sprite = _item.definition.icon;
-                _icon.color = Color.white;
-            }
-            else
-            {
-                // Prefab supplies a UISprite; don't clear it or the footprint won't draw.
-                _icon.color = new Color(0.25f, 0.45f, 0.85f, 0.95f);
-            }
+            EnsureVisuals();
+            ApplyIcon();
         }
 
         /// <summary>
@@ -76,6 +64,7 @@ namespace Bayou.Inventory
             _rect.anchoredPosition = localPos;
             _rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
             _rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
+            ApplyIcon();
         }
 
         public void ApplySize(InventoryGridUI grid, int rotation)
@@ -95,6 +84,69 @@ namespace Bayou.Inventory
 
             _rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
             _rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
+            ApplyIcon();
+        }
+
+        private void EnsureVisuals()
+        {
+            _plate = GetComponent<Image>();
+            if (_plate != null)
+            {
+                _plate.sprite = UiWhiteSprite.Get();
+                _plate.type = Image.Type.Simple;
+                _plate.preserveAspect = false;
+                _plate.raycastTarget = true;
+            }
+
+            var iconTf = transform.Find("Icon");
+            if (iconTf != null)
+                _icon = iconTf.GetComponent<Image>();
+
+            if (_icon == null)
+            {
+                var go = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                go.transform.SetParent(transform, false);
+                _icon = go.GetComponent<Image>();
+            }
+
+            var iconRt = _icon.rectTransform;
+            iconRt.anchorMin = Vector2.zero;
+            iconRt.anchorMax = Vector2.one;
+            iconRt.pivot = new Vector2(0.5f, 0.5f);
+            iconRt.offsetMin = new Vector2(6f, 6f);
+            iconRt.offsetMax = new Vector2(-6f, -6f);
+            iconRt.localScale = Vector3.one;
+            iconRt.localRotation = Quaternion.identity;
+
+            _icon.raycastTarget = false;
+            _icon.type = Image.Type.Simple;
+            _icon.preserveAspect = true;
+        }
+
+        private void ApplyIcon()
+        {
+            EnsureVisuals();
+            if (_plate != null)
+                _plate.color = _item?.definition?.icon != null ? PlateColor : PlateEmptyIcon;
+
+            if (_icon == null) return;
+
+            var sprite = _item?.definition?.icon;
+            _icon.sprite = sprite;
+            _icon.enabled = sprite != null;
+            _icon.color = Color.white;
+            _icon.type = Image.Type.Simple;
+            _icon.preserveAspect = true;
+
+            if (sprite == null)
+                return;
+
+            var fitter = _icon.GetComponent<AspectRatioFitter>();
+            if (fitter == null)
+                fitter = _icon.gameObject.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
+            var h = sprite.rect.height;
+            fitter.aspectRatio = h > 0.01f ? sprite.rect.width / h : 1f;
         }
 
         private void EnsureIgnoreLayout()

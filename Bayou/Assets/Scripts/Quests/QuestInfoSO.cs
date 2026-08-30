@@ -18,6 +18,12 @@ public class QuestInfoSO : ScriptableObject
     [Header("Steps")]
     public GameObject[] questStepPrefabs;
 
+    [Header("Start")]
+    [Tooltip("Begin this quest automatically when the scene loads (if requirements are met).")]
+    public bool autoStart;
+    [Tooltip("When the last step finishes, mark the quest finished (no turn-in).")]
+    public bool autoComplete;
+
     [Header("Rewards")]
     public int moneyReward;
     public string MiscReward;

@@ -34,9 +34,9 @@ namespace Bayou.Fishing
 
         [Header("Fishing scoop")]
         [Tooltip("Max horizontal distance from player to net center (short throw).")]
-        [SerializeField] private float maxReach = 2.8f;
+        [SerializeField] private float maxReach = 3.2f;
         [Tooltip("Base catch radius. Pulse grows/shrinks around this.")]
-        [SerializeField] private float coverageRadius = 1.6f;
+        [SerializeField] private float coverageRadius = 1.85f;
         [SerializeField] private float fishingCooldown = 0.55f;
         [SerializeField] private Color fishingRingColor = new(0.95f, 0.75f, 0.15f, 0.85f);
 
@@ -49,7 +49,7 @@ namespace Bayou.Fishing
         [SerializeField] private float pulseCycleSeconds = 1.35f;
         [Tooltip("Release quality below this (0 = smallest, 1 = largest) is a missed throw.")]
         [Range(0.05f, 0.8f)]
-        [SerializeField] private float missBelowQuality = 0.42f;
+        [SerializeField] private float missBelowQuality = 0.22f;
         [SerializeField] private Color missRingColor = new(0.85f, 0.22f, 0.18f, 0.9f);
         [SerializeField] private Color goodRingColor = new(0.35f, 0.95f, 0.45f, 0.95f);
         [SerializeField] private Color peakRingColor = new(0.55f, 1f, 0.7f, 1f);
@@ -100,7 +100,7 @@ namespace Bayou.Fishing
             EnsureRing();
             if (areaRing != null)
                 areaRing.enabled = true;
-            _ignoreInputUntil = Time.unscaledTime + 1f;
+            _ignoreInputUntil = Time.unscaledTime + 0.25f;
         }
 
         private void OnDisable()
@@ -225,7 +225,7 @@ namespace Bayou.Fishing
             _charging = false;
             Pulse01 = 0f;
 
-            if (heldFor < 0.15f)
+            if (heldFor < 0.08f)
                 return;
 
             if (quality < missBelowQuality)

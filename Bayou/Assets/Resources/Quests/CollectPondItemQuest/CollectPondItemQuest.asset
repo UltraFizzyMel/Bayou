@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CollectPondItemQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestInfoSO
   <id>k__BackingField: CollectPondItemQuest
-  displayName: Shiny Hunting
+  displayName: The Church Pond Rosary
   netLevelRequirement: 0
   rodLevelRequirement: 0
   mainQuestLevel: 0

@@ -19,8 +19,20 @@ namespace Bayou.Quests
         [SerializeField] private string pickupPrompt = "Pick up";
         [Tooltip("If true, picking this up finishes the demo. Leave off for the lantern so it can be used.")]
         [SerializeField] private bool endDemoOnPickup;
+        [SerializeField] private bool addStraightToBag = true;
+        [SerializeField] private bool autoEquipHandNet = true;
+
+        public ItemDefinition Item => item;
 
         private bool _playerInRange;
+
+        public void Bind(ItemDefinition definition, string prompt = "Pick up")
+        {
+            item = definition;
+            addStraightToBag = true;
+            if (!string.IsNullOrWhiteSpace(prompt))
+                pickupPrompt = prompt;
+        }
 
         private void Reset()
         {
@@ -87,7 +99,20 @@ namespace Bayou.Quests
             if (input == null || !input.GetInteractPressed())
                 return;
 
-            CaughtFishPresenter.Present(item);
+            if (addStraightToBag)
+                GiveItemDirectly();
+            else
+                CaughtFishPresenter.Present(item);
+
+            if (autoEquipHandNet && item != null && item.IsUniqueEquipment &&
+                item.Id.IndexOf("HandNet", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                var player = GameObject.FindGameObjectWithTag(playerTag);
+                var equipment = player != null
+                    ? player.GetComponent<Bayou.Fishing.BayouFishingEquipment>()
+                    : FindFirstObjectByType<Bayou.Fishing.BayouFishingEquipment>();
+                equipment?.ApplyItem(Bayou.Fishing.BayouHeldItem.Net);
+            }
 
             if (endDemoOnPickup)
                 DemoEndController.Show();
@@ -96,6 +121,15 @@ namespace Bayou.Quests
                 Destroy(gameObject);
             else
                 enabled = false;
+        }
+
+        private void GiveItemDirectly()
+        {
+            var inv = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
+            if (inv == null || item == null) return;
+            if (inv.HasItemsById(item.Id, 1)) return;
+            if (!inv.TryAddItem(item) && !inv.TryHoldNewItem(item, out _))
+                CaughtFishPresenter.Present(item);
         }
     }
 }

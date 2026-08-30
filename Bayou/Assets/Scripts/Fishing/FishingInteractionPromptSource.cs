@@ -87,13 +87,13 @@ namespace Bayou.Fishing
 
                 if (equipment != null && equipment.CurrentItem == BayouHeldItem.Rod)
                 {
-                    var spot = FishingSpot.FindContaining(transform.position);
-                    if (spot != null && spot.RequiredTool == FishCatchTool.Net)
+                    var spot = FishingSpot.FindNearby(transform.position);
+                    if (spot == null)
+                        return false;
+                    if (spot.RequiredTool == FishCatchTool.Net)
                         prompt = new InteractionPrompt("2", "This hole needs the net", 45);
-                    else if (spot != null && spot.RequiredTool == FishCatchTool.Rod)
-                        prompt = new InteractionPrompt("Hold LMB", "Cast into this rod hole", 50);
                     else
-                        prompt = new InteractionPrompt("Hold LMB", "Charge · release to cast", 40);
+                        prompt = new InteractionPrompt("Hold LMB", "Cast into this rod hole", 50);
                     return true;
                 }
             }
@@ -102,17 +102,21 @@ namespace Bayou.Fishing
                 equipment != null && equipment.CurrentItem == BayouHeldItem.Net)
             {
                 if (handNet.IsCombatMode)
+                {
                     prompt = new InteractionPrompt("LMB", "Swing net", 40);
-                else if (handNet.IsCharging)
-                    prompt = new InteractionPrompt("Release", "Throw at the big circle", 90);
-                else
-                    prompt = new InteractionPrompt("Hold LMB", "Wind up throw", 40);
-                return true;
-            }
+                    return true;
+                }
 
-            if (equipment != null && equipment.CurrentItem == BayouHeldItem.Lantern)
-            {
-                prompt = new InteractionPrompt("Lantern", "Lighting the fog", 30);
+                if (handNet.IsCharging)
+                {
+                    prompt = new InteractionPrompt("Release", "Throw at the big circle", 90);
+                    return true;
+                }
+
+                if (FishingSpot.FindNearby(transform.position) == null)
+                    return false;
+
+                prompt = new InteractionPrompt("Hold LMB", "Wind up throw", 40);
                 return true;
             }
 

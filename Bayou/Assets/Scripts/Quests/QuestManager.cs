@@ -49,6 +49,16 @@ public class QuestManager : MonoBehaviour
 
             GameEventManager.Instance?.questEvents?.QuestStateChange(quest);
         }
+
+        foreach (Quest quest in questMap.Values)
+        {
+            if (quest?.info == null || !quest.info.autoStart) continue;
+            if (quest.state == QuestState.FINISHED ||
+                quest.state == QuestState.IN_PROGRESS ||
+                quest.state == QuestState.CAN_FINISH)
+                continue;
+            StartQuest(quest.info.id);
+        }
     }
 
     private void Update()
@@ -174,6 +184,8 @@ public class QuestManager : MonoBehaviour
 
         if (quest.CurrentStepExists())
             quest.InstantiateCurrentQuestStep(this.transform);
+        else if (quest.info != null && quest.info.autoComplete)
+            FinishQuest(id);
         else
             ChangeQuestState(quest.info.id, QuestState.CAN_FINISH);
     }
@@ -287,6 +299,18 @@ public class QuestManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    /// <summary>Wipe saved progress for a quest and start it again (starter / playtest).</summary>
+    public void ForceRestart(string id)
+    {
+        if (string.IsNullOrWhiteSpace(id) || questMap == null) return;
+        if (!TryGetQuest(id, out var quest) || quest.info == null) return;
+
+        PlayerPrefs.DeleteKey(id);
+        var fresh = new Quest(quest.info);
+        questMap[id] = fresh;
+        StartQuest(id);
     }
 
     public static QuestManager Resolve() =>
