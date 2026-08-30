@@ -4,6 +4,7 @@ using Bayou.Inventory;
 using Bayou.Inventory.Shop;
 using Bayou.Quests;
 using Bayou.Save;
+using Bayou.UI;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -107,13 +108,24 @@ namespace Bayou.Testing
             var h = Mathf.Min(Screen.height - 24f, 620f);
             GUILayout.BeginArea(new Rect(12f, 12f, w, h), GUI.skin.box);
             GUILayout.Label("Mechanics bootstrap");
-            GUILayout.Label("` hide  ·  1 rod  2 net  3 lantern");
+            GUILayout.Label("` hide  ·  Tab hold wheel  ·  1–4 slots");
             GUILayout.Label("Net: hold LMB over pond glow, release");
             GUILayout.Label("Rod: hold LMB, release to cast, A/D wiggle");
             GUILayout.Space(4f);
 
             _scroll = GUILayout.BeginScrollView(_scroll);
 
+            GUILayout.Label("Hotwheel");
+            Btn("Hotwheel kit + open wheel", SetupHotwheelTest);
+            Btn("Open wheel", OpenHotwheel);
+            Btn("Close wheel", CloseHotwheel);
+            Btn("Equip slot 1", () => SelectHotwheelSlot(0));
+            Btn("Equip slot 2", () => SelectHotwheelSlot(1));
+            Btn("Equip slot 3", () => SelectHotwheelSlot(2));
+            Btn("Equip slot 4", () => SelectHotwheelSlot(3));
+            Btn("Clear wheel slots", ClearHotwheelSlots);
+
+            GUILayout.Space(6f);
             GUILayout.Label("Fishing");
             Btn("Rod fishing", StartRodFishing);
             Btn("Church pond (rosary)", GoPond);
@@ -420,6 +432,64 @@ namespace Bayou.Testing
             GrantItem("Item_FishingRod");
             Equip(BayouHeldItem.Net);
             Debug.Log("[Mechanics] Test kit: $150, hand net (equipped), fishing rod.");
+        }
+
+        private static void SetupHotwheelTest()
+        {
+            GrantItem("Item_FishingRod");
+            GrantItem("Item_HandNet");
+            GrantItem("Item_Lantern");
+
+            var wheel = ResolveHotwheel();
+            if (wheel == null)
+            {
+                Debug.LogWarning("[Mechanics] EquipmentHotwheel missing.");
+                return;
+            }
+
+            wheel.SetSlotItemIds("Item_FishingRod", "Item_HandNet", "Item_Lantern");
+            wheel.OpenWheel();
+            Debug.Log("[Mechanics] Hotwheel kit: rod / net / lantern in slots 1–3. Aim a slice, or use 1–4. Close wheel or tap Tab to dismiss.");
+        }
+
+        private static void OpenHotwheel()
+        {
+            var wheel = ResolveHotwheel();
+            if (wheel == null)
+            {
+                Debug.LogWarning("[Mechanics] EquipmentHotwheel missing.");
+                return;
+            }
+
+            wheel.OpenWheel();
+        }
+
+        private static void CloseHotwheel()
+        {
+            var wheel = EquipmentHotwheel.Instance ?? FindFirstObjectByType<EquipmentHotwheel>();
+            wheel?.CloseWheel();
+        }
+
+        private static void SelectHotwheelSlot(int index)
+        {
+            var wheel = ResolveHotwheel();
+            if (wheel == null) return;
+            if (!wheel.TrySelectSlot(index))
+                Debug.Log($"[Mechanics] Hotwheel slot {index + 1} is empty or you don't have that item.");
+        }
+
+        private static void ClearHotwheelSlots()
+        {
+            var wheel = ResolveHotwheel();
+            if (wheel == null) return;
+            wheel.SetSlotItemIds();
+            Debug.Log("[Mechanics] Hotwheel slots cleared.");
+        }
+
+        private static EquipmentHotwheel ResolveHotwheel()
+        {
+            EquipmentHotwheel.EnsureInScene();
+            return EquipmentHotwheel.Instance ?? FindFirstObjectByType<EquipmentHotwheel>(FindObjectsInactive.Include);
         }
 
         private static void GrantItem(string itemId)

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d2e3f4a5b678901234567890abcdef, type: 3}
+  m_Name: HotwheelSkin_Default
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.UI.EquipmentHotwheelSkin
+  wheelDisc: {fileID: 0}
+  selector: {fileID: 0}
+  hub: {fileID: 0}
+  slotPlate: {fileID: 0}
+  wheelPrefab: {fileID: 0}
+  slotCount: 4
+  firstSlotAngle: 90
+  clockwise: 1
+  wheelSize: {x: 560, y: 560}
+  iconOrbit: 168
+  iconSize: {x: 72, y: 72}
+  slotPlateSize: {x: 96, y: 96}
+  innerDeadzone: 0.22
+  discColor: {r: 1, g: 1, b: 1, a: 1}
+  hubColor: {r: 1, g: 1, b: 1, a: 1}
+  selectorColor: {r: 1, g: 0.86, b: 0.45, a: 1}
+  slotIdle: {r: 1, g: 1, b: 1, a: 0.55}
+  slotHover: {r: 1, g: 0.88, b: 0.4, a: 1}
+  slotSelected: {r: 0.65, g: 0.9, b: 0.5, a: 1}
+  dimColor: {r: 0.02, g: 0.02, b: 0.02, a: 0.4}
+  labelColor: {r: 0.95, g: 0.9, b: 0.78, a: 1}

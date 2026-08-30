@@ -4,6 +4,7 @@
 
 using Bayou.Creatures;
 using Bayou.Inventory;
+using Bayou.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -137,9 +138,67 @@ namespace Bayou.Fishing
             selectLanternAction?.action?.Disable();
         }
 
+        public static bool TryResolveHeldItem(string itemId, out BayouHeldItem held)
+        {
+            held = BayouHeldItem.None;
+            if (string.IsNullOrWhiteSpace(itemId)) return false;
+            if (itemId.IndexOf("FishingRod", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                itemId.IndexOf("Item_Rod", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                held = BayouHeldItem.Rod;
+                return true;
+            }
+
+            if (itemId.IndexOf("HandNet", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                string.Equals(itemId, "Item_Net", System.StringComparison.OrdinalIgnoreCase))
+            {
+                held = BayouHeldItem.Net;
+                return true;
+            }
+
+            if (itemId.IndexOf("Lantern", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                held = BayouHeldItem.Lantern;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool TryEquipItemId(string itemId)
+        {
+            if (string.IsNullOrWhiteSpace(itemId))
+            {
+                ApplyItem(BayouHeldItem.None);
+                return true;
+            }
+
+            if (!TryResolveHeldItem(itemId, out var held))
+                return false;
+            if (!CanHold(held))
+                return false;
+            ApplyItem(held);
+            return true;
+        }
+
         private void Update()
         {
             UpdatePursuitContext();
+
+            if (EquipmentHotwheel.SuppressLegacyToolKeys)
+            {
+                if (WasSelect(selectNoneAction, Key.Digit0))
+                {
+                    ApplyItem(BayouHeldItem.None);
+                    if (animator != null)
+                    {
+                        animator.SetBool("isHoldingRod", false);
+                        animator.SetBool("isHoldingLantern", false);
+                    }
+                }
+
+                return;
+            }
 
             if (WasSelect(selectNoneAction, Key.Digit0, Key.Backquote))
             {

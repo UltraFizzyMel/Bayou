@@ -89,6 +89,7 @@ namespace Bayou.UI
             // Always ensure these — even if GameplayHud already exists in the scene.
             QuestMarkerHud.EnsureInScene();
             InteractionPromptHud.EnsureInScene();
+            EquipmentHotwheel.EnsureInScene();
         }
 
         private static void DestroyAllInScene()
