@@ -12907,6 +12907,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 1252699428}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
     tool: 0
@@ -15188,6 +15189,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 1498597571}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
     tool: 0
@@ -25069,6 +25071,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 1556779023}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
     tool: 0
@@ -25385,6 +25388,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 1505500934}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
     tool: 0
@@ -46147,6 +46151,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 1007311171}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
     tool: 0
@@ -57078,6 +57083,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 1556779023}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
     tool: 0
