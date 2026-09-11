@@ -10159,13 +10159,13 @@ PrefabInstance:
       value: Item_ChurchFoggyMarshKey
       objectReference: {fileID: 0}
     - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
-      propertyPath: consumeKeyOnOpen
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
       propertyPath: requiredKeyItem
       value: 
       objectReference: {fileID: 11400000, guid: d2a2b3c4d5e6789012345678abcdef02, type: 2}
+    - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
+      propertyPath: consumeKeyOnOpen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7930719393345831516, guid: 681c4952e02358e4e9a2616715dc79ef, type: 3}
       propertyPath: autoOpenWhenUnlocked
       value: 1
@@ -17974,13 +17974,13 @@ PrefabInstance:
       value: Item_ChurchGraveyardKey
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
-      propertyPath: consumeKeyOnOpen
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: requiredKeyItem
       value: 
       objectReference: {fileID: 11400000, guid: b7c8d9e0f1a234567890abcdef123456, type: 2}
+    - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+      propertyPath: consumeKeyOnOpen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6292213623205623122, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_LocalPosition.x
       value: -24.53
@@ -24845,6 +24845,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 1937929245}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
     tool: 0
@@ -24904,6 +24905,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 2091402745}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
     tool: 0
@@ -24963,6 +24965,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 1350302560}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
     tool: 0
@@ -25022,6 +25025,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 961348459}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
     tool: 0
@@ -25086,6 +25090,7 @@ MonoBehaviour:
   spawnY: 0.2
   waterBounds: {fileID: 448350092}
   shoreMargin: 0.45
+  snapToWaterOnPlay: 1
   fishSpawns:
   - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
     tool: 0
@@ -38085,6 +38090,7 @@ RectTransform:
   m_Children:
   - {fileID: 1077958963}
   - {fileID: 677896870}
+  - {fileID: 2009317089}
   - {fileID: 773668866}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -54729,6 +54735,78 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
+--- !u!1 &2009317088
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2009317089}
+  - component: {fileID: 2009317091}
+  - component: {fileID: 2009317090}
+  m_Layer: 5
+  m_Name: Veve
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2009317089
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009317088}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1413173005}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -25.849976, y: -7.450012}
+  m_SizeDelta: {x: 361.525, y: 361.525}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2009317090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009317088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 2800000, guid: a192c108c8fdac54c9de0af1e8af88c3, type: 3}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &2009317091
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2009317088}
+  m_CullTransparentMesh: 1
 --- !u!1001 &2010772579
 PrefabInstance:
   m_ObjectHideFlags: 0
