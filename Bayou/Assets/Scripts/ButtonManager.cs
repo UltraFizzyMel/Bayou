@@ -5,7 +5,7 @@ public class ButtonManager : MonoBehaviour
 {
     public void NewGame()
     {
-        SceneManager.LoadScene("TerrainTest");
+        SceneManager.LoadScene("MovementTest");
     }
 
     public void Quit()

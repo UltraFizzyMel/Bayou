@@ -3,7 +3,42 @@ guid: 897720d9e7bedaf449fb5ef34e426be1
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Charred_Wood.001
+    second: {fileID: 2100000, guid: 86a29e1f80cfe1e47860a3cf5a54aa11, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Metal_Dark_Iron
+    second: {fileID: 2100000, guid: a0ae315bd56ee3f4f8279cbf7243c51b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Metal_Dark_Iron.001
+    second: {fileID: 2100000, guid: 01c89005444b00145a2844d0c7add2f1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rope_Tan.002
+    second: {fileID: 2100000, guid: 4f8d36fc0d0279641b2206c4328011ec, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stone_Grey.001
+    second: {fileID: 2100000, guid: 77b5d4e5fe1c943448b65161fabf6d6a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wood
+    second: {fileID: 2100000, guid: 1102e0e07e83060469fd4c7b9df79254, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wood_Weathered.002
+    second: {fileID: 2100000, guid: 0d12b426f58cc794f9e81c1feea2c1aa, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -33,7 +68,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 2
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -91,7 +126,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 0.02
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
