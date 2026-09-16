@@ -4,8 +4,7 @@ using UnityEngine;
 namespace Bayou.Player
 {
     /// <summary>
-    /// Detects "in water" using overlap + downward raycast against the Water layer.
-    /// Supports trigger colliders (recommended for walk-through surface water — no vertical edges blocking entry).
+    /// Detects water via trigger overlap. Reports two depth levels: wade and swim.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class BayouWaterSensor : MonoBehaviour
@@ -22,78 +21,125 @@ namespace Bayou.Player
         [SerializeField] private Vector3 rayOriginOffset = new(0f, 0.35f, 0f);
         [SerializeField] private float rayLength = 3f;
 
-        [Header("Trigger messages (optional backup)")]
+        [Header("Trigger messages")]
         [SerializeField] private bool useTriggerMessages = true;
 
         [Tooltip("If true, tagged Water counts without WaterVolume on that collider.")]
         [SerializeField] private bool acceptWaterTagWithoutComponent = true;
 
-        private readonly System.Collections.Generic.HashSet<Collider> _activeWaterTriggers =
-            new System.Collections.Generic.HashSet<Collider>();
+        [SerializeField] private float chestHeight = 1.05f;
 
-        public bool InWater { get; private set; }
+        private readonly System.Collections.Generic.HashSet<Collider> _activeWaterTriggers = new();
+        private static readonly Collider[] OverlapHits = new Collider[16];
+
+        public bool InWater => Depth != WaterDepthLevel.None;
+        public bool IsWading => Depth == WaterDepthLevel.Wade;
+        public bool IsSwimming => Depth == WaterDepthLevel.Swim;
+        public WaterDepthLevel Depth { get; private set; }
+        public float WaterSurfaceY { get; private set; }
+        public float Submersion { get; private set; }
+
+        /// <summary>World Y the motor should hold while swimming (chest near the surface).</summary>
+        public float SwimHoldY => WaterSurfaceY - chestHeight * 0.35f;
+
+        private Vector3 FeetPosition => transform.position + new Vector3(0f, footOverlapYOffset, 0f);
 
         private void OnTriggerEnter(Collider other)
         {
             if (!useTriggerMessages) return;
             if (IsWaterCollider(other))
                 _activeWaterTriggers.Add(other);
-            RefreshInWater();
+            Refresh();
+        }
+
+        private void OnTriggerStay(Collider other)
+        {
+            if (!useTriggerMessages) return;
+            if (IsWaterCollider(other))
+                _activeWaterTriggers.Add(other);
         }
 
         private void OnTriggerExit(Collider other)
         {
             if (!useTriggerMessages) return;
             _activeWaterTriggers.Remove(other);
-            RefreshInWater();
+            Refresh();
         }
 
         private void FixedUpdate()
         {
-            RefreshInWater();
+            Refresh();
         }
 
-        private void RefreshInWater()
+        private void Refresh()
         {
-            if (waterLayers.value == 0)
+            PruneTriggers();
+
+            var feet = FeetPosition;
+            var depth = WaterDepthLevel.None;
+            var surface = feet.y;
+            var foundSurface = false;
+
+            void Consider(Collider col)
             {
-                InWater = useTriggerMessages && _activeWaterTriggers.Count > 0;
-                return;
+                if (col == null || !col.enabled) return;
+                var vol = col.GetComponent<WaterVolume>() ?? col.GetComponentInParent<WaterVolume>();
+                var sample = vol != null ? vol.Evaluate(feet) : WaterDepthLevel.Wade;
+                if (sample > depth)
+                    depth = sample;
+
+                var top = vol != null ? vol.SurfaceY : col.bounds.max.y;
+                if (!foundSurface || top > surface)
+                {
+                    surface = top;
+                    foundSurface = true;
+                }
             }
 
-            InWater = OverlapFeetInWater() ||
-                      RaycastHitsWater() ||
-                      (useTriggerMessages && _activeWaterTriggers.Count > 0);
+            if (useTriggerMessages)
+            {
+                foreach (var col in _activeWaterTriggers)
+                    Consider(col);
+            }
+
+            if (waterLayers.value != 0)
+            {
+                var count = Physics.OverlapSphereNonAlloc(
+                    feet, footOverlapRadius, OverlapHits, waterLayers, QueryTriggerInteraction.Collide);
+                for (var i = 0; i < count; i++)
+                    Consider(OverlapHits[i]);
+
+                if (Physics.Raycast(transform.position + rayOriginOffset, Vector3.down, out var hit, rayLength,
+                        waterLayers, QueryTriggerInteraction.Collide))
+                    Consider(hit.collider);
+            }
+
+            if (depth == WaterDepthLevel.None && _activeWaterTriggers.Count > 0)
+                depth = WaterDepthLevel.Wade;
+
+            WaterSurfaceY = foundSurface ? surface : transform.position.y;
+            Submersion = InWaterOr(depth) ? WaterSurfaceY - feet.y : 0f;
+            Depth = depth;
         }
 
-        private bool OverlapFeetInWater()
+        private static bool InWaterOr(WaterDepthLevel depth) => depth != WaterDepthLevel.None;
+
+        private void PruneTriggers()
         {
-            var p = transform.position + new Vector3(0f, footOverlapYOffset, 0f);
-            return Physics.CheckSphere(p, footOverlapRadius, waterLayers, QueryTriggerInteraction.Collide);
-        }
-
-        private bool RaycastHitsWater()
-        {
-            var origin = transform.position + rayOriginOffset;
-            // Include triggers so thin water planes / trigger volumes register.
-            if (!Physics.Raycast(origin, Vector3.down, out var hit, rayLength, waterLayers,
-                    QueryTriggerInteraction.Collide))
-                return false;
-
-            var vol = hit.collider.GetComponent<WaterVolume>();
-            if (vol != null)
-                return vol.Matches(hit.collider.gameObject);
-
-            return true;
+            if (_activeWaterTriggers.Count == 0) return;
+            _activeWaterTriggers.RemoveWhere(c => c == null || !c.enabled || !c.gameObject.activeInHierarchy);
         }
 
         private bool IsWaterCollider(Collider other)
         {
             if (other == null) return false;
 
-            var vol = other.GetComponent<WaterVolume>();
+            var vol = other.GetComponent<WaterVolume>() ?? other.GetComponentInParent<WaterVolume>();
             if (vol != null)
-                return vol.Matches(other.gameObject);
+                return vol.Matches(other.gameObject) || vol.Matches(vol.gameObject);
+
+            if (waterLayers.value != 0 && ((1 << other.gameObject.layer) & waterLayers.value) != 0)
+                return true;
 
             return acceptWaterTagWithoutComponent && other.CompareTag("Water");
         }
@@ -101,10 +147,10 @@ namespace Bayou.Player
 #if UNITY_EDITOR
         private void OnDrawGizmosSelected()
         {
-            if (waterLayers.value == 0) return;
-            Gizmos.color = new Color(0.2f, 0.6f, 1f, 0.35f);
-            var p = transform.position + new Vector3(0f, footOverlapYOffset, 0f);
-            Gizmos.DrawWireSphere(p, footOverlapRadius);
+            Gizmos.color = Depth == WaterDepthLevel.Swim
+                ? new Color(0.1f, 0.3f, 0.95f, 0.45f)
+                : new Color(0.2f, 0.6f, 1f, 0.35f);
+            Gizmos.DrawWireSphere(FeetPosition, footOverlapRadius);
             var o = transform.position + rayOriginOffset;
             Gizmos.color = Color.cyan;
             Gizmos.DrawLine(o, o + Vector3.down * rayLength);

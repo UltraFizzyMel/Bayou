@@ -40,6 +40,7 @@ namespace Bayou.Save
 
             cookAndRestButton?.onClick.AddListener(OnCookAndRest);
             cancelButton?.onClick.AddListener(Close);
+            SetRestButtonLabel("Rest");
         }
 
         private void OnDestroy()
@@ -50,7 +51,7 @@ namespace Bayou.Save
                 Active = null;
         }
 
-        public void Open(string bonfireId, string bonfireDisplayName = "Bonfire")
+        public void Open(string bonfireId, string bonfireDisplayName = "Campfire")
         {
             _inventory = InventoryController.Instance;
             _saveSystem = GameSaveSystem.Instance;
@@ -62,7 +63,7 @@ namespace Bayou.Save
             if (titleLabel != null)
                 titleLabel.text = bonfireDisplayName;
             if (hintLabel != null)
-                hintLabel.text = "Select a fish from your pack to cook. Resting at the fire saves your journey.";
+                hintLabel.text = "Rest at the campfire to save. Cooking a fish is optional.";
             if (statusLabel != null)
                 statusLabel.text = string.Empty;
 
@@ -105,7 +106,8 @@ namespace Bayou.Save
             if (fish.Count == 0)
             {
                 if (statusLabel != null)
-                    statusLabel.text = "You have no fish to cook. Catch one in the bayou first.";
+                    statusLabel.text = "No fish to cook. Rest anyway to save your journey.";
+                UpdateCookButton();
                 return;
             }
 
@@ -145,12 +147,21 @@ namespace Bayou.Save
         private void UpdateCookButton()
         {
             if (cookAndRestButton == null) return;
-            cookAndRestButton.interactable = _selectedFish != null && _saveSystem != null;
+            cookAndRestButton.interactable = _saveSystem != null;
+            SetRestButtonLabel(_selectedFish != null ? "Cook & Rest" : "Rest");
+        }
+
+        private void SetRestButtonLabel(string label)
+        {
+            if (cookAndRestButton == null) return;
+            var tmp = cookAndRestButton.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (tmp != null)
+                tmp.text = label;
         }
 
         private void OnCookAndRest()
         {
-            if (_selectedFish == null || _inventory == null || _saveSystem == null)
+            if (_inventory == null || _saveSystem == null)
                 return;
 
             if (!_saveSystem.Save(_bonfireId))
@@ -160,12 +171,18 @@ namespace Bayou.Save
                 return;
             }
 
-            var cooked = _selectedFish;
-            _selectedFish = null;
-            _inventory.RemoveItem(cooked);
-
-            if (statusLabel != null)
-                statusLabel.text = "Fish cooked. Your progress is saved.";
+            if (_selectedFish != null)
+            {
+                var cooked = _selectedFish;
+                _selectedFish = null;
+                _inventory.RemoveItem(cooked);
+                if (statusLabel != null)
+                    statusLabel.text = "Fish cooked. Your progress is saved.";
+            }
+            else if (statusLabel != null)
+            {
+                statusLabel.text = "You rest. Your progress is saved.";
+            }
 
             Invoke(nameof(Close), 1.2f);
         }

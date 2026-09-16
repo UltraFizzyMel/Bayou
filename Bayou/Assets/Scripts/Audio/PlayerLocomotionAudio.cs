@@ -45,7 +45,8 @@ namespace Bayou.Audio
             if (motor == null) return;
 
             var moving = motor.PlanarSpeed >= moveSpeedThreshold && motor.HasMoveInput;
-            var inWater = waterSensor != null && waterSensor.InWater;
+            var isSwimming = waterSensor != null && waterSensor.IsSwimming;
+            var isWading = waterSensor != null && waterSensor.IsWading;
 
             if (!moving)
             {
@@ -53,11 +54,15 @@ namespace Bayou.Audio
                 return;
             }
 
-            if (inWater)
+            if (isSwimming)
             {
-                // Sustained swim bed under discrete wade steps.
                 if (swimming != null)
                     sfx.PlayLoop(swimming, swimLoopVolume);
+            }
+            else if (isWading)
+            {
+                if (sfx.IsPlayingClip(swimming))
+                    sfx.StopLoop();
 
                 if (Time.time >= _nextStepTime)
                 {

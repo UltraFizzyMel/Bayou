@@ -17,7 +17,7 @@ namespace Bayou.Creatures
             for (var i = 0; i < creatures.Count; i++)
             {
                 var c = creatures[i];
-                if (c == null || !c.isActiveAndEnabled || c.IsCaught) continue;
+                if (c == null || !c.isActiveAndEnabled || !c.IsAlive) continue;
                 if (!c.IsActive) continue;
 
                 var d = c.transform.position - player.position;
@@ -38,7 +38,7 @@ namespace Bayou.Creatures
             for (var i = 0; i < creatures.Count; i++)
             {
                 var c = creatures[i];
-                if (c == null || !c.isActiveAndEnabled || c.IsCaught || !c.IsActive) continue;
+                if (c == null || !c.isActiveAndEnabled || !c.IsAlive || !c.IsActive) continue;
                 var d = c.transform.position - player.position;
                 d.y = 0f;
                 if (d.sqrMagnitude <= maxSq)

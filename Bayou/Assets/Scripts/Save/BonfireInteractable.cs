@@ -8,12 +8,23 @@ namespace Bayou.Save
     public sealed class BonfireInteractable : MonoBehaviour, IInteractionPromptSource
     {
         [SerializeField] private string bonfireId = "bonfire_01";
-        [SerializeField] private string displayName = "Bayou Bonfire";
+        [SerializeField] private string displayName = "Campfire";
         [SerializeField] private BonfireUIController bonfireUi;
         [SerializeField] private GameObject visualCue;
-        [SerializeField] private string restPrompt = "Rest / cook";
+        [SerializeField] private string restPrompt = "Rest at the fire";
+        [SerializeField] private float interactRadius = 2.6f;
 
         private bool _playerInRange;
+
+        public void Configure(string id, string name, BonfireUIController ui)
+        {
+            if (!string.IsNullOrWhiteSpace(id))
+                bonfireId = id;
+            if (!string.IsNullOrWhiteSpace(name))
+                displayName = name;
+            if (ui != null)
+                bonfireUi = ui;
+        }
 
         private void Awake()
         {
@@ -29,6 +40,8 @@ namespace Bayou.Save
 
         private void Update()
         {
+            RefreshRange();
+
             if (bonfireUi == null) return;
 
             var blocked = bonfireUi.IsOpen ||
@@ -42,6 +55,20 @@ namespace Bayou.Save
             var input = InputManager.GetInstance();
             if (input != null && input.GetInteractPressed())
                 bonfireUi.Open(bonfireId, displayName);
+        }
+
+        private void RefreshRange()
+        {
+            var player = PlayerLocator.Transform;
+            if (player == null)
+            {
+                _playerInRange = false;
+                return;
+            }
+
+            var d = player.position - transform.position;
+            d.y = 0f;
+            _playerInRange = d.sqrMagnitude <= interactRadius * interactRadius;
         }
 
         public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
@@ -80,7 +107,7 @@ namespace Bayou.Save
         private void OnDrawGizmosSelected()
         {
             Gizmos.color = new Color(1f, 0.45f, 0.1f, 0.85f);
-            Gizmos.DrawWireSphere(transform.position, 0.75f);
+            Gizmos.DrawWireSphere(transform.position, interactRadius);
         }
     }
 }

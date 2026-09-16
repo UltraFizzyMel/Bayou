@@ -1,3 +1,4 @@
+using Bayou.Environment;
 using Bayou.Inventory.Shop;
 using Bayou.Save;
 using TMPro;
@@ -21,8 +22,9 @@ namespace Bayou.UI
             "R  Rotate item\n" +
             "Tab  Cycle tools\n" +
             "1 Rod · 2 Net · 3 Lantern · 0 None\n" +
-            "Left click  Cast / scoop  ·  melee with rod or net if chased\n" +
-            "Lantern lights fog  ·  Esc / Q cancel cast\n" +
+            "Left click  Cast / scoop  ·  melee damages enemies if chased\n" +
+            "Lantern lights fog  ·  stay in fog too long without it and you are pushed back\n" +
+            "Campfire  E rest to save  ·  Esc / Q cancel cast\n" +
             "V  Volume";
 
         [SerializeField] private bool buildUiIfMissing = true;
@@ -32,6 +34,8 @@ namespace Bayou.UI
         [SerializeField] private TextMeshProUGUI controlsLabel;
         [SerializeField] private GameObject questPanel;
         [SerializeField] private GameObject controlsPanel;
+        [SerializeField] private GameObject fogWarningPanel;
+        [SerializeField] private TextMeshProUGUI fogWarningLabel;
         [SerializeField] private bool hideWhenMenusOpen = true;
         [SerializeField] private bool showControlsLegend;
 
@@ -138,6 +142,7 @@ namespace Bayou.UI
             }
             if (controlsPanel != null)
                 controlsPanel.SetActive(showControlsLegend);
+            RefreshFogWarning();
         }
 
         private void OnEnable()
@@ -185,6 +190,26 @@ namespace Bayou.UI
             var show = !ShouldHideForMenus();
             if (rootCanvas.gameObject.activeSelf != show)
                 rootCanvas.gameObject.SetActive(show);
+
+            if (show)
+                RefreshFogWarning();
+        }
+
+        private void RefreshFogWarning()
+        {
+            if (fogWarningPanel == null && rootCanvas != null)
+            {
+                var existing = rootCanvas.transform.Find("FogWarning");
+                if (existing != null)
+                    fogWarningPanel = existing.gameObject;
+            }
+
+            var text = FogBarrier.WarningText;
+            var show = !string.IsNullOrEmpty(text);
+            if (fogWarningPanel != null && fogWarningPanel.activeSelf != show)
+                fogWarningPanel.SetActive(show);
+            if (show && fogWarningLabel != null)
+                fogWarningLabel.text = text;
         }
 
         private void TrySubscribe()
@@ -359,6 +384,18 @@ namespace Bayou.UI
                 TextAlignmentOptions.BottomLeft);
             StretchTmp(controlsLabel.rectTransform, 14f, 12f, 14f, 12f);
             controlsPanel.SetActive(showControlsLegend);
+
+            fogWarningPanel = CreatePanel("FogWarning", canvasGo.transform,
+                new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(0f, -28f), new Vector2(560f, 64f));
+            var fogRt = fogWarningPanel.GetComponent<RectTransform>();
+            fogRt.pivot = new Vector2(0.5f, 1f);
+            var fogImg = fogWarningPanel.GetComponent<Image>();
+            if (fogImg != null)
+                fogImg.color = new Color(0.12f, 0.1f, 0.16f, 0.78f);
+            fogWarningLabel = CreateTmp("FogText", fogWarningPanel.transform,
+                "", 20f, FontStyles.Bold, TextAlignmentOptions.Center);
+            StretchTmp(fogWarningLabel.rectTransform, 16f, 10f, 16f, 10f);
+            fogWarningPanel.SetActive(false);
         }
 
         private static GameObject CreatePanel(

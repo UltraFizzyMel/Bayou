@@ -44,6 +44,19 @@ namespace Bayou.Creatures
 
             var root = new GameObject(RootName);
 
+            // Near player spawn — easy to test chase / net melee.
+            CreateSnake(
+                root.transform,
+                "Snake_TestNearSpawn",
+                new Vector3(-4f, 1.6f, -82f),
+                new[]
+                {
+                    new Vector3(-4f, 1.6f, -82f),
+                    new Vector3(2f, 1.6f, -78f),
+                    new Vector3(-1f, 1.6f, -74f),
+                    new Vector3(-8f, 1.6f, -78f)
+                });
+
             // Near Caliste pond — snake patrols the bank.
             CreateSnake(
                 root.transform,
@@ -187,6 +200,8 @@ namespace Bayou.Creatures
                     so.FindProperty("inventoryItemWhenCaught").objectReferenceValue = item;
                 so.FindProperty("passiveSpeed").floatValue = 1.6f;
                 so.FindProperty("activeSpeed").floatValue = 3.4f;
+                so.FindProperty("maxHealth").floatValue = 3f;
+                so.FindProperty("meleeHitDamage").floatValue = 1f;
                 so.ApplyModifiedPropertiesWithoutUndo();
                 return;
             }
@@ -205,6 +220,8 @@ namespace Bayou.Creatures
                 so.FindProperty("stunSeconds").floatValue = 2.5f;
                 so.FindProperty("passiveSpeed").floatValue = 1.1f;
                 so.FindProperty("activeSpeed").floatValue = 2.8f;
+                so.FindProperty("maxHealth").floatValue = 8f;
+                so.FindProperty("meleeHitDamage").floatValue = 1f;
                 so.ApplyModifiedPropertiesWithoutUndo();
                 return;
             }

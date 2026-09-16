@@ -24,7 +24,7 @@ namespace Bayou.Fishing
                 if (col == null) continue;
                 var hittable = col.GetComponentInParent<INetHittable>();
                 if (hittable == null || !hittable.IsNetHittable) continue;
-                hittable.OnNetHit(new NetHitInfo(center, source));
+                hittable.OnNetHit(new NetHitInfo(center, source, damage: 1f));
                 hitAny = true;
             }
 

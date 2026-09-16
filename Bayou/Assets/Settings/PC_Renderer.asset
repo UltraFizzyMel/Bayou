@@ -35,8 +35,9 @@ MonoBehaviour:
       type: 3}
   m_RendererFeatures:
   - {fileID: 7833122117494664109}
-  m_RendererFeatureMap: ad6b866f10d7b46c
-  m_UseNativeRenderPass: 1
+  - {fileID: 5544332211887766554}
+  m_RendererFeatureMap: ad6b866f10d7b46c1a7c5386c56cf14c
+  m_UseNativeRenderPass: 0
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   m_AssetVersion: 2
   m_OpaqueLayerMask:
@@ -53,7 +54,7 @@ MonoBehaviour:
     failOperation: 0
     zFailOperation: 0
   m_ShadowTransparentReceive: 1
-  m_RenderingMode: 2
+  m_RenderingMode: 1
   m_DepthPrimingMode: 0
   m_CopyDepthMode: 0
   m_AccurateGbufferNormals: 0
@@ -93,3 +94,21 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 3302065f671a8450b82c9ddf07426f3a, type: 3}
   - {fileID: 2800000, guid: 56a77a3e8d64f47b6afe9e3c95cb57d5, type: 3}
   m_Shader: {fileID: 4800000, guid: 0849e84e3d62649e8882e9d6f056a017, type: 3}
+--- !u!114 &5544332211887766554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 312420e7960934bbaa47d364e225cd0c, type: 3}
+  m_Name: FreeOutline
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  settings: {fileID: 11400000, guid: 7d2c8e91a4b64f0e9c3a5b1d8e6f0c24, type: 2}
+  shaders:
+    mask: {fileID: 4800000, guid: 19ae7b440d27f4f9990007afdc74ddaf, type: 3}
+    outline: {fileID: 4800000, guid: fb375234a1509436fa2a7d37f08912f8, type: 3}
+    clear: {fileID: 4800000, guid: b854aa374420b4b47992044f7c9a0719, type: 3}

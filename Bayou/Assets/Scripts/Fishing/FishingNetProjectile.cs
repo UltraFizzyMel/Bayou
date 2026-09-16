@@ -259,7 +259,7 @@ namespace Bayou.Fishing
             if (result == NetHitResult.Ignored) return false;
 
             // Caught snake: consume the net. Stunned croc: don't plant on the body — keep flying.
-            if (result == NetHitResult.Caught)
+            if (result == NetHitResult.Caught || result == NetHitResult.Killed)
             {
                 _hasLanded = true;
                 CancelMissLifetime();

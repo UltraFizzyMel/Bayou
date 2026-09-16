@@ -20619,6 +20619,21 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7065288530743218205, guid: a2294af47d2635b4a9ff8ec9bba5b863, type: 3}
   m_PrefabInstance: {fileID: 1733591493}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &640752765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 640752738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Outline
+  m_EffectColor: {r: 1, g: 0.8365737, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!4 &644168874 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
@@ -24249,6 +24264,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.WaterVolume
   requiredTag: Water
+  depthLevel: 1
+  wadeSubmersion: 0.12
+  swimSubmersion: 0.85
+  spawnInnerSwimZone: 1
+  innerSwimInset: 0.28
+  triggerDepth: 2.6
+  triggerAboveSurface: 0.4
 --- !u!64 &771730599
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -26110,6 +26132,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.WaterVolume
   requiredTag: Water
+  depthLevel: 1
+  wadeSubmersion: 0.12
+  swimSubmersion: 0.85
+  spawnInnerSwimZone: 1
+  innerSwimInset: 0.28
+  triggerDepth: 2.6
+  triggerAboveSurface: 0.4
 --- !u!64 &845957440
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -31086,6 +31115,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.WaterVolume
   requiredTag: Water
+  depthLevel: 1
+  wadeSubmersion: 0.12
+  swimSubmersion: 0.85
+  spawnInnerSwimZone: 1
+  innerSwimInset: 0.28
+  triggerDepth: 2.6
+  triggerAboveSurface: 0.4
 --- !u!64 &1007311171
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -37546,6 +37582,7 @@ MonoBehaviour:
   bonfireUi: {fileID: 1212046530}
   visualCue: {fileID: 955508803}
   restPrompt: Rest / cook
+  interactRadius: 2.6
 --- !u!23 &1193249996
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -40437,6 +40474,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.WaterVolume
   requiredTag: Water
+  depthLevel: 1
+  wadeSubmersion: 0.12
+  swimSubmersion: 0.85
+  spawnInnerSwimZone: 1
+  innerSwimInset: 0.28
+  triggerDepth: 2.6
+  triggerAboveSurface: 0.4
 --- !u!64 &1252699428
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -48980,6 +49024,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.WaterVolume
   requiredTag: Water
+  depthLevel: 1
+  wadeSubmersion: 0.12
+  swimSubmersion: 0.85
+  spawnInnerSwimZone: 1
+  innerSwimInset: 0.28
+  triggerDepth: 2.6
+  triggerAboveSurface: 0.4
 --- !u!64 &1498597571
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -49107,6 +49158,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.WaterVolume
   requiredTag: Water
+  depthLevel: 1
+  wadeSubmersion: 0.12
+  swimSubmersion: 0.85
+  spawnInnerSwimZone: 1
+  innerSwimInset: 0.28
+  triggerDepth: 2.6
+  triggerAboveSurface: 0.4
 --- !u!64 &1505500934
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -50412,6 +50470,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.WaterVolume
   requiredTag: Water
+  depthLevel: 1
+  wadeSubmersion: 0.12
+  swimSubmersion: 0.85
+  spawnInnerSwimZone: 1
+  innerSwimInset: 0.28
+  triggerDepth: 2.6
+  triggerAboveSurface: 0.4
 --- !u!64 &1556779023
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -57716,6 +57781,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1638070245639809799, guid: a2294af47d2635b4a9ff8ec9bba5b863, type: 3}
       insertIndex: -1
       addedObject: {fileID: 640752740}
+    - targetCorrespondingSourceObject: {fileID: 1638070245639809799, guid: a2294af47d2635b4a9ff8ec9bba5b863, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 640752765}
   m_SourcePrefab: {fileID: 100100000, guid: a2294af47d2635b4a9ff8ec9bba5b863, type: 3}
 --- !u!4 &1734746618 stripped
 Transform:
@@ -61117,6 +61185,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.WaterVolume
   requiredTag: Water
+  depthLevel: 1
+  wadeSubmersion: 0.12
+  swimSubmersion: 0.85
+  spawnInnerSwimZone: 1
+  innerSwimInset: 0.28
+  triggerDepth: 2.6
+  triggerAboveSurface: 0.4
 --- !u!64 &1824420838
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -65164,6 +65239,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.WaterVolume
   requiredTag: Water
+  depthLevel: 1
+  wadeSubmersion: 0.12
+  swimSubmersion: 0.85
+  spawnInnerSwimZone: 1
+  innerSwimInset: 0.28
+  triggerDepth: 2.6
+  triggerAboveSurface: 0.4
 --- !u!64 &1967363500
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -70895,6 +70977,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.WaterVolume
   requiredTag: Water
+  depthLevel: 1
+  wadeSubmersion: 0.12
+  swimSubmersion: 0.85
+  spawnInnerSwimZone: 1
+  innerSwimInset: 0.28
+  triggerDepth: 2.6
+  triggerAboveSurface: 0.4
 --- !u!64 &2134414107
 MeshCollider:
   m_ObjectHideFlags: 0

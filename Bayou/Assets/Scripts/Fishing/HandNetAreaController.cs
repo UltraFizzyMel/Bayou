@@ -383,7 +383,7 @@ namespace Bayou.Fishing
                 if (c == null) continue;
                 var hittable = c.GetComponentInParent<INetHittable>();
                 if (hittable == null || !hittable.IsNetHittable) continue;
-                hittable.OnNetHit(new NetHitInfo(center, source));
+                hittable.OnNetHit(new NetHitInfo(center, source, source is NetHitSource.MeleeNet or NetHitSource.MeleeRod ? 1f : 0f));
                 hitAny = true;
             }
 

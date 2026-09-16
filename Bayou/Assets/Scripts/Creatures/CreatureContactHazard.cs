@@ -36,7 +36,7 @@ namespace Bayou.Creatures
         private void TryHit(Collider other)
         {
             if (other == null) return;
-            if (_owner != null && (_owner.IsCaught || _owner.IsStunned || !_owner.IsActive))
+            if (_owner != null && (!_owner.IsAlive || _owner.IsStunned || !_owner.IsActive))
                 return;
             if (Time.time < _nextHitTime) return;
             if (!IsPlayer(other)) return;
