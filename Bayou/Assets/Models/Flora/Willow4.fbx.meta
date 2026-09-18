@@ -3,7 +3,37 @@ guid: 54f51c8ed0344574fbd13b359fb9a885
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Bark.004
+    second: {fileID: 2100000, guid: f0d01dfed4fbe214691ac23eff753b17, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Bark_Dead.004
+    second: {fileID: 2100000, guid: e7154f2666cfe6d4fbcf8e704cd416b6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Foliage_Blackened.004
+    second: {fileID: 2100000, guid: 6596928aea9a13e4bb751495412dbe5c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Foliage_Dark.004
+    second: {fileID: 2100000, guid: 889ef4568c69b6a4294f1d555fb97994, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Foliage_Light.004
+    second: {fileID: 2100000, guid: a2cf34062e373ec4391509415ba995d8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Hollow_Void.004
+    second: {fileID: 2100000, guid: 1653d2ce0625ea24383ca9c4c5e293de, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -33,7 +63,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.3
+    globalScale: 0.25
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -91,7 +121,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.003
+    globalScale: 0.0025
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

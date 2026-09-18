@@ -3,7 +3,57 @@ guid: c77ecac40d829e7448caf9a795e4410e
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Frame_Dark_Red.004
+    second: {fileID: 2100000, guid: b0c002c1f15411046ac626ce48df26f4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass_Band_0.004
+    second: {fileID: 2100000, guid: d55247cf18995624cb6e42191f0ad6aa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass_Band_1.004
+    second: {fileID: 2100000, guid: f2268706172afe045b3576201fc58a9e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass_Band_2.004
+    second: {fileID: 2100000, guid: 4dba399a53e8b6843b38a2bfc51f8379, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass_Band_3.004
+    second: {fileID: 2100000, guid: 97e2f617cd8902943a70dd79948e937c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Lintel_Near_Black.004
+    second: {fileID: 2100000, guid: 9620b815729919b4cb9d655f961d417a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Mullion_Near_Black.004
+    second: {fileID: 2100000, guid: 8aea496ec261e4b4ba2e82a9882e2881, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Reveal_Dark_Red.004
+    second: {fileID: 2100000, guid: f3c8ac861e5211342b26f7ff20d3fd08, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sill_Glow.004
+    second: {fileID: 2100000, guid: 1c6643aa8eba7e84997932af75570d75, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sill_Stone.004
+    second: {fileID: 2100000, guid: 0b589531e8cf88e4a99f0c446805241d, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -33,7 +83,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 0.4
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -91,7 +141,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 0.004
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

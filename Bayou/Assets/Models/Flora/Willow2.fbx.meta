@@ -3,7 +3,42 @@ guid: f3b0d59af94baa947a8605c1869b662d
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Bark.006
+    second: {fileID: 2100000, guid: 50e1b933183bf7643aa65ecd53ec8ca2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Bark_Dead.006
+    second: {fileID: 2100000, guid: 181aecfb83ae1e64f8de40cf7d733ad4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Foliage_Base.002
+    second: {fileID: 2100000, guid: 3a1e37706e3b1504aa1f786d7dfc6e83, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Foliage_Blackened.006
+    second: {fileID: 2100000, guid: 16dded13f4bb4824e80aa5b31f530eb2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Foliage_Dark.006
+    second: {fileID: 2100000, guid: 127f0fbd15483394ea7433c1f0592fee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Foliage_Light.006
+    second: {fileID: 2100000, guid: 907275b1511bed34baed1103192d4c94, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Willow_Hollow_Void.006
+    second: {fileID: 2100000, guid: 99ccb1b762e925b48b5e0e6c1262b4ad, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -33,7 +68,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.3
+    globalScale: 0.25
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -91,7 +126,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.003
+    globalScale: 0.0025
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
