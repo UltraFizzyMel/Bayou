@@ -166,8 +166,8 @@ Material:
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _CausticsBrightness: 0.37
-    - _CausticsChromance: 0.893
-    - _CausticsDistortion: 0.458
+    - _CausticsChromance: 0.451
+    - _CausticsDistortion: 0.155
     - _CausticsOn: 1
     - _CausticsSpeed: 0.03
     - _CausticsTiling: 0.1
@@ -314,7 +314,7 @@ Material:
     - _HorizonColor: {r: 0.68, g: 1, b: 0.99, a: 0.15}
     - _IntersectionColor: {r: 0.78867924, g: 0.49714315, b: 0.34969738, a: 1}
     - _NormalTiling: {r: 0.3, g: 0.3, b: 0, a: 0}
-    - _ShallowColor: {r: 0.039215688, g: 0.64705884, b: 0.23532437, a: 0.3764706}
+    - _ShallowColor: {r: 0.051584173, g: 0.4339623, b: 0.17493193, a: 0.3764706}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _WaveDirection: {r: -1, g: -1, b: -1, a: -1}
     - _WaveFadeDistance: {r: 26.666674, g: 26.666674, b: 0, a: 0}
