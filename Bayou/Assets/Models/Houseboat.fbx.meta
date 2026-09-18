@@ -3,7 +3,102 @@ guid: 8ceb48d79289dbd40b1f14d2160cf385
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Barrel Inside
+    second: {fileID: 2100000, guid: 5dbe4c2380f3820408957e8a5b0888fb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Barrel Outside
+    second: {fileID: 2100000, guid: 31b79c9f03d0f4b40aa60d48fa568230, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Chimney
+    second: {fileID: 2100000, guid: 7d1236041ab5808448bcd18e2e28375c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Crate Inside
+    second: {fileID: 2100000, guid: 3a3957ad5918aa6488a64f2b0bc3799c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Crate Inside.001
+    second: {fileID: 2100000, guid: b8bd85a846037d542bb7968d2d5d24e9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Crate Outside
+    second: {fileID: 2100000, guid: c444ab964adf2a849a55a92d7abbaf3b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Crate Outsie
+    second: {fileID: 2100000, guid: 574d5b6def7147347acf027d4645a454, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Door
+    second: {fileID: 2100000, guid: db295a83420cf594f93cfc1bfa178880, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Door Frame
+    second: {fileID: 2100000, guid: 38cee438305710e4db8b5bb863b8b249, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass
+    second: {fileID: 2100000, guid: 4dba399a53e8b6843b38a2bfc51f8379, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HouseBoat Base
+    second: {fileID: 2100000, guid: 5a961973fcd496047be9db19e35049a3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HouseBoat Planks
+    second: {fileID: 2100000, guid: 94b1b078ff2c51943bde3c82fd701c33, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HouseBoat Rail
+    second: {fileID: 2100000, guid: a14acf0736551704fa80e56446b6cddd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HouseBoat Rail 2
+    second: {fileID: 2100000, guid: a1caf323a947ce942be33b90b5072cf5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HouseBoat Roof
+    second: {fileID: 2100000, guid: fd42fdf7de5c2b24a8a7dd8b0aba34e6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HouseBoat Walls
+    second: {fileID: 2100000, guid: 3e37bcfb3a2989e488959a5107b92376, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Ladder Outside
+    second: {fileID: 2100000, guid: 6dd5f979b39223b4eb4c12f5072cd27a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Ladder Steps
+    second: {fileID: 2100000, guid: 54765ae9e93d89643af05d06d38e3d9f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Window Frame
+    second: {fileID: 2100000, guid: 60e773dfc9d5b5440ab11456a8503e1f, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -33,7 +128,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 2.2
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -91,7 +186,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 1
+    globalScale: 2.2
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
