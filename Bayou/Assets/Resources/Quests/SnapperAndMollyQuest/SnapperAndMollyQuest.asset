@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: SnapperAndMollyQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestInfoSO
   <id>k__BackingField: SnapperAndMollyQuest
-  displayName: A Snapper & A Molly
+  displayName: A Snapper and a Molly
   netLevelRequirement: 0
   rodLevelRequirement: 0
   mainQuestLevel: 0
-  questPrerequistes: []
+  questPrerequistes:
+  - {fileID: 11400000, guid: 497a731e2fcc72a418cffd12b3cbd33c, type: 2}
   questStepPrefabs:
   - {fileID: 7010378617243886321, guid: 338d873d27b58c04abf16b633d736567, type: 3}
-  moneyReward: 150
-  MiscReward: Shop unlocked 
+  autoStart: 0
+  autoComplete: 0
+  moneyReward: 0
+  MiscReward: Maze gate key

@@ -29,6 +29,7 @@ namespace Bayou.CameraControl
         [SerializeField] private bool applyFixedRotationOnEnable = true;
 
         private Vector3 _smoothVelocity;
+        private Vector3 _punch;
 
         private void OnEnable()
         {
@@ -42,6 +43,8 @@ namespace Bayou.CameraControl
                 return;
 
             var desired = target.position + worldOffset;
+            _punch = Vector3.Lerp(_punch, Vector3.zero, 1f - Mathf.Exp(-10f * Time.deltaTime));
+            desired += _punch;
 
             if (positionSmoothTime <= 0f)
             {
@@ -69,6 +72,7 @@ namespace Bayou.CameraControl
             if (target == null) return;
             transform.position = target.position + worldOffset;
             _smoothVelocity = Vector3.zero;
+            _punch = Vector3.zero;
             if (useFixedRotation)
                 transform.rotation = Quaternion.Euler(fixedEulerAngles);
         }
@@ -76,6 +80,14 @@ namespace Bayou.CameraControl
         public void SetTarget(Transform newTarget)
         {
             target = newTarget;
+        }
+
+        /// <summary>Short combat punch so a connecting hit is readable on an isometric rig.</summary>
+        public void Punch(Vector3 worldImpulse)
+        {
+            _punch += worldImpulse;
+            if (_punch.sqrMagnitude > 0.45f * 0.45f)
+                _punch = _punch.normalized * 0.45f;
         }
     }
 }

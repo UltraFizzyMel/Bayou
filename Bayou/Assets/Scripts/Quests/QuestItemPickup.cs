@@ -22,7 +22,6 @@ namespace Bayou.Quests
         [Tooltip("If true, picking this up finishes the demo. Leave off for the lantern so it can be used.")]
         [SerializeField] private bool endDemoOnPickup;
         [SerializeField] private bool addStraightToBag = true;
-        [SerializeField] private bool autoEquipHandNet = true;
 
         public ItemDefinition Item => item;
         public static IReadOnlyList<QuestItemPickup> Living => All;
@@ -117,13 +116,6 @@ namespace Bayou.Quests
                 GiveItemDirectly();
             else
                 CaughtFishPresenter.Present(item);
-
-            if (autoEquipHandNet && item != null && item.IsUniqueEquipment &&
-                item.Id.IndexOf("HandNet", System.StringComparison.OrdinalIgnoreCase) >= 0)
-            {
-                var equipment = PlayerLocator.Equipment;
-                equipment?.ApplyItem(Bayou.Fishing.BayouHeldItem.Net);
-            }
 
             if (endDemoOnPickup)
                 DemoEndController.Show();

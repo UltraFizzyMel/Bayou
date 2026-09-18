@@ -17,7 +17,7 @@ namespace Bayou.UI
     {
         private const string ControlsText =
             "<b>Controls</b>\n" +
-            "I  Inventory  ·  Esc close bag\n" +
+            "I  Inventory  ·  J  Journal  ·  Esc close\n" +
             "E  Interact  ·  Space / click  Dialogue\n" +
             "R  Rotate item\n" +
             "Tab  Cycle tools\n" +
@@ -96,6 +96,7 @@ namespace Bayou.UI
             InteractionPromptHud.EnsureInScene();
             EquipmentHotwheel.EnsureInScene();
             OnboardingCoach.EnsureInScene();
+            QuestJournalHud.EnsureInScene();
         }
 
         private static void DestroyAllInScene()
@@ -119,6 +120,13 @@ namespace Bayou.UI
             {
                 if (prompts[i] != null)
                     Object.Destroy(prompts[i].gameObject);
+            }
+
+            var journals = Object.FindObjectsByType<QuestJournalHud>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < journals.Length; i++)
+            {
+                if (journals[i] != null)
+                    Object.Destroy(journals[i].gameObject);
             }
 
             var coaches = Object.FindObjectsByType<OnboardingCoach>(FindObjectsInactive.Include, FindObjectsSortMode.None);
@@ -240,9 +248,11 @@ namespace Bayou.UI
 
             if (quest.IsActiveForHud)
             {
-                // Prefer the quest that just became active (Caliste shop quest, etc.).
-                _trackedQuestId = quest.info.id;
-                ApplyQuest(quest);
+                if (string.IsNullOrEmpty(_trackedQuestId) || _trackedQuestId == quest.info.id)
+                {
+                    _trackedQuestId = quest.info.id;
+                    ApplyQuest(quest);
+                }
                 return;
             }
 
@@ -285,9 +295,27 @@ namespace Bayou.UI
             ShowQuestPanel(true);
         }
 
+        public string TrackedQuestId => _trackedQuestId;
+
+        public void TrackQuest(string questId)
+        {
+            _trackedQuestId = string.IsNullOrWhiteSpace(questId) ? null : questId.Trim();
+            RefreshQuestFromManager();
+        }
+
         private void RefreshQuestFromManager()
         {
             var manager = QuestManager.Resolve();
+            if (manager != null &&
+                !string.IsNullOrEmpty(_trackedQuestId) &&
+                manager.TryGetQuest(_trackedQuestId, out var pinned) &&
+                pinned != null &&
+                pinned.IsActiveForHud)
+            {
+                ApplyQuest(pinned);
+                return;
+            }
+
             if (manager != null && manager.TryGetPrimaryActiveQuest(out var quest))
             {
                 _trackedQuestId = quest.info != null ? quest.info.id : null;
@@ -344,6 +372,7 @@ namespace Bayou.UI
         private static bool ShouldHideForMenus()
         {
             if (AudioSettings.IsOpen) return true;
+            if (QuestJournalHud.IsOpen) return true;
             if (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) return true;
             if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen) return true;
             if (IsDialogueOpen()) return true;

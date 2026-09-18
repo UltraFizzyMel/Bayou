@@ -78,6 +78,8 @@ public class QuestManager : MonoBehaviour
                 CheckRequirementsMet(quest))
             {
                 ChangeQuestState(quest.info.id, QuestState.CAN_START);
+                if (quest.info != null && quest.info.autoStart)
+                    StartQuest(quest.info.id);
             }
         }
     }
@@ -176,7 +178,13 @@ public class QuestManager : MonoBehaviour
             return;
         }
 
-        // Allow start from CAN_START or REQUIREMENTS_NOT_MET (Ink can ask before Update promotes state).
+        // Ink may fire before Update promotes REQUIREMENTS_NOT_MET → CAN_START.
+        if (quest.state == QuestState.REQUIREMENTS_NOT_MET && !CheckRequirementsMet(quest))
+        {
+            Debug.Log($"[QuestManager] StartQuest blocked — '{id}' requirements not met.");
+            return;
+        }
+
         ChangeQuestState(quest.info.id, QuestState.IN_PROGRESS);
         quest.InstantiateCurrentQuestStep(this.transform);
     }
@@ -204,7 +212,7 @@ public class QuestManager : MonoBehaviour
 
     private void ClaimRewards(Quest quest)
     {
-        // Rewards currently granted from Ink (money) / shop unlock via dialogue.
+        QuestRewards.Apply(quest);
     }
 
     private void QuestStepStateChange(string id, int stepIndex, QuestStepState questStepState)
@@ -245,17 +253,23 @@ public class QuestManager : MonoBehaviour
         return quest;
     }
 
+    public System.Collections.Generic.IEnumerable<Quest> AllQuests =>
+        questMap != null ? questMap.Values : System.Array.Empty<Quest>();
+
     public bool TryGetPrimaryActiveQuest(out Quest quest)
     {
         quest = null;
         if (questMap == null) return false;
 
-        if (questMap.TryGetValue("SnapperAndMollyQuest", out var caliste) &&
-            caliste != null && caliste.IsActiveForHud)
-        {
-            quest = caliste;
+        // Prefer the main Zenon spine while it's active.
+        if (TryActive(QuestIds.CollectPondItem, out quest) ||
+            TryActive(QuestIds.CollectLantern, out quest) ||
+            TryActive(QuestIds.BreakTheSeals, out quest) ||
+            TryActive(QuestIds.DestroyTheWitch, out quest) ||
+            TryActive(QuestIds.RitualComponents, out quest) ||
+            TryActive(QuestIds.SecondWayOut, out quest) ||
+            TryActive(QuestIds.EndTheme, out quest))
             return true;
-        }
 
         foreach (var candidate in questMap.Values)
         {
@@ -276,6 +290,12 @@ public class QuestManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    private bool TryActive(string id, out Quest quest)
+    {
+        quest = null;
+        return TryGetQuest(id, out quest) && quest != null && quest.IsActiveForHud;
     }
 
     public bool TryGetQuest(string id, out Quest quest)

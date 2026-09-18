@@ -78,8 +78,9 @@ namespace Bayou.Fishing
 
         [Header("Combat melee (when pursued)")]
         [SerializeField] private float meleeReach = 2.4f;
-        [SerializeField] private float meleeRadius = 1.25f;
-        [SerializeField] private float meleeCooldown = 0.4f;
+        [SerializeField] private float meleeArcDegrees = 140f;
+        [SerializeField] private float meleeGuaranteedRadius = 1.05f;
+        [SerializeField] private float meleeCooldown = 0.42f;
 
         private float _lastCastTime = -999f;
         private float _lastMeleeTime = -999f;
@@ -93,6 +94,7 @@ namespace Bayou.Fishing
         private LineRenderer _fishingLine;
         private bool _meleeMode;
         private float _nextMeleeCheck;
+        private MeleeSweepAttack _sweep;
 
         public float CurrentCharge01 { get; private set; }
 
@@ -134,6 +136,7 @@ namespace Bayou.Fishing
             EnsureDirectionLines();
             EnsureFishingLine();
             HideAllVisuals();
+            _sweep = GetComponent<MeleeSweepAttack>() ?? gameObject.AddComponent<MeleeSweepAttack>();
             if (GetComponent<FishingHud>() == null)
                 gameObject.AddComponent<FishingHud>();
         }
@@ -481,16 +484,16 @@ namespace Bayou.Fishing
         {
             if (!WasMeleePressedThisFrame()) return;
             if (Time.time - _lastMeleeTime < meleeCooldown) return;
+            if (_sweep != null && _sweep.IsSwinging) return;
 
             _lastMeleeTime = Time.time;
-            SetAnimBool("isSwinging", true);
+            SetAnimBool("isSwingingNet", true);
             CancelInvoke(nameof(ClearSwingFlag));
             Invoke(nameof(ClearSwingFlag), 0.28f);
-            Bayou.Audio.FishingAudio.Resolve()?.PlayHandNetScoop();
 
-            var origin = transform.position + Vector3.up * 0.9f;
-            var center = origin + GetCenterForwardXZ() * meleeReach;
-            ToolMelee.TryHitCreatures(center, meleeRadius, NetHitSource.MeleeRod);
+            if (_sweep == null)
+                _sweep = GetComponent<MeleeSweepAttack>() ?? gameObject.AddComponent<MeleeSweepAttack>();
+            _sweep.TryPlay(NetHitSource.MeleeRod, meleeReach, meleeArcDegrees, meleeGuaranteedRadius);
         }
 
         private bool WasMeleePressedThisFrame()
@@ -509,7 +512,7 @@ namespace Bayou.Fishing
             HideAllVisuals();
             _charging = false;
             CurrentCharge01 = 0f;
-            SetAnimBool("isSwinging", false);
+            SetAnimBool("isSwingingNet", false);
             SetAnimBool("isCasting", false);
         }
 
@@ -519,7 +522,7 @@ namespace Bayou.Fishing
                 animator.SetBool(param, value);
         }
 
-        private void ClearSwingFlag() => SetAnimBool("isSwinging", false);
+        private void ClearSwingFlag() => SetAnimBool("isSwingingNet", false);
 
         private float SampleCharge01()
         {

@@ -55,9 +55,13 @@ namespace Bayou.Fishing
         [SerializeField] private Color peakRingColor = new(0.55f, 1f, 0.7f, 1f);
 
         [Header("Combat melee (when pursued)")]
-        [SerializeField] private float meleeReach = 2.1f;
-        [SerializeField] private float meleeRadius = 1.35f;
-        [SerializeField] private float meleeCooldown = 0.35f;
+        [Tooltip("Max distance from the player that a swing can connect.")]
+        [SerializeField] private float meleeReach = 2.4f;
+        [Tooltip("Forward cone. Creatures inside this angle are hittable.")]
+        [SerializeField] private float meleeArcDegrees = 140f;
+        [Tooltip("Inside this radius a swing always hits, even beside / behind you.")]
+        [SerializeField] private float meleeGuaranteedRadius = 1.05f;
+        [SerializeField] private float meleeCooldown = 0.42f;
         [SerializeField] private Color combatRingColor = new(0.95f, 0.25f, 0.2f, 0.9f);
         [Tooltip("How far away a hunting creature can be for combat mode to engage.")]
         [SerializeField] private float pursuitDetectRange = 45f;
@@ -83,6 +87,7 @@ namespace Bayou.Fishing
         private Coroutine _swingRoutine;
         private float _ignoreInputUntil;
         private float _nextModeCheck;
+        private MeleeSweepAttack _sweep;
 
         public HandNetMode Mode => _mode;
         public bool IsCombatMode => _mode == HandNetMode.Combat;
@@ -107,6 +112,8 @@ namespace Bayou.Fishing
         private void OnDisable()
         {
             CancelCharge();
+            if (animator != null)
+                animator.SetBool("isSwingingNet", false);
             useNetAction?.action?.Disable();
             if (areaRing != null)
                 areaRing.enabled = false;
@@ -116,6 +123,7 @@ namespace Bayou.Fishing
         private void Awake()
         {
             EnsureRing();
+            _sweep = GetComponent<MeleeSweepAttack>() ?? gameObject.AddComponent<MeleeSweepAttack>();
         }
 
         private void LateUpdate()
@@ -123,6 +131,14 @@ namespace Bayou.Fishing
             if (!enabled) return;
 
             RefreshMode();
+
+            if (_mode == HandNetMode.Combat)
+            {
+                HideGhost();
+                DrawCombatWedge();
+                _hasCenter = true;
+                return;
+            }
 
             if (!TryGetNetCenter(out var center))
             {
@@ -134,13 +150,6 @@ namespace Bayou.Fishing
 
             _hasCenter = true;
             _lastCenter = center;
-
-            if (_mode == HandNetMode.Combat)
-            {
-                HideGhost();
-                DrawRing(center, meleeRadius, combatRingColor, 0.07f);
-                return;
-            }
 
             if (_charging)
             {
@@ -246,13 +255,14 @@ namespace Bayou.Fishing
                 return;
             if (Time.time - _lastUseTime < meleeCooldown)
                 return;
-            if (!_hasCenter || !TryGetNetCenter(out var center))
+            if (_sweep != null && _sweep.IsSwinging)
                 return;
 
             _lastUseTime = Time.time;
             PlaySwingAnim();
-            Bayou.Audio.FishingAudio.Resolve()?.PlayHandNetScoop();
-            TryMeleeSwing(center, meleeRadius);
+            if (_sweep == null)
+                _sweep = GetComponent<MeleeSweepAttack>() ?? gameObject.AddComponent<MeleeSweepAttack>();
+            _sweep.TryPlay(NetHitSource.MeleeNet, meleeReach, meleeArcDegrees, meleeGuaranteedRadius);
         }
 
         private void ThrowAtCurrentCircle(float quality)
@@ -279,7 +289,7 @@ namespace Bayou.Fishing
         {
             _lastUseTime = Time.time;
             if (animator != null)
-                animator.SetBool("isSwinging", false);
+                animator.SetBool("isSwingingNet", false);
         }
 
         private void CancelCharge()
@@ -346,8 +356,7 @@ namespace Bayou.Fishing
             center = default;
             var origin = netOrigin != null ? netOrigin.position : transform.position + Vector3.up * 0.1f;
             var flat = GetFlatForward();
-            var reach = _mode == HandNetMode.Combat ? meleeReach : maxReach;
-            var horizontal = origin + flat * reach;
+            var horizontal = origin + flat * maxReach;
 
             if (Physics.Raycast(horizontal + Vector3.up * 4f, Vector3.down, out var hit, 12f, surfaceMask,
                     QueryTriggerInteraction.Collide))
@@ -362,9 +371,12 @@ namespace Bayou.Fishing
 
         private Vector3 GetFlatForward() => BayouFacing.GetCardinalForward8(transform);
 
-        private void TryMeleeSwing(Vector3 center, float radius)
+        private static Vector3 GetAimForward(Transform t)
         {
-            TryHitCreaturesInArea(center, radius, NetHitSource.MeleeNet);
+            if (t == null) return Vector3.forward;
+            var fwd = t.forward;
+            fwd.y = 0f;
+            return fwd.sqrMagnitude < 1e-6f ? Vector3.forward : fwd.normalized;
         }
 
         private bool TryHitCreaturesInArea(Vector3 center, float radius, NetHitSource source)
@@ -412,9 +424,11 @@ namespace Bayou.Fishing
         private void PlaySwingAnim()
         {
             if (animator == null)
+                animator = GetComponentInChildren<Animator>();
+            if (animator == null)
                 return;
 
-            animator.SetBool("isSwinging", true);
+            animator.SetBool("isSwingingNet", true);
             if (_swingRoutine != null)
                 StopCoroutine(_swingRoutine);
             _swingRoutine = StartCoroutine(ClearSwingFlag());
@@ -424,7 +438,7 @@ namespace Bayou.Fishing
         {
             yield return new WaitForSeconds(0.28f);
             if (animator != null)
-                animator.SetBool("isSwinging", false);
+                animator.SetBool("isSwingingNet", false);
             _swingRoutine = null;
         }
 
@@ -482,9 +496,58 @@ namespace Bayou.Fishing
             WriteCircle(peakGhostRing, center, radius, color, 0.03f);
         }
 
+        private void DrawCombatWedge()
+        {
+            if (areaRing == null) return;
+
+            var origin = transform.position;
+            origin.y += 0.04f;
+            var swinging = _sweep != null && _sweep.IsSwinging;
+            var forward = swinging ? _sweep.LockedForward : GetAimForward(transform);
+            var range = Mathf.Max(0.6f, meleeReach);
+            var half = Mathf.Clamp(meleeArcDegrees, 20f, 180f) * 0.5f;
+            var n = Mathf.Clamp(ringSegments, 10, 48);
+
+            areaRing.loop = false;
+            var color = combatRingColor;
+            if (swinging)
+                color = Color.Lerp(combatRingColor, Color.white, 0.45f);
+            if (areaRing.material != null)
+                areaRing.material.color = color;
+            areaRing.startColor = color;
+            areaRing.endColor = color;
+            areaRing.startWidth = swinging ? 0.09f : 0.07f;
+            areaRing.endWidth = swinging ? 0.09f : 0.07f;
+
+            // Full wedge, plus a hotter blade tick at the current sweep yaw.
+            var extra = swinging ? 3 : 0;
+            areaRing.positionCount = n + 3 + extra;
+            areaRing.SetPosition(0, origin);
+
+            for (var i = 0; i <= n; i++)
+            {
+                var t = i / (float)n;
+                var yaw = Mathf.Lerp(-half, half, t);
+                var dir = Quaternion.AngleAxis(yaw, Vector3.up) * forward;
+                areaRing.SetPosition(i + 1, origin + dir * range);
+            }
+
+            areaRing.SetPosition(n + 2, origin);
+
+            if (swinging)
+            {
+                var blade = Quaternion.AngleAxis(_sweep.CurrentYawDegrees, Vector3.up) * forward;
+                var tip = origin + blade * range;
+                areaRing.SetPosition(n + 3, origin);
+                areaRing.SetPosition(n + 4, tip);
+                areaRing.SetPosition(n + 5, origin);
+            }
+        }
+
         private void DrawRing(Vector3 center, float radius, Color color, float width)
         {
             if (areaRing == null) return;
+            areaRing.loop = true;
             WriteCircle(areaRing, center, radius, color, width);
         }
 

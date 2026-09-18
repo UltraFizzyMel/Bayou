@@ -13,12 +13,14 @@ MonoBehaviour:
   m_Name: CollectPondItemQuest
   m_EditorClassIdentifier: Assembly-CSharp::QuestInfoSO
   <id>k__BackingField: CollectPondItemQuest
-  displayName: The Church Pond Rosary
+  displayName: The Start of it all
   netLevelRequirement: 0
   rodLevelRequirement: 0
   mainQuestLevel: 0
   questPrerequistes: []
   questStepPrefabs:
   - {fileID: 790324185953897356, guid: 71dee48d785ec5343b3e8b5b178d46b4, type: 3}
+  autoStart: 0
+  autoComplete: 0
   moneyReward: 0
-  MiscReward: 
+  MiscReward: Church graveyard gate key

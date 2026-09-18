@@ -148,18 +148,10 @@ public class DialogueManager : MonoBehaviour
         var manager = QuestManager.Resolve();
         if (manager == null) return;
 
-        // Known quest ids from globals.ink — push live QuestManager state into Ink.
-        string[] ids =
+        foreach (var quest in manager.AllQuests)
         {
-            "CollectPondItemQuest",
-            "CollectLanternQuest",
-            "SnapperAndMollyQuest"
-        };
-
-        foreach (var id in ids)
-        {
-            if (manager.TryGetQuest(id, out var quest) && quest != null)
-                ApplyQuestStateToDialogue(id, quest.state);
+            if (quest?.info == null) continue;
+            ApplyQuestStateToDialogue(quest.info.id, quest.state);
         }
     }
 

@@ -27,8 +27,11 @@ namespace Bayou.Rendering
                 }
 
                 _cachedUnlit =
+                    Shader.Find("HDRP/Unlit") ??
+                    Shader.Find("HDRenderPipeline/Unlit") ??
                     Shader.Find("Universal Render Pipeline/Unlit") ??
                     Shader.Find("Universal Render Pipeline/Lit") ??
+                    Shader.Find("HDRP/Lit") ??
                     Shader.Find("Sprites/Default") ??
                     Shader.Find("Unlit/Color") ??
                     Shader.Find("Hidden/InternalErrorShader");
@@ -52,9 +55,18 @@ namespace Bayou.Rendering
             else
                 mat = new Material(shader);
 
+            ApplyColor(mat, color);
+            return mat;
+        }
+
+        public static void ApplyColor(Material mat, Color color)
+        {
+            if (mat == null) return;
             if (mat.HasProperty("_BaseColor")) mat.SetColor("_BaseColor", color);
             if (mat.HasProperty("_Color")) mat.SetColor("_Color", color);
-            return mat;
+            if (mat.HasProperty("_UnlitColor")) mat.SetColor("_UnlitColor", color);
+            if (mat.HasProperty("_EmissiveColor")) mat.SetColor("_EmissiveColor", color * 0.35f);
+            if (mat.HasProperty("_EmissionColor")) mat.SetColor("_EmissionColor", color * 0.25f);
         }
     }
 }

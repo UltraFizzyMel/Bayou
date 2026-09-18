@@ -115,6 +115,12 @@ namespace Bayou.Fishing
                 gameObject.AddComponent<FishingInteractionPromptSource>();
 
             EnsureHeldVisuals();
+            if (animator == null)
+                animator = GetComponentInChildren<Animator>();
+            if (handNet != null && handNet.animator == null)
+                handNet.animator = animator;
+            if (rodCaster != null && rodCaster.animator == null)
+                rodCaster.animator = animator;
             // Disable tools before the first Update so a Play-mode click cannot auto-cast.
             ApplyItem(startingItem);
         }
@@ -184,27 +190,18 @@ namespace Bayou.Fishing
         private void Update()
         {
             UpdatePursuitContext();
+            SyncHeldAnimator();
 
             if (EquipmentHotwheel.SuppressLegacyToolKeys)
             {
                 if (WasSelect(selectNoneAction, Key.Digit0))
-                {
                     ApplyItem(BayouHeldItem.None);
-                    if (animator != null)
-                    {
-                        animator.SetBool("isHoldingRod", false);
-                        animator.SetBool("isHoldingLantern", false);
-                    }
-                }
-
                 return;
             }
 
             if (WasSelect(selectNoneAction, Key.Digit0, Key.Backquote))
             {
                 ApplyItem(BayouHeldItem.None);
-                animator.SetBool("isHoldingRod", false);
-                animator.SetBool("isHoldingLantern", false);
                 return;
             }
 
@@ -216,8 +213,6 @@ namespace Bayou.Fishing
                     return;
                 }
 
-                animator.SetBool("isHoldingRod", true);
-                animator.SetBool("isHoldingLantern", false);
                 ApplyItem(BayouHeldItem.Rod);
                 return;
             }
@@ -230,8 +225,6 @@ namespace Bayou.Fishing
                     return;
                 }
 
-                animator.SetBool("isHoldingRod", true);
-                animator.SetBool("isHoldingLantern", false);
                 ApplyItem(BayouHeldItem.Net);
                 return;
             }
@@ -244,8 +237,6 @@ namespace Bayou.Fishing
                     return;
                 }
 
-                animator.SetBool("isHoldingRod", false);
-                animator.SetBool("isHoldingLantern", true);
                 ApplyItem(BayouHeldItem.Lantern);
                 return;
             }
@@ -275,15 +266,7 @@ namespace Bayou.Fishing
                 var rodBusy = rodCaster != null &&
                               (rodCaster.Phase != FishingCastPhase.Idle || rodCaster.HasActiveNet);
                 if (!rodBusy)
-                {
-                    if (animator != null)
-                    {
-                        animator.SetBool("isHoldingRod", true);
-                        animator.SetBool("isHoldingLantern", false);
-                    }
-
                     ApplyItem(BayouHeldItem.Net);
-                }
             }
 
             _wasPursued = IsPursued;
@@ -351,6 +334,7 @@ namespace Bayou.Fishing
             }
 
             CurrentItem = item;
+            SyncHeldAnimator();
 
             if (rodCaster != null)
                 rodCaster.enabled = item == BayouHeldItem.Rod;
@@ -372,6 +356,18 @@ namespace Bayou.Fishing
                            heldLantern.GetComponentInChildren<HeldLantern>(true);
 
             _lantern?.SetLit(item == BayouHeldItem.Lantern);
+        }
+
+        /// <summary>
+        /// Rod and lantern have dedicated hold/swim clips. The net is a prop on the
+        /// default idle/walk — sharing <c>isHoldingRod</c> made every net swim exit
+        /// snap into the rod hold pose.
+        /// </summary>
+        private void SyncHeldAnimator()
+        {
+            if (animator == null) return;
+            animator.SetBool("isHoldingRod", CurrentItem == BayouHeldItem.Rod);
+            animator.SetBool("isHoldingLantern", CurrentItem == BayouHeldItem.Lantern);
         }
 
         private void EnsureHeldVisuals()

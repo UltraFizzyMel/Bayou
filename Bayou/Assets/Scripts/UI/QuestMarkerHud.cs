@@ -66,6 +66,7 @@ namespace Bayou.UI
         private bool ShouldHide()
         {
             if (AudioSettings.IsOpen) return true;
+            if (QuestJournalHud.IsOpen) return true;
             if (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) return true;
             if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen) return true;
             var dialogue = DialogueManager.GetInstance();
@@ -85,8 +86,21 @@ namespace Bayou.UI
         {
             _hasTarget = false;
             var manager = QuestManager.Resolve();
-            if (manager == null || !manager.TryGetPrimaryActiveQuest(out var quest))
+            if (manager == null) return false;
+
+            Quest quest = null;
+            var trackedId = GameplayHud.Instance != null ? GameplayHud.Instance.TrackedQuestId : null;
+            if (!string.IsNullOrEmpty(trackedId) &&
+                manager.TryGetQuest(trackedId, out var pinned) &&
+                pinned != null &&
+                pinned.IsActiveForHud)
+            {
+                quest = pinned;
+            }
+            else if (!manager.TryGetPrimaryActiveQuest(out quest))
+            {
                 return false;
+            }
 
             if (!QuestObjectiveLocator.TryResolve(quest, manager, _player, out var objective))
                 return false;

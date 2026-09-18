@@ -130,7 +130,13 @@ public static class QuestObjectiveLocator
 
         if (questId.IndexOf("Snapper", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
             questId.IndexOf("Molly", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-            questId.IndexOf("Fish", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            questId.IndexOf("Fish", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+            questId.IndexOf("Dinner", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+            questId.IndexOf("Gar", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+            questId.IndexOf("Ride", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+            questId.IndexOf("Horizons", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+            questId.IndexOf("Ritual", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+            questId.IndexOf("Delivery", System.StringComparison.OrdinalIgnoreCase) >= 0)
         {
             if (TryFindNearestNeededFish(near, out pos, out label))
                 return true;
@@ -249,11 +255,15 @@ public static class QuestObjectiveLocator
         pos = default;
         label = null;
 
-        // Caliste handles fish turn-in; Landry/Zenon handle pond + lantern.
         string[] names;
-        if (questId.IndexOf("Snapper", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-            questId.IndexOf("Molly", System.StringComparison.OrdinalIgnoreCase) >= 0)
+        if (IsCalisteQuest(questId))
             names = CalisteNames;
+        else if (IsOlivierQuest(questId))
+            names = OlivierNames;
+        else if (IsMarieQuest(questId))
+            names = MarieNames;
+        else if (IsSabineQuest(questId))
+            names = SabineNames;
         else
             // Never match the graveyard "Landry" mausoleum — that sent the pond turn-in across the map.
             names = LandryNames;
@@ -282,6 +292,32 @@ public static class QuestObjectiveLocator
 
     private static readonly string[] CalisteNames = { "Caliste", "Caliste NPC", "NPC_Caliste" };
     private static readonly string[] LandryNames = { "Church NPC", "Zenon Landry", "Father Landry", "NPC_Landry" };
+    private static readonly string[] OlivierNames = { "Olivier", "Olivier Baptiste", "Mr Baptiste", "NPC_Olivier" };
+    private static readonly string[] MarieNames = { "Marie", "Marie-Claire", "Marie Claire", "NPC_Marie" };
+    private static readonly string[] SabineNames = { "Sabine", "NPC_Sabine" };
+
+    private static bool IsCalisteQuest(string questId) =>
+        ContainsAny(questId, "Snapper", "Molly", "Cargo", "Herbalist", "SharedDinner");
+
+    private static bool IsOlivierQuest(string questId) =>
+        ContainsAny(questId, "EmergencyDinner", "LostAccordion", "MealToDieForOlivier");
+
+    private static bool IsMarieQuest(string questId) =>
+        ContainsAny(questId, "PaymentForARide", "ExpandedHorizons", "AccordionDisposal", "MealToDieForMarie");
+
+    private static bool IsSabineQuest(string questId) =>
+        ContainsAny(questId, "SpecialDelivery", "VisitGraves", "LostSupplies", "CatfishAndGar");
+
+    private static bool ContainsAny(string questId, params string[] tokens)
+    {
+        if (string.IsNullOrWhiteSpace(questId) || tokens == null) return false;
+        for (var i = 0; i < tokens.Length; i++)
+        {
+            if (questId.IndexOf(tokens[i], System.StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+        }
+        return false;
+    }
     private static readonly Dictionary<string, Transform> NamedCache = new();
     private static readonly Dictionary<string, float> NamedMissUntil = new();
 

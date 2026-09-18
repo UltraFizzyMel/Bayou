@@ -12,6 +12,8 @@ namespace Bayou.Inventory.Shop
         public string compartmentId = "case";
         public int gridX = -1;
         public int gridY = -1;
+        [Tooltip("WorldFlags key required before this stock appears. Empty = always listed.")]
+        public string requiredWorldFlag;
     }
 
     [CreateAssetMenu(menuName = "Bayou/Shop/Shop Definition", fileName = "Shop_")]
@@ -32,6 +34,9 @@ namespace Bayou.Inventory.Shop
             foreach (var entry in stock)
             {
                 if (entry?.item == null) continue;
+                if (!string.IsNullOrWhiteSpace(entry.requiredWorldFlag) &&
+                    !WorldFlags.Has(entry.requiredWorldFlag))
+                    continue;
                 if (IsUniqueAlreadyOwned(entry.item, playerInventory))
                     continue;
 

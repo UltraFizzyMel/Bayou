@@ -1,149 +1,149 @@
- INCLUDE globals.ink
- EXTERNAL StartQuest(questId)
- EXTERNAL AdvanceQuest(questId)
- EXTERNAL FinishQuest(questId)
- EXTERNAL HasItem(itemId, count)
- EXTERNAL HandOverItem(itemId, count)
- EXTERNAL GiveItem(itemId, count)
- EXTERNAL GrantKey(flagName)
-
- #portrait: father_landry_neutral #layout: left #background: church
-->collectPondItemStart
-
-=== collectPondItemStart ===
-#portrait: father_landry_neutral #layout: left #background: church
-{ CollectPondItemQuestState :
-    - "CAN_START": 
-     {first_meeting == true: ->FirstMeeting.Intro}
-    
-    - "IN_PROGRESS": -> DeliverItem
-    - "CAN_FINISH": -> DeliverItem
-    - "FINISHED":  ->CollectLanternStart
-    - else: -> END
- }
- 
- === CollectLanternStart ===
-{ CollectLanternQuestState :
-    - "CAN_START": -> LanternReminder
-    - "IN_PROGRESS": -> LanternReminder
-    - "CAN_FINISH": -> LanternFound
-    - "FINISHED": -> LanternFound
-    - else: -> END
- }
-
-=== LanternReminder ===
-The lantern waits past Caliste's maze gate — north-east through the foggy graves.
-My graveyard key will not open her gate.
-Buy the Foggy Marsh Key from Caliste once she trusts you.
-Be careful out there.
--> END
-
-=== LanternFound ===
-{ HasItem("Item_Lantern", 1):
-    The lantern… you found it.
-    Rest now, child. You've seen enough of this bayou for one night.
-    -> END
-- else:
-    -> LanternReminder
-}
- 
- 
- === FirstMeeting ===
- =Intro
- ~first_meeting = false
- Well now… I didn't expect to find a single soul out here after sundown.
- Perhaps you are looking for something or someone long lost?
- +[I can't leave...]
- -> FirstMeeting.Answer
- +[I can't remember...]
- -> FirstMeeting.Answer
- 
- =Answer
- Oh my how... unfortunate. It seems the bayou has taken its toll.
- No-one can walk into these waters unscathed.
- I might be able to help you if you return the favour.
- Find the rosary in the church pond.
- You'll know it when you see it.
- + {HasItem("Item_RosaryNecklace", 1)} [Do you mean this?] ->DeliveredItem
- +[Right away.]
-     ~StartQuest(CollectPondItemQuestId)
-     ->END
- 
- ===DeliverItem
- Welcome back!
- Did you find it?
-    +[Not Yet…] -> UnDeliveredItem
-    +{HasItem("Item_RosaryNecklace", 1)}[I have.] ->DeliveredItem
- 
- ===UnDeliveredItem
- Come back as soon as you have it. ->END
- 
- === DeliveredItem ===
- ~ temp handed = HandOverItem("Item_RosaryNecklace", 1)
- { handed:
-    ~ FinishQuest(CollectPondItemQuestId)
-    Excellent! Teach a man to fish and they'll fish indeed.
-    Take this cross. 
-    As long as you wear it, you'll be protected from that which lurks in the Bayou's shadows.
-    ->Agree
- - else:
-    Hmm… I don't see the rosary on you. Come back when you have it.
-    -> END
- }
- 
- 
- === Agree ===
- Agree to do a little favor for me and it's all yours.
- +[Of Course!]
- ->Agreed
- +{Agree}[Of Course?]
- ->Agreed
- +{Agree >= 2}[Of Course...]
- ->Agreed
- +{Agree <= 2}[Maybe another time?]
- ->Agree
- 
- ===Agreed ===
- Excellent! To venture into the bayou's depths, you'll need to first fetch a lantern for me. 
- ~StartQuest(CollectLanternQuestId)
- Take this key, it will unlock the NorthWest gate to the graveyard.
- ~ GiveItem("Item_ChurchGraveyardKey", 1)
- ~ GrantKey("hasKeyChurchToGraveyard")
- What better place to do some soul searching?
- Be careful out there. Not everything is as it seems… 
- Your eyes and ears will be your greatest deceivers.
- ->END
- 
-=== knownName ===
-#speaker: Father Landry
-It's good to see you again.
--> service
-
-=== service ===
-How might I be of service?
-->questions
-
-=== questions ===
-+[Who are you?]
- { priest_name == "":-> introduction("Landry") | -> repeatName}
-+[Where am I?]
- -> location
-+[Chat Later]
- -> goodbye
- 
- === introduction(name) ===
- ~ priest_name = name
- The name is <color=\#F8FF30>Father Landry.</color> #speaker: Father Landry
- -> questions
- 
- === repeatName ===
- Call me Landry... 
- ->questions
- 
- === location ===
- The Bayou... You must have hit your head hard.
- -> questions
- 
- === goodbye ===
- until next time my friend.
- -> END
+ INCLUDE globals.ink
+ EXTERNAL StartQuest(questId)
+ EXTERNAL AdvanceQuest(questId)
+ EXTERNAL FinishQuest(questId)
+ EXTERNAL HasItem(itemId, count)
+ EXTERNAL HandOverItem(itemId, count)
+ EXTERNAL GiveItem(itemId, count)
+ EXTERNAL GrantKey(flagName)
+
+ #portrait: father_landry_neutral #layout: left #background: church
+->collectPondItemStart
+
+=== collectPondItemStart ===
+#portrait: father_landry_neutral #layout: left #background: church
+{ CollectPondItemQuestState :
+    - "CAN_START": 
+     {first_meeting == true: ->FirstMeeting.Intro}
+    
+    - "IN_PROGRESS": -> DeliverItem
+    - "CAN_FINISH": -> DeliverItem
+    - "FINISHED":  ->CollectLanternStart
+    - else: -> END
+ }
+ 
+ === CollectLanternStart ===
+{ CollectLanternQuestState :
+    - "CAN_START": -> LanternReminder
+    - "IN_PROGRESS": -> LanternReminder
+    - "CAN_FINISH": -> LanternFound
+    - "FINISHED": -> LanternFound
+    - else: -> END
+ }
+
+=== LanternReminder ===
+The lantern waits past Caliste's maze gate — north-east through the foggy graves.
+My graveyard key will not open her gate.
+Buy the Foggy Marsh Key from Caliste once she trusts you.
+Be careful out there.
+-> END
+
+=== LanternFound ===
+{ HasItem("Item_Lantern", 1):
+    The lantern… you found it.
+    Rest now, child. You've seen enough of this bayou for one night.
+    -> END
+- else:
+    -> LanternReminder
+}
+ 
+ 
+ === FirstMeeting ===
+ =Intro
+ ~first_meeting = false
+ Well now… I didn't expect to find a single soul out here after sundown.
+ Perhaps you are looking for something or someone long lost?
+ +[I can't leave...]
+ -> FirstMeeting.Answer
+ +[I can't remember...]
+ -> FirstMeeting.Answer
+ 
+ =Answer
+ Oh my how... unfortunate. It seems the bayou has taken its toll.
+ No-one can walk into these waters unscathed.
+ I might be able to help you if you return the favour.
+ Find the rosary in the church pond.
+ You'll know it when you see it.
+ + {HasItem("Item_RosaryNecklace", 1)} [Do you mean this?] ->DeliveredItem
+ +[Right away.]
+     ~StartQuest(CollectPondItemQuestId)
+     ->END
+ 
+ ===DeliverItem
+ Welcome back!
+ Did you find it?
+    +[Not Yet…] -> UnDeliveredItem
+    +{HasItem("Item_RosaryNecklace", 1)}[I have.] ->DeliveredItem
+ 
+ ===UnDeliveredItem
+ Come back as soon as you have it. ->END
+ 
+ === DeliveredItem ===
+ ~ temp handed = HandOverItem("Item_RosaryNecklace", 1)
+ { handed:
+    ~ FinishQuest(CollectPondItemQuestId)
+    Excellent! Teach a man to fish and they'll fish indeed.
+    Take this cross. 
+    As long as you wear it, you'll be protected from that which lurks in the Bayou's shadows.
+    ->Agree
+ - else:
+    Hmm… I don't see the rosary on you. Come back when you have it.
+    -> END
+ }
+ 
+ 
+ === Agree ===
+ Agree to do a little favor for me and it's all yours.
+ +[Of Course!]
+ ->Agreed
+ +{Agree}[Of Course?]
+ ->Agreed
+ +{Agree >= 2}[Of Course...]
+ ->Agreed
+ +{Agree <= 2}[Maybe another time?]
+ ->Agree
+ 
+ ===Agreed ===
+ Excellent! To venture into the bayou's depths, you'll need to first fetch a lantern for me. 
+ ~StartQuest(CollectLanternQuestId)
+ Take this key, it will unlock the NorthWest gate to the graveyard.
+ ~ GiveItem("Item_ChurchGraveyardKey", 1)
+ ~ GrantKey("hasKeyChurchToGraveyard")
+ What better place to do some soul searching?
+ Be careful out there. Not everything is as it seems… 
+ Your eyes and ears will be your greatest deceivers.
+ ->END
+ 
+=== knownName ===
+#speaker: Father Landry
+It's good to see you again.
+-> service
+
+=== service ===
+How might I be of service?
+->questions
+
+=== questions ===
++[Who are you?]
+ { priest_name == "":-> introduction("Landry") | -> repeatName}
++[Where am I?]
+ -> location
++[Chat Later]
+ -> goodbye
+ 
+ === introduction(name) ===
+ ~ priest_name = name
+ The name is <color=\#F8FF30>Father Landry.</color> #speaker: Father Landry
+ -> questions
+ 
+ === repeatName ===
+ Call me Landry... 
+ ->questions
+ 
+ === location ===
+ The Bayou... You must have hit your head hard.
+ -> questions
+ 
+ === goodbye ===
+ until next time my friend.
+ -> END

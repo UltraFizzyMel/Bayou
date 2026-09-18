@@ -34,6 +34,23 @@ namespace Bayou.Audio
             source.PlayOneShot(clip, Mathf.Clamp01(volume));
         }
 
+        public void PlayOneShotPitched(AudioClip clip, float volume = 1f, float pitch = 1f)
+        {
+            if (clip == null) return;
+            var go = new GameObject("SfxPitched");
+            go.transform.SetParent(transform, false);
+            var src = go.AddComponent<AudioSource>();
+            src.playOnAwake = false;
+            src.spatialBlend = 0f;
+            src.clip = clip;
+            src.volume = Mathf.Clamp01(volume);
+            src.pitch = Mathf.Clamp(pitch, 0.4f, 2.2f);
+            if (outputGroup != null)
+                src.outputAudioMixerGroup = outputGroup;
+            src.Play();
+            Destroy(go, clip.length / Mathf.Max(0.2f, src.pitch) + 0.05f);
+        }
+
         public void PlayLoop(AudioClip clip, float volume = 1f)
         {
             if (clip == null) return;

@@ -41,7 +41,3 @@ Don't gotta answer, wanna hear some of my tunes?
  === goodbye ===
  until next time my friend.
  -> END
- 
- 
- 
- 

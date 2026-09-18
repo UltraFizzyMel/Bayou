@@ -115,6 +115,7 @@ namespace Bayou.UI
         private static bool ShouldHide()
         {
             if (AudioSettings.IsOpen) return true;
+            if (QuestJournalHud.IsOpen) return true;
             if (Bayou.Inventory.Shop.ShopUIController.ActiveShop != null &&
                 Bayou.Inventory.Shop.ShopUIController.ActiveShop.IsOpen) return true;
             if (Bayou.Save.BonfireUIController.Active != null &&

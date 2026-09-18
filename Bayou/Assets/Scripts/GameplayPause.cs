@@ -21,6 +21,7 @@ namespace Bayou
                 IsInventoryOpen() ||
                 CaughtFishPresenter.IsBusy ||
                 AudioSettings.IsOpen ||
+                Bayou.UI.QuestJournalHud.IsOpen ||
                 (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) ||
                 (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen);
 

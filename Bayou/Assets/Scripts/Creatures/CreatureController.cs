@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Bayou.Combat;
 using Bayou.Inventory;
 using UnityEngine;
 
@@ -53,7 +54,8 @@ namespace Bayou.Creatures
         [SerializeField] private float meleeHitDamage = 1f;
         [SerializeField] private float hitStunSeconds = 0.35f;
         [SerializeField] private float hitInvulnSeconds = 0.25f;
-        [SerializeField] private float hitKnockback = 1.6f;
+        [SerializeField] private float hitKnockback = 2.4f;
+        [SerializeField] private float hitKnockbackSpeed = 9f;
 
         [Header("Chase")]
         [SerializeField] private float stopChaseDistance = 0.9f;
@@ -73,8 +75,14 @@ namespace Bayou.Creatures
         private float _health;
         private Vector3 _moveDir = Vector3.forward;
         private CreaturePlaceholderVisual _visual;
+        private Vector3 _knockVel;
+        private float _hudUntil;
+        private bool _dying;
+        private float _dieAt;
+        private float _hpFlashUntil;
 
         public CreatureMode Mode => _mode;
+        public CreatureNetBehavior NetBehavior => netBehavior;
         public bool IsActive => _mode == CreatureMode.Active;
         public bool IsStunned => Time.time < _stunUntil;
         public bool IsCaught => _caught;
@@ -101,6 +109,13 @@ namespace Bayou.Creatures
             _sense = GetComponent<CreatureSense>();
             _sense.EnsurePlayer();
             _visual = GetComponent<CreaturePlaceholderVisual>();
+            if (_visual == null)
+                _visual = gameObject.AddComponent<CreaturePlaceholderVisual>();
+            _visual.Configure(
+                netBehavior == CreatureNetBehavior.StunOnNet
+                    ? new Color(0.22f, 0.42f, 0.22f, 1f)
+                    : new Color(0.42f, 0.86f, 0.28f, 1f),
+                crocodileShape: netBehavior == CreatureNetBehavior.StunOnNet);
             if (netBehavior == CreatureNetBehavior.StunOnNet && maxHealth <= 3.01f)
                 maxHealth = 8f;
             _health = Mathf.Max(1f, maxHealth);
@@ -114,9 +129,26 @@ namespace Bayou.Creatures
                 _patrolIndex = 0;
         }
 
+        private void Start()
+        {
+            SnapBodyToGround();
+        }
+
         private void Update()
         {
-            if (_caught || _dead) return;
+            if (_caught) return;
+
+            if (_dying)
+            {
+                if (Time.time >= _dieAt)
+                    FinishDeath();
+                return;
+            }
+
+            ApplyKnockback(Time.deltaTime);
+            _visual?.SetStunned(IsStunned);
+
+            if (_dead) return;
 
             if (IsStunned)
                 return;
@@ -274,25 +306,40 @@ namespace Bayou.Creatures
             return Mathf.Max(2f, Flat(edge - center).magnitude);
         }
 
+        private void ApplyKnockback(float dt)
+        {
+            if (_knockVel.sqrMagnitude < 0.0001f) return;
+            transform.position += _knockVel * dt;
+            _knockVel = Vector3.Lerp(_knockVel, Vector3.zero, 1f - Mathf.Exp(-10f * dt));
+            if (_knockVel.sqrMagnitude < 0.04f)
+                _knockVel = Vector3.zero;
+        }
+
         private void OnGUI()
         {
-            if (!IsAlive || _health >= maxHealth - 0.01f) return;
+            if (!IsAlive && !_dying) return;
+            var show = _health < maxHealth - 0.01f || Time.time < _hudUntil || _mode == CreatureMode.Active;
+            if (!show) return;
+
             var cam = Camera.main;
             if (cam == null) return;
-            var world = transform.position + Vector3.up * 1.35f;
+            var world = transform.position + Vector3.up * 1.45f;
             var screen = cam.WorldToScreenPoint(world);
             if (screen.z <= 0.1f) return;
 
-            const float width = 42f;
-            const float height = 6f;
+            const float width = 56f;
+            const float height = 8f;
             var x = screen.x - width * 0.5f;
             var y = Screen.height - screen.y - height;
             var fill = Mathf.Clamp01(_health / Mathf.Max(0.01f, maxHealth));
-            GUI.color = new Color(0f, 0f, 0f, 0.65f);
+            GUI.color = new Color(0f, 0f, 0f, 0.75f);
             GUI.DrawTexture(new Rect(x - 1f, y - 1f, width + 2f, height + 2f), Texture2D.whiteTexture);
-            GUI.color = new Color(0.25f, 0.08f, 0.08f, 0.9f);
+            GUI.color = new Color(0.18f, 0.06f, 0.06f, 0.95f);
             GUI.DrawTexture(new Rect(x, y, width, height), Texture2D.whiteTexture);
-            GUI.color = Color.Lerp(new Color(0.85f, 0.2f, 0.15f), new Color(0.35f, 0.85f, 0.3f), fill);
+            var fillColor = Time.time < _hpFlashUntil
+                ? new Color(1f, 1f, 0.85f, 1f)
+                : Color.Lerp(new Color(0.85f, 0.2f, 0.15f), new Color(0.35f, 0.85f, 0.3f), fill);
+            GUI.color = fillColor;
             GUI.DrawTexture(new Rect(x, y, width * fill, height), Texture2D.whiteTexture);
             GUI.color = Color.white;
         }
@@ -304,8 +351,16 @@ namespace Bayou.Creatures
 
             if (info.IsMelee)
             {
+                if (Time.time < _invulnUntil)
+                    return NetHitResult.Ignored;
+
                 var amount = info.Damage > 0f ? info.Damage : meleeHitDamage;
-                return ApplyDamage(amount, info.HitPoint) ? NetHitResult.Killed : NetHitResult.Damaged;
+                var killed = ApplyDamage(amount, info.HitPoint);
+                var result = killed ? NetHitResult.Killed : NetHitResult.Damaged;
+                CombatFeedback.PlayHit(transform.position, result, transform.position - info.HitPoint);
+                if (killed)
+                    Bayou.Audio.FishingAudio.Resolve()?.PlayMeleeKill();
+                return result;
             }
 
             if (IsStunned)
@@ -313,12 +368,17 @@ namespace Bayou.Creatures
 
             if (netBehavior == CreatureNetBehavior.CatchOnNet)
             {
+                CombatFeedback.PlayHit(transform.position, NetHitResult.Caught, Vector3.up);
                 Catch();
                 return NetHitResult.Caught;
             }
 
             _stunUntil = Time.time + Mathf.Max(0.2f, stunSeconds);
             _mode = CreatureMode.Active;
+            _hudUntil = Time.time + stunSeconds + 1f;
+            _visual?.FlashHurt();
+            _visual?.SetStunned(true);
+            CombatFeedback.PlayHit(transform.position, NetHitResult.Stunned, Vector3.up);
             return NetHitResult.Stunned;
         }
 
@@ -338,12 +398,14 @@ namespace Bayou.Creatures
             _invulnUntil = Time.time + Mathf.Max(0.05f, hitInvulnSeconds);
             _stunUntil = Mathf.Max(_stunUntil, Time.time + Mathf.Max(0.05f, hitStunSeconds));
             _mode = CreatureMode.Active;
+            _hudUntil = Time.time + 3.2f;
+            _hpFlashUntil = Time.time + 0.16f;
 
             var away = transform.position - hitPoint;
             away.y = 0f;
             if (away.sqrMagnitude < 0.001f)
                 away = -transform.forward;
-            transform.position += away.normalized * hitKnockback;
+            _knockVel = away.normalized * Mathf.Max(hitKnockbackSpeed, hitKnockback * 4f);
 
             _visual?.FlashHurt();
             _visual?.NotifyHealth(_health, maxHealth);
@@ -357,12 +419,19 @@ namespace Bayou.Creatures
 
         private void Die()
         {
-            if (_dead) return;
+            if (_dead || _dying) return;
             _dead = true;
+            _dying = true;
             _health = 0f;
             _mode = CreatureMode.Passive;
+            _dieAt = Time.time + 0.28f;
             _visual?.NotifyHealth(0f, maxHealth);
+            _visual?.PlayDeath();
+        }
 
+        private void FinishDeath()
+        {
+            _dying = false;
             if (netBehavior == CreatureNetBehavior.CatchOnNet)
             {
                 Catch();
@@ -377,6 +446,7 @@ namespace Bayou.Creatures
             if (_caught) return;
             _caught = true;
             _dead = true;
+            _dying = false;
             _health = 0f;
             _mode = CreatureMode.Passive;
             Bayou.Audio.FishingAudio.Resolve()?.PlaySnagCatch();
@@ -416,6 +486,32 @@ namespace Bayou.Creatures
         {
             v.y = 0f;
             return v;
+        }
+
+        internal static void SnapBodyToGround(Transform t, float hover)
+        {
+            if (t == null) return;
+            var origin = t.position + Vector3.up * 20f;
+            var hits = Physics.RaycastAll(origin, Vector3.down, 52f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+            var bestY = float.NegativeInfinity;
+            for (var i = 0; i < hits.Length; i++)
+            {
+                var hit = hits[i];
+                if (hit.collider == null) continue;
+                if (hit.collider.transform == t || hit.collider.transform.IsChildOf(t))
+                    continue;
+                if (hit.point.y > bestY)
+                    bestY = hit.point.y;
+            }
+
+            if (bestY > -1000f)
+                t.position = new Vector3(t.position.x, bestY + hover, t.position.z);
+        }
+
+        private void SnapBodyToGround()
+        {
+            var hover = netBehavior == CreatureNetBehavior.StunOnNet ? 0.38f : 0.28f;
+            SnapBodyToGround(transform, hover);
         }
 
 #if UNITY_EDITOR

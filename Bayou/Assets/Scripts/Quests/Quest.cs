@@ -15,7 +15,8 @@ public class Quest
         this.info = questInfo;
         this.state = QuestState.REQUIREMENTS_NOT_MET;
         this.currentQuestStepIndex = 0;
-        this.questStepStates = new QuestStepState[info.questStepPrefabs.Length];
+        var stepCount = info.questStepPrefabs != null ? info.questStepPrefabs.Length : 0;
+        this.questStepStates = new QuestStepState[stepCount];
         for( int i = 0; i< questStepStates.Length; i++ )
         {
             questStepStates[i] = new QuestStepState();
@@ -44,6 +45,18 @@ public class Quest
     public bool IsActiveForHud =>
         state == QuestState.IN_PROGRESS || state == QuestState.CAN_FINISH;
 
+    public string GetJournalStatusLabel()
+    {
+        return state switch
+        {
+            QuestState.IN_PROGRESS => "Active",
+            QuestState.CAN_FINISH => "Ready to turn in",
+            QuestState.CAN_START => "Available",
+            QuestState.FINISHED => "Completed",
+            _ => "Locked"
+        };
+    }
+
     /// <summary>Progress text for the current (or last) step — used by the gameplay quest log.</summary>
     public string GetHudObjectiveText()
     {
@@ -70,11 +83,15 @@ public class Quest
 
     public bool CurrentStepExists()
     { 
-        return(currentQuestStepIndex < info.questStepPrefabs.Length);
+        var steps = info != null ? info.questStepPrefabs : null;
+        return steps != null && currentQuestStepIndex < steps.Length;
     }
 
     public void InstantiateCurrentQuestStep(Transform parentTransform)
     {
+        if (!CurrentStepExists())
+            return;
+
         GameObject questStepPrefab = GetCurrentQuestStepPrefab();
         if (questStepPrefab == null)
             return;

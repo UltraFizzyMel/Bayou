@@ -29,7 +29,3 @@ VAR SnapperAndMollyQuestId = "SnapperAndMollyQuest"
 
 //quest states (questId + "State" for variable name)
 VAR SnapperAndMollyQuestState = "CAN_START"
-
-
-
-

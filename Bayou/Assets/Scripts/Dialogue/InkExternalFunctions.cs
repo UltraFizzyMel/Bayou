@@ -18,6 +18,8 @@ public class InkExternalFunctions
         story.BindExternalFunction("GrantKey", (string flagName) => GrantKey(flagName));
         story.BindExternalFunction("GiveMoney", (int amount) => GiveMoney(amount));
         story.BindExternalFunction("OpenShop", () => OpenShop());
+        story.BindExternalFunction("SetWorldFlag", (string flagName) => WorldFlags.Set(flagName, true));
+        story.BindExternalFunction("HasWorldFlag", (string flagName) => WorldFlags.Has(flagName), lookaheadSafe: true);
     }
 
     public void Unbind(Story story)
@@ -31,6 +33,8 @@ public class InkExternalFunctions
         story.UnbindExternalFunction("GrantKey");
         story.UnbindExternalFunction("GiveMoney");
         story.UnbindExternalFunction("OpenShop");
+        story.UnbindExternalFunction("SetWorldFlag");
+        story.UnbindExternalFunction("HasWorldFlag");
     }
 
     private void StartQuest(string questId)
@@ -109,9 +113,16 @@ public class InkExternalFunctions
         return true;
     }
 
-    private static void GrantKey(string _)
+    private static void GrantKey(string flagName)
     {
-        // Gate flags are set when the player spends the matching key, not when dialogue grants it.
+        var keys = KeyGateManager.Instance ?? UnityEngine.Object.FindFirstObjectByType<KeyGateManager>();
+        if (keys == null)
+        {
+            Debug.LogWarning("[Ink] GrantKey: no KeyGateManager.");
+            return;
+        }
+
+        keys.GrantKeyFlag(flagName);
     }
 
     private static void GiveMoney(int amount)

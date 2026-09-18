@@ -148,16 +148,19 @@ namespace Bayou.Fishing
 
         private static ItemDefinition Resolve(ItemCatalog catalog, string id)
         {
-            if (catalog != null)
-            {
-                var fromCat = catalog.Resolve(id);
-                if (fromCat != null) return fromCat;
-            }
+        if (catalog != null)
+        {
+            var fromCat = catalog.Resolve(id);
+            if (fromCat != null) return fromCat;
+        }
+
+        var fromResources = Resources.Load<ItemDefinition>($"Bayou/Items/{id}");
+        if (fromResources != null) return fromResources;
 
 #if UNITY_EDITOR
-            return UnityEditor.AssetDatabase.LoadAssetAtPath<ItemDefinition>($"Assets/Inventory/Items/{id}.asset");
+        return UnityEditor.AssetDatabase.LoadAssetAtPath<ItemDefinition>($"Assets/Inventory/Items/{id}.asset");
 #else
-            return null;
+        return null;
 #endif
         }
 

@@ -47,6 +47,27 @@ namespace Bayou.Audio
         public void PlayFishOnLine() => sfx.PlayOneShot(fishOnLine);
         public void PlaySnagCatch() => sfx.PlayOneShot(manSnaggingFish);
 
+        public void PlayMeleeSwing()
+        {
+            if (sfx == null) return;
+            var clip = handNetScoop != null ? handNetScoop : throwNet;
+            sfx.PlayOneShotPitched(clip, 0.85f, Random.Range(0.82f, 0.95f));
+        }
+
+        public void PlayMeleeHit()
+        {
+            if (sfx == null) return;
+            var clip = rodLanding != null ? rodLanding : (manSnaggingFish != null ? manSnaggingFish : throwNet);
+            sfx.PlayOneShotPitched(clip, 1f, Random.Range(1.15f, 1.4f));
+        }
+
+        public void PlayMeleeKill()
+        {
+            if (sfx == null) return;
+            var clip = manSnaggingFish != null ? manSnaggingFish : rodLanding;
+            sfx.PlayOneShotPitched(clip, 1f, Random.Range(0.7f, 0.85f));
+        }
+
         public void StartReelingLoop() => sfx.PlayLoop(reelingInFish);
         public void StopReelingLoop() => sfx.StopLoop();
 

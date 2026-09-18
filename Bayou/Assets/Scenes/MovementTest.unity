@@ -57748,9 +57748,10 @@ MonoBehaviour:
   missRingColor: {r: 0.85, g: 0.22, b: 0.18, a: 0.9}
   goodRingColor: {r: 0.35, g: 0.95, b: 0.45, a: 0.95}
   peakRingColor: {r: 0.55, g: 1, b: 0.7, a: 1}
-  meleeReach: 2.1
-  meleeRadius: 1.35
-  meleeCooldown: 0.35
+  meleeReach: 2.4
+  meleeArcDegrees: 140
+  meleeGuaranteedRadius: 1.05
+  meleeCooldown: 0.42
   combatRingColor: {r: 0.95, g: 0.25, b: 0.2, a: 0.9}
   pursuitDetectRange: 45
   surfaceMask:

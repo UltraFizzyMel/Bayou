@@ -19,5 +19,7 @@ MonoBehaviour:
   mainQuestLevel: 0
   questPrerequistes: []
   questStepPrefabs: []
+  autoStart: 0
+  autoComplete: 0
   moneyReward: 0
   MiscReward: 

@@ -17,14 +17,13 @@ namespace Bayou.Creatures
         public const string SnakePrefabPath = PrefabFolder + "/Snake.prefab";
         public const string CrocPrefabPath = PrefabFolder + "/Crocodile.prefab";
 
-        /// <summary>Play-mode / build fallback when none were baked.</summary>
+        private static readonly Color SnakeColor = new(0.42f, 0.86f, 0.28f, 1f);
+        private static readonly Color CrocColor = new(0.22f, 0.42f, 0.22f, 1f);
+
+        /// <summary>Play-mode / build fallback. Adds missing quest-route creatures and repairs visuals.</summary>
         public static void EnsureInScene()
         {
-            if (Object.FindFirstObjectByType<CreatureController>() != null)
-                return;
-            if (GameObject.Find(RootName) != null)
-                return;
-
+            CreaturePlaceholderVisual.PatchAll();
             CreateCreaturesInScene(replaceExisting: false);
         }
 
@@ -33,19 +32,18 @@ namespace Bayou.Creatures
             if (replaceExisting)
                 RemoveExisting();
 
-            if (!replaceExisting)
-            {
-                var existing = GameObject.Find(RootName);
-                if (existing != null)
-                    return existing;
-                if (Object.FindFirstObjectByType<CreatureController>() != null)
-                    return null;
-            }
+            var root = GameObject.Find(RootName);
+            if (root == null)
+                root = new GameObject(RootName);
 
-            var root = new GameObject(RootName);
+            var lantern = Anchor("LanternPickup", new Vector3(5.37f, 0.6f, 119.3f));
+            var caliste = Anchor("CalistePond_Net", new Vector3(73.62f, 0.2f, 16.36f));
+            var graveyard = Anchor("Graveyard_Entrance_Net", new Vector3(66.31f, 0.2f, -26.35f));
+            var marshGate = Anchor("Foggy Marsh Transition", new Vector3(32.6f, 0.2f, 2.19f));
+            var lanternPath = Vector3.Lerp(marshGate, lantern, 0.55f);
 
             // Near player spawn — easy to test chase / net melee.
-            CreateSnake(
+            EnsureSnake(
                 root.transform,
                 "Snake_TestNearSpawn",
                 new Vector3(-4f, 1.6f, -82f),
@@ -57,38 +55,45 @@ namespace Bayou.Creatures
                     new Vector3(-8f, 1.6f, -78f)
                 });
 
-            // Near Caliste pond — snake patrols the bank.
-            CreateSnake(
+            EnsureSnake(
                 root.transform,
                 "Snake_CalisteBank",
-                new Vector3(-58f, 0.2f, 86f),
-                new[]
-                {
-                    new Vector3(-58f, 0.2f, 86f),
-                    new Vector3(-52f, 0.2f, 90f),
-                    new Vector3(-55f, 0.2f, 95f),
-                    new Vector3(-61f, 0.2f, 91f)
-                });
+                caliste + new Vector3(-4.5f, 0.2f, 3f),
+                Ring(caliste + new Vector3(-4.5f, 0.2f, 3f), 4.5f));
 
-            // Foggy marsh approach — croc wanders a patch.
-            CreateCrocodile(
-                root.transform,
-                "Crocodile_FoggyMarsh",
-                new Vector3(30f, 0.2f, 8f),
-                radius: 7f);
-
-            // Graveyard path — second snake for net practice.
-            CreateSnake(
+            EnsureSnake(
                 root.transform,
                 "Snake_GraveyardPath",
-                new Vector3(-95f, 0.2f, 95f),
-                new[]
-                {
-                    new Vector3(-95f, 0.2f, 95f),
-                    new Vector3(-90f, 0.2f, 98f),
-                    new Vector3(-92f, 0.2f, 102f)
-                });
+                graveyard + new Vector3(-3f, 0.2f, 4f),
+                Ring(graveyard + new Vector3(-3f, 0.2f, 4f), 4f));
 
+            // Foggy marsh approach — croc at the marsh gate.
+            EnsureCrocodile(
+                root.transform,
+                "Crocodile_FoggyMarsh",
+                marshGate + new Vector3(-2f, 0.2f, 6f),
+                radius: 7f);
+
+            // Lantern quest: path through the fog, then a guard at the pickup.
+            EnsureSnake(
+                root.transform,
+                "Snake_LanternPath",
+                lanternPath,
+                Ring(lanternPath, 5f));
+
+            EnsureSnake(
+                root.transform,
+                "Snake_LanternGuard",
+                lantern + new Vector3(4.8f, 0.2f, -5.2f),
+                Ring(lantern + new Vector3(4.8f, 0.2f, -5.2f), 4.2f));
+
+            EnsureCrocodile(
+                root.transform,
+                "Crocodile_LanternMarsh",
+                lantern + new Vector3(8.5f, 0.2f, 6f),
+                radius: 6.5f);
+
+            CreaturePlaceholderVisual.PatchAll();
             return root;
         }
 
@@ -112,14 +117,15 @@ namespace Bayou.Creatures
                 waypoints[i] = wp.transform;
             }
 
-            var body = CreateBody(group.transform, "Body", start, new Color(0.35f, 0.75f, 0.3f),
-                height: 1.2f, radius: 0.4f, scale: new Vector3(0.7f, 0.45f, 1.2f));
+            var body = CreateBody(group.transform, "Body", start, SnakeColor,
+                height: 1.2f, radius: 0.4f, scale: new Vector3(0.7f, 0.45f, 1.2f), crocodile: false);
             body.AddComponent<CreatureSense>();
             var brain = body.AddComponent<CreatureController>();
             body.AddComponent<CreatureContactHazard>();
 
             var snakeItem = LoadSnakeItem();
             ApplySnakeDefaults(brain, waypoints, snakeItem);
+            body.GetComponent<CreaturePlaceholderVisual>()?.Configure(SnakeColor, crocodileShape: false);
 
             return group;
         }
@@ -138,14 +144,27 @@ namespace Bayou.Creatures
             var area = areaGo.AddComponent<AreaBounds>();
             area.ConfigureCircle(radius);
 
-            var body = CreateBody(group.transform, "Body", center, new Color(0.25f, 0.45f, 0.28f),
-                height: 1.6f, radius: 0.55f, scale: new Vector3(1.1f, 0.4f, 1.8f));
+            var body = CreateBody(group.transform, "Body", center, CrocColor,
+                height: 1.6f, radius: 0.55f, scale: new Vector3(1.1f, 0.4f, 1.8f), crocodile: true);
             body.AddComponent<CreatureSense>();
             var brain = body.AddComponent<CreatureController>();
             body.AddComponent<CreatureContactHazard>();
             ApplyCrocDefaults(brain, area);
+            body.GetComponent<CreaturePlaceholderVisual>()?.Configure(CrocColor, crocodileShape: true);
 
             return group;
+        }
+
+        private static void EnsureSnake(Transform parent, string name, Vector3 start, Vector3[] worldWaypoints)
+        {
+            if (GameObject.Find(name) != null) return;
+            CreateSnake(parent, name, start, worldWaypoints);
+        }
+
+        private static void EnsureCrocodile(Transform parent, string name, Vector3 center, float radius)
+        {
+            if (GameObject.Find(name) != null) return;
+            CreateCrocodile(parent, name, center, radius);
         }
 
         private static GameObject CreateBody(
@@ -155,7 +174,8 @@ namespace Bayou.Creatures
             Color color,
             float height,
             float radius,
-            Vector3 scale)
+            Vector3 scale,
+            bool crocodile)
         {
             var body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             body.name = name;
@@ -179,10 +199,31 @@ namespace Bayou.Creatures
             capsule.radius = radius;
             capsule.center = Vector3.zero;
 
+            var hostRend = body.GetComponent<MeshRenderer>();
+            if (hostRend != null)
+                hostRend.enabled = false;
+
             var visual = body.AddComponent<CreaturePlaceholderVisual>();
-            visual.Configure(color);
+            visual.Configure(color, crocodileShape: crocodile);
 
             return body;
+        }
+
+        private static Vector3[] Ring(Vector3 center, float radius)
+        {
+            return new[]
+            {
+                center + new Vector3(radius, 0f, 0f),
+                center + new Vector3(0f, 0f, radius),
+                center + new Vector3(-radius, 0f, 0f),
+                center + new Vector3(0f, 0f, -radius)
+            };
+        }
+
+        private static Vector3 Anchor(string objectName, Vector3 fallback)
+        {
+            var go = GameObject.Find(objectName);
+            return go != null ? go.transform.position : fallback;
         }
 
         private static void ApplySnakeDefaults(CreatureController brain, Transform[] waypoints, ItemDefinition item)

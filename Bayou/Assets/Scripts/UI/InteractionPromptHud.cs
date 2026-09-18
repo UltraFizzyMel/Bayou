@@ -82,6 +82,7 @@ namespace Bayou.UI
         private static bool ShouldHideForMenus()
         {
             if (AudioSettings.IsOpen) return true;
+            if (QuestJournalHud.IsOpen) return true;
             if (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) return true;
             if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen) return true;
             var dialogue = DialogueManager.GetInstance();

@@ -232,7 +232,7 @@ namespace Bayou.UI
             _boundInv = inv;
             if (_boundInv == null) return;
             _boundInv.InventoryChanged += OnInventoryChanged;
-            SyncCollectedEquipmentToSlots();
+            ClearSlotsForMissingGear();
         }
 
         private void UnbindInventory()
@@ -245,13 +245,16 @@ namespace Bayou.UI
         private void OnInventoryChanged()
         {
             _assignDirty = true;
-            SyncCollectedEquipmentToSlots();
+            ClearSlotsForMissingGear();
             RefreshSlotVisuals();
             RefreshAssignStrip();
         }
 
-        /// <summary>Put collected unique gear (rod, net, lantern) onto empty slices so their icons show.</summary>
-        private void SyncCollectedEquipmentToSlots()
+        /// <summary>
+        /// Drop slot assignments for gear you no longer own.
+        /// New pickups stay off the wheel until the player assigns them.
+        /// </summary>
+        private void ClearSlotsForMissingGear()
         {
             EnsureSlotBuffers();
             CollectOwnedEquipment();
@@ -272,29 +275,6 @@ namespace Bayou.UI
 
                 if (!owned)
                     _slotItemIds[i] = null;
-            }
-
-            for (var j = 0; j < _owned.Count; j++)
-            {
-                var def = _owned[j];
-                if (def == null) continue;
-                var already = false;
-                for (var i = 0; i < _slotItemIds.Length; i++)
-                {
-                    if (def.MatchesId(_slotItemIds[i]))
-                    {
-                        already = true;
-                        break;
-                    }
-                }
-
-                if (already) continue;
-                for (var i = 0; i < _slotItemIds.Length; i++)
-                {
-                    if (!string.IsNullOrWhiteSpace(_slotItemIds[i])) continue;
-                    _slotItemIds[i] = def.Id;
-                    break;
-                }
             }
         }
 
@@ -594,6 +574,7 @@ namespace Bayou.UI
         private static bool ShouldHide()
         {
             if (AudioSettings.IsOpen) return true;
+            if (QuestJournalHud.IsOpen) return true;
             if (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) return true;
             if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen) return true;
             var dialogue = DialogueManager.GetInstance();
@@ -855,7 +836,7 @@ namespace Bayou.UI
             stripBg.color = new Color(0.12f, 0.1f, 0.08f, 0.82f);
             stripBg.raycastTarget = true;
 
-            var stripHint = CreateTmp("AssignHint", _assignRoot, "Hotwheel  ·  click gear, then a slot", 13f,
+            var stripHint = CreateTmp("AssignHint", _assignRoot, "Hotwheel  ·  assign gear yourself: click an item, then a slot", 13f,
                 FontStyles.Italic);
             stripHint.rectTransform.anchorMin = new Vector2(0f, 1f);
             stripHint.rectTransform.anchorMax = new Vector2(1f, 1f);

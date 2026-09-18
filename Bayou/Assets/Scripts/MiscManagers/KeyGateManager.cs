@@ -12,6 +12,14 @@ public sealed class KeyGateManager : MonoBehaviour
     public const string FoggyMarshKeyItemId = "Item_ChurchFoggyMarshKey";
     public const string GraveyardKeyFlag = "hasKeyChurchToGraveyard";
     public const string GraveyardKeyItemId = "Item_ChurchGraveyardKey";
+    public const string MazeGateKeyFlag = "hasKeyMazeGate";
+    public const string MazeGateKeyItemId = "Item_MazeGateKey";
+    public const string FoggyMarshGraveyardKeyFlag = "hasKeyFoggyMarshGraveyard";
+    public const string FoggyMarshGraveyardKeyItemId = "Item_FoggyMarshGraveyardKey";
+    public const string LandryTombKeyFlag = "hasKeyLandryTomb";
+    public const string LandryTombKeyItemId = "Item_LandryTombKey";
+    public const string ChurchReturnKeyFlag = "hasKeyChurchReturn";
+    public const string ChurchReturnKeyItemId = "Item_ChurchReturnKey";
 
     public static KeyGateManager Instance { get; private set; }
 
@@ -20,6 +28,10 @@ public sealed class KeyGateManager : MonoBehaviour
     public bool hasKeyChurchToBrackishShore;
     public bool hasKeyGraveyardOne;
     public bool hasKeyGraveyardTwo;
+    public bool hasKeyMazeGate;
+    public bool hasKeyFoggyMarshGraveyard;
+    public bool hasKeyLandryTomb;
+    public bool hasKeyChurchReturn;
 
     private static readonly Dictionary<string, string> FlagToItemId = new()
     {
@@ -27,7 +39,11 @@ public sealed class KeyGateManager : MonoBehaviour
         { FoggyMarshKeyFlag, FoggyMarshKeyItemId },
         { "hasKeyChurchToBrackishShore", "Item_ChurchBrackishShoreKey" },
         { "hasKeyGraveyardOne", "Item_GraveyardKeyOne" },
-        { "hasKeyGraveyardTwo", "Item_GraveyardKeyTwo" }
+        { "hasKeyGraveyardTwo", "Item_GraveyardKeyTwo" },
+        { MazeGateKeyFlag, MazeGateKeyItemId },
+        { FoggyMarshGraveyardKeyFlag, FoggyMarshGraveyardKeyItemId },
+        { LandryTombKeyFlag, LandryTombKeyItemId },
+        { ChurchReturnKeyFlag, ChurchReturnKeyItemId }
     };
 
     private InventoryController _inv;
@@ -111,6 +127,10 @@ public sealed class KeyGateManager : MonoBehaviour
             "hasKeyChurchToBrackishShore" => hasKeyChurchToBrackishShore,
             "hasKeyGraveyardOne" => hasKeyGraveyardOne,
             "hasKeyGraveyardTwo" => hasKeyGraveyardTwo,
+            MazeGateKeyFlag => hasKeyMazeGate,
+            FoggyMarshGraveyardKeyFlag => hasKeyFoggyMarshGraveyard,
+            LandryTombKeyFlag => hasKeyLandryTomb,
+            ChurchReturnKeyFlag => hasKeyChurchReturn,
             _ => false
         };
     }
@@ -134,6 +154,18 @@ public sealed class KeyGateManager : MonoBehaviour
                 break;
             case "hasKeyGraveyardTwo":
                 hasKeyGraveyardTwo = value;
+                break;
+            case MazeGateKeyFlag:
+                hasKeyMazeGate = value;
+                break;
+            case FoggyMarshGraveyardKeyFlag:
+                hasKeyFoggyMarshGraveyard = value;
+                break;
+            case LandryTombKeyFlag:
+                hasKeyLandryTomb = value;
+                break;
+            case ChurchReturnKeyFlag:
+                hasKeyChurchReturn = value;
                 break;
             default:
                 Debug.LogWarning($"[KeyGate] Unknown flag '{flagName}'.");
