@@ -294,6 +294,19 @@ namespace Bayou.Inventory
         public bool HasItemsById(string itemId, int count = 1) =>
             CountItemsById(itemId) >= Mathf.Max(1, count);
 
+        public bool HasPlacedItemsById(string itemId, int count = 1)
+        {
+            if (string.IsNullOrWhiteSpace(itemId) || Bag == null) return false;
+            var n = 0;
+            foreach (var item in Bag.AllItems)
+            {
+                if (item?.definition != null && item.IsPlaced && item.definition.MatchesId(itemId))
+                    n++;
+            }
+
+            return n >= Mathf.Max(1, count);
+        }
+
         /// <summary>Removes up to <paramref name="count"/> matching items. Returns false if not enough.</summary>
         public bool TryRemoveItems(ItemDefinition definition, int count = 1)
         {

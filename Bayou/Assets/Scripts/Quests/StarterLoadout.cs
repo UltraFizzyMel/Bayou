@@ -26,11 +26,20 @@ namespace Bayou.Quests
 
         private void Start() => StartCoroutine(SetupNextFrame());
 
+        private void Update()
+        {
+            if (Time.frameCount % 30 != 0) return;
+            EnsureNetPickup();
+        }
+
         private System.Collections.IEnumerator SetupNextFrame()
         {
             yield return null;
+            Bayou.Rendering.WorldItemVisual.PatchScenePickups();
             EnsureNetPickup();
             EnsureNetQuest();
+            yield return null;
+            Bayou.Rendering.WorldItemVisual.PatchScenePickups();
         }
 
         private static bool IsGameplayScene()
@@ -59,26 +68,40 @@ namespace Bayou.Quests
                 return;
             }
 
-            var player = GameObject.FindGameObjectWithTag("Player");
-            var pos = player != null
-                ? player.transform.position + player.transform.forward * 3.6f + Vector3.right * 1.1f
-                : new Vector3(-8.2f, 1.15f, -88.4f);
-            pos.y = player != null ? player.transform.position.y : pos.y;
-
             var go = new GameObject(PickupName);
-            go.transform.position = pos;
+            go.transform.position = DefaultNetPosition();
 
             var col = go.AddComponent<SphereCollider>();
             col.isTrigger = true;
             col.radius = 1.7f;
 
             var pickup = go.AddComponent<QuestItemPickup>();
-            pickup.Bind(item, "Pick up");
+            pickup.Bind(item, "Pick up", addStraightToBag: false);
 
             var marker = go.AddComponent<QuestMarkerTarget>();
             marker.Bind(NetQuestId, item.Id, "Hand net");
 
-            CreateNetVisual(go.transform);
+            Bayou.Rendering.WorldItemVisual.BuildNet(go.transform, replaceExisting: true);
+            Bayou.Rendering.WorldItemVisual.SnapToGround(go.transform, 0.22f);
+        }
+
+        private static Vector3 DefaultNetPosition()
+        {
+            var player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                var pos = player.transform.position
+                          + player.transform.forward * 3.4f
+                          + player.transform.right * 1.1f;
+                pos.y = player.transform.position.y;
+                return pos;
+            }
+
+            var scene = SceneManager.GetActiveScene().name;
+            if (string.Equals(scene, "TerrainTest", System.StringComparison.OrdinalIgnoreCase))
+                return new Vector3(-2.5f, 1.75f, -125.2f);
+
+            return new Vector3(-8.8f, 1.75f, -89.2f);
         }
 
         private static void EnsureNetQuest()
@@ -87,7 +110,7 @@ namespace Bayou.Quests
             if (manager == null) return;
 
             var inv = InventoryController.Instance ?? Object.FindFirstObjectByType<InventoryController>();
-            var hasNet = inv != null && inv.HasItemsById("Item_HandNet", 1);
+            var hasNet = inv != null && inv.HasPlacedItemsById("Item_HandNet", 1);
             if (hasNet) return;
 
             if (!manager.TryGetQuest(NetQuestId, out var quest) || quest == null)
@@ -97,11 +120,6 @@ namespace Bayou.Quests
                 manager.ForceRestart(NetQuestId);
             else if (quest.state != QuestState.IN_PROGRESS && quest.state != QuestState.CAN_FINISH)
                 manager.StartQuest(NetQuestId);
-        }
-
-        private static void CreateNetVisual(Transform parent)
-        {
-            Bayou.Rendering.WorldItemVisual.BuildNet(parent, replaceExisting: true);
         }
     }
 }

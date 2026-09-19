@@ -233,10 +233,16 @@ namespace Bayou.Inventory
             if (allocateHint != null)
             {
                 var name = string.IsNullOrWhiteSpace(fishItem.displayName) ? "item" : fishItem.displayName;
-                allocateHint.text = string.Equals(_revealTitleOverride, "You've received", System.StringComparison.Ordinal)
-                    ? $"You've received a {name}. Drag it into your case."
-                    : $"Drag the {name} into your case — or discard it.";
+                if (string.Equals(_revealTitleOverride, "You've received", System.StringComparison.Ordinal))
+                    allocateHint.text = $"You've received a {name}. Drag it into your case.";
+                else if (fishItem.IsUniqueEquipment)
+                    allocateHint.text = $"Drag the {name} into your case.";
+                else
+                    allocateHint.text = $"Drag the {name} into your case — or discard it.";
             }
+
+            if (discardButton != null)
+                discardButton.gameObject.SetActive(fishItem == null || !fishItem.IsUniqueEquipment);
         }
 
         private void HideAllocateBar()

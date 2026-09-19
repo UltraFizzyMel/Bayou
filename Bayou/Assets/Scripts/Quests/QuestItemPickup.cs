@@ -29,12 +29,13 @@ namespace Bayou.Quests
         private static readonly List<QuestItemPickup> All = new();
         private bool _playerInRange;
 
-        public void Bind(ItemDefinition definition, string prompt = "Pick up")
+        public void Bind(ItemDefinition definition, string prompt = "Pick up", bool addStraightToBag = false)
         {
             item = definition;
-            addStraightToBag = true;
+            this.addStraightToBag = addStraightToBag;
             if (!string.IsNullOrWhiteSpace(prompt))
                 pickupPrompt = prompt;
+            Bayou.Rendering.WorldItemVisual.EnsurePickupVisual(gameObject, item);
         }
 
         private void Reset()
@@ -47,6 +48,14 @@ namespace Bayou.Quests
         private void Awake()
         {
             Bayou.Rendering.WorldItemVisual.EnsurePickupVisual(gameObject, item);
+        }
+
+        private void Start()
+        {
+            if (item != null && item.IsUniqueEquipment)
+                addStraightToBag = false;
+            Bayou.Rendering.WorldItemVisual.EnsurePickupVisual(gameObject, item);
+            Bayou.Rendering.WorldItemVisual.SnapToGround(transform, 0.22f);
         }
 
         private void OnEnable()
@@ -117,7 +126,7 @@ namespace Bayou.Quests
             if (input == null || !input.GetInteractPressed())
                 return;
 
-            if (addStraightToBag)
+            if (addStraightToBag && item != null && !item.IsUniqueEquipment)
                 GiveItemDirectly();
             else
                 CaughtFishPresenter.Present(item);

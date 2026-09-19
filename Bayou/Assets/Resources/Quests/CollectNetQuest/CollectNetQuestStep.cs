@@ -18,7 +18,7 @@ public sealed class CollectNetQuestStep : QuestStep
 
     private void Start()
     {
-        ChangeState("Pick up the hand net near where you woke.");
+        ChangeState("Pick up the hand net near where you woke, then put it in your bag.");
         CheckProgress();
     }
 
@@ -83,7 +83,7 @@ public sealed class CollectNetQuestStep : QuestStep
     {
         var inv = ResolveInventory();
         if (inv == null) return;
-        if (!inv.HasItemsById(netItemId, 1)) return;
+        if (!inv.HasPlacedItemsById(netItemId, 1)) return;
         FinishQuestStep();
     }
 

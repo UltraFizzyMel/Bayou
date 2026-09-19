@@ -43,6 +43,13 @@ namespace Bayou.Quests
             ApplyGlow();
         }
 
+        private void Start()
+        {
+            ResolveItem();
+            ApplyGlow();
+            Bayou.Rendering.WorldItemVisual.PatchRenderers(gameObject, force: true);
+        }
+
         private void OnEnable()
         {
             if (!All.Contains(this))
@@ -156,8 +163,11 @@ namespace Bayou.Quests
 
         private void ApplyGlow()
         {
+            if (_renderer == null)
+                _renderer = GetComponentInChildren<Renderer>();
             if (_renderer == null) return;
             _renderer.sharedMaterial = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(glowColor);
+            _renderer.enabled = true;
         }
 
         private void OnTriggerEnter(Collider other)

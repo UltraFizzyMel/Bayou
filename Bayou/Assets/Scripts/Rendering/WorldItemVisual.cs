@@ -1,4 +1,5 @@
 using Bayou.Inventory;
+using Bayou.Quests;
 using UnityEngine;
 
 namespace Bayou.Rendering
@@ -9,7 +10,27 @@ namespace Bayou.Rendering
     /// </summary>
     public static class WorldItemVisual
     {
-        public static void PatchRenderers(GameObject root)
+        public static void PatchScenePickups()
+        {
+            var pickups = Object.FindObjectsByType<QuestItemPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < pickups.Length; i++)
+            {
+                var pickup = pickups[i];
+                if (pickup == null) continue;
+                EnsurePickupVisual(pickup.gameObject, pickup.Item);
+                SnapToGround(pickup.transform, 0.22f);
+            }
+
+            var shinies = Object.FindObjectsByType<PondShinyCollectible>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < shinies.Length; i++)
+            {
+                var shiny = shinies[i];
+                if (shiny == null) continue;
+                PatchRenderers(shiny.gameObject, force: true);
+            }
+        }
+
+        public static void PatchRenderers(GameObject root, bool force = false)
         {
             if (root == null) return;
             var renderers = root.GetComponentsInChildren<Renderer>(true);
@@ -18,7 +39,7 @@ namespace Bayou.Rendering
                 var r = renderers[i];
                 if (r == null) continue;
                 var mat = r.sharedMaterial;
-                if (mat != null && mat.shader != null && !IsBrokenShader(mat.shader))
+                if (!force && mat != null && mat.shader != null && !IsBrokenShader(mat.shader))
                     continue;
 
                 var color = mat != null && mat.HasProperty("_Color")
@@ -32,14 +53,14 @@ namespace Bayou.Rendering
         public static void EnsurePickupVisual(GameObject root, ItemDefinition item)
         {
             if (root == null) return;
-            PatchRenderers(root);
+            PatchRenderers(root, force: true);
             if (item == null) return;
 
             var id = item.Id ?? item.name;
             if (IsLantern(id))
-                BuildLantern(root.transform, replaceExisting: false);
+                BuildLantern(root.transform, replaceExisting: true);
             else if (IsNet(id))
-                BuildNet(root.transform, replaceExisting: false);
+                BuildNet(root.transform, replaceExisting: true);
         }
 
         public static GameObject BuildLantern(Transform parent, bool replaceExisting)
@@ -47,18 +68,18 @@ namespace Bayou.Rendering
             var existing = parent.Find("LanternVisual");
             if (existing != null)
             {
-                PatchRenderers(existing.gameObject);
+                PatchRenderers(existing.gameObject, force: true);
+                HideHostMesh(parent);
                 return existing.gameObject;
             }
 
-            HideHostMesh(parent);
             var root = new GameObject("LanternVisual");
             root.transform.SetParent(parent, false);
+            NeutralizeParentScale(root.transform);
             root.transform.localPosition = new Vector3(0f, 0.15f, 0f);
             root.transform.localRotation = Quaternion.identity;
-            root.transform.localScale = Vector3.one;
 
-            var body = Primitive(root.transform, PrimitiveType.Cylinder, "Body",
+            Primitive(root.transform, PrimitiveType.Cylinder, "Body",
                 new Vector3(0f, 0.08f, 0f), new Vector3(0.38f, 0.22f, 0.38f),
                 new Color(0.42f, 0.26f, 0.12f, 1f));
             Primitive(root.transform, PrimitiveType.Sphere, "Glass",
@@ -67,36 +88,29 @@ namespace Bayou.Rendering
             Primitive(root.transform, PrimitiveType.Capsule, "Handle",
                 new Vector3(0f, 0.58f, 0f), new Vector3(0.08f, 0.16f, 0.08f),
                 new Color(0.28f, 0.28f, 0.3f, 1f));
-            _ = body;
+            HideHostMesh(parent);
             return root;
         }
 
         public static GameObject BuildNet(Transform parent, bool replaceExisting)
         {
-            var existing = parent.Find("NetVisual");
-            if (existing != null)
-            {
-                // Pond editor placeholder — leave it, just make sure children render.
-                if (!replaceExisting)
-                {
-                    PatchRenderers(existing.gameObject);
-                    return existing.gameObject;
-                }
-            }
+            var leftover = parent.Find("NetVisual");
+            if (leftover != null)
+                leftover.gameObject.SetActive(false);
 
             var built = parent.Find("NetPickupVisual");
             if (built != null)
             {
-                PatchRenderers(built.gameObject);
+                PatchRenderers(built.gameObject, force: true);
+                HideHostMesh(parent);
                 return built.gameObject;
             }
 
-            HideHostMesh(parent);
             var root = new GameObject("NetPickupVisual");
             root.transform.SetParent(parent, false);
+            NeutralizeParentScale(root.transform);
             root.transform.localPosition = Vector3.zero;
             root.transform.localRotation = Quaternion.identity;
-            root.transform.localScale = Vector3.one;
 
             Primitive(root.transform, PrimitiveType.Cylinder, "Hoop",
                 new Vector3(0f, 0.18f, 0f), new Vector3(0.7f, 0.04f, 0.7f),
@@ -107,6 +121,7 @@ namespace Bayou.Rendering
             Primitive(root.transform, PrimitiveType.Cube, "Handle",
                 new Vector3(0f, 0.12f, -0.48f), new Vector3(0.08f, 0.08f, 0.62f),
                 new Color(0.38f, 0.24f, 0.12f, 1f));
+            HideHostMesh(parent);
             return root;
         }
 
@@ -118,6 +133,15 @@ namespace Bayou.Rendering
             rend.sharedMaterial = BayouShaderUtil.CreateUnlitColor(color);
             rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             rend.enabled = true;
+        }
+
+        public static void SnapToGround(Transform t, float extraY)
+        {
+            if (t == null) return;
+            var origin = t.position + Vector3.up * 10f;
+            if (!Physics.Raycast(origin, Vector3.down, out var hit, 50f, ~0, QueryTriggerInteraction.Ignore))
+                return;
+            t.position = hit.point + Vector3.up * extraY;
         }
 
         public static bool IsLantern(string id) =>
@@ -137,16 +161,24 @@ namespace Bayou.Rendering
                    n.IndexOf("Legacy Shaders", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
                    n == "Diffuse" ||
                    n == "Specular" ||
-                   n == "Standard";
+                   n == "Standard" ||
+                   n == "Sprites/Default";
         }
 
         private static void HideHostMesh(Transform parent)
         {
-            var filter = parent.GetComponent<MeshFilter>();
             var rend = parent.GetComponent<MeshRenderer>();
             if (rend != null)
                 rend.enabled = false;
-            _ = filter;
+        }
+
+        private static void NeutralizeParentScale(Transform child)
+        {
+            var ls = child.parent != null ? child.parent.localScale : Vector3.one;
+            child.localScale = new Vector3(
+                1f / Mathf.Max(0.05f, Mathf.Abs(ls.x)),
+                1f / Mathf.Max(0.05f, Mathf.Abs(ls.y)),
+                1f / Mathf.Max(0.05f, Mathf.Abs(ls.z)));
         }
 
         private static GameObject Primitive(
@@ -165,7 +197,13 @@ namespace Bayou.Rendering
             go.transform.localScale = localScale;
             var col = go.GetComponent<Collider>();
             if (col != null)
-                Object.Destroy(col);
+            {
+                if (Application.isPlaying)
+                    Object.Destroy(col);
+                else
+                    Object.DestroyImmediate(col);
+            }
+
             Tint(go, color);
             return go;
         }
