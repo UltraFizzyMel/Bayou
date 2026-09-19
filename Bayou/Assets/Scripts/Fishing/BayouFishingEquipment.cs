@@ -482,6 +482,7 @@ namespace Bayou.Fishing
             if (rend == null) return;
             rend.sharedMaterial = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(color);
             rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            rend.enabled = true;
         }
 
         private bool WasSwitch()

@@ -55,7 +55,7 @@ namespace Bayou.UI
 
         public static EquipmentHotwheel Instance { get; private set; }
         public static bool IsOpen => Instance != null && Instance._open;
-        public static bool SuppressLegacyToolKeys => Instance != null;
+        public static bool SuppressLegacyToolKeys => IsOpen;
 
         public EquipmentHotwheelSkin Skin => skin;
 
@@ -102,6 +102,8 @@ namespace Bayou.UI
             BindInventory();
             if (buildUiIfMissing)
                 BuildUi();
+            HideSceneMockWheel();
+            AutoFillOwnedSlots();
             SetWheelVisible(false);
             RefreshAssignStrip();
         }
@@ -246,13 +248,13 @@ namespace Bayou.UI
         {
             _assignDirty = true;
             ClearSlotsForMissingGear();
+            AutoFillOwnedSlots();
             RefreshSlotVisuals();
             RefreshAssignStrip();
         }
 
         /// <summary>
-        /// Drop slot assignments for gear you no longer own.
-        /// New pickups stay off the wheel until the player assigns them.
+        /// Drop slot assignments for gear you no longer own, then auto-slot owned rod / net / lantern.
         /// </summary>
         private void ClearSlotsForMissingGear()
         {
@@ -276,12 +278,66 @@ namespace Bayou.UI
                 if (!owned)
                     _slotItemIds[i] = null;
             }
+
+            AutoFillOwnedSlots();
+        }
+
+        private void AutoFillOwnedSlots()
+        {
+            EnsureSlotBuffers();
+            CollectOwnedEquipment();
+            TryPlaceOwned("Item_FishingRod", 0);
+            TryPlaceOwned("Item_HandNet", 1);
+            TryPlaceOwned("Item_Lantern", 2);
+        }
+
+        private void TryPlaceOwned(string itemId, int preferredSlot)
+        {
+            ItemDefinition def = null;
+            for (var i = 0; i < _owned.Count; i++)
+            {
+                if (_owned[i] != null && _owned[i].MatchesId(itemId))
+                {
+                    def = _owned[i];
+                    break;
+                }
+            }
+
+            if (def == null) return;
+
+            for (var i = 0; i < _slotItemIds.Length; i++)
+            {
+                if (string.Equals(_slotItemIds[i], def.Id, System.StringComparison.OrdinalIgnoreCase) ||
+                    (!string.IsNullOrWhiteSpace(_slotItemIds[i]) && def.MatchesId(_slotItemIds[i])))
+                    return;
+            }
+
+            if (preferredSlot >= 0 && preferredSlot < _slotItemIds.Length &&
+                string.IsNullOrWhiteSpace(_slotItemIds[preferredSlot]))
+            {
+                _slotItemIds[preferredSlot] = def.Id;
+                return;
+            }
+
+            for (var i = 0; i < _slotItemIds.Length; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(_slotItemIds[i])) continue;
+                _slotItemIds[i] = def.Id;
+                return;
+            }
+        }
+
+        private static void HideSceneMockWheel()
+        {
+            var mock = GameObject.Find("Hotwheel Canvas");
+            if (mock != null && FindFirstObjectByType<EquipmentHotwheel>() != null)
+                mock.SetActive(false);
         }
 
         private void HandleSlotHotkeys()
         {
             var kb = Keyboard.current;
-            if (kb == null || _open) return;
+            if (kb == null || !_open) return;
             if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) TrySelectSlot(0);
             else if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame) TrySelectSlot(1);
             else if (kb.digit3Key.wasPressedThisFrame || kb.numpad3Key.wasPressedThisFrame) TrySelectSlot(2);

@@ -101,37 +101,7 @@ namespace Bayou.Quests
 
         private static void CreateNetVisual(Transform parent)
         {
-            var hoop = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            hoop.name = "NetHoop";
-            hoop.transform.SetParent(parent, false);
-            hoop.transform.localPosition = new Vector3(0f, 0.18f, 0f);
-            hoop.transform.localScale = new Vector3(0.55f, 0.035f, 0.55f);
-            Object.Destroy(hoop.GetComponent<Collider>());
-
-            var handle = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            handle.name = "NetHandle";
-            handle.transform.SetParent(parent, false);
-            handle.transform.localPosition = new Vector3(0f, 0.12f, -0.42f);
-            handle.transform.localScale = new Vector3(0.07f, 0.07f, 0.55f);
-            Object.Destroy(handle.GetComponent<Collider>());
-
-            var brown = new Color(0.35f, 0.24f, 0.14f, 1f);
-            ApplyColor(hoop, new Color(0.22f, 0.38f, 0.28f, 1f));
-            ApplyColor(handle, brown);
-        }
-
-        private static void ApplyColor(GameObject go, Color color)
-        {
-            var renderer = go.GetComponent<MeshRenderer>();
-            if (renderer == null) return;
-            var shader = Shader.Find("Universal Render Pipeline/Lit") ?? Shader.Find("Standard");
-            if (shader == null) return;
-            var mat = new Material(shader);
-            if (mat.HasProperty("_BaseColor"))
-                mat.SetColor("_BaseColor", color);
-            if (mat.HasProperty("_Color"))
-                mat.color = color;
-            renderer.sharedMaterial = mat;
+            Bayou.Rendering.WorldItemVisual.BuildNet(parent, replaceExisting: true);
         }
     }
 }

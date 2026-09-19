@@ -41,8 +41,15 @@ namespace Bayou.Inventory
                 return true;
 
             // Legacy pond pickup id — the church-pond item is the rosary.
+            if (IsLanternItem(Id) && IsLanternItem(id))
+                return true;
+
             return IsPondQuestItem(Id) && IsPondQuestItem(id);
         }
+
+        public static bool IsLanternItem(string id) =>
+            !string.IsNullOrWhiteSpace(id) &&
+            id.IndexOf("Lantern", System.StringComparison.OrdinalIgnoreCase) >= 0;
 
         public bool IsKeyItem
         {

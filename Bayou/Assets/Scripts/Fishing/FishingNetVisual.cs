@@ -65,9 +65,29 @@ namespace Bayou.Fishing
             }
 
             foreach (var r in GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if (KeepVisible(r.transform)) continue;
                 r.enabled = false;
+            }
+
             foreach (var r in GetComponentsInChildren<LineRenderer>(true))
+            {
+                if (KeepVisible(r.transform)) continue;
                 r.enabled = false;
+            }
+        }
+
+        private static bool KeepVisible(Transform t)
+        {
+            while (t != null)
+            {
+                var n = t.name;
+                if (n == "NetPickupVisual" || n == "LanternVisual" || n == "ThrownNetVisual")
+                    return true;
+                t = t.parent;
+            }
+
+            return false;
         }
 
         private void SetVisible(bool on)

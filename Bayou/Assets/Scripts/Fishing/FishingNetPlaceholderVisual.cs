@@ -48,13 +48,30 @@ namespace Bayou.Fishing
         private void HideMeshes()
         {
             foreach (var r in GetComponentsInChildren<MeshRenderer>(true))
+            {
+                if (KeepPlaceholderVisible(r.transform)) continue;
                 r.enabled = false;
+            }
 
             foreach (var r in GetComponentsInChildren<SkinnedMeshRenderer>(true))
+            {
+                if (KeepPlaceholderVisible(r.transform)) continue;
                 r.enabled = false;
+            }
+        }
 
-            foreach (var r in GetComponentsInChildren<LineRenderer>(true))
-                r.enabled = false;
+        private static bool KeepPlaceholderVisible(Transform t)
+        {
+            while (t != null)
+            {
+                var n = t.name;
+                if (n == "NetPickupVisual" || n == "LanternVisual" || n == "ThrownNetVisual" ||
+                    n.StartsWith("HeldNet") || n.StartsWith("HeldLantern"))
+                    return true;
+                t = t.parent;
+            }
+
+            return false;
         }
 
         private void ConfigureIfNeeded()

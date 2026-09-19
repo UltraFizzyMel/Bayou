@@ -147,6 +147,8 @@ namespace Bayou.Fishing
         private void EnsureVisual()
         {
             _visual = GetComponent<FishingNetVisual>();
+            if (transform.Find("NetPickupVisual") == null && transform.Find("ThrownNetVisual") == null)
+                Bayou.Rendering.WorldItemVisual.BuildNet(transform, replaceExisting: true);
         }
 
         public void CancelAndDestroy()

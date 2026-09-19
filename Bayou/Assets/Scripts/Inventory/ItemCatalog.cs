@@ -30,7 +30,20 @@ namespace Bayou.Inventory
             _lookup ??= new Dictionary<string, ItemDefinition>();
             if (_lookup.Count == 0 && items != null && items.Length > 0)
                 BuildLookup();
-            return _lookup.TryGetValue(itemId, out var def) ? def : null;
+            if (_lookup.TryGetValue(itemId, out var def))
+                return def;
+
+            if (items != null)
+            {
+                for (var i = 0; i < items.Length; i++)
+                {
+                    var item = items[i];
+                    if (item != null && item.MatchesId(itemId))
+                        return item;
+                }
+            }
+
+            return null;
         }
 
         public ItemDefinition[] AllDefinitions => items ?? System.Array.Empty<ItemDefinition>();

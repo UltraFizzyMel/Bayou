@@ -44,6 +44,11 @@ namespace Bayou.Quests
                 col.isTrigger = true;
         }
 
+        private void Awake()
+        {
+            Bayou.Rendering.WorldItemVisual.EnsurePickupVisual(gameObject, item);
+        }
+
         private void OnEnable()
         {
             if (!All.Contains(this))
