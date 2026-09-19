@@ -7,13 +7,13 @@ public class ButtonManager : MonoBehaviour
     public void NewGame()
     {
         GameSaveSystem.SuppressNextLoad = true;
-        SceneManager.LoadScene("MovementTest");
+        SceneManager.LoadScene("TerrainTest");
     }
 
     public void ContinueGame()
     {
         GameSaveSystem.SuppressNextLoad = false;
-        SceneManager.LoadScene("MovementTest");
+        SceneManager.LoadScene("TerrainTest");
     }
 
     public void Quit()
