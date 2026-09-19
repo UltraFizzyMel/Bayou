@@ -3,7 +3,22 @@ guid: 29e6ac4b07718764383b72b144e55906
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Frond.001
+    second: {fileID: 2100000, guid: d54744734fc519b4a985d51fc619b96d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Frond_Dark.001
+    second: {fileID: 2100000, guid: 77c5ae0fdbce57c4ca753390d9b05d7b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Frond_Dead.001
+    second: {fileID: 2100000, guid: df195b65df7d45c42a69c96e586e6dfb, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
