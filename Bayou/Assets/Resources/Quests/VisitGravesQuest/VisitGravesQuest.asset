@@ -23,7 +23,7 @@ MonoBehaviour:
   - {fileID: 4186559727008806551, guid: 90b46e7ae49e58c4bb4eab7aa5084e65, type: 3}
   - {fileID: 4186559727008806551, guid: affb9a2f89ca5c1408fd64233ab89b8f, type: 3}
   - {fileID: 4186559727008806551, guid: fc91accb2ee153b458bda0bf3000dfba, type: 3}
-  autoStart: 1
+  autoStart: 0
   autoComplete: 1
   moneyReward: 0
   MiscReward: Landry tomb key

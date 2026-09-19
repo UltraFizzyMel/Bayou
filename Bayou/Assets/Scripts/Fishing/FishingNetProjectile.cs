@@ -147,8 +147,6 @@ namespace Bayou.Fishing
         private void EnsureVisual()
         {
             _visual = GetComponent<FishingNetVisual>();
-            if (_visual == null)
-                _visual = gameObject.AddComponent<FishingNetVisual>();
         }
 
         public void CancelAndDestroy()

@@ -27,6 +27,10 @@ namespace Bayou.Creatures
         private bool _stunned;
         private bool _dying;
         private float _dieStarted;
+        private float _coilUntil;
+        private float _stretchUntil;
+        private float _coilDuration = 0.3f;
+        private float _stretchDuration = 0.22f;
 
         public static void PatchAll()
         {
@@ -88,6 +92,20 @@ namespace Bayou.Creatures
                 ApplyTint(HealthTint());
         }
 
+        public void PlayLungeCoil(float seconds)
+        {
+            _coilDuration = Mathf.Max(0.08f, seconds);
+            _coilUntil = Time.time + _coilDuration;
+            _stretchUntil = 0f;
+        }
+
+        public void PlayLungeStretch(float seconds)
+        {
+            _stretchDuration = Mathf.Max(0.08f, seconds);
+            _stretchUntil = Time.time + _stretchDuration;
+            _coilUntil = 0f;
+        }
+
         public void PlayDeath()
         {
             _dying = true;
@@ -107,7 +125,25 @@ namespace Bayou.Creatures
                 return;
             }
 
-            if (_squashUntil > 0f)
+            if (_stretchUntil > Time.time)
+            {
+                var u = Mathf.Clamp01((_stretchUntil - Time.time) / Mathf.Max(0.05f, _stretchDuration));
+                var strike = 1f - u;
+                transform.localScale = new Vector3(
+                    _bindScale.x * (1f - 0.18f * strike),
+                    _bindScale.y * (1f - 0.08f * strike),
+                    _bindScale.z * (1f + 0.7f * strike));
+            }
+            else if (_coilUntil > Time.time)
+            {
+                var u = Mathf.Clamp01((_coilUntil - Time.time) / Mathf.Max(0.05f, _coilDuration));
+                var coil = 1f - u;
+                transform.localScale = new Vector3(
+                    _bindScale.x * (1f + 0.2f * coil),
+                    _bindScale.y * (1f + 0.12f * coil),
+                    _bindScale.z * (1f - 0.42f * coil));
+            }
+            else if (_squashUntil > 0f)
             {
                 var u = Mathf.Clamp01((_squashUntil - Time.time) / 0.18f);
                 var squash = 1f + 0.35f * u;
@@ -117,6 +153,10 @@ namespace Bayou.Creatures
                     transform.localScale = _bindScale;
                     _squashUntil = 0f;
                 }
+            }
+            else
+            {
+                transform.localScale = Vector3.Lerp(transform.localScale, _bindScale, Time.deltaTime * 14f);
             }
 
             if (_flashUntil > 0f && Time.time >= _flashUntil)

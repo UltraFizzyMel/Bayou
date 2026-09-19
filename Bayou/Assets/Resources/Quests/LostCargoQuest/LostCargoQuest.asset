@@ -21,7 +21,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 82230f6581a1fd04aba37fd8d95fc822, type: 2}
   questStepPrefabs:
   - {fileID: 1000000000000000001, guid: a11e5701b5ea15000200000000000008, type: 3}
-  autoStart: 1
+  autoStart: 0
   autoComplete: 1
   moneyReward: 0
   MiscReward: 

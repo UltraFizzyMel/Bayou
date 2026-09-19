@@ -25,6 +25,8 @@ namespace Bayou.Save
         public float playerZ;
         public float playerRotY;
         public int walletBalance;
+        public int playerHealth;
+        public int playerMaxHealth;
         public SavedItemEntry[] inventoryItems = Array.Empty<SavedItemEntry>();
     }
 }

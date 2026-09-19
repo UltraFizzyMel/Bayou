@@ -75,11 +75,10 @@ public class QuestManager : MonoBehaviour
         {
             if (quest != null &&
                 quest.state == QuestState.REQUIREMENTS_NOT_MET &&
-                CheckRequirementsMet(quest))
+                CheckRequirementsMet(quest) &&
+                quest.info != null && quest.info.autoStart)
             {
-                ChangeQuestState(quest.info.id, QuestState.CAN_START);
-                if (quest.info != null && quest.info.autoStart)
-                    StartQuest(quest.info.id);
+                StartQuest(quest.info.id);
             }
         }
     }
@@ -150,7 +149,9 @@ public class QuestManager : MonoBehaviour
     }
 
     /// <summary>Called from Ink / gameplay. Safe to call even if the event bus missed the subscribe.</summary>
-    public void StartQuest(string id)
+    public void StartQuest(string id) => StartQuest(id, requirePrereqs: true);
+
+    public void StartQuest(string id, bool requirePrereqs)
     {
         if (string.IsNullOrWhiteSpace(id))
         {
@@ -179,7 +180,9 @@ public class QuestManager : MonoBehaviour
         }
 
         // Ink may fire before Update promotes REQUIREMENTS_NOT_MET → CAN_START.
-        if (quest.state == QuestState.REQUIREMENTS_NOT_MET && !CheckRequirementsMet(quest))
+        // Dialogue owns start/turn-in. Ink StartQuest may fire before Update
+        // promotes REQUIREMENTS_NOT_MET, so allow it when called from conversation.
+        if (requirePrereqs && quest.state == QuestState.REQUIREMENTS_NOT_MET && !CheckRequirementsMet(quest))
         {
             Debug.Log($"[QuestManager] StartQuest blocked — '{id}' requirements not met.");
             return;
@@ -189,9 +192,10 @@ public class QuestManager : MonoBehaviour
         quest.InstantiateCurrentQuestStep(this.transform);
     }
 
-    private void AdvanceQuest(string id)
+    public void AdvanceQuest(string id)
     {
         if (!TryGetQuest(id, out var quest)) return;
+        if (quest.state == QuestState.FINISHED) return;
 
         quest.MoveToNextStep();
 
@@ -203,9 +207,11 @@ public class QuestManager : MonoBehaviour
             ChangeQuestState(quest.info.id, QuestState.CAN_FINISH);
     }
 
-    private void FinishQuest(string id)
+    public void FinishQuest(string id)
     {
         if (!TryGetQuest(id, out var quest)) return;
+        if (quest.state == QuestState.FINISHED) return;
+
         ClaimRewards(quest);
         ChangeQuestState(quest.info.id, QuestState.FINISHED);
     }
@@ -341,9 +347,11 @@ public class QuestManager : MonoBehaviour
     public static QuestManager Resolve() =>
         Instance != null ? Instance : Object.FindFirstObjectByType<QuestManager>();
 
+    private bool PersistQuestState => loadQuestState && !Application.isEditor;
+
     private void OnApplicationQuit()
     {
-        if (questMap == null) return;
+        if (!PersistQuestState || questMap == null) return;
         foreach (Quest quest in questMap.Values)
         {
             if (quest != null)
@@ -369,7 +377,7 @@ public class QuestManager : MonoBehaviour
     {
         try
         {
-            if (PlayerPrefs.HasKey(questInfo.id) && loadQuestState)
+            if (PersistQuestState && PlayerPrefs.HasKey(questInfo.id))
             {
                 string serializedData = PlayerPrefs.GetString(questInfo.id);
                 QuestData questData = JsonUtility.FromJson<QuestData>(serializedData);

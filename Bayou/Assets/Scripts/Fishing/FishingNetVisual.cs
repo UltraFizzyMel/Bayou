@@ -3,7 +3,8 @@ using UnityEngine;
 namespace Bayou.Fishing
 {
     /// <summary>
-    /// Runtime visual for the thrown/planted fishing net (no art dependency).
+    /// Editor layout aid for the thrown/planted fishing net. Hidden during play unless
+    /// <see cref="showAtRuntime"/> is enabled.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class FishingNetVisual : MonoBehaviour
@@ -14,6 +15,8 @@ namespace Bayou.Fishing
         [SerializeField] private Color meshColor = new(0.25f, 0.55f, 0.6f, 0.45f);
         [SerializeField] private Color bobberColor = new(0.92f, 0.22f, 0.18f, 1f);
         [SerializeField] private bool hideUntilPlanted = true;
+        [Tooltip("Placeholder disc / cords. Off so the net stays editor-visible but does not appear in play or builds.")]
+        [SerializeField] private bool showAtRuntime = false;
 
         private GameObject _root;
         private GameObject _bobber;
@@ -21,18 +24,26 @@ namespace Bayou.Fishing
 
         private void Awake()
         {
+            if (Application.isPlaying && !showAtRuntime)
+            {
+                HideRuntimeVisuals();
+                return;
+            }
+
             Build();
             SetVisible(!hideUntilPlanted);
         }
 
         public void ShowPlanted()
         {
+            if (!ShouldShow()) return;
             _planted = true;
             SetVisible(true);
         }
 
         public void ShowInFlight()
         {
+            if (!ShouldShow()) return;
             SetVisible(true);
             if (_bobber != null)
                 _bobber.SetActive(true);
@@ -43,8 +54,26 @@ namespace Bayou.Fishing
             // Line is drawn by FishingNetCaster so it stays attached to the rod.
         }
 
+        private bool ShouldShow() => showAtRuntime || !Application.isPlaying;
+
+        private void HideRuntimeVisuals()
+        {
+            foreach (var t in GetComponentsInChildren<Transform>(true))
+            {
+                if (t != null && t.gameObject != gameObject && t.name == "NetVisual")
+                    t.gameObject.SetActive(false);
+            }
+
+            foreach (var r in GetComponentsInChildren<MeshRenderer>(true))
+                r.enabled = false;
+            foreach (var r in GetComponentsInChildren<LineRenderer>(true))
+                r.enabled = false;
+        }
+
         private void SetVisible(bool on)
         {
+            if (!ShouldShow())
+                on = false;
             if (_root != null)
                 _root.SetActive(on);
         }

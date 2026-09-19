@@ -13,7 +13,8 @@ namespace Bayou.Save
     {
         public static GameSaveSystem Instance { get; private set; }
 
-        private const string SaveFileName = "bayou_save.json";
+        private const string PlayerSaveFileName = "bayou_save.json";
+        private const string EditorSaveFileName = "bayou_save_editor.json";
 
         [SerializeField] private ItemCatalog itemCatalog;
         [SerializeField] private bool loadSaveOnStart = true;
@@ -22,14 +23,28 @@ namespace Bayou.Save
         public bool HasSaveFile => File.Exists(SaveFilePath);
         public string LastBonfireId { get; private set; }
         public ItemCatalog ItemCatalog => itemCatalog;
+        public bool HasSessionCheckpoint { get; private set; }
 
         public static string SaveFilePath => Path.Combine(Application.persistentDataPath, SaveFileName);
+
+        private static string SaveFileName => Application.isEditor ? EditorSaveFileName : PlayerSaveFileName;
 
         /// <summary>When true, the next Start skips loading the save.</summary>
         public static bool SuppressNextLoad { get; set; }
 
         public event Action GameSaved;
         public event Action GameLoaded;
+
+        private bool _capturedSpawn;
+        private Vector3 _spawnPosition;
+        private Quaternion _spawnRotation;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics()
+        {
+            Instance = null;
+            SuppressNextLoad = false;
+        }
 
         private void Awake()
         {
@@ -42,6 +57,7 @@ namespace Bayou.Save
             Instance = this;
             DontDestroyOnLoad(gameObject);
             itemCatalog?.BuildLookup();
+            HasSessionCheckpoint = false;
         }
 
         private void OnDestroy()
@@ -53,8 +69,19 @@ namespace Bayou.Save
         private IEnumerator Start()
         {
             yield return null;
+            CaptureSpawnIfNeeded();
+
             var suppress = SuppressNextLoad;
             SuppressNextLoad = false;
+
+            // Editor Play Mode must not consume the real player save — that teleports
+            // testers to an old campfire and desyncs inventory from a fresh quest log.
+            if (Application.isEditor)
+            {
+                Debug.Log("[Save] Editor play starts fresh. Rest at a campfire to set a death checkpoint for this session.");
+                yield break;
+            }
+
             if (loadSaveOnStart && !suppress && HasSaveFile)
                 Load();
         }
@@ -71,6 +98,7 @@ namespace Bayou.Save
                 return false;
             }
 
+            var health = player.GetComponent<PlayerHealth>() ?? PlayerHealth.Resolve();
             var data = new GameSaveData
             {
                 sceneName = SceneManager.GetActiveScene().name,
@@ -80,6 +108,8 @@ namespace Bayou.Save
                 playerZ = player.position.z,
                 playerRotY = player.eulerAngles.y,
                 walletBalance = wallet != null ? wallet.Balance : 0,
+                playerHealth = health != null ? health.Current : PlayerHealth.DefaultMaxHealth,
+                playerMaxHealth = health != null ? health.Max : PlayerHealth.DefaultMaxHealth,
                 inventoryItems = CaptureInventory(inventory)
             };
 
@@ -88,6 +118,7 @@ namespace Bayou.Save
                 var json = JsonUtility.ToJson(data, prettyPrint: true);
                 File.WriteAllText(SaveFilePath, json);
                 LastBonfireId = bonfireId;
+                HasSessionCheckpoint = true;
                 GameSaved?.Invoke();
                 Debug.Log($"[Save] Game saved at bonfire '{bonfireId}'.");
                 return true;
@@ -129,6 +160,7 @@ namespace Bayou.Save
             }
 
             LastBonfireId = data.lastBonfireId;
+            HasSessionCheckpoint = true;
 
             var wallet = PlayerWallet.Instance;
             if (wallet != null)
@@ -141,13 +173,82 @@ namespace Bayou.Save
             var player = FindPlayer();
             if (player != null)
             {
-                player.position = new Vector3(data.playerX, data.playerY, data.playerZ);
-                player.rotation = Quaternion.Euler(0f, data.playerRotY, 0f);
+                PlacePlayer(
+                    player,
+                    new Vector3(data.playerX, data.playerY, data.playerZ),
+                    Quaternion.Euler(0f, data.playerRotY, 0f));
+                var health = player.GetComponent<PlayerHealth>() ?? PlayerHealth.EnsureOn(player.gameObject);
+                if (data.playerMaxHealth > 0)
+                    health.Restore(data.playerHealth, data.playerMaxHealth);
             }
 
+            SnapCamera();
             GameLoaded?.Invoke();
             Debug.Log($"[Save] Game loaded from bonfire '{data.lastBonfireId}'.");
             return true;
+        }
+
+        /// <summary>
+        /// Death respawn. Uses a campfire rest from this session; otherwise the scene spawn.
+        /// Editor Play Mode never falls back to a previous run's save file.
+        /// </summary>
+        public bool RespawnAfterDeath()
+        {
+            CaptureSpawnIfNeeded();
+
+            if (HasSessionCheckpoint && HasSaveFile && Load())
+                return true;
+
+            RestoreSpawn();
+            return false;
+        }
+
+        private void CaptureSpawnIfNeeded()
+        {
+            if (_capturedSpawn) return;
+            var player = FindPlayer();
+            if (player == null) return;
+
+            _spawnPosition = player.position;
+            _spawnRotation = player.rotation;
+            _capturedSpawn = true;
+        }
+
+        private void RestoreSpawn()
+        {
+            var player = FindPlayer();
+            if (player != null && _capturedSpawn)
+                PlacePlayer(player, _spawnPosition, _spawnRotation);
+
+            var health = player != null
+                ? player.GetComponent<PlayerHealth>() ?? PlayerHealth.EnsureOn(player.gameObject)
+                : PlayerHealth.Resolve();
+            health?.HealToFull();
+            SnapCamera();
+        }
+
+        private static void PlacePlayer(Transform player, Vector3 position, Quaternion rotation)
+        {
+            var motor = player.GetComponent<BayouCharacterMotor>();
+            if (motor != null)
+            {
+                motor.Teleport(position, rotation);
+                return;
+            }
+
+            player.SetPositionAndRotation(position, rotation);
+            var rb = player.GetComponent<Rigidbody>();
+            if (rb == null) return;
+            rb.position = position;
+            rb.rotation = rotation;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        private static void SnapCamera()
+        {
+            var cam = FindFirstObjectByType<Bayou.CameraControl.BayouFollowCamera>();
+            cam?.SnapToTarget();
         }
 
         private SavedItemEntry[] CaptureInventory(InventoryController inventory)
@@ -220,6 +321,7 @@ namespace Bayou.Save
             {
                 File.Delete(SaveFilePath);
                 LastBonfireId = null;
+                HasSessionCheckpoint = false;
                 Debug.Log("[Save] Save file deleted.");
                 return true;
             }

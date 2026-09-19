@@ -54,6 +54,14 @@ namespace Bayou.Combat
             Resolve().SpawnPopup(origin + forward * 1.2f, "—", new Color(0.85f, 0.85f, 0.85f, 0.7f));
         }
 
+        public static void PlayPlayerHurt(Vector3 worldPos, Vector3 knockback)
+        {
+            var fx = Resolve();
+            fx.SpawnSpark(worldPos + Vector3.up * 0.85f, knockback);
+            fx.SpawnPopup(worldPos, "!", new Color(1f, 0.28f, 0.22f, 1f));
+            PunchCamera(knockback.sqrMagnitude > 0.0001f ? knockback : Vector3.back);
+        }
+
         public static void PunchCamera(Vector3 worldDir)
         {
             var cam = Object.FindFirstObjectByType<BayouFollowCamera>();

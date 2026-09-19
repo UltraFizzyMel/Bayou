@@ -207,14 +207,13 @@ public class DialogueManager : MonoBehaviour
         inkExternalFunctions = new InkExternalFunctions();
         inkExternalFunctions.Bind(currentStory);
 
-        // Keep Ink quest*State vars in sync with QuestManager (Start() order can miss this).
+        // Quest states must be in the story before the opening knot is evaluated.
         SyncQuestStatesIntoDialogueVariables();
+        dialogueVariables.StartListening(currentStory);
 
-        if (knotName != "")
-        {
+        if (!string.IsNullOrEmpty(knotName))
             currentStory.ChoosePathString(knotName);
-        }
-        
+
         dialogueIsPlaying = true;
         dialoguePanel.SetActive(true);
         EnableAdvanceAction();
@@ -222,8 +221,6 @@ public class DialogueManager : MonoBehaviour
         // Don't treat the E/click that started this conversation as "advance".
         _advanceConsumedFrame = Time.frameCount;
         InputManager.GetInstance()?.RegisterInteractPressed();
-
-        dialogueVariables.StartListening(currentStory);
 
         //reset portrait, layout and speaker
         displayNameText.text = "???";

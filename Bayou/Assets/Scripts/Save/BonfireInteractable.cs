@@ -11,7 +11,7 @@ namespace Bayou.Save
         [SerializeField] private string displayName = "Campfire";
         [SerializeField] private BonfireUIController bonfireUi;
         [SerializeField] private GameObject visualCue;
-        [SerializeField] private string restPrompt = "Rest at the fire";
+        [SerializeField] private string restPrompt = "Rest / cook fish to heal";
         [SerializeField] private float interactRadius = 2.6f;
 
         private bool _playerInRange;

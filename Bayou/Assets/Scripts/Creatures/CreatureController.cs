@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Bayou.Combat;
+using Bayou.Fishing;
 using Bayou.Inventory;
 using UnityEngine;
 
@@ -59,8 +60,19 @@ namespace Bayou.Creatures
 
         [Header("Chase")]
         [SerializeField] private float stopChaseDistance = 0.9f;
+        [SerializeField] private float maxStepHeight = 1.15f;
+        [SerializeField] private float obstacleProbe = 1.35f;
+
+        [Header("Snake lunge")]
+        [SerializeField] private float lungeRange = 3.5f;
+        [SerializeField] private float lungeWindupSeconds = 0.32f;
+        [SerializeField] private float lungeSpeed = 13.5f;
+        [SerializeField] private float lungeDuration = 0.24f;
+        [SerializeField] private float lungeRecoverSeconds = 0.4f;
+        [SerializeField] private float lungeCooldown = 1.55f;
 
         private static readonly List<CreatureController> All = new();
+        private static readonly RaycastHit[] GroundHits = new RaycastHit[16];
 
         private CreatureSense _sense;
         private CreatureMode _mode = CreatureMode.Passive;
@@ -80,6 +92,21 @@ namespace Bayou.Creatures
         private bool _dying;
         private float _dieAt;
         private float _hpFlashUntil;
+        private Vector3 _lastXz;
+        private float _stuckTime;
+        private bool _triedMove;
+        private StrikePhase _strike;
+        private Vector3 _lungeDir = Vector3.forward;
+        private float _strikeUntil;
+        private float _nextLungeTime;
+
+        private enum StrikePhase
+        {
+            None,
+            Windup,
+            Lunge,
+            Recover
+        }
 
         public CreatureMode Mode => _mode;
         public CreatureNetBehavior NetBehavior => netBehavior;
@@ -91,6 +118,7 @@ namespace Bayou.Creatures
         public float Health => _health;
         public float MaxHealth => maxHealth;
         public bool IsNetHittable => IsAlive;
+        public bool IsLunging => _strike == StrikePhase.Lunge;
         public static IReadOnlyList<CreatureController> Living => All;
 
         private void OnEnable()
@@ -131,7 +159,9 @@ namespace Bayou.Creatures
 
         private void Start()
         {
+            SnapWaypointsToGround();
             SnapBodyToGround();
+            _lastXz = Flat(transform.position);
         }
 
         private void Update()
@@ -151,7 +181,11 @@ namespace Bayou.Creatures
             if (_dead) return;
 
             if (IsStunned)
+            {
+                CancelStrike();
+                FollowGround();
                 return;
+            }
 
             var sensed = _sense.TrySensePlayer(out var player);
             if (sensed || _sense.HasRecentSense)
@@ -160,10 +194,16 @@ namespace Bayou.Creatures
                 _mode = CreatureMode.Passive;
 
             var dt = Time.deltaTime;
-            if (_mode == CreatureMode.Active && _sense.Player != null)
+            _triedMove = false;
+            if (_strike != StrikePhase.None)
+                TickStrike(dt);
+            else if (_mode == CreatureMode.Active && _sense.Player != null)
                 TickActive(_sense.Player, dt);
             else
                 TickPassive(dt);
+
+            FollowGround();
+            NoteStuck(_triedMove, dt);
         }
 
         private void TickPassive(float dt)
@@ -178,7 +218,18 @@ namespace Bayou.Creatures
         {
             var to = Flat(player.position - transform.position);
             var dist = to.magnitude;
-            if (dist <= stopChaseDistance)
+
+            if (netBehavior == CreatureNetBehavior.CatchOnNet &&
+                Time.time >= _nextLungeTime &&
+                dist <= lungeRange &&
+                dist > 0.35f)
+            {
+                BeginWindup(to);
+                TickStrike(dt);
+                return;
+            }
+
+            if (dist <= stopChaseDistance && netBehavior != CreatureNetBehavior.CatchOnNet)
             {
                 Face(to, dt);
                 return;
@@ -203,6 +254,72 @@ namespace Bayou.Creatures
                         activeSpeed * dt);
                 }
             }
+        }
+
+        private void BeginWindup(Vector3 toPlayer)
+        {
+            _lungeDir = toPlayer.sqrMagnitude > 0.0001f ? toPlayer.normalized : transform.forward;
+            _lungeDir.y = 0f;
+            if (_lungeDir.sqrMagnitude < 0.0001f)
+                _lungeDir = Vector3.forward;
+            _lungeDir.Normalize();
+            _strike = StrikePhase.Windup;
+            _strikeUntil = Time.time + Mathf.Max(0.12f, lungeWindupSeconds);
+            _visual?.PlayLungeCoil(lungeWindupSeconds);
+            Face(_lungeDir, 1f);
+        }
+
+        private void TickStrike(float dt)
+        {
+            if (_strike == StrikePhase.Windup)
+            {
+                var player = _sense != null ? _sense.Player : null;
+                if (player != null)
+                {
+                    var to = Flat(player.position - transform.position);
+                    if (to.sqrMagnitude > 0.0001f)
+                        _lungeDir = to.normalized;
+                }
+
+                Face(_lungeDir, dt * 2.4f);
+                if (Time.time < _strikeUntil)
+                    return;
+
+                _strike = StrikePhase.Lunge;
+                _strikeUntil = Time.time + Mathf.Max(0.08f, lungeDuration);
+                _moveDir = _lungeDir;
+                _visual?.PlayLungeStretch(lungeDuration);
+                return;
+            }
+
+            if (_strike == StrikePhase.Lunge)
+            {
+                _triedMove = true;
+                Face(_lungeDir, dt * 4f);
+                transform.position += _lungeDir * lungeSpeed * dt;
+                FollowGround();
+                if (Time.time < _strikeUntil)
+                    return;
+
+                _strike = StrikePhase.Recover;
+                _strikeUntil = Time.time + Mathf.Max(0.1f, lungeRecoverSeconds);
+                _nextLungeTime = Time.time + Mathf.Max(0.4f, lungeCooldown);
+                return;
+            }
+
+            if (_strike == StrikePhase.Recover)
+            {
+                if (Time.time < _strikeUntil)
+                    return;
+                _strike = StrikePhase.None;
+            }
+        }
+
+        private void CancelStrike()
+        {
+            if (_strike == StrikePhase.None) return;
+            _strike = StrikePhase.None;
+            _nextLungeTime = Time.time + 0.35f;
         }
 
         private void TickPatrol(float dt)
@@ -276,8 +393,11 @@ namespace Bayou.Creatures
 
         private void MoveToward(Vector3 dir, float speed, float dt)
         {
+            _triedMove = true;
+            dir = SteerAroundObstacles(dir);
             Face(dir, dt);
             transform.position += _moveDir * speed * dt;
+            FollowGround();
         }
 
         private void Face(Vector3 dir, float dt)
@@ -310,6 +430,7 @@ namespace Bayou.Creatures
         {
             if (_knockVel.sqrMagnitude < 0.0001f) return;
             transform.position += _knockVel * dt;
+            FollowGround();
             _knockVel = Vector3.Lerp(_knockVel, Vector3.zero, 1f - Mathf.Exp(-10f * dt));
             if (_knockVel.sqrMagnitude < 0.04f)
                 _knockVel = Vector3.zero;
@@ -427,6 +548,7 @@ namespace Bayou.Creatures
             _dieAt = Time.time + 0.28f;
             _visual?.NotifyHealth(0f, maxHealth);
             _visual?.PlayDeath();
+            CancelStrike();
         }
 
         private void FinishDeath()
@@ -449,6 +571,7 @@ namespace Bayou.Creatures
             _dying = false;
             _health = 0f;
             _mode = CreatureMode.Passive;
+            CancelStrike();
             Bayou.Audio.FishingAudio.Resolve()?.PlaySnagCatch();
             gameObject.SetActive(false);
 
@@ -491,27 +614,161 @@ namespace Bayou.Creatures
         internal static void SnapBodyToGround(Transform t, float hover)
         {
             if (t == null) return;
-            var origin = t.position + Vector3.up * 20f;
-            var hits = Physics.RaycastAll(origin, Vector3.down, 52f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
-            var bestY = float.NegativeInfinity;
-            for (var i = 0; i < hits.Length; i++)
-            {
-                var hit = hits[i];
-                if (hit.collider == null) continue;
-                if (hit.collider.transform == t || hit.collider.transform.IsChildOf(t))
-                    continue;
-                if (hit.point.y > bestY)
-                    bestY = hit.point.y;
-            }
-
-            if (bestY > -1000f)
-                t.position = new Vector3(t.position.x, bestY + hover, t.position.z);
+            if (!TryGetWalkableHeight(t.position, t, out var ground))
+                return;
+            t.position = new Vector3(t.position.x, ground + hover, t.position.z);
         }
 
         private void SnapBodyToGround()
         {
-            var hover = netBehavior == CreatureNetBehavior.StunOnNet ? 0.38f : 0.28f;
-            SnapBodyToGround(transform, hover);
+            SnapBodyToGround(transform, HoverHeight);
+        }
+
+        private float HoverHeight => netBehavior == CreatureNetBehavior.StunOnNet ? 0.4f : 0.32f;
+
+        private void FollowGround()
+        {
+            SnapBodyToGround();
+        }
+
+        private void SnapWaypointsToGround()
+        {
+            if (patrolWaypoints == null) return;
+            for (var i = 0; i < patrolWaypoints.Length; i++)
+            {
+                var wp = patrolWaypoints[i];
+                if (wp == null) continue;
+                SnapBodyToGround(wp, 0.05f);
+            }
+        }
+
+        private Vector3 SteerAroundObstacles(Vector3 dir)
+        {
+            if (dir.sqrMagnitude < 0.0001f) return dir;
+            dir.Normalize();
+            if (!IsBlocked(transform.position, dir))
+                return dir;
+
+            var left = Quaternion.Euler(0f, -55f, 0f) * dir;
+            var right = Quaternion.Euler(0f, 55f, 0f) * dir;
+            var leftBlocked = IsBlocked(transform.position, left);
+            var rightBlocked = IsBlocked(transform.position, right);
+            if (!leftBlocked && rightBlocked) return left;
+            if (!rightBlocked && leftBlocked) return right;
+            if (!leftBlocked && !rightBlocked)
+            {
+                var prefer = Vector3.Dot(left, dir) >= Vector3.Dot(right, dir) ? left : right;
+                return prefer;
+            }
+
+            var wideLeft = Quaternion.Euler(0f, -110f, 0f) * dir;
+            if (!IsBlocked(transform.position, wideLeft)) return wideLeft;
+            var wideRight = Quaternion.Euler(0f, 110f, 0f) * dir;
+            if (!IsBlocked(transform.position, wideRight)) return wideRight;
+            return -dir;
+        }
+
+        private bool IsBlocked(Vector3 from, Vector3 dir)
+        {
+            if (!TryGetWalkableHeight(from, transform, out var here))
+                return false;
+
+            var ahead = from + dir.normalized * obstacleProbe;
+            if (TryGetWalkableHeight(ahead, transform, out var there) &&
+                there - here > maxStepHeight)
+                return true;
+
+            var origin = from + Vector3.up * 0.45f;
+            if (Physics.SphereCast(origin, 0.22f, dir.normalized, out var hit, obstacleProbe,
+                    Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider != null &&
+                    hit.collider.transform != transform &&
+                    !hit.collider.transform.IsChildOf(transform) &&
+                    hit.normal.y < 0.45f)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void NoteStuck(bool wantsMove, float dt)
+        {
+            var xz = Flat(transform.position);
+            if (!wantsMove)
+            {
+                _stuckTime = 0f;
+                _lastXz = xz;
+                return;
+            }
+
+            if ((xz - _lastXz).magnitude > 0.08f)
+            {
+                _stuckTime = 0f;
+                _lastXz = xz;
+                return;
+            }
+
+            _stuckTime += dt;
+            if (_stuckTime < 1.15f) return;
+
+            _stuckTime = 0f;
+            var side = Vector3.Cross(Vector3.up, _moveDir.sqrMagnitude > 0.001f ? _moveDir : Vector3.forward);
+            if (side.sqrMagnitude < 0.001f) side = Vector3.right;
+            transform.position += side.normalized * Random.Range(-1.4f, 1.4f);
+            FollowGround();
+
+            if (netBehavior == CreatureNetBehavior.CatchOnNet)
+                AdvancePatrol();
+            else
+                _nextWanderPick = 0f;
+        }
+
+        private static bool TryGetWalkableHeight(Vector3 worldPos, Transform ignoreRoot, out float y)
+        {
+            if (FishingSpot.TryGetGroundHeight(worldPos, out y))
+            {
+                // Terrain.SampleHeight is the ground even under trees; prefer it.
+                var terrains = Terrain.activeTerrains;
+                for (var i = 0; i < terrains.Length; i++)
+                {
+                    var terrain = terrains[i];
+                    if (terrain == null || terrain.terrainData == null) continue;
+                    var local = worldPos - terrain.transform.position;
+                    var size = terrain.terrainData.size;
+                    if (local.x < 0f || local.z < 0f || local.x > size.x || local.z > size.z)
+                        continue;
+                    y = terrain.SampleHeight(worldPos) + terrain.transform.position.y;
+                    return true;
+                }
+
+                return true;
+            }
+
+            var origin = worldPos + Vector3.up * 8f;
+            var count = Physics.RaycastNonAlloc(
+                origin, Vector3.down, GroundHits, 16f, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+            var bestDist = float.PositiveInfinity;
+            var found = false;
+            y = worldPos.y;
+            for (var i = 0; i < count; i++)
+            {
+                var hit = GroundHits[i];
+                if (hit.collider == null) continue;
+                if (ignoreRoot != null &&
+                    (hit.collider.transform == ignoreRoot || hit.collider.transform.IsChildOf(ignoreRoot)))
+                    continue;
+                if (hit.normal.y < 0.4f) continue;
+                var dist = Mathf.Abs(hit.point.y - worldPos.y);
+                if (!found || dist < bestDist)
+                {
+                    found = true;
+                    bestDist = dist;
+                    y = hit.point.y;
+                }
+            }
+
+            return found;
         }
 
 #if UNITY_EDITOR

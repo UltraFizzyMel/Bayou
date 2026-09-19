@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Bayou.Inventory;
+using Bayou.Player;
 using Bayou.Save;
 using Bayou;
 using TMPro;
@@ -63,7 +64,7 @@ namespace Bayou.Save
             if (titleLabel != null)
                 titleLabel.text = bonfireDisplayName;
             if (hintLabel != null)
-                hintLabel.text = "Rest at the campfire to save. Cooking a fish is optional.";
+                hintLabel.text = "Cooking a fish is the only way to restore health. Resting without a fish still saves.";
             if (statusLabel != null)
                 statusLabel.text = string.Empty;
 
@@ -106,7 +107,7 @@ namespace Bayou.Save
             if (fish.Count == 0)
             {
                 if (statusLabel != null)
-                    statusLabel.text = "No fish to cook. Rest anyway to save your journey.";
+                    statusLabel.text = "No fish to cook. Rest to save — you will not heal.";
                 UpdateCookButton();
                 return;
             }
@@ -164,6 +165,15 @@ namespace Bayou.Save
             if (_inventory == null || _saveSystem == null)
                 return;
 
+            var cooked = _selectedFish != null;
+            if (cooked)
+            {
+                var meal = _selectedFish;
+                _selectedFish = null;
+                _inventory.RemoveItem(meal);
+                PlayerHealth.Resolve()?.HealToFull();
+            }
+
             if (!_saveSystem.Save(_bonfireId))
             {
                 if (statusLabel != null)
@@ -171,17 +181,15 @@ namespace Bayou.Save
                 return;
             }
 
-            if (_selectedFish != null)
+            if (statusLabel != null)
             {
-                var cooked = _selectedFish;
-                _selectedFish = null;
-                _inventory.RemoveItem(cooked);
-                if (statusLabel != null)
-                    statusLabel.text = "Fish cooked. Your progress is saved.";
-            }
-            else if (statusLabel != null)
-            {
-                statusLabel.text = "You rest. Your progress is saved.";
+                var health = PlayerHealth.Resolve();
+                var wounded = health != null && health.Current < health.Max;
+                statusLabel.text = cooked
+                    ? "The meal restores you. Your progress is saved."
+                    : wounded
+                        ? "You rest. Your progress is saved, but you are still wounded."
+                        : "You rest. Your progress is saved.";
             }
 
             Invoke(nameof(Close), 1.2f);

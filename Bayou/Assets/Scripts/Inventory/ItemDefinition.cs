@@ -23,7 +23,7 @@ namespace Bayou.Inventory
         public int sellPrice;
 
         [Header("Bonfire")]
-        [Tooltip("Fish caught in the bayou can be cooked at a bonfire to save the game.")]
+        [Tooltip("Fish caught in the bayou. Cooking one at a campfire is the only way to restore health.")]
         public bool isFish;
 
         [Header("Equipment")]

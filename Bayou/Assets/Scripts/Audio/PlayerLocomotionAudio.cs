@@ -44,7 +44,7 @@ namespace Bayou.Audio
         {
             if (motor == null) return;
 
-            var moving = motor.PlanarSpeed >= moveSpeedThreshold && motor.HasMoveInput;
+            var moving = motor.PlanarSpeed >= moveSpeedThreshold && motor.HasMoveInput && !motor.IsStunned;
             var isSwimming = waterSensor != null && waterSensor.IsSwimming;
             var isWading = waterSensor != null && waterSensor.IsWading;
 

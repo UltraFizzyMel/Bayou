@@ -22,6 +22,6 @@ MonoBehaviour:
   questStepPrefabs:
   - {fileID: 7699019382557362582, guid: 7f6799083cbce704fb7743821e0c7558, type: 3}
   autoStart: 0
-  autoComplete: 1
+  autoComplete: 0
   moneyReward: 0
   MiscReward: Church foggy marsh gate key 

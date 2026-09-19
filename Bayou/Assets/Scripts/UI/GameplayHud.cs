@@ -1,5 +1,6 @@
 using Bayou.Environment;
 using Bayou.Inventory.Shop;
+using Bayou.Player;
 using Bayou.Save;
 using TMPro;
 using UnityEngine;
@@ -24,7 +25,7 @@ namespace Bayou.UI
             "1 Rod · 2 Net · 3 Lantern · 0 None\n" +
             "Left click  Cast / scoop  ·  melee damages enemies if chased\n" +
             "Lantern lights fog  ·  stay in fog too long without it and you are pushed back\n" +
-            "Campfire  E rest to save  ·  Esc / Q cancel cast\n" +
+            "Campfire  E rest to save  ·  cook a fish there to heal\n" +
             "V  Volume";
 
         [SerializeField] private bool buildUiIfMissing = true;
@@ -36,9 +37,17 @@ namespace Bayou.UI
         [SerializeField] private GameObject controlsPanel;
         [SerializeField] private GameObject fogWarningPanel;
         [SerializeField] private TextMeshProUGUI fogWarningLabel;
+        [SerializeField] private GameObject healthPanel;
+        [SerializeField] private Image healthFill;
+        [SerializeField] private TextMeshProUGUI healthLabel;
+        [SerializeField] private GameObject deathPanel;
+        [SerializeField] private TextMeshProUGUI deathLabel;
         [SerializeField] private bool hideWhenMenusOpen = true;
         [SerializeField] private bool showControlsLegend;
 
+        private RectTransform _healthFillRect;
+        private PlayerHealth _boundHealth;
+        private static Sprite _uiWhiteSprite;
         private string _trackedQuestId;
         private string _objectiveCache = "";
         private bool _subscribed;
@@ -164,11 +173,13 @@ namespace Bayou.UI
         {
             Unsubscribe();
             _subscribed = false;
+            BindHealth(null);
         }
 
         private void OnDestroy()
         {
             Unsubscribe();
+            BindHealth(null);
             if (Instance == this)
                 Instance = null;
         }
@@ -194,13 +205,18 @@ namespace Bayou.UI
             if (!dialogueOpen && (Time.frameCount % 30 == 0))
                 RefreshQuestFromManager();
 
-            if (!hideWhenMenusOpen || rootCanvas == null) return;
-            var show = !ShouldHideForMenus();
-            if (rootCanvas.gameObject.activeSelf != show)
-                rootCanvas.gameObject.SetActive(show);
+            if (rootCanvas == null) return;
 
-            if (show)
-                RefreshFogWarning();
+            if (hideWhenMenusOpen)
+            {
+                var show = !ShouldHideForMenus();
+                if (rootCanvas.gameObject.activeSelf != show)
+                    rootCanvas.gameObject.SetActive(show);
+                if (!show) return;
+            }
+
+            RefreshFogWarning();
+            RefreshHealthHud();
         }
 
         private void RefreshFogWarning()
@@ -425,6 +441,157 @@ namespace Bayou.UI
                 "", 20f, FontStyles.Bold, TextAlignmentOptions.Center);
             StretchTmp(fogWarningLabel.rectTransform, 16f, 10f, 16f, 10f);
             fogWarningPanel.SetActive(false);
+        }
+
+        private void RefreshHealthHud()
+        {
+            EnsureHealthUi();
+            var health = PlayerHealth.Resolve();
+            BindHealth(health);
+            if (health == null)
+            {
+                if (healthPanel != null)
+                    healthPanel.SetActive(false);
+                if (deathPanel != null)
+                    deathPanel.SetActive(false);
+                return;
+            }
+
+            if (healthPanel != null && !healthPanel.activeSelf)
+                healthPanel.SetActive(true);
+
+            var amount = Mathf.Clamp01(health.Normalized);
+            if (_healthFillRect != null)
+            {
+                _healthFillRect.anchorMin = Vector2.zero;
+                _healthFillRect.anchorMax = new Vector2(amount, 1f);
+                _healthFillRect.offsetMin = Vector2.zero;
+                _healthFillRect.offsetMax = Vector2.zero;
+                _healthFillRect.gameObject.SetActive(amount > 0.001f);
+            }
+
+            if (healthFill != null)
+            {
+                healthFill.type = Image.Type.Simple;
+                healthFill.sprite = UiWhiteSprite();
+                healthFill.color = amount <= 0.35f
+                    ? new Color(0.82f, 0.18f, 0.16f, 0.95f)
+                    : new Color(0.72f, 0.22f, 0.2f, 0.92f);
+            }
+
+            if (healthLabel != null)
+                healthLabel.text = $"Health  {health.Current} / {health.Max}";
+
+            if (deathPanel != null)
+                deathPanel.SetActive(health.IsDying);
+        }
+
+        private void BindHealth(PlayerHealth health)
+        {
+            if (_boundHealth == health) return;
+            if (_boundHealth != null)
+                _boundHealth.Changed -= RefreshHealthHud;
+            _boundHealth = health;
+            if (_boundHealth != null)
+                _boundHealth.Changed += RefreshHealthHud;
+        }
+
+        private static Sprite UiWhiteSprite()
+        {
+            if (_uiWhiteSprite != null) return _uiWhiteSprite;
+            var tex = Texture2D.whiteTexture;
+            _uiWhiteSprite = Sprite.Create(
+                tex,
+                new Rect(0f, 0f, tex.width, tex.height),
+                new Vector2(0.5f, 0.5f),
+                4f);
+            _uiWhiteSprite.name = "BayouUiWhite";
+            return _uiWhiteSprite;
+        }
+
+        private void EnsureHealthUi()
+        {
+            if (rootCanvas == null) return;
+
+            if (healthPanel == null)
+            {
+                var existing = rootCanvas.transform.Find("Health");
+                healthPanel = existing != null ? existing.gameObject : null;
+            }
+
+            if (healthPanel == null)
+            {
+                healthPanel = CreatePanel("Health", rootCanvas.transform,
+                    new Vector2(1f, 1f), new Vector2(1f, 1f), new Vector2(-24f, -24f), new Vector2(220f, 64f));
+                var rt = healthPanel.GetComponent<RectTransform>();
+                rt.pivot = new Vector2(1f, 1f);
+
+                var track = new GameObject("Track", typeof(RectTransform));
+                track.transform.SetParent(healthPanel.transform, false);
+                var trackRt = track.GetComponent<RectTransform>();
+                StretchTmp(trackRt, 14f, 34f, 14f, 12f);
+                var trackImg = track.AddComponent<Image>();
+                trackImg.sprite = UiWhiteSprite();
+                trackImg.color = new Color(0.12f, 0.08f, 0.08f, 0.85f);
+                trackImg.raycastTarget = false;
+
+                var fillGo = new GameObject("Fill", typeof(RectTransform));
+                fillGo.transform.SetParent(track.transform, false);
+                _healthFillRect = fillGo.GetComponent<RectTransform>();
+                _healthFillRect.anchorMin = Vector2.zero;
+                _healthFillRect.anchorMax = Vector2.one;
+                _healthFillRect.offsetMin = Vector2.zero;
+                _healthFillRect.offsetMax = Vector2.zero;
+                healthFill = fillGo.AddComponent<Image>();
+                healthFill.sprite = UiWhiteSprite();
+                healthFill.color = new Color(0.72f, 0.22f, 0.2f, 0.92f);
+                healthFill.raycastTarget = false;
+                healthFill.type = Image.Type.Simple;
+
+                healthLabel = CreateTmp("HealthText", healthPanel.transform, "Health  5 / 5", 18f, FontStyles.Bold,
+                    TextAlignmentOptions.TopLeft);
+                StretchTmp(healthLabel.rectTransform, 14f, 8f, 14f, 36f);
+            }
+            else
+            {
+                if (healthFill == null || _healthFillRect == null)
+                {
+                    var fill = healthPanel.transform.Find("Track/Fill");
+                    if (fill != null)
+                    {
+                        healthFill = fill.GetComponent<Image>();
+                        _healthFillRect = fill.GetComponent<RectTransform>();
+                    }
+                }
+
+                if (healthLabel == null)
+                {
+                    var label = healthPanel.transform.Find("HealthText");
+                    if (label != null)
+                        healthLabel = label.GetComponent<TextMeshProUGUI>();
+                }
+            }
+
+            if (deathPanel == null)
+            {
+                var existing = rootCanvas.transform.Find("Death");
+                deathPanel = existing != null ? existing.gameObject : null;
+            }
+
+            if (deathPanel == null)
+            {
+                deathPanel = CreatePanel("Death", rootCanvas.transform,
+                    new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(520f, 90f));
+                var rt = deathPanel.GetComponent<RectTransform>();
+                rt.pivot = new Vector2(0.5f, 0.5f);
+                var img = deathPanel.GetComponent<Image>();
+                if (img != null)
+                    img.color = new Color(0.08f, 0.04f, 0.04f, 0.82f);
+                deathLabel = CreateTmp("DeathText", deathPanel.transform,
+                    "You collapsed.", 22f, FontStyles.Bold, TextAlignmentOptions.Center);
+                StretchTmp(deathLabel.rectTransform, 16f, 12f, 16f, 12f);
+                deathPanel.SetActive(false);
+            }
         }
 
         private static GameObject CreatePanel(

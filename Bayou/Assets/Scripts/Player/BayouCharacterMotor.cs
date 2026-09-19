@@ -64,6 +64,8 @@ namespace Bayou.Player
         private Transform[] _bindBones;
         private Vector3[] _bindBonePos;
         private Vector3[] _bindBoneScale;
+        private bool _hasHurtTrigger;
+        private float _stunUntil;
 
         public Animator animator;
 
@@ -81,6 +83,9 @@ namespace Bayou.Player
         /// <summary>True when the player is holding move input.</summary>
         public bool HasMoveInput => moveInput.sqrMagnitude > 0.01f;
 
+        /// <summary>True during a hit stagger — locomotion and fishing should idle.</summary>
+        public bool IsStunned => Time.time < _stunUntil;
+
         private void Awake()
         {
             rb = GetComponent<Rigidbody>();
@@ -96,6 +101,7 @@ namespace Bayou.Player
             CacheAnimatorParams();
             PlayerLocator.Bind(gameObject);
             PlayerOutline.EnsureOn(gameObject);
+            PlayerHealth.EnsureOn(gameObject);
         }
 
         private void CacheStandCapsule()
@@ -111,15 +117,45 @@ namespace Bayou.Player
         {
             _hasInWaterParam = false;
             _hasInDeepWaterParam = false;
+            _hasHurtTrigger = false;
             if (animator == null) return;
             var parms = animator.parameters;
             for (var i = 0; i < parms.Length; i++)
             {
+                if (parms[i].name == "hurt" && parms[i].type == AnimatorControllerParameterType.Trigger)
+                    _hasHurtTrigger = true;
                 if (parms[i].type != AnimatorControllerParameterType.Bool) continue;
                 if (parms[i].name == "inWater") _hasInWaterParam = true;
                 else if (parms[i].name == "inDeepWater") _hasInDeepWaterParam = true;
             }
             CacheBindPose();
+        }
+
+        public void ApplyHitReaction(Vector3 planarVelocity, float stunSeconds)
+        {
+            _stunUntil = Time.time + Mathf.Max(0.05f, stunSeconds);
+            if (rb == null) return;
+            planarVelocity.y = 0f;
+            if (planarVelocity.sqrMagnitude < 0.0001f) return;
+            var v = rb.linearVelocity;
+            rb.linearVelocity = new Vector3(planarVelocity.x, Mathf.Max(v.y, 0.35f), planarVelocity.z);
+        }
+
+        public void Teleport(Vector3 position, Quaternion rotation)
+        {
+            _stunUntil = 0f;
+            transform.SetPositionAndRotation(position, rotation);
+            if (rb == null) return;
+            rb.position = position;
+            rb.rotation = rotation;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        public void PlayHurtAnimation()
+        {
+            if (animator != null && _hasHurtTrigger)
+                animator.SetTrigger("hurt");
         }
 
 #if ENABLE_INPUT_SYSTEM
@@ -183,6 +219,16 @@ namespace Bayou.Player
 
             var swimming = waterSensor != null && waterSensor.IsSwimming;
             var wading = waterSensor != null && waterSensor.IsWading;
+
+            if (IsStunned)
+            {
+                ApplySwimBuoyancy(swimming);
+                ApplyWaterAnimator(wading, swimming);
+                if (animator != null)
+                    animator.SetBool("isMoving", PlanarSpeed > 0.15f);
+                return;
+            }
+
             var speedMul = swimming ? swimSpeedMultiplier : (wading ? waterSpeedMultiplier : 1f);
             var accelMul = swimming ? swimAccelerationMultiplier : (wading ? waterAccelerationMultiplier : 1f);
             var speed = maxSpeed * speedMul;

@@ -1,3 +1,4 @@
+using Bayou.Save;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -5,6 +6,13 @@ public class ButtonManager : MonoBehaviour
 {
     public void NewGame()
     {
+        GameSaveSystem.SuppressNextLoad = true;
+        SceneManager.LoadScene("MovementTest");
+    }
+
+    public void ContinueGame()
+    {
+        GameSaveSystem.SuppressNextLoad = false;
         SceneManager.LoadScene("MovementTest");
     }
 

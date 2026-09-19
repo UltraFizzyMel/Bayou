@@ -434,18 +434,63 @@ namespace Bayou.Fishing
             scoop.Configure(loot.item, loot.glowColor);
         }
 
+        public Vector3 RandomSwimPoint(Vector3 from, float minTravel)
+        {
+            var minTravelSq = Mathf.Max(1.2f, minTravel) * Mathf.Max(1.2f, minTravel);
+            var fallback = ClampInside(from);
+            for (var attempt = 0; attempt < 18; attempt++)
+            {
+                var r = radius * 0.9f;
+                var offset = UnityEngine.Random.insideUnitCircle * r;
+                var candidate = new Vector3(
+                    transform.position.x + offset.x,
+                    from.y,
+                    transform.position.z + offset.y);
+                candidate = ClampInside(candidate);
+                if (IsLand(candidate) || (!Contains(candidate) && attempt < 17))
+                    continue;
+
+                var d = candidate - from;
+                d.y = 0f;
+                if (d.sqrMagnitude < minTravelSq && attempt < 14)
+                    continue;
+                return candidate;
+            }
+
+            return fallback;
+        }
+
         private Vector3 RandomPointInSpot()
         {
-            for (var attempt = 0; attempt < 16; attempt++)
+            var minSpacing = 2.2f;
+            var minSpacingSq = minSpacing * minSpacing;
+            for (var attempt = 0; attempt < 24; attempt++)
             {
-                var r = radius * 0.65f;
+                var r = radius * 0.9f;
                 var offset = UnityEngine.Random.insideUnitCircle * r;
                 var candidate = new Vector3(
                     transform.position.x + offset.x,
                     transform.position.y,
                     transform.position.z + offset.y);
                 candidate = ClampInside(candidate);
-                if (!IsLand(candidate) && (Contains(candidate) || attempt == 15))
+                if (IsLand(candidate) || (!Contains(candidate) && attempt < 23))
+                    continue;
+
+                var tooClose = false;
+                for (var i = 0; i < _spawned.Count; i++)
+                {
+                    var other = _spawned[i];
+                    if (other == null) continue;
+                    var d = candidate - other.transform.position;
+                    d.y = 0f;
+                    if (d.sqrMagnitude < minSpacingSq)
+                    {
+                        tooClose = true;
+                        break;
+                    }
+                }
+
+                if (!tooClose || attempt >= 20)
                     return candidate;
             }
 

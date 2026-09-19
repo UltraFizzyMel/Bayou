@@ -70,15 +70,11 @@ public static class QuestRewards
         switch (questId)
         {
             case QuestIds.CollectLantern:
-                spec = new Spec(
-                    grantItems: new[] { "Item_ChurchFoggyMarshKey" },
-                    keyFlags: new[] { KeyGateManager.FoggyMarshKeyFlag });
-                return true;
+                // Landry's dialogue turns this in. The foggy marsh key is bought from Caliste.
+                return false;
             case QuestIds.SnapperAndMolly:
-                spec = new Spec(
-                    grantItems: new[] { "Item_MazeGateKey" },
-                    keyFlags: new[] { KeyGateManager.MazeGateKeyFlag });
-                return true;
+                // Caliste's shop sells the maze key after she trusts you.
+                return false;
             case QuestIds.BreakTheSeals:
                 spec = new Spec(grantItems: new[] { "Item_SpiritLantern" });
                 return true;

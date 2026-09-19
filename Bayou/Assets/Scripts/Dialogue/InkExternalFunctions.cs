@@ -49,7 +49,7 @@ public class InkExternalFunctions
         var manager = QuestManager.Resolve();
         if (manager != null)
         {
-            manager.StartQuest(questId);
+            manager.StartQuest(questId, requirePrereqs: false);
             return;
         }
 
@@ -58,11 +58,25 @@ public class InkExternalFunctions
 
     private void AdvanceQuest(string questId)
     {
+        var manager = QuestManager.Resolve();
+        if (manager != null)
+        {
+            manager.AdvanceQuest(questId);
+            return;
+        }
+
         GameEventManager.Instance?.questEvents?.AdvanceQuest(questId);
     }
 
     private void FinishQuest(string questId)
     {
+        var manager = QuestManager.Resolve();
+        if (manager != null)
+        {
+            manager.FinishQuest(questId);
+            return;
+        }
+
         GameEventManager.Instance?.questEvents?.FinishQuest(questId);
     }
 

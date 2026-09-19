@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 7045370368611028313}
   - component: {fileID: 4905685235082120590}
   - component: {fileID: 6193847562019384756}
+  - component: {fileID: 8827465103948572611}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -307,3 +308,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4f8e21a9b0746d3a5e1c8d0f2b39471, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Player.PlayerOutline
+--- !u!114 &8827465103948572611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1638070245639809799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e6a1c4b9d274f0eab53c7d18f2e90a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Player.PlayerHealth
+  maxHealth: 5
+  invulnerabilitySeconds: 0.9
+  stunSeconds: 0.42
+  knockbackScale: 1
+  deathHoldSeconds: 1.15
+  hurtClip: {fileID: 0}
+

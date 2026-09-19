@@ -9,6 +9,7 @@ namespace Bayou.Player
         private static Transform _transform;
         private static BayouCharacterMotor _motor;
         private static BayouFishingEquipment _equipment;
+        private static PlayerHealth _health;
         private static float _nextRetry;
 
         public static Transform Transform
@@ -41,19 +42,30 @@ namespace Bayou.Player
             }
         }
 
+        public static PlayerHealth Health
+        {
+            get
+            {
+                if (_health != null) return _health;
+                TryResolve();
+                return _health;
+            }
+        }
+
         public static void Bind(GameObject player)
         {
             if (player == null) return;
             _transform = player.transform;
             _motor = player.GetComponent<BayouCharacterMotor>();
             _equipment = player.GetComponent<BayouFishingEquipment>();
+            _health = PlayerHealth.EnsureOn(player);
             _nextRetry = 0f;
         }
 
         public static void ClearIf(Component owner)
         {
             if (owner == null) return;
-            if (_motor == owner || _equipment == owner ||
+            if (_motor == owner || _equipment == owner || _health == owner ||
                 (_transform != null && _transform == owner.transform))
                 Clear();
         }
@@ -63,8 +75,12 @@ namespace Bayou.Player
             _transform = null;
             _motor = null;
             _equipment = null;
+            _health = null;
             _nextRetry = 0f;
         }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => Clear();
 
         private static void TryResolve()
         {

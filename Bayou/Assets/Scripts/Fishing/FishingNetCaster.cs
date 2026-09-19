@@ -254,6 +254,7 @@ namespace Bayou.Fishing
                 return;
 
             var menusBlockCast =
+                PlayerHealth.BlocksAction ||
                 (DialogueManager.GetInstance() != null && DialogueManager.GetInstance().dialogueIsPlaying) ||
                 (InventoryDisplayUI.Active != null && InventoryDisplayUI.Active.IsOpen);
 

@@ -173,7 +173,8 @@ namespace Bayou.Fishing
             if (!enabled) return;
             if (Time.unscaledTime < _ignoreInputUntil)
                 return;
-            if (DialogueManager.GetInstance() != null && DialogueManager.GetInstance().dialogueIsPlaying)
+            if (PlayerHealth.BlocksAction ||
+                (DialogueManager.GetInstance() != null && DialogueManager.GetInstance().dialogueIsPlaying))
             {
                 CancelCharge();
                 return;

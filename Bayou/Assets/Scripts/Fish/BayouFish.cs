@@ -10,14 +10,16 @@ namespace Bayou.Fish
     public sealed class BayouFish : MonoBehaviour
     {
         [Header("Movement")]
-        [SerializeField] private float wanderSpeed = 1.2f;
-        [SerializeField] private float turnSpeed = 60f;
-        [SerializeField] private float directionChangeInterval = 2f;
-        [SerializeField] private float randomTurnStrength = 35f;
-        [SerializeField] private float swimWobble = 20f;
-        [SerializeField] private float fleeSpeed = 3f;
+        [SerializeField] private float wanderSpeed = 1.05f;
+        [SerializeField] private float dartSpeed = 2.55f;
+        [SerializeField] private float turnSpeed = 95f;
+        [SerializeField] private float fleeSpeed = 2.8f;
         [SerializeField] private float fleeRadius = 3.5f;
-        [SerializeField] private float roamRadius = 5f;
+        [SerializeField] private float roamRadius = 8f;
+        [SerializeField] private float bobAmplitude = 0.055f;
+        [SerializeField] private float bobFrequency = 1.35f;
+        [SerializeField] private float bankDegrees = 16f;
+        [SerializeField] private float neighborSeparation = 2.6f;
 
         [Header("Catch rules")]
         [SerializeField] private FishCatchTool requiredTool = FishCatchTool.Net;
@@ -44,8 +46,13 @@ namespace Bayou.Fish
         private Vector3 _spawnPosition;
         private Vector3 _currentDirection;
         private Vector3 _targetDirection;
-        private float _nextDirectionChange;
+        private Vector3 _swimTarget;
+        private bool _hasSwimTarget;
+        private float _speed;
+        private float _yaw;
         private float _wobbleSeed;
+        private float _idleUntil;
+        private float _retargetAt;
         private bool _hasAttractTarget;
         private Vector3 _attractTarget;
         private float _attractPull01;
@@ -58,8 +65,12 @@ namespace Bayou.Fish
                 player = PlayerLocator.Transform;
 
             _wobbleSeed = Random.Range(0f, 1000f);
-            PickNewDirection();
+            _speed = wanderSpeed;
+            PickRandomSwimTarget();
             _currentDirection = _targetDirection;
+            if (_currentDirection.sqrMagnitude < 0.0001f)
+                _currentDirection = Vector3.forward;
+            _yaw = Mathf.Atan2(_currentDirection.x, _currentDirection.z) * Mathf.Rad2Deg;
         }
 
         private void OnEnable()
@@ -81,7 +92,8 @@ namespace Bayou.Fish
             isStatic = !moving;
             if (home != null)
             {
-                roamRadius = Mathf.Min(roamRadius, home.Radius * 0.55f);
+                roamRadius = Mathf.Max(roamRadius, home.Radius * 0.9f);
+                neighborSeparation = Mathf.Clamp(neighborSeparation, 1.6f, home.Radius * 0.42f);
                 _spawnPosition = home.ClampInside(transform.position);
                 transform.position = _spawnPosition;
             }
@@ -90,7 +102,10 @@ namespace Bayou.Fish
             {
                 wanderSpeed = 0f;
                 fleeSpeed = 0f;
+                dartSpeed = 0f;
             }
+
+            PickRandomSwimTarget();
         }
 
         public bool CanCatchWith(FishCatchTool tool) => requiredTool == tool;
@@ -107,6 +122,7 @@ namespace Bayou.Fish
         {
             _hasAttractTarget = false;
             _attractPull01 = 0f;
+            _hasSwimTarget = false;
         }
 
         private void Update()
@@ -121,34 +137,24 @@ namespace Bayou.Fish
             }
 
             var dt = Time.deltaTime;
-            SteerAwayFromShore();
+            if (player == null)
+                player = PlayerLocator.Transform;
+
+            var cruise = wanderSpeed * (0.72f + 0.28f * Mathf.PerlinNoise(_wobbleSeed, Time.time * 0.22f));
+            var desiredSpeed = cruise;
 
             if (_hasAttractTarget)
             {
                 var toNet = Flat(_attractTarget - transform.position);
                 if (toNet.sqrMagnitude > 0.0001f)
-                {
                     _targetDirection = toNet.normalized;
-                    _currentDirection = Vector3.RotateTowards(
-                        _currentDirection,
-                        _targetDirection,
-                        Mathf.Deg2Rad * turnSpeed * (1.5f + _attractPull01 * 2f) * dt,
-                        0f);
-
-                    var speed = Mathf.Lerp(wanderSpeed, attractSwimSpeed, _attractPull01);
-                    Move(speed, dt);
-                    return;
-                }
+                desiredSpeed = Mathf.Lerp(cruise, attractSwimSpeed, _attractPull01);
             }
-
-            if (player == null)
-                player = PlayerLocator.Transform;
-
-            if (player != null)
+            else if (player != null)
             {
-                var away = Flat(transform.position - player.position);                if (away.magnitude < fleeRadius)
+                var away = Flat(transform.position - player.position);
+                if (away.magnitude < fleeRadius)
                 {
-                    // Prefer fleeing along shore rather than onto land.
                     var fleeDir = away.normalized;
                     if (HomeSpot != null && HomeSpot.IsNearShore(transform.position + fleeDir))
                     {
@@ -157,43 +163,138 @@ namespace Bayou.Fish
                             fleeDir = (fleeDir + toCenter.normalized).normalized;
                     }
 
-                    _currentDirection = Vector3.RotateTowards(
-                        _currentDirection, fleeDir, Mathf.Deg2Rad * turnSpeed * 3f * dt, 0f);
-                    Move(fleeSpeed, dt);
-                    return;
+                    _targetDirection = fleeDir;
+                    desiredSpeed = fleeSpeed;
+                    _idleUntil = 0f;
+                    _hasSwimTarget = false;
+                }
+                else
+                {
+                    TickRandomSwim();
                 }
             }
+            else
+            {
+                TickRandomSwim();
+            }
 
-            if (Time.time >= _nextDirectionChange)
-                PickNewDirection();
+            SeparateFromNeighbors();
+
+            var turn = turnSpeed * (_hasAttractTarget ? 1.6f + _attractPull01 : 1f);
+            if (desiredSpeed >= fleeSpeed * 0.9f)
+                turn *= 1.7f;
 
             _currentDirection = Vector3.RotateTowards(
-                _currentDirection, _targetDirection, Mathf.Deg2Rad * turnSpeed * dt, 0f);
+                _currentDirection.sqrMagnitude < 0.0001f ? _targetDirection : _currentDirection,
+                _targetDirection,
+                Mathf.Deg2Rad * turn * dt,
+                0f);
+            _currentDirection.y = 0f;
+            if (_currentDirection.sqrMagnitude > 0.0001f)
+                _currentDirection.Normalize();
 
-            var wobble = Mathf.Sin((Time.time + _wobbleSeed) * 2f) * swimWobble;
-            _currentDirection = Quaternion.Euler(0f, wobble * dt, 0f) * _currentDirection;
+            if (Time.time < _idleUntil && !_hasAttractTarget)
+                desiredSpeed = wanderSpeed * 0.08f;
 
-            var home = HomeSpot != null ? HomeSpot.SwimCenter : _spawnPosition;
-            var toHome = home - transform.position;
-            toHome.y = 0f;
-            if (toHome.magnitude > roamRadius * 0.75f)
-                _targetDirection = toHome.normalized;
+            _speed = Mathf.MoveTowards(_speed, desiredSpeed, dt * 3.4f);
+            Move(_speed, dt);
+        }
 
-            Move(wanderSpeed, dt);
+        private void TickRandomSwim()
+        {
+            if (Time.time < _idleUntil)
+                return;
+
+            if (_hasSwimTarget && ReachedSwimTarget())
+            {
+                _idleUntil = Time.time + Random.Range(0.25f, 0.9f);
+                _hasSwimTarget = false;
+                return;
+            }
+
+            if (!_hasSwimTarget || Time.time >= _retargetAt)
+                PickRandomSwimTarget();
+
+            var to = Flat(_swimTarget - transform.position);
+            if (to.sqrMagnitude > 0.0001f)
+                _targetDirection = to.normalized;
+        }
+
+        private bool ReachedSwimTarget()
+        {
+            var arrive = Mathf.Max(0.4f, roamRadius * 0.06f);
+            return Flat(_swimTarget - transform.position).sqrMagnitude <= arrive * arrive;
+        }
+
+        private void PickRandomSwimTarget()
+        {
+            var minTravel = Mathf.Max(2.8f, roamRadius * 0.35f);
+            Vector3 candidate;
+            if (HomeSpot != null)
+            {
+                candidate = HomeSpot.RandomSwimPoint(transform.position, minTravel);
+            }
+            else
+            {
+                var offset = Random.insideUnitCircle * roamRadius;
+                candidate = _spawnPosition + new Vector3(offset.x, 0f, offset.y);
+            }
+
+            PreferSpotAwayFromNeighbors(ref candidate);
+
+            _swimTarget = candidate;
+            _hasSwimTarget = true;
+            _retargetAt = Time.time + Random.Range(8f, 16f);
+
+            var to = Flat(_swimTarget - transform.position);
+            if (to.sqrMagnitude > 0.0001f)
+                _targetDirection = to.normalized;
+        }
+
+        private void PreferSpotAwayFromNeighbors(ref Vector3 candidate)
+        {
+            var avoidSq = neighborSeparation * neighborSeparation * 1.4f;
+            for (var n = 0; n < 6; n++)
+            {
+                var crowded = false;
+                for (var i = 0; i < All.Count; i++)
+                {
+                    var other = All[i];
+                    if (other == null || other == this || other.IsCaught) continue;
+                    if (other.HomeSpot != HomeSpot) continue;
+                    var d = Flat(candidate - other.transform.position);
+                    if (d.sqrMagnitude < avoidSq)
+                    {
+                        crowded = true;
+                        break;
+                    }
+                }
+
+                if (!crowded) return;
+                if (HomeSpot != null)
+                    candidate = HomeSpot.RandomSwimPoint(transform.position, Mathf.Max(2.8f, roamRadius * 0.35f));
+            }
         }
 
         private void Move(float speed, float dt)
         {
+            var prevYaw = _yaw;
             transform.position += _currentDirection.normalized * speed * dt;
             KeepInsideWater();
 
             if (_currentDirection.sqrMagnitude > 0.001f)
-            {
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    Quaternion.LookRotation(_currentDirection),
-                    dt * 5f);
-            }
+                _yaw = Mathf.Atan2(_currentDirection.x, _currentDirection.z) * Mathf.Rad2Deg;
+
+            var yawRate = Mathf.DeltaAngle(prevYaw, _yaw) / Mathf.Max(0.0001f, dt);
+            var roll = Mathf.Clamp(-yawRate * 0.12f, -bankDegrees, bankDegrees);
+            var bob = Mathf.Sin((Time.time + _wobbleSeed) * bobFrequency) * bobAmplitude;
+            var pitch = Mathf.Clamp(-bob * 55f, -10f, 10f);
+            var look = Quaternion.Euler(pitch, _yaw, roll);
+            transform.rotation = Quaternion.Slerp(transform.rotation, look, dt * 6f);
+
+            var p = transform.position;
+            p.y += bob;
+            transform.position = p;
         }
 
         private void KeepInsideWater()
@@ -201,44 +302,39 @@ namespace Bayou.Fish
             if (HomeSpot == null) return;
             var before = transform.position;
             var clamped = HomeSpot.ClampInside(before);
-            if ((clamped - before).sqrMagnitude > 0.00001f)
+            if ((clamped - before).sqrMagnitude <= 0.00001f)
+                return;
+
+            transform.position = clamped;
+            if (!_hasAttractTarget)
+                PickRandomSwimTarget();
+        }
+
+        private void SeparateFromNeighbors()
+        {
+            var r = neighborSeparation;
+            var rSq = r * r;
+            var hard = r * 0.55f;
+            for (var i = 0; i < All.Count; i++)
             {
-                transform.position = clamped;
-                var inward = Flat(HomeSpot.SwimCenter - clamped);
-                if (inward.sqrMagnitude > 0.0001f)
+                var other = All[i];
+                if (other == null || other == this || other.IsCaught) continue;
+                if (other.HomeSpot != HomeSpot) continue;
+                var delta = Flat(transform.position - other.transform.position);
+                var sq = delta.sqrMagnitude;
+                if (sq > rSq) continue;
+                if (sq < 0.0001f)
                 {
-                    _currentDirection = inward.normalized;
-                    _targetDirection = _currentDirection;
+                    var jitter = Quaternion.Euler(0f, (GetInstanceID() * 47f) % 360f, 0f) * Vector3.forward;
+                    if (!_hasAttractTarget)
+                        transform.position += jitter * 0.45f;
+                    continue;
                 }
+
+                var dist = Mathf.Sqrt(sq);
+                if (!_hasAttractTarget && dist < hard)
+                    transform.position += (delta / dist) * (hard - dist) * 0.65f;
             }
-        }
-
-        private void SteerAwayFromShore()
-        {
-            if (HomeSpot == null || !HomeSpot.IsNearShore(transform.position)) return;
-            var inward = Flat(HomeSpot.SwimCenter - transform.position);
-            if (inward.sqrMagnitude < 0.0001f) return;
-            _targetDirection = inward.normalized;
-        }
-
-        private void PickNewDirection()
-        {
-            var randomAngle = Random.Range(-randomTurnStrength, randomTurnStrength);
-            _targetDirection = Quaternion.Euler(0f, randomAngle, 0f) *
-                               (_currentDirection == Vector3.zero ? Random.insideUnitSphere : _currentDirection);
-            _targetDirection.y = 0f;
-            _targetDirection.Normalize();
-
-            // Bias new headings toward open water when near the edge.
-            if (HomeSpot != null && HomeSpot.IsNearShore(transform.position, 0.7f))
-            {
-                var inward = Flat(HomeSpot.SwimCenter - transform.position);
-                if (inward.sqrMagnitude > 0.0001f)
-                    _targetDirection = (inward.normalized + _targetDirection * 0.35f).normalized;
-            }
-
-            _nextDirectionChange = Time.time + Random.Range(
-                directionChangeInterval * 0.6f, directionChangeInterval * 1.4f);
         }
 
         public void TryCatchFromNet(Vector3 netCenter, float radius)

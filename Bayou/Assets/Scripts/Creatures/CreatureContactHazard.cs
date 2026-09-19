@@ -3,8 +3,7 @@ using UnityEngine;
 namespace Bayou.Creatures
 {
     /// <summary>
-    /// While Active, overlapping the player applies knockback / hurt callbacks.
-    /// Wire an optional <see cref="IPlayerHurtReceiver"/> on the player for HP later.
+    /// While Active, overlapping the player deals damage and knockback.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CreatureContactHazard : MonoBehaviour
@@ -51,24 +50,28 @@ namespace Bayou.Creatures
                 away = transform.forward;
             away.Normalize();
 
+            var lunging = _owner != null && _owner.IsLunging;
+            var force = knockbackSpeed * (lunging ? 1.85f : 1f);
+            var hitDamage = damage * (lunging ? 1.5f : 1f);
+
             var receiver = player.GetComponentInChildren<IPlayerHurtReceiver>();
             if (receiver != null)
-                receiver.OnCreatureHit(new CreatureHitInfo(damage, away * knockbackSpeed, gameObject));
+                receiver.OnCreatureHit(new CreatureHitInfo(hitDamage, away * force, gameObject));
             else
             {
                 // Fallback: shove CharacterController / Rigidbody if present.
                 var cc = player.GetComponent<CharacterController>();
                 if (cc != null && cc.enabled)
-                    cc.Move(away * knockbackSpeed * Time.deltaTime * 8f);
+                    cc.Move(away * force * Time.deltaTime * 8f);
                 else
                 {
                     var rb = player.GetComponent<Rigidbody>();
                     if (rb != null && !rb.isKinematic)
-                        rb.AddForce(away * knockbackSpeed, ForceMode.VelocityChange);
+                        rb.AddForce(away * force, ForceMode.VelocityChange);
                 }
             }
 
-            _nextHitTime = Time.time + hitCooldownSeconds;
+            _nextHitTime = Time.time + (lunging ? hitCooldownSeconds * 0.7f : hitCooldownSeconds);
         }
 
         private bool IsPlayer(Collider other) =>
