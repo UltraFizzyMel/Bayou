@@ -3,7 +3,17 @@ guid: 9ba8812c976dc7342b967c11fd5209b2
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Post Wood
+    second: {fileID: 2100000, guid: 06157ad303d4fff4abb2b8eb8be3a7ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sign Wood
+    second: {fileID: 2100000, guid: f88097b95632ca2479390921f3e22bbc, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -91,7 +101,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.03
+    globalScale: 3
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
