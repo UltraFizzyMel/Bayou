@@ -117,7 +117,7 @@ namespace Bayou.Fishing
             castHoldAction?.action?.Enable();
             lockDirectionAction?.action?.Enable();
             cancelCastAction?.action?.Enable();
-            _ignoreInputUntil = Time.unscaledTime + 0.25f;
+            _ignoreInputUntil = Time.unscaledTime + 0.05f;
         }
 
         private void OnDisable()
@@ -243,13 +243,37 @@ namespace Bayou.Fishing
 
         private void LateUpdate()
         {
+            if (!IsRodEquipped())
+            {
+                HideAllVisuals();
+                return;
+            }
+
             if (_activeNet == null)
                 _activeNet = null;
             UpdateFishingLine();
         }
 
+        private BayouFishingEquipment _equipment;
+
+        private bool IsRodEquipped()
+        {
+            if (_equipment == null)
+                _equipment = GetComponent<BayouFishingEquipment>() ??
+                             GetComponentInParent<BayouFishingEquipment>();
+            return _equipment != null && _equipment.CurrentItem == BayouHeldItem.Rod;
+        }
+
         private void Update()
         {
+            if (!IsRodEquipped())
+            {
+                if (_phase != FishingCastPhase.Idle)
+                    ResetToIdle();
+                HideAllVisuals();
+                return;
+            }
+
             if (Time.unscaledTime < _ignoreInputUntil)
                 return;
 

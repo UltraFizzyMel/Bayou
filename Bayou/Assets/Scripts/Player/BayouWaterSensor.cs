@@ -40,7 +40,10 @@ namespace Bayou.Player
         public float Submersion { get; private set; }
 
         /// <summary>World Y the motor should hold while swimming (chest near the surface).</summary>
-        public float SwimHoldY => WaterSurfaceY - chestHeight * 0.35f;
+        public float SwimHoldY => WaterSurfaceY - Mathf.Max(0.72f, chestHeight * 0.65f);
+
+        private WaterDepthLevel _latchedDepth;
+        private float _swimLatchUntil;
 
         private Vector3 FeetPosition => transform.position + new Vector3(0f, footOverlapYOffset, 0f);
 
@@ -84,12 +87,14 @@ namespace Bayou.Player
             {
                 if (col == null || !col.enabled) return;
                 var vol = col.GetComponent<WaterVolume>() ?? col.GetComponentInParent<WaterVolume>();
-                var sample = vol != null ? vol.Evaluate(feet) : WaterDepthLevel.Wade;
+                var top = vol != null ? vol.SurfaceY : col.bounds.max.y;
+                var sample = vol != null
+                    ? vol.Evaluate(feet)
+                    : (top - feet.y >= 0.12f ? WaterDepthLevel.Wade : WaterDepthLevel.None);
                 if (sample > depth)
                     depth = sample;
 
-                var top = vol != null ? vol.SurfaceY : col.bounds.max.y;
-                if (!foundSurface || top > surface)
+                if (sample != WaterDepthLevel.None && (!foundSurface || top > surface))
                 {
                     surface = top;
                     foundSurface = true;
@@ -114,12 +119,45 @@ namespace Bayou.Player
                     Consider(hit.collider);
             }
 
-            if (depth == WaterDepthLevel.None && _activeWaterTriggers.Count > 0)
+            if (depth == WaterDepthLevel.None && _activeWaterTriggers.Count > 0 &&
+                foundSurface && surface - feet.y >= 0.12f && !StandingOnBank(feet, surface, true))
                 depth = WaterDepthLevel.Wade;
+
+            if (depth != WaterDepthLevel.None && StandingOnBank(feet, surface, foundSurface))
+                depth = WaterDepthLevel.None;
 
             WaterSurfaceY = foundSurface ? surface : transform.position.y;
             Submersion = InWaterOr(depth) ? WaterSurfaceY - feet.y : 0f;
+
+            // Deep-water swim/wade flicker snaps hold poses and jittered equipped items.
+            if (depth == WaterDepthLevel.Swim)
+            {
+                _latchedDepth = WaterDepthLevel.Swim;
+                _swimLatchUntil = Time.time + 0.4f;
+            }
+            else if (_latchedDepth == WaterDepthLevel.Swim &&
+                     depth != WaterDepthLevel.None &&
+                     Time.time < _swimLatchUntil)
+            {
+                depth = WaterDepthLevel.Swim;
+            }
+            else if (depth == WaterDepthLevel.None)
+            {
+                _latchedDepth = WaterDepthLevel.None;
+            }
+
             Depth = depth;
+        }
+
+        private bool StandingOnBank(Vector3 feet, float surface, bool foundSurface)
+        {
+            var origin = feet + Vector3.up * 0.4f;
+            if (!Physics.Raycast(origin, Vector3.down, out var hit, 1.6f, ~0, QueryTriggerInteraction.Ignore))
+                return false;
+            if (IsWaterCollider(hit.collider))
+                return false;
+            var top = foundSurface ? surface : hit.point.y;
+            return hit.point.y >= top - 0.08f;
         }
 
         private static bool InWaterOr(WaterDepthLevel depth) => depth != WaterDepthLevel.None;

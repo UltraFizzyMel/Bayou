@@ -49,7 +49,7 @@ namespace Bayou.Fishing
         [SerializeField] private float pulseCycleSeconds = 1.35f;
         [Tooltip("Release quality below this (0 = smallest, 1 = largest) is a missed throw.")]
         [Range(0.05f, 0.8f)]
-        [SerializeField] private float missBelowQuality = 0.22f;
+        [SerializeField] private float missBelowQuality = 0.12f;
         [SerializeField] private Color missRingColor = new(0.85f, 0.22f, 0.18f, 0.9f);
         [SerializeField] private Color goodRingColor = new(0.35f, 0.95f, 0.45f, 0.95f);
         [SerializeField] private Color peakRingColor = new(0.55f, 1f, 0.7f, 1f);
@@ -64,7 +64,7 @@ namespace Bayou.Fishing
         [SerializeField] private float meleeCooldown = 0.42f;
         [SerializeField] private Color combatRingColor = new(0.95f, 0.25f, 0.2f, 0.9f);
         [Tooltip("How far away a hunting creature can be for combat mode to engage.")]
-        [SerializeField] private float pursuitDetectRange = 45f;
+        [SerializeField] private float pursuitDetectRange = 8.5f;
 
         [Header("Shared")]
         [SerializeField] private LayerMask surfaceMask = ~0;
@@ -104,9 +104,9 @@ namespace Bayou.Fishing
         {
             useNetAction?.action?.Enable();
             EnsureRing();
-            if (areaRing != null)
-                areaRing.enabled = true;
-            _ignoreInputUntil = Time.unscaledTime + 0.25f;
+            HideRing();
+            HideGhost();
+            _ignoreInputUntil = Time.unscaledTime + 0.05f;
         }
 
         private void OnDisable()
@@ -126,9 +126,25 @@ namespace Bayou.Fishing
             _sweep = GetComponent<MeleeSweepAttack>() ?? gameObject.AddComponent<MeleeSweepAttack>();
         }
 
+        private BayouFishingEquipment _equipment;
+
+        private bool IsNetEquipped()
+        {
+            if (_equipment == null)
+                _equipment = GetComponent<BayouFishingEquipment>() ??
+                             GetComponentInParent<BayouFishingEquipment>();
+            return _equipment != null && _equipment.CurrentItem == BayouHeldItem.Net;
+        }
+
         private void LateUpdate()
         {
             if (!enabled) return;
+            if (!IsNetEquipped())
+            {
+                HideRing();
+                HideGhost();
+                return;
+            }
 
             RefreshMode();
 
@@ -171,6 +187,11 @@ namespace Bayou.Fishing
         private void Update()
         {
             if (!enabled) return;
+            if (!IsNetEquipped())
+            {
+                CancelCharge();
+                return;
+            }
             if (Time.unscaledTime < _ignoreInputUntil)
                 return;
             if (PlayerHealth.BlocksAction ||
@@ -200,10 +221,31 @@ namespace Bayou.Fishing
 
         private void RefreshMode()
         {
+            if (_charging)
+            {
+                _mode = HandNetMode.Fishing;
+                return;
+            }
+
             if (Time.unscaledTime < _nextModeCheck) return;
             _nextModeCheck = Time.unscaledTime + 0.15f;
-            var pursued = CreatureThreat.IsPlayerPursued(transform, pursuitDetectRange);
-            _mode = pursued ? HandNetMode.Combat : HandNetMode.Fishing;
+
+            var meleeRange = Mathf.Max(meleeReach + 2.5f, 6.5f);
+            var hunterClose = CreatureThreat.IsPlayerPursued(transform, meleeRange);
+            if (!hunterClose)
+            {
+                _mode = HandNetMode.Fishing;
+                return;
+            }
+
+            var nearSpot = FishingSpot.FindNearby(transform.position, 2.5f);
+            if (nearSpot != null && !CreatureThreat.IsPlayerPursued(transform, meleeReach + 1.2f))
+            {
+                _mode = HandNetMode.Fishing;
+                return;
+            }
+
+            _mode = HandNetMode.Combat;
         }
 
         private void UpdateFishingCharge()
@@ -239,7 +281,10 @@ namespace Bayou.Fishing
             Pulse01 = 0f;
 
             if (heldFor < 0.08f)
+            {
+                ThrowAtCurrentCircle(0.55f);
                 return;
+            }
 
             if (quality < missBelowQuality)
             {
@@ -357,17 +402,20 @@ namespace Bayou.Fishing
             center = default;
             var origin = netOrigin != null ? netOrigin.position : transform.position + Vector3.up * 0.1f;
             var flat = GetFlatForward();
-            var horizontal = origin + flat * maxReach;
+            var aimed = origin + flat * maxReach;
 
-            if (Physics.Raycast(horizontal + Vector3.up * 4f, Vector3.down, out var hit, 12f, surfaceMask,
-                    QueryTriggerInteraction.Collide))
+            var spot = FishingSpot.FindContaining(aimed)
+                       ?? FishingSpot.FindContaining(origin)
+                       ?? FishingSpot.FindNearby(aimed, 1.8f)
+                       ?? FishingSpot.FindNearby(origin, maxReach);
+            if (spot != null)
             {
-                center = hit.point;
+                center = spot.ClampInside(aimed);
                 return true;
             }
 
-            center = new Vector3(horizontal.x, origin.y, horizontal.z);
-            return true;
+            center = default;
+            return false;
         }
 
         private Vector3 GetFlatForward() => BayouFacing.GetCardinalForward8(transform);
@@ -480,6 +528,7 @@ namespace Bayou.Fishing
         private void HideRing()
         {
             if (areaRing == null) return;
+            areaRing.enabled = false;
             areaRing.positionCount = 0;
         }
 
@@ -500,6 +549,7 @@ namespace Bayou.Fishing
         private void DrawCombatWedge()
         {
             if (areaRing == null) return;
+            areaRing.enabled = true;
 
             var origin = transform.position;
             origin.y += 0.04f;
@@ -548,6 +598,7 @@ namespace Bayou.Fishing
         private void DrawRing(Vector3 center, float radius, Color color, float width)
         {
             if (areaRing == null) return;
+            areaRing.enabled = true;
             areaRing.loop = true;
             WriteCircle(areaRing, center, radius, color, width);
         }

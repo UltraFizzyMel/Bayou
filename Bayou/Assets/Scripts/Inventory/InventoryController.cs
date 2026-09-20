@@ -227,7 +227,6 @@ namespace Bayou.Inventory
         {
             if (Bag == null || item == null) return;
             Bag.DetachFromGrid(item);
-            NotifyChanged();
         }
 
         public void NotifyChanged() => InventoryChanged?.Invoke();

@@ -131,14 +131,38 @@ namespace Bayou.Inventory.UI
             icon.sprite = sprite;
             icon.enabled = sprite != null;
             icon.color = Color.white;
-            if (sprite == null) return;
 
             var fitter = icon.GetComponent<AspectRatioFitter>();
-            if (fitter == null)
-                fitter = icon.gameObject.AddComponent<AspectRatioFitter>();
-            fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
-            var h = sprite.rect.height;
-            fitter.aspectRatio = h > 0.01f ? sprite.rect.width / h : 1f;
+            if (fitter != null)
+                Object.Destroy(fitter);
+
+            var rt = icon.rectTransform;
+            rt.anchorMin = new Vector2(0.5f, 0.5f);
+            rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.localScale = Vector3.one;
+            rt.localRotation = Quaternion.identity;
+
+            if (sprite == null)
+            {
+                rt.sizeDelta = Vector2.zero;
+                rt.anchoredPosition = Vector2.zero;
+                return;
+            }
+
+            var parent = rt.parent as RectTransform;
+            var plate = parent != null ? parent.rect.size : new Vector2(64f, 64f);
+            if (plate.x < 4f || plate.y < 4f)
+                plate = new Vector2(64f, 64f);
+            var pad = 8f;
+            var maxW = Mathf.Max(8f, plate.x - pad * 2f);
+            var maxH = Mathf.Max(8f, plate.y - pad * 2f);
+            var spriteSize = sprite.rect.size;
+            if (spriteSize.x < 1f) spriteSize.x = 1f;
+            if (spriteSize.y < 1f) spriteSize.y = 1f;
+            var scale = Mathf.Min(maxW / spriteSize.x, maxH / spriteSize.y);
+            rt.sizeDelta = spriteSize * scale;
+            rt.anchoredPosition = Vector2.zero;
         }
 
         private static void EnsureRaycastGraphic(Image image)

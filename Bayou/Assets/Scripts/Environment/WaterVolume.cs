@@ -35,7 +35,7 @@ namespace Bayou.Environment
         [Tooltip("How far the trigger extends below the water surface.")]
         [SerializeField] private float triggerDepth = 2.6f;
         [Tooltip("How far the trigger extends above the water surface.")]
-        [SerializeField] private float triggerAboveSurface = 0.4f;
+        [SerializeField] private float triggerAboveSurface = 0.08f;
 
         private Collider _trigger;
         private bool _prepared;
@@ -67,15 +67,38 @@ namespace Bayou.Environment
 
         public WaterDepthLevel Evaluate(Vector3 playerFeet)
         {
-            if (depthLevel == WaterDepthLevel.Swim)
-                return WaterDepthLevel.Swim;
+            if (StandingOnBank(playerFeet))
+                return WaterDepthLevel.None;
 
             var submersion = SurfaceY - playerFeet.y;
-            if (submersion >= swimSubmersion)
+            if (submersion < wadeSubmersion)
+                return WaterDepthLevel.None;
+
+            if (depthLevel == WaterDepthLevel.Swim || submersion >= swimSubmersion)
                 return WaterDepthLevel.Swim;
-            if (submersion >= wadeSubmersion || depthLevel == WaterDepthLevel.Wade)
-                return WaterDepthLevel.Wade;
-            return WaterDepthLevel.None;
+
+            return WaterDepthLevel.Wade;
+        }
+
+        private bool StandingOnBank(Vector3 feet)
+        {
+            var origin = feet + Vector3.up * 0.4f;
+            if (!Physics.Raycast(origin, Vector3.down, out var hit, 1.6f, ~0, QueryTriggerInteraction.Ignore))
+                return false;
+            if (IsOwnWaterCollider(hit.collider))
+                return false;
+            return hit.point.y >= SurfaceY - 0.08f;
+        }
+
+        private bool IsOwnWaterCollider(Collider col)
+        {
+            if (col == null) return false;
+            if (col == _trigger) return true;
+            if (col.transform == transform || col.transform.IsChildOf(transform))
+                return true;
+            if (col.CompareTag("Water")) return true;
+            return col.GetComponent<WaterVolume>() != null ||
+                   col.GetComponentInParent<WaterVolume>() != null;
         }
 
         private void Reset()
@@ -97,11 +120,12 @@ namespace Bayou.Environment
 
         public void EnsureTriggerVolume()
         {
+            DestroySupportFloor();
             if (_prepared && _trigger != null && _trigger.isTrigger)
                 return;
 
             // Mesh colliders on water planes are non-convex, so they cannot be triggers.
-            // Keep them for authored bounds / fishing, but they must not block the player.
+            // They also make the player rock/jitter, so they stay disabled.
             var meshes = GetComponents<MeshCollider>();
             for (var i = 0; i < meshes.Length; i++)
             {
@@ -111,14 +135,15 @@ namespace Bayou.Environment
                 meshes[i].enabled = false;
             }
 
+            var localSize = LocalSurfaceSize();
             var box = GetComponent<BoxCollider>();
             if (box == null)
                 box = gameObject.AddComponent<BoxCollider>();
 
-            var localSize = LocalSurfaceSize();
-            var height = Mathf.Max(0.6f, triggerDepth + triggerAboveSurface);
+            var above = Mathf.Clamp(triggerAboveSurface, 0.04f, 0.12f);
+            var height = Mathf.Max(0.6f, triggerDepth + above);
             box.size = new Vector3(localSize.x, height, localSize.z);
-            box.center = new Vector3(0f, (triggerAboveSurface - triggerDepth) * 0.5f, 0f);
+            box.center = new Vector3(0f, (above - triggerDepth) * 0.5f, 0f);
             box.isTrigger = true;
             box.enabled = true;
             _trigger = box;
@@ -154,6 +179,20 @@ namespace Bayou.Environment
             }
 
             return new Vector3(10f, 1f, 10f);
+        }
+
+        private void DestroySupportFloor()
+        {
+            const string name = "WaterSupport";
+            for (var i = transform.childCount - 1; i >= 0; i--)
+            {
+                var child = transform.GetChild(i);
+                if (child == null || child.name != name) continue;
+                if (Application.isPlaying)
+                    Destroy(child.gameObject);
+                else
+                    DestroyImmediate(child.gameObject);
+            }
         }
 
         private void EnsureInnerSwimZone()

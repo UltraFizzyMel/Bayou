@@ -126,10 +126,23 @@ namespace Bayou.Quests
             if (input == null || !input.GetInteractPressed())
                 return;
 
+            var inv = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
+            if (item.IsUniqueEquipment && inv != null && inv.HasItemsById(item.Id, 1))
+            {
+                if (destroyOnPickup)
+                    Destroy(gameObject);
+                else
+                    enabled = false;
+                return;
+            }
+
             if (addStraightToBag && item != null && !item.IsUniqueEquipment)
                 GiveItemDirectly();
             else
                 CaughtFishPresenter.Present(item);
+
+            if (item.IsUniqueEquipment && (inv == null || !inv.HasItemsById(item.Id, 1)))
+                return;
 
             if (endDemoOnPickup)
                 DemoEndController.Show();

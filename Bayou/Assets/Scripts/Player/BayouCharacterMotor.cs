@@ -66,6 +66,8 @@ namespace Bayou.Player
         private Vector3[] _bindBoneScale;
         private bool _hasHurtTrigger;
         private float _stunUntil;
+        private bool _swimSnapArmed = true;
+        private float _deepWaterAnimLatch;
 
         public Animator animator;
 
@@ -108,8 +110,9 @@ namespace Bayou.Player
         {
             if (bodyCapsule == null || _capsuleCached) return;
             _standCapsuleHeight = bodyCapsule.height;
-            _standCapsuleRadius = bodyCapsule.radius;
+            _standCapsuleRadius = Mathf.Min(bodyCapsule.radius, 0.32f);
             _standCapsuleCenter = bodyCapsule.center;
+            bodyCapsule.radius = _standCapsuleRadius;
             _capsuleCached = true;
         }
 
@@ -239,12 +242,7 @@ namespace Bayou.Player
             var vel = rb.linearVelocity;
             var planar = new Vector3(vel.x, 0f, vel.z);
             if (animator != null)
-            {
-                if (vel.x <= 0.001f && vel.x >= -0.001f && vel.z <= 0.001f && vel.z >= -0.001f)
-                    animator.SetBool("isMoving", false);
-                else
-                    animator.SetBool("isMoving", true);
-            }
+                animator.SetBool("isMoving", HasMoveInput || planar.magnitude > 0.2f);
 
 
             if (wishDir.sqrMagnitude > 0.0001f)
@@ -276,6 +274,8 @@ namespace Bayou.Player
 
             ApplySwimBuoyancy(swimming);
             ApplyWaterAnimator(wading, swimming);
+            KeepFromFallingThroughWater(wading, swimming);
+            ResolveStaticOverlaps();
 
             if (!swimming && isGrounded && rb.linearVelocity.y < 0f)
             {
@@ -285,8 +285,111 @@ namespace Bayou.Player
 
         private void LateUpdate()
         {
-            if (waterSensor != null && waterSensor.IsSwimming)
-                StabilizeSwimPose();
+            if (animator == null)
+                animator = GetComponentInChildren<Animator>();
+            if (animator != null && _visualRoot == null)
+                CacheAnimatorParams();
+
+            SyncLocomotionAnimSpeed();
+            LockBindScale();
+
+            if (waterSensor == null) return;
+            if (!waterSensor.IsSwimming)
+            {
+                _swimSnapArmed = true;
+                return;
+            }
+
+            SnapToSwimStateIfNeeded();
+            StabilizeSwimPose();
+        }
+
+        private void SyncLocomotionAnimSpeed()
+        {
+            if (animator == null) return;
+
+            var moving = !IsStunned && (HasMoveInput || PlanarSpeed > 0.2f);
+            animator.SetBool("isMoving", moving);
+
+            if (animator.IsInTransition(0))
+                return;
+
+            var info = animator.GetCurrentAnimatorStateInfo(0);
+            if (IsSwimState(info))
+            {
+                animator.speed = 1f;
+                return;
+            }
+
+            var loco = info.IsName("Armature|Walking") ||
+                       info.IsName("Armature|Wading") ||
+                       info.IsName("Armature|WalkingHoldingRod") ||
+                       info.IsName("Armature|WalkingWithLantern");
+
+            if (!loco || !moving)
+            {
+                animator.speed = 1f;
+                return;
+            }
+
+            var reference = Mathf.Max(0.5f, maxSpeed);
+            animator.speed = Mathf.Clamp(PlanarSpeed / reference, 0.4f, 1.2f);
+        }
+
+        private static readonly Collider[] OverlapBuffer = new Collider[12];
+
+        private void ResolveStaticOverlaps()
+        {
+            if (bodyCapsule == null || rb == null) return;
+
+            var p = rb.position + bodyCapsule.center;
+            var height = Mathf.Max(bodyCapsule.height, bodyCapsule.radius * 2f);
+            var pointOff = Vector3.up * (height * 0.5f - bodyCapsule.radius);
+            var count = Physics.OverlapCapsuleNonAlloc(
+                p + pointOff, p - pointOff, bodyCapsule.radius * 0.92f,
+                OverlapBuffer, groundMask, QueryTriggerInteraction.Ignore);
+            var push = Vector3.zero;
+            for (var i = 0; i < count; i++)
+            {
+                var col = OverlapBuffer[i];
+                if (col == null || col == bodyCapsule) continue;
+                if (col is TerrainCollider) continue;
+                if (col.transform.IsChildOf(transform)) continue;
+                if (col.GetComponentInParent<Bayou.Environment.WaterVolume>() != null)
+                    continue;
+                if (Physics.ComputePenetration(
+                        bodyCapsule, rb.position, rb.rotation,
+                        col, col.transform.position, col.transform.rotation,
+                        out var dir, out var dist))
+                {
+                    if (dir.y > 0.7f) continue;
+                    dir.y = 0f;
+                    push += dir * dist;
+                }
+            }
+
+            push.y = 0f;
+            if (push.sqrMagnitude < 0.0001f) return;
+            rb.MovePosition(rb.position + Vector3.ClampMagnitude(push, 0.35f));
+        }
+
+        private void KeepFromFallingThroughWater(bool wading, bool swimming)
+        {
+            if (waterSensor == null || (!wading && !swimming) || rb == null)
+                return;
+
+            var minY = swimming
+                ? waterSensor.SwimHoldY - 0.12f
+                : waterSensor.WaterSurfaceY - 0.55f;
+            if (rb.position.y >= minY)
+                return;
+
+            var p = rb.position;
+            p.y = minY;
+            rb.position = p;
+            var vel = rb.linearVelocity;
+            if (vel.y < 0f)
+                rb.linearVelocity = new Vector3(vel.x, 0f, vel.z);
         }
 
         private void ApplySwimBuoyancy(bool swimming)
@@ -302,14 +405,12 @@ namespace Bayou.Player
                 ApplySwimCapsule(true);
 
                 var vel = rb.linearVelocity;
-                var surface = waterSensor != null ? waterSensor.WaterSurfaceY : rb.position.y;
-                var belowSurface = surface - rb.position.y;
-
-                // Deep water: rise toward the surface. Shallow inner-pond swim: don't sink.
-                if (belowSurface > 1.05f)
-                    vel.y = (surface - 0.35f - rb.position.y) * swimRiseSpeed;
-                else if (vel.y < 0f)
+                var targetY = waterSensor != null ? waterSensor.SwimHoldY : rb.position.y;
+                var dy = targetY - rb.position.y;
+                if (Mathf.Abs(dy) < 0.04f)
                     vel.y = 0f;
+                else
+                    vel.y = Mathf.Clamp(dy * 3.2f, -2.2f, 2.2f);
 
                 rb.linearVelocity = vel;
             }
@@ -347,10 +448,13 @@ namespace Bayou.Player
         private void ApplyWaterAnimator(bool wading, bool swimming)
         {
             if (animator == null) return;
+            if (swimming)
+                _deepWaterAnimLatch = Time.time + 0.35f;
+            var deep = swimming || Time.time < _deepWaterAnimLatch;
             if (_hasInWaterParam)
-                animator.SetBool("inWater", wading || swimming);
+                animator.SetBool("inWater", wading || swimming || deep);
             if (_hasInDeepWaterParam)
-                animator.SetBool("inDeepWater", swimming);
+                animator.SetBool("inDeepWater", deep);
         }
 
         private void CacheBindPose()
@@ -364,39 +468,97 @@ namespace Bayou.Player
             _bindBoneScale = new Vector3[_bindBones.Length];
             for (var i = 0; i < _bindBones.Length; i++)
             {
-                _bindBonePos[i] = _bindBones[i].localPosition;
-                _bindBoneScale[i] = _bindBones[i].localScale;
+                var bone = _bindBones[i];
+                if (bone == null || IsHeldProp(bone)) continue;
+                _bindBonePos[i] = bone.localPosition;
+                _bindBoneScale[i] = bone.localScale;
             }
+        }
+
+        private void LockBindScale()
+        {
+            if (_visualRoot == null || _bindBones == null) return;
+            _visualRoot.localScale = _visualBindLocalScale;
+            for (var i = 0; i < _bindBones.Length; i++)
+            {
+                var bone = _bindBones[i];
+                if (bone == null || IsHeldProp(bone)) continue;
+                bone.localScale = _bindBoneScale[i];
+            }
+        }
+
+        private static bool IsHeldProp(Transform t)
+        {
+            for (var p = t; p != null; p = p.parent)
+            {
+                var n = p.name;
+                if (n.StartsWith("HeldRod", System.StringComparison.OrdinalIgnoreCase) ||
+                    n.StartsWith("HeldNet", System.StringComparison.OrdinalIgnoreCase) ||
+                    n.StartsWith("HeldLantern", System.StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void SnapToSwimStateIfNeeded()
+        {
+            if (animator == null) return;
+            if (animator.IsInTransition(0)) return;
+
+            var info = animator.GetCurrentAnimatorStateInfo(0);
+            if (IsSwimState(info))
+            {
+                _swimSnapArmed = false;
+                return;
+            }
+
+            if (!_swimSnapArmed) return;
+            _swimSnapArmed = false;
+
+            string clip;
+            if (HasAnimatorBool("isHoldingLantern") && animator.GetBool("isHoldingLantern"))
+                clip = "Armature|SwimmingHoldingLight";
+            else if (HasAnimatorBool("isHoldingRod") && animator.GetBool("isHoldingRod"))
+                clip = "Armature|SwimmingHoldingRod";
+            else if (HasAnimatorBool("isMoving") && animator.GetBool("isMoving"))
+                clip = "Armature|Swimming";
+            else
+                clip = "Armature|IdleSwimming";
+
+            animator.CrossFadeInFixedTime(clip, 0.2f);
+        }
+
+        private static bool IsSwimState(AnimatorStateInfo info) =>
+            info.IsName("Armature|Swimming") ||
+            info.IsName("Armature|IdleSwimming") ||
+            info.IsName("Armature|SwimmingHoldingRod") ||
+            info.IsName("Armature|SwimmingHoldingLight");
+
+        private bool HasAnimatorBool(string name)
+        {
+            if (animator == null) return false;
+            var parms = animator.parameters;
+            for (var i = 0; i < parms.Length; i++)
+            {
+                if (parms[i].type == AnimatorControllerParameterType.Bool && parms[i].name == name)
+                    return true;
+            }
+            return false;
         }
 
         private void StabilizeSwimPose()
         {
             if (_visualRoot == null || _bindBones == null) return;
 
-            // Swim clips were authored away from the standing root. Keep the visual
-            // where it was placed, and stop bone translation/scale from rubber-banding
-            // the mesh between planted feet and a distant swim pose.
-            _visualRoot.localPosition = _visualBindLocalPos;
+            // Only kill scale stretch. Writing bone positions every LateUpdate
+            // fought the swim clip and made held items jitter in deep water.
             _visualRoot.localScale = _visualBindLocalScale;
-
-            var limit = Mathf.Max(0.15f, swimBoneMoveLimit);
-            var limitSq = limit * limit;
             for (var i = 0; i < _bindBones.Length; i++)
             {
                 var bone = _bindBones[i];
-                if (bone == null) continue;
+                if (bone == null || IsHeldProp(bone)) continue;
                 bone.localScale = _bindBoneScale[i];
-                if (bone == _visualRoot) continue;
-
-                var delta = bone.localPosition - _bindBonePos[i];
-                if (bone.parent == _visualRoot)
-                {
-                    bone.localPosition = _bindBonePos[i];
-                    continue;
-                }
-
-                if (delta.sqrMagnitude > limitSq)
-                    bone.localPosition = _bindBonePos[i] + Vector3.ClampMagnitude(delta, limit);
             }
         }
 

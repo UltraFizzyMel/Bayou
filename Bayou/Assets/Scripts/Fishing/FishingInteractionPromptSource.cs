@@ -55,7 +55,8 @@ namespace Bayou.Fishing
                 return true;
             }
 
-            if (rodCaster != null && rodCaster.enabled)
+            if (rodCaster != null && rodCaster.enabled &&
+                equipment != null && equipment.CurrentItem == BayouHeldItem.Rod)
             {
                 if (rodCaster.IsMeleeMode)
                 {

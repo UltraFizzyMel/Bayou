@@ -10,10 +10,10 @@ namespace Bayou.Fish
     public sealed class BayouFish : MonoBehaviour
     {
         [Header("Movement")]
-        [SerializeField] private float wanderSpeed = 1.05f;
-        [SerializeField] private float dartSpeed = 2.55f;
-        [SerializeField] private float turnSpeed = 95f;
-        [SerializeField] private float fleeSpeed = 2.8f;
+        [SerializeField] private float wanderSpeed = 2.35f;
+        [SerializeField] private float dartSpeed = 3.6f;
+        [SerializeField] private float turnSpeed = 140f;
+        [SerializeField] private float fleeSpeed = 4.1f;
         [SerializeField] private float fleeRadius = 3.5f;
         [SerializeField] private float roamRadius = 8f;
         [SerializeField] private float bobAmplitude = 0.055f;
@@ -140,7 +140,7 @@ namespace Bayou.Fish
             if (player == null)
                 player = PlayerLocator.Transform;
 
-            var cruise = wanderSpeed * (0.72f + 0.28f * Mathf.PerlinNoise(_wobbleSeed, Time.time * 0.22f));
+            var cruise = wanderSpeed * (0.82f + 0.45f * Mathf.PerlinNoise(_wobbleSeed, Time.time * 0.55f));
             var desiredSpeed = cruise;
 
             if (_hasAttractTarget)
@@ -194,7 +194,7 @@ namespace Bayou.Fish
                 _currentDirection.Normalize();
 
             if (Time.time < _idleUntil && !_hasAttractTarget)
-                desiredSpeed = wanderSpeed * 0.08f;
+                desiredSpeed = wanderSpeed * 0.42f;
 
             _speed = Mathf.MoveTowards(_speed, desiredSpeed, dt * 3.4f);
             Move(_speed, dt);
@@ -207,7 +207,7 @@ namespace Bayou.Fish
 
             if (_hasSwimTarget && ReachedSwimTarget())
             {
-                _idleUntil = Time.time + Random.Range(0.25f, 0.9f);
+                _idleUntil = Time.time + Random.Range(0.05f, 0.22f);
                 _hasSwimTarget = false;
                 return;
             }
@@ -244,7 +244,7 @@ namespace Bayou.Fish
 
             _swimTarget = candidate;
             _hasSwimTarget = true;
-            _retargetAt = Time.time + Random.Range(8f, 16f);
+            _retargetAt = Time.time + Random.Range(2.2f, 4.8f);
 
             var to = Flat(_swimTarget - transform.position);
             if (to.sqrMagnitude > 0.0001f)
@@ -342,15 +342,10 @@ namespace Bayou.Fish
             if (IsCaught || !CanCatchWith(FishCatchTool.Net))
                 return;
 
-            if (HomeSpot != null && !HomeSpot.Contains(netCenter) && !HomeSpot.Contains(transform.position))
+            if (Vector3.Distance(Flat(transform.position), Flat(netCenter)) > radius)
                 return;
 
-            if (FishingSpot.AnySpotsExist() && FishingSpot.FindContaining(netCenter) == null &&
-                FishingSpot.FindContaining(transform.position) == null)
-                return;
-
-            if (Vector3.Distance(Flat(transform.position), Flat(netCenter)) <= radius)
-                Catch();
+            Catch();
         }
 
         public void Catch()

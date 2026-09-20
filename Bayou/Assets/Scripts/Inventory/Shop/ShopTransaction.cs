@@ -54,15 +54,17 @@ namespace Bayou.Inventory.Shop
             foreach (var item in playerBag.AllItems)
             {
                 if (item?.definition == null) continue;
-                if (GetOriginalOwner(item.instanceId) == ShopBagRole.Merchant)
-                    TotalBuyCost += Mathf.Max(0, item.definition.buyPrice);
+                if (GetOriginalOwner(item.instanceId) != ShopBagRole.Merchant) continue;
+                if (merchantBag != null && merchantBag.Contains(item)) continue;
+                TotalBuyCost += Mathf.Max(0, item.definition.buyPrice);
             }
 
             foreach (var item in merchantBag.AllItems)
             {
                 if (item?.definition == null) continue;
-                if (GetOriginalOwner(item.instanceId) == ShopBagRole.Player)
-                    TotalSellCredit += Mathf.Max(0, item.definition.sellPrice);
+                if (GetOriginalOwner(item.instanceId) != ShopBagRole.Player) continue;
+                if (playerBag != null && playerBag.Contains(item)) continue;
+                TotalSellCredit += Mathf.Max(0, item.definition.sellPrice);
             }
 
             DealChanged?.Invoke();

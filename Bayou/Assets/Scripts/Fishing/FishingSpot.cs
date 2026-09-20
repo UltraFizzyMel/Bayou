@@ -334,7 +334,9 @@ namespace Bayou.Fishing
             if (!TryGetGroundHeight(worldPos, out var ground))
                 return false;
             var waterY = waterBounds != null ? waterBounds.bounds.max.y : transform.position.y;
-            return ground > waterY - 0.04f;
+            // Terrain under a flush water plane is at ~waterY. Only treat real banks
+            // as land so fish are not pinned to the pond surface.
+            return ground > waterY + 0.12f;
         }
 
         public static bool TryGetGroundHeight(Vector3 worldPos, out float y)

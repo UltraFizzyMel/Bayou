@@ -250,6 +250,9 @@ namespace Bayou.Inventory.Shop
 
         public void OpenShop(ShopDefinition definition = null)
         {
+            if (_isOpen)
+                return;
+
             RefreshRuntimeReferences();
 
             if (definition != null)
@@ -452,40 +455,19 @@ namespace Bayou.Inventory.Shop
                 return false;
 
             var screen = eventData.position;
-            // Overlay-safe: ignore pressEventCamera (often the gameplay camera).
-            if (!merchantPanel.ContainsScreenPoint(screen, null))
+            if (!merchantPanel.TryPickGrid(screen, out var compartmentId, out var hoverX, out var hoverY))
                 return false;
 
             var item = ui.Item;
             var grabOffset = handmadePlayerInventoryUi?.CurrentDragGrabOffset ?? Vector2Int.zero;
-
-            string compartmentId;
-            int gx, gy;
-            if (merchantPanel.TryPickGrid(screen, out compartmentId, out var hoverX, out var hoverY))
-            {
-                ResolveAnchor(_merchantBag, item, compartmentId, hoverX, hoverY, grabOffset, out gx, out gy);
-                if (!_merchantBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&
-                    !_merchantBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy))
-                    return false;
-            }
-            else if (!_merchantBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy))
-            {
+            ResolveAnchor(_merchantBag, item, compartmentId, hoverX, hoverY, grabOffset, out var gx, out var gy);
+            if (!_merchantBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&
+                !_merchantBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy))
                 return false;
-            }
 
-            var sourceBag = _playerInventory.Bag;
-            if (item.IsPlaced)
-                sourceBag.DetachFromGrid(item);
-            sourceBag.Remove(item);
-
-            if (!_merchantBag.TryPlace(item, compartmentId, gx, gy, item.rotation))
-            {
-                // Merchant place failed — restore into player bag.
-                if (!sourceBag.TryFindFirstFitAnywhere(item, out var backId, out var bx, out var by) ||
-                    !sourceBag.TryPlace(item, backId, bx, by, item.rotation))
-                    sourceBag.HoldItem(item);
+            if (!InventoryBagModel.Transfer(
+                    _playerInventory.Bag, _merchantBag, item, compartmentId, gx, gy, item.rotation))
                 return false;
-            }
 
             RefreshAfterCrossPanelMove();
             return true;
@@ -499,37 +481,19 @@ namespace Bayou.Inventory.Shop
                 return false;
 
             var screen = eventData.position;
-            if (!merchantPanel.ContainsScreenPoint(screen, null))
+            if (!merchantPanel.TryPickGrid(screen, out var compartmentId, out var hoverX, out var hoverY))
                 return false;
 
             var item = view.Item;
             var grabOffset = playerInventoryUi?.CurrentDragGrabOffset ?? Vector2Int.zero;
-
-            string compartmentId;
-            int gx, gy;
-            if (merchantPanel.TryPickGrid(screen, out compartmentId, out var hoverX, out var hoverY))
-            {
-                ResolveAnchor(_merchantBag, item, compartmentId, hoverX, hoverY, grabOffset, out gx, out gy);
-                if (!_merchantBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&
-                    !_merchantBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy))
-                    return false;
-            }
-            else if (!_merchantBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy))
-            {
+            ResolveAnchor(_merchantBag, item, compartmentId, hoverX, hoverY, grabOffset, out var gx, out var gy);
+            if (!_merchantBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&
+                !_merchantBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy))
                 return false;
-            }
 
-            var sourceBag = _playerInventory.Bag;
-            if (item.IsPlaced)
-                sourceBag.DetachFromGrid(item);
-            sourceBag.Remove(item);
-            if (!_merchantBag.TryPlace(item, compartmentId, gx, gy, item.rotation))
-            {
-                if (!sourceBag.TryFindFirstFitAnywhere(item, out var backId, out var bx, out var by) ||
-                    !sourceBag.TryPlace(item, backId, bx, by, item.rotation))
-                    sourceBag.HoldItem(item);
+            if (!InventoryBagModel.Transfer(
+                    _playerInventory.Bag, _merchantBag, item, compartmentId, gx, gy, item.rotation))
                 return false;
-            }
 
             RefreshAfterCrossPanelMove();
             return true;
@@ -576,14 +540,9 @@ namespace Bayou.Inventory.Shop
                     return false;
                 }
 
-                _merchantBag.Remove(item);
-                if (!_playerInventory.TryPlace(item, compartmentId, gx, gy, item.rotation))
-                {
-                    if (!_merchantBag.TryFindFirstFitAnywhere(item, out var backId, out var bx, out var by) ||
-                        !_merchantBag.TryPlace(item, backId, bx, by, item.rotation))
-                        _merchantBag.HoldItem(item);
+                if (!InventoryBagModel.Transfer(
+                        _merchantBag, playerBag, item, compartmentId, gx, gy, item.rotation))
                     return false;
-                }
 
                 RefreshAfterCrossPanelMove();
                 return true;
@@ -609,14 +568,8 @@ namespace Bayou.Inventory.Shop
                 return false;
             }
 
-            _merchantBag.Remove(item);
-            if (!targetUi.Inventory.TryPlace(item, cId, ax, ay, item.rotation))
-            {
-                if (!_merchantBag.TryFindFirstFitAnywhere(item, out var backId, out var bx, out var by) ||
-                    !_merchantBag.TryPlace(item, backId, bx, by, item.rotation))
-                    _merchantBag.HoldItem(item);
+            if (!InventoryBagModel.Transfer(_merchantBag, playerBag, item, cId, ax, ay, item.rotation))
                 return false;
-            }
 
             RefreshAfterCrossPanelMove();
             return true;

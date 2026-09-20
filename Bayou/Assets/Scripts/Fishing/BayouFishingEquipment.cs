@@ -34,6 +34,7 @@ namespace Bayou.Fishing
     /// Keys (defaults): Tab cycle · 0 none · 1 rod · 2 net · 3 lantern.
     /// </summary>
     [DisallowMultipleComponent]
+    [DefaultExecutionOrder(50)]
     public sealed class BayouFishingEquipment : MonoBehaviour
     {
         [Header("Tools")]
@@ -46,7 +47,7 @@ namespace Bayou.Fishing
         [SerializeField] private GameObject heldNet;
         [SerializeField] private GameObject heldLantern;
         [SerializeField] private Transform heldAttachPoint;
-        [SerializeField] private bool createPlaceholdersIfMissing = true;
+        [SerializeField] private bool createPlaceholdersIfMissing = false;
 
         [Header("Input")]
         [SerializeField] private InputActionReference switchToolAction;
@@ -80,6 +81,7 @@ namespace Bayou.Fishing
         };
 
         private HeldLantern _lantern;
+        private Light _carryLight;
         private bool _wasPursued;
         private float _nextPursuitCheck;
 
@@ -114,7 +116,7 @@ namespace Bayou.Fishing
             if (GetComponent<FishingInteractionPromptSource>() == null)
                 gameObject.AddComponent<FishingInteractionPromptSource>();
 
-            EnsureHeldVisuals();
+            HidePhysicalHeldItems();
             if (animator == null)
                 animator = GetComponentInChildren<Animator>();
             if (handNet != null && handNet.animator == null)
@@ -132,7 +134,6 @@ namespace Bayou.Fishing
             selectRodAction?.action?.Enable();
             selectNetAction?.action?.Enable();
             selectLanternAction?.action?.Enable();
-            ApplyItem(startingItem);
         }
 
         private void OnDisable()
@@ -192,12 +193,9 @@ namespace Bayou.Fishing
             UpdatePursuitContext();
             SyncHeldAnimator();
 
-            if (EquipmentHotwheel.SuppressLegacyToolKeys)
-            {
-                if (WasSelect(selectNoneAction, Key.Digit0))
-                    ApplyItem(BayouHeldItem.None);
+            // The hotwheel owns Tab / 1–4. Don't cycle or overwrite its selection.
+            if (EquipmentHotwheel.Instance != null)
                 return;
-            }
 
             if (WasSelect(selectNoneAction, Key.Digit0, Key.Backquote))
             {
@@ -243,6 +241,14 @@ namespace Bayou.Fishing
 
             if (WasSwitch())
                 CycleNext();
+        }
+
+        private void LateUpdate()
+        {
+            HideHeld(heldRod);
+            HideHeld(heldNet);
+            HideHeld(heldLantern);
+            UpdateCarryLight();
         }
 
         private void UpdatePursuitContext()
@@ -334,61 +340,436 @@ namespace Bayou.Fishing
             }
 
             CurrentItem = item;
+            HidePhysicalHeldItems();
+
+            if (rodCaster != null && !rodCaster.enabled)
+                rodCaster.enabled = true;
+
+            if (handNet != null && !handNet.enabled)
+                handNet.enabled = true;
+
             SyncHeldAnimator();
-
-            if (rodCaster != null)
-                rodCaster.enabled = item == BayouHeldItem.Rod;
-
-            if (handNet != null)
-                handNet.enabled = item == BayouHeldItem.Net;
-
-            if (heldRod != null)
-                heldRod.SetActive(item == BayouHeldItem.Rod);
-
-            if (heldNet != null)
-                heldNet.SetActive(item == BayouHeldItem.Net);
-
-            if (heldLantern != null)
-                heldLantern.SetActive(item == BayouHeldItem.Lantern);
-
-            if (_lantern == null && heldLantern != null)
-                _lantern = heldLantern.GetComponent<HeldLantern>() ??
-                           heldLantern.GetComponentInChildren<HeldLantern>(true);
-
-            _lantern?.SetLit(item == BayouHeldItem.Lantern);
+            UpdateCarryLight();
         }
 
         /// <summary>
-        /// Rod and lantern have dedicated hold/swim clips. The net is a prop on the
-        /// default idle/walk — sharing <c>isHoldingRod</c> made every net swim exit
-        /// snap into the rod hold pose.
+        /// In-hand meshes and hold clips are disabled until that attach is stable.
+        /// Tools still work from the hotwheel; the lantern is a body light.
         /// </summary>
         private void SyncHeldAnimator()
         {
+            if (animator == null)
+                animator = GetComponentInChildren<Animator>();
             if (animator == null) return;
-            animator.SetBool("isHoldingRod", CurrentItem == BayouHeldItem.Rod);
-            animator.SetBool("isHoldingLantern", CurrentItem == BayouHeldItem.Lantern);
+
+            animator.SetBool("isHoldingRod", false);
+            animator.SetBool("isHoldingLantern", false);
         }
+
+        private void HidePhysicalHeldItems()
+        {
+            HideHeld(heldRod);
+            HideHeld(heldNet);
+            HideHeld(heldLantern);
+
+            for (var i = 0; i < transform.childCount; i++)
+            {
+                var child = transform.GetChild(i);
+                if (child == null) continue;
+                var n = child.name;
+                if (n.StartsWith("HeldRod", System.StringComparison.OrdinalIgnoreCase) ||
+                    n.StartsWith("HeldNet", System.StringComparison.OrdinalIgnoreCase) ||
+                    n.StartsWith("HeldLantern", System.StringComparison.OrdinalIgnoreCase))
+                    HideHeld(child.gameObject);
+            }
+
+            if (animator == null) return;
+            var bones = animator.GetComponentsInChildren<Transform>(true);
+            for (var i = 0; i < bones.Length; i++)
+            {
+                var t = bones[i];
+                if (t == null) continue;
+                var n = t.name;
+                if (n.StartsWith("HeldRod", System.StringComparison.OrdinalIgnoreCase) ||
+                    n.StartsWith("HeldNet", System.StringComparison.OrdinalIgnoreCase) ||
+                    n.StartsWith("HeldLantern", System.StringComparison.OrdinalIgnoreCase))
+                    HideHeld(t.gameObject);
+            }
+        }
+
+        private static void HideHeld(GameObject go)
+        {
+            if (go == null) return;
+            if (go.GetComponent<BayouFishingEquipment>() != null) return;
+            if (go.GetComponentInParent<EquipmentHotwheel>() != null) return;
+            if (go.GetComponent<Canvas>() != null) return;
+            if (go.activeSelf)
+                go.SetActive(false);
+        }
+
+        private void UpdateCarryLight()
+        {
+            EnsureCarryLight();
+            var on = CurrentItem == BayouHeldItem.Lantern;
+            if (_carryLight != null)
+                _carryLight.enabled = on;
+            _lantern?.SetLit(false);
+        }
+
+        private void EnsureCarryLight()
+        {
+            if (_carryLight != null) return;
+            var existing = transform.Find("CarryLanternLight");
+            var go = existing != null ? existing.gameObject : new GameObject("CarryLanternLight");
+            go.transform.SetParent(transform, false);
+            go.transform.localPosition = new Vector3(0.12f, 1.15f, 0.18f);
+            go.transform.localScale = Vector3.one;
+            _carryLight = go.GetComponent<Light>() ?? go.AddComponent<Light>();
+            _carryLight.type = LightType.Point;
+            _carryLight.intensity = 18f;
+            _carryLight.range = 9f;
+            _carryLight.color = new Color(1f, 0.78f, 0.48f, 1f);
+            _carryLight.shadows = LightShadows.None;
+            _carryLight.renderMode = LightRenderMode.ForcePixel;
+            _carryLight.cullingMask = ~0;
+            _carryLight.renderingLayerMask = int.MaxValue;
+            _carryLight.enabled = false;
+            if (go.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalLightData>() == null)
+                go.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalLightData>();
+        }
+
+        private static bool IsSwimHoldState(AnimatorStateInfo info) =>
+            info.IsName("Armature|Swimming") ||
+            info.IsName("Armature|IdleSwimming") ||
+            info.IsName("Armature|SwimmingHoldingRod") ||
+            info.IsName("Armature|SwimmingHoldingLight");
 
         private void EnsureHeldVisuals()
         {
-            var attach = heldAttachPoint != null ? heldAttachPoint : transform;
+            if (animator == null)
+                animator = GetComponentInChildren<Animator>();
 
-            if (heldRod == null && createPlaceholdersIfMissing)
-                heldRod = CreateRodPlaceholder(attach);
+            var attach = transform;
 
-            if (heldNet == null && createPlaceholdersIfMissing)
-                heldNet = CreateNetPlaceholder(attach);
+            heldRod = EnsureHeldProp(heldRod, attach, "HeldRod", CreateRodPlaceholder);
+            heldNet = EnsureHeldProp(heldNet, attach, "HeldNet", CreateNetPlaceholder);
+            heldLantern = EnsureHeldProp(heldLantern, attach, "HeldLantern", CreateLanternPlaceholder);
 
-            if (heldLantern == null && createPlaceholdersIfMissing)
-                heldLantern = CreateLanternPlaceholder(attach);
+            StripPlaceholderColliders(heldRod);
+            StripPlaceholderColliders(heldNet);
+            StripPlaceholderColliders(heldLantern);
+            HideFlatMeshes(heldRod);
+            HideFlatMeshes(heldNet);
+            HideFlatMeshes(heldLantern);
 
             if (heldLantern != null)
             {
                 _lantern = heldLantern.GetComponent<HeldLantern>();
                 if (_lantern == null)
+                    _lantern = heldLantern.GetComponentInChildren<HeldLantern>(true);
+                if (_lantern == null)
                     _lantern = heldLantern.AddComponent<HeldLantern>();
             }
+        }
+
+        private GameObject EnsureHeldProp(
+            GameObject existing,
+            Transform attach,
+            string namePrefix,
+            System.Func<Transform, GameObject> create)
+        {
+            if (existing != null &&
+                existing.name.StartsWith(namePrefix, System.StringComparison.OrdinalIgnoreCase) &&
+                !NeedsHeldRebuild(existing))
+            {
+                if (existing.transform.parent != attach)
+                    existing.transform.SetParent(attach, false);
+                return existing;
+            }
+
+            if (existing != null)
+            {
+                if (existing.transform == transform || existing.transform.IsChildOf(transform))
+                    existing.SetActive(false);
+            }
+
+            if (!createPlaceholdersIfMissing && existing != null)
+                return existing;
+
+            return create(attach);
+        }
+
+        private static bool NeedsHeldRebuild(GameObject go)
+        {
+            if (go == null) return true;
+            if (HasFlatMesh(go)) return true;
+            var size = MaxWorldSize(go.transform);
+            return size > 4f;
+        }
+
+        private Transform _cachedHand;
+        private Vector3 _heldFollowVel;
+        private bool _heldFollowInit;
+
+        private void FollowHeldVisuals()
+        {
+            if (_cachedHand == null)
+                _cachedHand = ResolveHandAttach();
+            var hand = _cachedHand != null ? _cachedHand : ResolveHandAttach();
+            FollowHeld(heldRod, hand, new Vector3(0.02f, -0.02f, 0.08f), Quaternion.Euler(8f, 90f, 80f), 0.55f,
+                CurrentItem == BayouHeldItem.Rod);
+            FollowHeld(heldNet, hand, new Vector3(0.04f, 0.01f, 0.1f), Quaternion.Euler(25f, 0f, 0f), 0.4f,
+                CurrentItem == BayouHeldItem.Net);
+            FollowHeld(heldLantern, hand, new Vector3(0.02f, -0.1f, 0.03f), Quaternion.Euler(0f, 0f, 8f), 0.28f,
+                CurrentItem == BayouHeldItem.Lantern);
+        }
+
+        private void FollowHeld(GameObject go, Transform hand, Vector3 localPos, Quaternion localRot, float worldScale, bool equipped)
+        {
+            if (go == null) return;
+            var t = go.transform;
+            if (!equipped)
+            {
+                if (go.activeSelf)
+                    go.SetActive(false);
+                if (t.parent != transform)
+                    t.SetParent(transform, false);
+                t.localScale = Vector3.one * 0.01f;
+                _heldFollowInit = false;
+                return;
+            }
+
+            if (!go.activeSelf)
+                go.SetActive(true);
+
+            var water = GetComponent<Bayou.Player.BayouWaterSensor>();
+            var swimming = water != null && water.IsSwimming;
+            if (swimming && hand != null && hand != transform)
+            {
+                if (t.parent != transform)
+                    t.SetParent(transform, true);
+                var wantPos = hand.TransformPoint(localPos);
+                var wantRot = hand.rotation * localRot;
+                if (!_heldFollowInit)
+                {
+                    t.position = wantPos;
+                    t.rotation = wantRot;
+                    _heldFollowVel = Vector3.zero;
+                    _heldFollowInit = true;
+                }
+                else
+                {
+                    t.position = Vector3.SmoothDamp(t.position, wantPos, ref _heldFollowVel, 0.12f);
+                    t.rotation = Quaternion.Slerp(t.rotation, wantRot, 1f - Mathf.Exp(-10f * Time.deltaTime));
+                }
+
+                t.localScale = Vector3.one * worldScale;
+                return;
+            }
+
+            _heldFollowInit = false;
+            var parent = hand != null && hand != transform ? hand : transform;
+            if (t.parent != parent)
+                t.SetParent(parent, false);
+
+            t.localPosition = parent == transform
+                ? new Vector3(0.22f, 0.9f, 0.2f) + localPos
+                : localPos;
+            t.localRotation = localRot;
+            t.localScale = CompensatedLocalScale(t, worldScale);
+        }
+
+        private static Vector3 CompensatedLocalScale(Transform t, float worldScale)
+        {
+            var parent = t.parent;
+            if (parent == null)
+                return Vector3.one * worldScale;
+            var ls = parent.lossyScale;
+            // Clamp so a tiny swim-bone scale cannot blow the net into a pond-sized disc.
+            var sx = Mathf.Clamp(worldScale / Mathf.Max(0.05f, Mathf.Abs(ls.x)), 0.05f, 1.8f);
+            var sy = Mathf.Clamp(worldScale / Mathf.Max(0.05f, Mathf.Abs(ls.y)), 0.05f, 1.8f);
+            var sz = Mathf.Clamp(worldScale / Mathf.Max(0.05f, Mathf.Abs(ls.z)), 0.05f, 1.8f);
+            return new Vector3(sx, sy, sz);
+        }
+
+        private static void StripPlaceholderColliders(GameObject root)
+        {
+            if (root == null) return;
+            var cols = root.GetComponentsInChildren<Collider>(true);
+            for (var i = 0; i < cols.Length; i++)
+            {
+                if (cols[i] != null)
+                    Object.Destroy(cols[i]);
+            }
+        }
+
+        private static void HideFlatMeshes(GameObject root)
+        {
+            if (root == null) return;
+            var filters = root.GetComponentsInChildren<MeshFilter>(true);
+            for (var i = 0; i < filters.Length; i++)
+            {
+                var mf = filters[i];
+                if (mf == null || !IsFlatMesh(mf.sharedMesh)) continue;
+                var rend = mf.GetComponent<Renderer>();
+                if (rend != null)
+                    rend.enabled = false;
+            }
+        }
+
+        private static bool HasFlatMesh(GameObject root)
+        {
+            if (root == null) return false;
+            var filters = root.GetComponentsInChildren<MeshFilter>(true);
+            for (var i = 0; i < filters.Length; i++)
+            {
+                if (IsFlatMesh(filters[i] != null ? filters[i].sharedMesh : null))
+                    return true;
+            }
+            return false;
+        }
+
+        private static bool IsFlatMesh(Mesh mesh)
+        {
+            if (mesh == null) return false;
+            var n = mesh.name;
+            return n.IndexOf("Plane", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   n.IndexOf("Quad", System.StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private static float MaxWorldSize(Transform t)
+        {
+            if (t == null) return 0f;
+            var rends = t.GetComponentsInChildren<Renderer>(true);
+            var any = false;
+            var bounds = new Bounds(t.position, Vector3.zero);
+            for (var i = 0; i < rends.Length; i++)
+            {
+                var r = rends[i];
+                if (r == null || !r.enabled) continue;
+                if (!any)
+                {
+                    bounds = r.bounds;
+                    any = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(r.bounds);
+                }
+            }
+
+            if (!any) return 0f;
+            return Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z));
+        }
+
+        private Transform ResolveHandAttach()
+        {
+            if (heldAttachPoint != null)
+                return heldAttachPoint;
+
+            if (animator == null)
+                animator = GetComponentInChildren<Animator>();
+            var root = animator != null ? animator.transform : transform;
+            if (animator != null && animator.isHuman)
+            {
+                var human = animator.GetBoneTransform(HumanBodyBones.RightHand);
+                if (human != null)
+                    return human;
+            }
+
+            var named = FindRightHand(root);
+            if (named != null)
+                return named;
+            var raised = FindRaisedRightLimb(root);
+            return raised != null ? raised : transform;
+        }
+
+        private static Transform FindRaisedRightLimb(Transform root)
+        {
+            if (root == null) return null;
+            Transform best = null;
+            var bestScore = float.MinValue;
+            var all = root.GetComponentsInChildren<Transform>(true);
+            for (var i = 0; i < all.Length; i++)
+            {
+                var t = all[i];
+                if (t == null || t == root) continue;
+                var n = t.name;
+                if (n.IndexOf("Left", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    continue;
+                if (n.StartsWith("Held", System.StringComparison.OrdinalIgnoreCase))
+                    continue;
+                if (n.IndexOf("Toe", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    n.IndexOf("Foot", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    n.IndexOf("Heel", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    continue;
+
+                var local = root.InverseTransformPoint(t.position);
+                if (local.y < 0.35f) continue;
+                var score = local.y * 1.6f + local.x * 1.1f + local.z * 0.25f;
+                if (n.IndexOf("Hand", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    n.IndexOf("Wrist", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    n.IndexOf("Arm", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    score += 4f;
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    best = t;
+                }
+            }
+
+            return best;
+        }
+
+        private static Transform FindRightHand(Transform root)
+        {
+            if (root == null) return null;
+            Transform best = null;
+            var bestScore = int.MinValue;
+            var all = root.GetComponentsInChildren<Transform>(true);
+            for (var i = 0; i < all.Length; i++)
+            {
+                var t = all[i];
+                if (t == null) continue;
+                var n = t.name;
+                if (n.IndexOf("Left", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    continue;
+                if (n.IndexOf("Handle", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    continue;
+
+                var isHand = n.IndexOf("Hand", System.StringComparison.OrdinalIgnoreCase) >= 0;
+                var isWrist = n.IndexOf("Wrist", System.StringComparison.OrdinalIgnoreCase) >= 0;
+                var isPalm = n.IndexOf("Palm", System.StringComparison.OrdinalIgnoreCase) >= 0;
+                if (!isHand && !isWrist && !isPalm) continue;
+
+                var isRight =
+                    n.IndexOf("Right", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    n.EndsWith("_R", System.StringComparison.OrdinalIgnoreCase) ||
+                    n.EndsWith(".R", System.StringComparison.OrdinalIgnoreCase) ||
+                    n.EndsWith(" R", System.StringComparison.OrdinalIgnoreCase) ||
+                    n.IndexOf("_R_", System.StringComparison.OrdinalIgnoreCase) >= 0;
+                if (!isRight) continue;
+
+                var score = (isHand ? 8 : 0) + (isWrist ? 5 : 0) + (isPalm ? 4 : 0) + Depth(t);
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    best = t;
+                }
+            }
+
+            return best;
+        }
+
+        private static int Depth(Transform t)
+        {
+            var d = 0;
+            while (t != null)
+            {
+                d++;
+                t = t.parent;
+            }
+            return d;
         }
 
         private static GameObject CreateRodPlaceholder(Transform parent)

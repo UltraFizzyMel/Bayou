@@ -1,6 +1,8 @@
 using System.Collections;
 using Bayou;
+using Bayou.Fishing;
 using Bayou.Inventory.Shop;
+using Bayou.Player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -99,13 +101,25 @@ namespace Bayou.Inventory
             if (_routine != null)
                 StopCoroutine(_routine);
 
-            // Drop a previous unfinished catch (rare).
+            // Drop a previous unfinished catch (rare). Keep unique gear in the bag.
             if (_pending != null && InventoryController.Instance != null)
-                InventoryController.Instance.RemoveItem(_pending);
+            {
+                var pendingUnique = _pending.definition != null && _pending.definition.IsUniqueEquipment;
+                if (!pendingUnique)
+                    InventoryController.Instance.RemoveItem(_pending);
+            }
 
             _pending = null;
             _allocating = false;
             _revealing = false;
+
+            var inventory = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
+            if (inventory == null || !inventory.TryHoldNewItem(fishItem, out _pending))
+            {
+                Debug.LogWarning("[Catch] Could not hold item for inventory allocation.");
+                return;
+            }
+
             _routine = StartCoroutine(CatchFlow(fishItem));
         }
 
@@ -133,15 +147,6 @@ namespace Bayou.Inventory
 
             HideReveal();
             _revealing = false;
-
-            var inventory = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
-            if (inventory == null || !inventory.TryHoldNewItem(fishItem, out _pending))
-            {
-                Debug.LogWarning("[Catch] Could not hold fish for inventory allocation.");
-                EndSession(closeInventory: false);
-                yield break;
-            }
-
             _allocating = true;
 
             var bag = InventoryDisplayUI.Active ?? FindFirstObjectByType<InventoryDisplayUI>();
@@ -156,8 +161,27 @@ namespace Bayou.Inventory
         private void OnInventoryChanged()
         {
             if (!_allocating || _pending == null) return;
-            if (_pending.IsPlaced)
-                EndSession(closeInventory: false);
+            if (!_pending.IsPlaced) return;
+
+            var def = _pending.definition;
+            var unique = def != null && def.IsUniqueEquipment;
+            EndSession(closeInventory: false);
+            if (unique)
+                TryEquipUnique(def);
+        }
+
+        private static void TryEquipUnique(ItemDefinition def)
+        {
+            if (def == null) return;
+            var equipment = PlayerLocator.Equipment ?? Object.FindFirstObjectByType<BayouFishingEquipment>();
+            if (equipment == null)
+            {
+                Debug.LogWarning("[Catch] No fishing equipment to auto-equip.");
+                return;
+            }
+
+            if (!equipment.TryEquipItemId(def.Id))
+                Debug.LogWarning($"[Catch] Could not auto-equip {def.Id}.");
         }
 
         public void DiscardPending()

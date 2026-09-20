@@ -9,7 +9,7 @@ namespace Bayou.Inventory
     [RequireComponent(typeof(RectTransform))]
     public sealed class InventoryItemUI : MonoBehaviour
     {
-        private static readonly Color PlateColor = new(0.78f, 0.68f, 0.48f, 0.92f);
+        private static readonly Color PlateColor = new(0.78f, 0.68f, 0.48f, 1f);
         private static readonly Color PlateEmptyIcon = new(0.32f, 0.48f, 0.78f, 0.92f);
 
         private readonly List<Vector2Int> _offsetBuffer = new(8);
@@ -110,17 +110,10 @@ namespace Bayou.Inventory
             }
 
             var iconRt = _icon.rectTransform;
-            iconRt.anchorMin = Vector2.zero;
-            iconRt.anchorMax = Vector2.one;
-            iconRt.pivot = new Vector2(0.5f, 0.5f);
-            iconRt.offsetMin = new Vector2(6f, 6f);
-            iconRt.offsetMax = new Vector2(-6f, -6f);
             iconRt.localScale = Vector3.one;
             iconRt.localRotation = Quaternion.identity;
-
             _icon.raycastTarget = false;
-            _icon.type = Image.Type.Simple;
-            _icon.preserveAspect = true;
+            InventoryItemView.FitIcon(_icon, _item?.definition?.icon);
         }
 
         private void ApplyIcon()
@@ -130,23 +123,7 @@ namespace Bayou.Inventory
                 _plate.color = _item?.definition?.icon != null ? PlateColor : PlateEmptyIcon;
 
             if (_icon == null) return;
-
-            var sprite = _item?.definition?.icon;
-            _icon.sprite = sprite;
-            _icon.enabled = sprite != null;
-            _icon.color = Color.white;
-            _icon.type = Image.Type.Simple;
-            _icon.preserveAspect = true;
-
-            if (sprite == null)
-                return;
-
-            var fitter = _icon.GetComponent<AspectRatioFitter>();
-            if (fitter == null)
-                fitter = _icon.gameObject.AddComponent<AspectRatioFitter>();
-            fitter.aspectMode = AspectRatioFitter.AspectMode.FitInParent;
-            var h = sprite.rect.height;
-            fitter.aspectRatio = h > 0.01f ? sprite.rect.width / h : 1f;
+            InventoryItemView.FitIcon(_icon, _item?.definition?.icon);
         }
 
         private void EnsureIgnoreLayout()

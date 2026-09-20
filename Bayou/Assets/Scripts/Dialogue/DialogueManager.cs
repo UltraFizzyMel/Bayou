@@ -201,7 +201,10 @@ public class DialogueManager : MonoBehaviour
 
     public void EnterDialogueMode(TextAsset inkJSON, string knotName)
     {
-        
+        if (Bayou.Inventory.Shop.ShopUIController.ActiveShop != null &&
+            Bayou.Inventory.Shop.ShopUIController.ActiveShop.IsOpen)
+            return;
+
         currentStory = new Story(inkJSON.text);
 
         inkExternalFunctions = new InkExternalFunctions();

@@ -198,6 +198,9 @@ public class InkExternalFunctions
 
     internal static void OpenShopImmediate()
     {
+        var existing = ShopUIController.ActiveShop;
+        if (existing != null && existing.IsOpen)
+            return;
         var keeper = UnityEngine.Object.FindFirstObjectByType<Shopkeeper>();
         var shopDef = keeper != null ? keeper.ShopDefinition : null;
 

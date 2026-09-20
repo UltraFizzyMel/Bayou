@@ -131,6 +131,40 @@ namespace Bayou.Inventory
                 _allItems.Add(item);
         }
 
+        public bool Contains(InventoryItemInstance item) => item != null && _allItems.Contains(item);
+
+        public static bool Transfer(
+            InventoryBagModel from,
+            InventoryBagModel to,
+            InventoryItemInstance item,
+            string compartmentId,
+            int x,
+            int y,
+            int rotation)
+        {
+            if (from == null || to == null || item == null)
+                return false;
+
+            if (from == to)
+                return to.TryPlace(item, compartmentId, x, y, rotation);
+
+            if (from.Contains(item))
+            {
+                from.DetachFromGrid(item);
+                from.Remove(item);
+            }
+
+            if (!to.TryPlace(item, compartmentId, x, y, rotation))
+            {
+                if (!from.TryFindFirstFitAnywhere(item, out var backId, out var bx, out var by) ||
+                    !from.TryPlace(item, backId, bx, by, item.rotation))
+                    from.HoldItem(item);
+                return false;
+            }
+
+            return true;
+        }
+
         public bool TryFindFirstFitAnywhere(
             InventoryItemInstance item,
             out string compartmentId,

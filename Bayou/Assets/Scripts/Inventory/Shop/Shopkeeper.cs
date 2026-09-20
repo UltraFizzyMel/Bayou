@@ -94,6 +94,9 @@ namespace Bayou.Inventory.Shop
                 return;
             }
 
+            if (shopUi.IsOpen)
+                return;
+
             var handmade = InventoryDisplayUI.Active ?? FindFirstObjectByType<InventoryDisplayUI>();
             if (handmade != null)
                 shopUi.AssignHandmadeInventory(handmade);

@@ -1,11 +1,16 @@
+using System;
+using System.Collections;
+using Bayou.Creatures;
 using Bayou.Fish;
 using Bayou.Fishing;
 using Bayou.Inventory;
 using Bayou.Inventory.Shop;
+using Bayou.Player;
 using Bayou.Quests;
 using Bayou.Save;
 using Bayou.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -13,12 +18,16 @@ using UnityEngine.InputSystem;
 namespace Bayou.Testing
 {
     /// <summary>
-    /// Retired play-mode test HUD. Kept so leftover scene objects destroy themselves.
+    /// Play-mode HUD for exercising gameplay systems. Auto-spawns in the editor
+    /// (not in player builds). Press ` to hide. HUD buttons grant items; Play
+    /// itself starts with a real loadout.
     /// </summary>
     [DefaultExecutionOrder(-150)]
     [DisallowMultipleComponent]
     public sealed class MechanicsTestBootstrap : MonoBehaviour
     {
+        private const string ObjectName = "MechanicsTestBootstrap";
+
         [SerializeField] private bool skipSaveOnPlay = true;
         [Tooltip("Leave off so Play matches a real start ($0, no tools). Use the HUD to grant test items.")]
         [SerializeField] private bool grantRodOnPlay;
@@ -32,20 +41,65 @@ namespace Bayou.Testing
 
         public static MechanicsTestBootstrap Instance { get; private set; }
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void Boot()
+        {
+#if UNITY_EDITOR
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            EnsureInScene();
+#endif
+        }
+
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+#if UNITY_EDITOR
+            EnsureInScene();
+#endif
+        }
+
         public static void EnsureInScene()
         {
+            if (Instance != null) return;
+
+            var scene = SceneManager.GetActiveScene();
+            if (!scene.IsValid()) return;
+            if (string.Equals(scene.name, "MainMenu", StringComparison.OrdinalIgnoreCase))
+                return;
+            if (string.Equals(scene.name, "InventoryTest", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            var existing = FindFirstObjectByType<MechanicsTestBootstrap>();
+            if (existing != null) return;
+
+            var go = new GameObject(ObjectName);
+            go.AddComponent<MechanicsTestBootstrap>();
         }
 
         private void Awake()
         {
-            Destroy(gameObject);
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            Instance = this;
+
+            if (skipSaveOnPlay)
+            {
+                GameSaveSystem.SuppressNextLoad = true;
+                _skippedSaveThisPlay = true;
+            }
         }
 
         private void Start()
         {
+            if (grantRodOnPlay || grantNetOnPlay || grantMoneyOnPlay)
+                StartCoroutine(GrantDefaultsNextFrame());
         }
 
-        private System.Collections.IEnumerator GrantDefaultsNextFrame()
+        private IEnumerator GrantDefaultsNextFrame()
         {
             yield return null;
             if (grantMoneyOnPlay)
@@ -79,10 +133,10 @@ namespace Bayou.Testing
 
         private void OnGUI()
         {
-            return;
+            if (!showHud) return;
 
-            var w = 300f;
-            var h = Mathf.Min(Screen.height - 24f, 620f);
+            var w = 310f;
+            var h = Mathf.Min(Screen.height - 24f, 720f);
             GUILayout.BeginArea(new Rect(12f, 12f, w, h), GUI.skin.box);
             GUILayout.Label("Mechanics bootstrap");
             GUILayout.Label("` hide  ·  Tab hold wheel  ·  1–4 slots");
@@ -105,15 +159,34 @@ namespace Bayou.Testing
             GUILayout.Space(6f);
             GUILayout.Label("Fishing");
             Btn("Rod fishing", StartRodFishing);
+            Btn("Scoop fishing (hand net)", StartScoopFishing);
             Btn("Church pond (rosary)", GoPond);
 
             GUILayout.Space(6f);
             GUILayout.Label("Go to");
-            Btn("Father Landry (church)", GoLandry);
             Btn("Player spawn", GoSpawn);
+            Btn("Net pickup", GoNetPickup);
+            Btn("Lantern pickup", GoLantern);
+            Btn("Father Landry (church)", GoLandry);
             Btn("Caliste", GoCaliste);
             Btn("Shop", GoShop);
-            Btn("Lantern pickup", GoLantern);
+            Btn("Campfire", GoCampfire);
+            Btn("Foggy marsh", GoFoggyMarsh);
+            Btn("Swim / deep water", GoSwim);
+
+            GUILayout.Space(6f);
+            GUILayout.Label("Combat");
+            Btn("Ensure snakes / crocs", () => CreatureBootstrap.EnsureInScene());
+            Btn("Snake near spawn", () => GoNamed("Snake_TestNearSpawn", new Vector3(-4f, 1.6f, -82f)));
+            Btn("Snake lantern path", () => GoNamed("Snake_LanternPath"));
+            Btn("Croc foggy marsh", () => GoNamed("Crocodile_FoggyMarsh"));
+            Btn("Croc lantern marsh", () => GoNamed("Crocodile_LanternMarsh"));
+
+            GUILayout.Space(6f);
+            GUILayout.Label("Health / campfire");
+            Btn("Hurt 1 HP", HurtPlayer);
+            Btn("Heal to full", HealPlayer);
+            Btn("Open campfire UI", OpenBonfireUi);
 
             GUILayout.Space(6f);
             GUILayout.Label("Give / equip");
@@ -134,12 +207,12 @@ namespace Bayou.Testing
                 Equip(BayouHeldItem.Lantern);
             });
             Btn("Give rosary (skip scoop)", () => GrantItem("Item_RosaryNecklace"));
-            Btn("Give graveyard key", () =>
-            {
-                GrantItem("Item_ChurchGraveyardKey");
-                var gates = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
-                gates?.SyncKeysFromInventory();
-            });
+            Btn("Give bass (cook / heal)", () => GrantItem("Item_LargemouthBass"));
+            Btn("Give crawfish", () => GrantItem("Item_Crawfish"));
+            Btn("Give graveyard key", () => GrantKey("Item_ChurchGraveyardKey"));
+            Btn("Give maze key", () => GrantKey("Item_MazeGateKey"));
+            Btn("Give tomb key", () => GrantKey("Item_LandryTombKey"));
+            Btn("Give foggy-marsh key", () => GrantKey("Item_ChurchFoggyMarshKey"));
             Btn("Give $100", () => AddMoney(100));
 
             GUILayout.Space(6f);
@@ -162,8 +235,7 @@ namespace Bayou.Testing
 
             GUILayout.Space(6f);
             GUILayout.Label("Quests");
-            Btn("Start pond / rosary quest", () => StartQuest("CollectPondItemQuest"));
-            Btn("Start lantern quest", () => StartQuest("CollectLanternQuest"));
+            DrawQuestButtons();
 
             GUILayout.Space(6f);
             GUILayout.Label("Save");
@@ -176,7 +248,39 @@ namespace Bayou.Testing
             GUILayout.EndArea();
         }
 
-        private static void Btn(string label, System.Action action)
+        private static void DrawQuestButtons()
+        {
+            var manager = QuestManager.Resolve();
+            if (manager == null)
+            {
+                GUILayout.Label("(no QuestManager)");
+                Btn("Start pond / rosary quest", () => StartQuest(QuestIds.CollectPondItem));
+                Btn("Start lantern quest", () => StartQuest(QuestIds.CollectLantern));
+                Btn("Start collect-net quest", () => StartQuest(QuestIds.CollectNet));
+                return;
+            }
+
+            var any = false;
+            foreach (var quest in manager.AllQuests)
+            {
+                if (quest?.info == null) continue;
+                any = true;
+                var label = string.IsNullOrWhiteSpace(quest.info.displayName)
+                    ? quest.info.id
+                    : quest.info.displayName;
+                var id = quest.info.id;
+                Btn($"Start {label}", () => StartQuest(id));
+            }
+
+            if (!any)
+            {
+                Btn("Start collect-net quest", () => StartQuest(QuestIds.CollectNet));
+                Btn("Start pond / rosary quest", () => StartQuest(QuestIds.CollectPondItem));
+                Btn("Start lantern quest", () => StartQuest(QuestIds.CollectLantern));
+            }
+        }
+
+        private static void Btn(string label, Action action)
         {
             if (GUILayout.Button(label, GUILayout.Height(26f)))
                 action?.Invoke();
@@ -187,7 +291,7 @@ namespace Bayou.Testing
             GrantItem("Item_FishingRod");
             Equip(BayouHeldItem.Rod);
 
-            if (TryFindRodFish(out var water))
+            if (TryFindFishWater(FishCatchTool.Rod, out var water))
             {
                 var stand = water + new Vector3(5.8f, 1.55f, 2.2f);
                 Teleport(stand, water - stand);
@@ -209,13 +313,30 @@ namespace Bayou.Testing
             Debug.Log("[Mechanics] Rod fishing fallback. Hold LMB, release to cast, A/D wiggle.");
         }
 
-        private static bool TryFindRodFish(out Vector3 water)
+        private static void StartScoopFishing()
+        {
+            GrantItem("Item_HandNet");
+            Equip(BayouHeldItem.Net);
+
+            if (TryFindFishWater(FishCatchTool.Net, out var water))
+            {
+                var stand = water + new Vector3(2.4f, 1.4f, 1.6f);
+                Teleport(stand, water - stand);
+                Debug.Log("[Mechanics] Scoop fishing: hold LMB over pond glow, then release.");
+                return;
+            }
+
+            GoPond();
+            Debug.Log("[Mechanics] Scoop fishing at pond. Hold LMB over glow, then release.");
+        }
+
+        private static bool TryFindFishWater(FishCatchTool tool, out Vector3 water)
         {
             water = default;
-            var fish = Object.FindObjectsByType<BayouFish>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            var fish = FindObjectsByType<BayouFish>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             foreach (var f in fish)
             {
-                if (f == null || f.IsCaught || !f.CanCatchWith(FishCatchTool.Rod))
+                if (f == null || f.IsCaught || !f.CanCatchWith(tool))
                     continue;
                 water = f.transform.position;
                 return true;
@@ -224,7 +345,7 @@ namespace Bayou.Testing
             foreach (var spot in FishingSpot.AllSpots)
             {
                 if (spot == null) continue;
-                if (spot.RequiredTool == FishCatchTool.Rod)
+                if (spot.RequiredTool == tool)
                 {
                     water = spot.transform.position;
                     return true;
@@ -232,7 +353,7 @@ namespace Bayou.Testing
 
                 foreach (var spawned in spot.SpawnedFish)
                 {
-                    if (spawned == null || spawned.IsCaught || !spawned.CanCatchWith(FishCatchTool.Rod))
+                    if (spawned == null || spawned.IsCaught || !spawned.CanCatchWith(tool))
                         continue;
                     water = spawned.transform.position;
                     return true;
@@ -266,14 +387,16 @@ namespace Bayou.Testing
                 return;
             }
 
-            var stand = npc.transform.position + new Vector3(2f, 0f, 1.2f);
-            stand.y = Mathf.Max(npc.transform.position.y + 1.1f, 1.4f);
-            Teleport(stand, npc.transform.position - stand);
+            StandNear(npc.transform);
         }
 
         private static void GoSpawn()
         {
-            Teleport(new Vector3(-10.06f, 1.6f, -92.71f), Vector3.forward);
+            var scene = SceneManager.GetActiveScene().name;
+            if (string.Equals(scene, "TerrainTest", StringComparison.OrdinalIgnoreCase))
+                Teleport(new Vector3(-3.83f, 1.6f, -128.61f), Vector3.forward);
+            else
+                Teleport(new Vector3(-10.06f, 1.6f, -92.71f), Vector3.forward);
         }
 
         private static void GoCaliste()
@@ -286,9 +409,7 @@ namespace Bayou.Testing
                 return;
             }
 
-            var stand = go.transform.position + new Vector3(2.2f, 0f, 0f);
-            stand.y = Mathf.Max(go.transform.position.y + 1.1f, 1.2f);
-            Teleport(stand, go.transform.position - stand);
+            StandNear(go.transform);
         }
 
         private static void GoShop()
@@ -314,15 +435,9 @@ namespace Bayou.Testing
             }
 
             if (dest != null)
-            {
-                var stand = dest.position + new Vector3(2.2f, 0f, 0f);
-                stand.y = Mathf.Max(dest.position.y + 1.1f, 1.2f);
-                Teleport(stand, dest.position - stand);
-            }
+                StandNear(dest);
             else
-            {
                 Teleport(new Vector3(-81.5f, 1.6f, 93.4f), Vector3.forward);
-            }
 
             OpenShopUi();
         }
@@ -391,15 +506,123 @@ namespace Bayou.Testing
 
         private static void GoLantern()
         {
-            var pickup = GameObject.Find("LanternPickup");
-            if (pickup == null)
+            GoNamed("LanternPickup", new Vector3(5.37f, 1.8f, 119.3f));
+        }
+
+        private static void GoNetPickup()
+        {
+            var pickup = GameObject.Find("NetPickup");
+            if (pickup != null)
             {
-                Debug.LogWarning("[Mechanics] LanternPickup not found.");
+                StandNear(pickup.transform, new Vector3(2f, 1.2f, 0.4f));
                 return;
             }
 
-            var stand = pickup.transform.position + new Vector3(2f, 1.4f, 0f);
-            Teleport(stand, pickup.transform.position - stand);
+            var scene = SceneManager.GetActiveScene().name;
+            if (string.Equals(scene, "TerrainTest", StringComparison.OrdinalIgnoreCase))
+                Teleport(new Vector3(-2.5f, 1.75f, -125.2f), Vector3.forward);
+            else
+                Teleport(new Vector3(-8.5f, 1.7f, -90f), Vector3.forward);
+        }
+
+        private static void GoCampfire()
+        {
+            var fire = FindFirstObjectByType<BonfireInteractable>();
+            if (fire != null)
+            {
+                StandNear(fire.transform, new Vector3(2.2f, 0.4f, 1.2f));
+                return;
+            }
+
+            var named = GameObject.Find("Fireplace") ?? GameObject.Find("Campfire");
+            if (named != null)
+            {
+                StandNear(named.transform, new Vector3(2.2f, 0.4f, 1.2f));
+                return;
+            }
+
+            Debug.LogWarning("[Mechanics] Campfire not found.");
+        }
+
+        private static void GoFoggyMarsh()
+        {
+            GoNamed("Foggy Marsh Transition", new Vector3(32.6f, 1.6f, 2.19f));
+        }
+
+        private static void GoSwim()
+        {
+            var pond = GameObject.Find("Graveyard_TreePond") ?? GameObject.Find("CalistePond_Net");
+            if (pond != null)
+            {
+                var water = pond.transform.position;
+                Teleport(water + new Vector3(0.4f, 0.35f, 0.4f), Vector3.forward);
+                return;
+            }
+
+            if (TryFindFishWater(FishCatchTool.Net, out var fishWater))
+            {
+                Teleport(fishWater + new Vector3(0.2f, 0.35f, 0.2f), Vector3.forward);
+                return;
+            }
+
+            Teleport(new Vector3(-20f, 0.45f, -45f), Vector3.forward);
+        }
+
+        private static void GoNamed(string objectName, Vector3 fallback = default)
+        {
+            var go = GameObject.Find(objectName);
+            if (go != null)
+            {
+                StandNear(go.transform);
+                return;
+            }
+
+            if (fallback != default)
+            {
+                Teleport(fallback, Vector3.forward);
+                return;
+            }
+
+            Debug.LogWarning($"[Mechanics] '{objectName}' not found.");
+        }
+
+        private static void HurtPlayer()
+        {
+            var health = PlayerHealth.Resolve();
+            if (health == null)
+            {
+                Debug.LogWarning("[Mechanics] No PlayerHealth.");
+                return;
+            }
+
+            var knock = health.transform.forward * -3.5f;
+            health.OnCreatureHit(new CreatureHitInfo(1f, knock, health.gameObject));
+        }
+
+        private static void HealPlayer()
+        {
+            var health = PlayerHealth.Resolve();
+            if (health == null)
+            {
+                Debug.LogWarning("[Mechanics] No PlayerHealth.");
+                return;
+            }
+
+            health.HealToFull();
+            Debug.Log("[Mechanics] Healed to full.");
+        }
+
+        private static void OpenBonfireUi()
+        {
+            var ui = BonfireUIController.Active ?? FindFirstObjectByType<BonfireUIController>();
+            if (ui == null)
+            {
+                Debug.LogWarning("[Mechanics] Bonfire UI missing.");
+                return;
+            }
+
+            var fire = FindFirstObjectByType<BonfireInteractable>();
+            ui.Open(fire != null ? "campfire_01" : "bonfire_test", "Campfire");
         }
 
         private static void GiveTestKit()
@@ -497,6 +720,13 @@ namespace Bayou.Testing
                 Debug.Log($"[Mechanics] Granted {def.displayName}.");
         }
 
+        private static void GrantKey(string itemId)
+        {
+            GrantItem(itemId);
+            var gates = KeyGateManager.Instance ?? FindFirstObjectByType<KeyGateManager>();
+            gates?.SyncKeysFromInventory();
+        }
+
         private static ItemDefinition ResolveItem(string itemId)
         {
             var catalog = GameSaveSystem.Instance != null ? GameSaveSystem.Instance.ItemCatalog : null;
@@ -518,10 +748,7 @@ namespace Bayou.Testing
 
         private static void Equip(BayouHeldItem item)
         {
-            var player = GameObject.FindGameObjectWithTag("Player");
-            var equipment = player != null
-                ? player.GetComponent<BayouFishingEquipment>()
-                : FindFirstObjectByType<BayouFishingEquipment>();
+            var equipment = PlayerLocator.Equipment ?? FindFirstObjectByType<BayouFishingEquipment>();
             if (equipment == null)
             {
                 Debug.LogWarning("[Mechanics] No BayouFishingEquipment.");
@@ -540,7 +767,7 @@ namespace Bayou.Testing
                 return;
             }
 
-            manager.StartQuest(questId);
+            manager.StartQuest(questId, requirePrereqs: false);
             Debug.Log($"[Mechanics] Started {questId}.");
         }
 
@@ -568,19 +795,40 @@ namespace Bayou.Testing
             Debug.Log($"[Mechanics] Deleted {GameSaveSystem.SaveFilePath}");
         }
 
+        private static void StandNear(Transform target, Vector3 offset = default)
+        {
+            if (target == null) return;
+            if (offset == default)
+                offset = new Vector3(2.2f, 0f, 1.1f);
+
+            var stand = target.position + offset;
+            stand.y = Mathf.Max(target.position.y + 1.1f, stand.y, 1.2f);
+            Teleport(stand, target.position - stand);
+        }
+
         private static void Teleport(Vector3 position, Vector3 faceToward)
         {
-            var player = GameObject.FindGameObjectWithTag("Player");
-            if (player == null)
-            {
-                Debug.LogWarning("[Mechanics] Player not tagged.");
-                return;
-            }
-
             if (faceToward.sqrMagnitude < 0.01f)
                 faceToward = Vector3.forward;
             faceToward.y = 0f;
+            if (faceToward.sqrMagnitude < 0.01f)
+                faceToward = Vector3.forward;
             var rot = Quaternion.LookRotation(faceToward.normalized, Vector3.up);
+
+            var motor = PlayerLocator.Motor;
+            if (motor != null)
+            {
+                motor.Teleport(position, rot);
+                Debug.Log($"[Mechanics] Teleported to {position}");
+                return;
+            }
+
+            var player = PlayerLocator.Transform;
+            if (player == null)
+            {
+                Debug.LogWarning("[Mechanics] Player not found.");
+                return;
+            }
 
             var rb = player.GetComponent<Rigidbody>();
             if (rb != null)
@@ -591,7 +839,7 @@ namespace Bayou.Testing
                 rb.rotation = rot;
             }
 
-            player.transform.SetPositionAndRotation(position, rot);
+            player.SetPositionAndRotation(position, rot);
             Debug.Log($"[Mechanics] Teleported to {position}");
         }
     }

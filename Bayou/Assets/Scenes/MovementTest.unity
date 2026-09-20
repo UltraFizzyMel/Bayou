@@ -57895,7 +57895,7 @@ MonoBehaviour:
   pulseMinScale: 0.35
   pulseMaxScale: 1.7
   pulseCycleSeconds: 1.35
-  missBelowQuality: 0.22
+  missBelowQuality: 0.12
   missRingColor: {r: 0.85, g: 0.22, b: 0.18, a: 0.9}
   goodRingColor: {r: 0.35, g: 0.95, b: 0.45, a: 0.95}
   peakRingColor: {r: 0.55, g: 1, b: 0.7, a: 1}
@@ -57904,7 +57904,7 @@ MonoBehaviour:
   meleeGuaranteedRadius: 1.05
   meleeCooldown: 0.42
   combatRingColor: {r: 0.95, g: 0.25, b: 0.2, a: 0.9}
-  pursuitDetectRange: 45
+  pursuitDetectRange: 8.5
   surfaceMask:
     serializedVersion: 2
     m_Bits: 4294967295

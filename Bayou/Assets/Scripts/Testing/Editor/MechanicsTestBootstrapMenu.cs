@@ -12,19 +12,32 @@ namespace Bayou.Testing.Editor
             var existing = Object.FindFirstObjectByType<MechanicsTestBootstrap>();
             if (existing != null)
             {
-                Undo.DestroyObjectImmediate(existing.gameObject);
-                Debug.Log("[Bayou] Removed leftover MechanicsTestBootstrap.");
+                Selection.activeGameObject = existing.gameObject;
+                Debug.Log("[Bayou] MechanicsTestBootstrap already in the scene.");
+                return;
             }
-            else
-            {
-                Debug.Log("[Bayou] Mechanics bootstrap is disabled.");
-            }
-        }
 
-        private static void EditorSceneManagerMarkDirty(GameObject go)
-        {
+            var go = new GameObject("MechanicsTestBootstrap");
+            Undo.RegisterCreatedObjectUndo(go, "Add Mechanics Bootstrap");
+            go.AddComponent<MechanicsTestBootstrap>();
+            Selection.activeGameObject = go;
             if (go.scene.IsValid())
                 UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(go.scene);
+            Debug.Log("[Bayou] Added MechanicsTestBootstrap. Play to use the HUD (` to hide).");
+        }
+
+        [MenuItem("Bayou/Test/Remove Mechanics Bootstrap", false, 6)]
+        public static void RemoveFromScene()
+        {
+            var existing = Object.FindFirstObjectByType<MechanicsTestBootstrap>();
+            if (existing == null)
+            {
+                Debug.Log("[Bayou] No MechanicsTestBootstrap in the scene.");
+                return;
+            }
+
+            Undo.DestroyObjectImmediate(existing.gameObject);
+            Debug.Log("[Bayou] Removed MechanicsTestBootstrap.");
         }
     }
 }

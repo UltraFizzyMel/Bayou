@@ -70,8 +70,16 @@ namespace Bayou.UI
 
         public static void EnsureInScene()
         {
-            if (Object.FindFirstObjectByType<EquipmentHotwheel>(FindObjectsInactive.Include) != null)
+            var existing = Object.FindFirstObjectByType<EquipmentHotwheel>(FindObjectsInactive.Include);
+            if (existing != null)
+            {
+                if (!existing.gameObject.activeSelf)
+                    existing.gameObject.SetActive(true);
+                if (!existing.enabled)
+                    existing.enabled = true;
+                Instance = existing;
                 return;
+            }
             var go = new GameObject("EquipmentHotwheel");
             go.AddComponent<EquipmentHotwheel>();
         }
@@ -168,11 +176,16 @@ namespace Bayou.UI
             if (index < 0 || index >= _slotItemIds.Length) return false;
             var id = _slotItemIds[index];
             var equipment = ResolveEquipment();
-            if (equipment == null) return false;
+            if (equipment == null)
+            {
+                Debug.Log("[Hotwheel] No player equipment to equip.");
+                return false;
+            }
 
             if (string.IsNullOrWhiteSpace(id))
             {
                 equipment.ApplyItem(BayouHeldItem.None);
+                RefreshEquippedHud();
                 return true;
             }
 
@@ -182,6 +195,8 @@ namespace Bayou.UI
                 return false;
             }
 
+            RefreshSlotVisuals();
+            RefreshEquippedHud();
             return true;
         }
 
@@ -337,21 +352,43 @@ namespace Bayou.UI
         private void HandleSlotHotkeys()
         {
             var kb = Keyboard.current;
-            if (kb == null || !_open) return;
-            if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) TrySelectSlot(0);
-            else if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame) TrySelectSlot(1);
-            else if (kb.digit3Key.wasPressedThisFrame || kb.numpad3Key.wasPressedThisFrame) TrySelectSlot(2);
-            else if (kb.digit4Key.wasPressedThisFrame || kb.numpad4Key.wasPressedThisFrame) TrySelectSlot(3);
+            if (kb == null) return;
+            var picked = -1;
+            if (kb.digit1Key.wasPressedThisFrame || kb.numpad1Key.wasPressedThisFrame) picked = 0;
+            else if (kb.digit2Key.wasPressedThisFrame || kb.numpad2Key.wasPressedThisFrame) picked = 1;
+            else if (kb.digit3Key.wasPressedThisFrame || kb.numpad3Key.wasPressedThisFrame) picked = 2;
+            else if (kb.digit4Key.wasPressedThisFrame || kb.numpad4Key.wasPressedThisFrame) picked = 3;
+            if (picked < 0) return;
+            TrySelectSlot(picked);
+            if (_open)
+                Close(selectHover: false);
         }
 
         private void HandleWheelHold()
         {
             var kb = Keyboard.current;
-            if (kb == null) return;
+            if (kb == null)
+            {
+                if (_open) Close(selectHover: false);
+                return;
+            }
+
+            if (kb.escapeKey.wasPressedThisFrame || kb.qKey.wasPressedThisFrame)
+            {
+                if (_open) Close(selectHover: false);
+                return;
+            }
+
+            var tabHeld = kb.tabKey.isPressed;
+            if (_open)
+            {
+                if (!tabHeld)
+                    Close(selectHover: true);
+                return;
+            }
+
             if (kb.tabKey.wasPressedThisFrame)
                 Open();
-            if (_open && kb.tabKey.wasReleasedThisFrame)
-                Close(selectHover: true);
         }
 
         private void Open()
@@ -359,6 +396,7 @@ namespace Bayou.UI
             _open = true;
             _hover = -1;
             _pendingAssignId = null;
+            AutoFillOwnedSlots();
             SetWheelVisible(true);
             RefreshSlotVisuals();
             UpdateCenterLabel();
@@ -367,11 +405,12 @@ namespace Bayou.UI
 
         private void Close(bool selectHover)
         {
-            if (selectHover && _hover >= 0)
-                TrySelectSlot(_hover);
+            var hover = _hover;
             _open = false;
             _hover = -1;
             SetWheelVisible(false);
+            if (selectHover && hover >= 0)
+                TrySelectSlot(hover);
         }
 
         private int ResolveHoverSlot()
@@ -524,15 +563,17 @@ namespace Bayou.UI
             _hudHeld = held;
             var def = held == BayouHeldItem.None ? null : ResolveItem(ItemIdForHeld(held));
             var icon = def != null ? def.icon : null;
-            var show = !hide && held != BayouHeldItem.None && icon != null;
+            var show = !hide && held != BayouHeldItem.None;
 
             if (_equippedRoot.gameObject.activeSelf != show)
                 _equippedRoot.gameObject.SetActive(show);
             if (!show) return;
 
             _equippedIcon.sprite = icon;
-            _equippedIcon.enabled = true;
+            _equippedIcon.enabled = icon != null;
             _equippedIcon.preserveAspect = true;
+            if (icon == null)
+                _equippedIcon.color = new Color(1f, 0.85f, 0.45f, 0.9f);
         }
 
         private static string ItemIdForHeld(BayouHeldItem held)
@@ -624,7 +665,10 @@ namespace Bayou.UI
             if (_wheelRoot != null)
                 _wheelRoot.gameObject.SetActive(visible);
             if (_dim != null)
+            {
                 _dim.enabled = visible;
+                _dim.gameObject.SetActive(visible);
+            }
         }
 
         private static bool ShouldHide()
@@ -641,6 +685,8 @@ namespace Bayou.UI
         {
             if (_equipment != null) return _equipment;
             _equipment = Bayou.Player.PlayerLocator.Equipment;
+            if (_equipment == null)
+                _equipment = FindFirstObjectByType<BayouFishingEquipment>();
             return _equipment;
         }
 

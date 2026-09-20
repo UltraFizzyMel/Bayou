@@ -33,11 +33,18 @@ namespace Bayou.Rendering
         public static void PatchRenderers(GameObject root, bool force = false)
         {
             if (root == null) return;
+            var skipHost = HasBuiltPickupVisual(root.transform);
             var renderers = root.GetComponentsInChildren<Renderer>(true);
             for (var i = 0; i < renderers.Length; i++)
             {
                 var r = renderers[i];
                 if (r == null) continue;
+                if (skipHost && r.transform == root.transform)
+                {
+                    r.enabled = false;
+                    continue;
+                }
+
                 var mat = r.sharedMaterial;
                 if (!force && mat != null && mat.shader != null && !IsBrokenShader(mat.shader))
                     continue;
@@ -96,7 +103,10 @@ namespace Bayou.Rendering
         {
             var leftover = parent.Find("NetVisual");
             if (leftover != null)
+            {
                 leftover.gameObject.SetActive(false);
+                Object.Destroy(leftover.gameObject);
+            }
 
             var built = parent.Find("NetPickupVisual");
             if (built != null)
@@ -139,9 +149,21 @@ namespace Bayou.Rendering
         {
             if (t == null) return;
             var origin = t.position + Vector3.up * 10f;
-            if (!Physics.Raycast(origin, Vector3.down, out var hit, 50f, ~0, QueryTriggerInteraction.Ignore))
+            var hits = Physics.RaycastAll(origin, Vector3.down, 50f, ~0, QueryTriggerInteraction.Ignore);
+            if (hits == null || hits.Length == 0) return;
+
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            for (var i = 0; i < hits.Length; i++)
+            {
+                var hit = hits[i];
+                if (hit.collider == null) continue;
+                if (hit.collider.GetComponentInParent<Bayou.Environment.WaterVolume>() != null)
+                    continue;
+                if (hit.collider.gameObject.layer == 4)
+                    continue;
+                t.position = hit.point + Vector3.up * extraY;
                 return;
-            t.position = hit.point + Vector3.up * extraY;
+            }
         }
 
         public static bool IsLantern(string id) =>
@@ -165,8 +187,19 @@ namespace Bayou.Rendering
                    n == "Sprites/Default";
         }
 
+        private static bool HasBuiltPickupVisual(Transform parent)
+        {
+            if (parent == null) return false;
+            return parent.Find("NetPickupVisual") != null || parent.Find("LanternVisual") != null;
+        }
+
         private static void HideHostMesh(Transform parent)
         {
+            if (parent == null) return;
+            var leftover = parent.Find("NetVisual");
+            if (leftover != null)
+                leftover.gameObject.SetActive(false);
+
             var rend = parent.GetComponent<MeshRenderer>();
             if (rend != null)
                 rend.enabled = false;

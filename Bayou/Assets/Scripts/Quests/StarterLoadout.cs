@@ -1,5 +1,6 @@
 using Bayou.Fishing;
 using Bayou.Inventory;
+using Bayou.Rendering;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -56,9 +57,30 @@ namespace Bayou.Quests
         private static void EnsureNetPickup()
         {
             var inv = InventoryController.Instance ?? Object.FindFirstObjectByType<InventoryController>();
-            if (inv != null && inv.HasItemsById("Item_HandNet", 1))
+            var owned = inv != null && inv.HasItemsById("Item_HandNet", 1);
+            var pickups = FindNetPickups();
+
+            if (owned)
+            {
+                for (var i = 0; i < pickups.Length; i++)
+                {
+                    if (pickups[i] != null)
+                        Object.Destroy(pickups[i].gameObject);
+                }
                 return;
-            if (GameObject.Find(PickupName) != null)
+            }
+
+            if (pickups.Length > 1)
+            {
+                for (var i = 1; i < pickups.Length; i++)
+                {
+                    if (pickups[i] != null)
+                        Object.Destroy(pickups[i].gameObject);
+                }
+                return;
+            }
+
+            if (pickups.Length == 1)
                 return;
 
             var item = Resources.Load<ItemDefinition>(NetItemPath);
@@ -81,8 +103,40 @@ namespace Bayou.Quests
             var marker = go.AddComponent<QuestMarkerTarget>();
             marker.Bind(NetQuestId, item.Id, "Hand net");
 
-            Bayou.Rendering.WorldItemVisual.BuildNet(go.transform, replaceExisting: true);
-            Bayou.Rendering.WorldItemVisual.SnapToGround(go.transform, 0.22f);
+            WorldItemVisual.BuildNet(go.transform, replaceExisting: true);
+            WorldItemVisual.SnapToGround(go.transform, 0.22f);
+        }
+
+        private static QuestItemPickup[] FindNetPickups()
+        {
+            var all = Object.FindObjectsByType<QuestItemPickup>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            var count = 0;
+            for (var i = 0; i < all.Length; i++)
+            {
+                if (IsHandNetPickup(all[i]))
+                    count++;
+            }
+
+            if (count == 0)
+                return System.Array.Empty<QuestItemPickup>();
+
+            var result = new QuestItemPickup[count];
+            var n = 0;
+            for (var i = 0; i < all.Length; i++)
+            {
+                if (!IsHandNetPickup(all[i])) continue;
+                result[n++] = all[i];
+            }
+
+            return result;
+        }
+
+        private static bool IsHandNetPickup(QuestItemPickup pickup)
+        {
+            if (pickup == null) return false;
+            if (pickup.gameObject.name == PickupName)
+                return true;
+            return pickup.Item != null && WorldItemVisual.IsNet(pickup.Item.Id);
         }
 
         private static Vector3 DefaultNetPosition()

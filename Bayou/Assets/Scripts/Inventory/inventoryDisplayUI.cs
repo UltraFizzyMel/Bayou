@@ -46,6 +46,8 @@ namespace Bayou.Inventory
         private int _dragStartY;
         private int _dragStartRotation;
         private Vector2Int _dragGrabOffset;
+        private Vector2 _lastDragScreen;
+        private Camera _lastDragCam;
         private bool _isOpen;
         private Func<InventoryItemUI, PointerEventData, bool> _crossPanelDropHandler;
 
@@ -171,6 +173,8 @@ namespace Bayou.Inventory
             _isOpen = true;
             SetPanelVisible(true);
             Canvas.ForceUpdateCanvases();
+            if (panelRoot != null)
+                LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
             SyncGridToModel();
             Refresh();
             GameplayPause.SyncFromUiState();
@@ -362,14 +366,21 @@ namespace Bayou.Inventory
             SyncItemLayerToGrid();
             InventoryDragOverlay.Attach(ui.Rect);
             ui.transform.SetAsLastSibling();
+            _lastDragScreen = eventData.position;
+            _lastDragCam = eventData.pressEventCamera;
         }
 
         public void Drag(InventoryItemUI ui, PointerEventData eventData)
         {
             if (ui == null || ui != _dragging) return;
 
-            InventoryDragOverlay.Follow(ui.Rect, eventData);
-            UpdateHoverPreview(eventData);
+            _lastDragScreen = eventData.position;
+            _lastDragCam = eventData.pressEventCamera;
+
+            if (!TrySnapDragToGrid(ui, eventData.position, eventData.pressEventCamera))
+                InventoryDragOverlay.Follow(ui.Rect, eventData);
+
+            UpdateHoverPreview(eventData.position, eventData.pressEventCamera);
         }
 
         public void EndDrag(InventoryItemUI ui, PointerEventData eventData)
@@ -387,18 +398,12 @@ namespace Bayou.Inventory
             var cg = ui.GetComponent<CanvasGroup>();
             if (cg != null) cg.blocksRaycasts = true;
 
-            // Shop: drop onto merchant panel.
-            if (_crossPanelDropHandler != null && _crossPanelDropHandler(ui, eventData))
-            {
-                _dragging = null;
-                Refresh();
-                return;
-            }
+            var overOwnGrid = ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
+                                   out var compartmentId, out var hoverX, out var hoverY) ||
+                               ScreenPointToGrid(eventData.position, null,
+                                   out compartmentId, out hoverX, out hoverY);
 
-            if (ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
-                    out var compartmentId, out var hoverX, out var hoverY) ||
-                ScreenPointToGrid(eventData.position, null,
-                    out compartmentId, out hoverX, out hoverY))
+            if (overOwnGrid)
             {
                 InventoryDragPlacement.TryGetAnchorFromHover(
                     item.definition.shape,
@@ -416,6 +421,13 @@ namespace Bayou.Inventory
                     Refresh();
                     return;
                 }
+            }
+
+            if (_crossPanelDropHandler != null && _crossPanelDropHandler(ui, eventData))
+            {
+                _dragging = null;
+                Refresh();
+                return;
             }
 
             // Revert.
@@ -450,6 +462,9 @@ namespace Bayou.Inventory
         private bool ShouldShowHeldItem(InventoryItemInstance item)
         {
             if (item == null) return false;
+            // Unique gear and any other unplaced bag item stay visible after pickup.
+            if (item.definition != null && item.definition.IsUniqueEquipment)
+                return true;
             if (!CaughtFishPresenter.IsAllocating) return false;
             var pending = CaughtFishPresenter.Instance != null
                 ? CaughtFishPresenter.Instance.PendingItem
@@ -480,17 +495,46 @@ namespace Bayou.Inventory
             if (_dragging?.Item == null) return;
             _dragging.Item.rotation = (_dragging.Item.rotation + 1) % 4;
             _dragging.ApplySize(gridUI, _dragging.Item.rotation);
+            TrySnapDragToGrid(_dragging, _lastDragScreen, _lastDragCam);
+            UpdateHoverPreview(_lastDragScreen, _lastDragCam);
         }
 
-        private void UpdateHoverPreview(PointerEventData eventData)
+        private bool TrySnapDragToGrid(InventoryItemUI ui, Vector2 screen, Camera cam)
+        {
+            if (ui?.Item?.definition == null || gridUI == null || inventory?.Bag == null || itemLayer == null)
+                return false;
+
+            if (!ScreenPointToGrid(screen, cam, out var compartmentId, out var hoverX, out var hoverY) &&
+                !ScreenPointToGrid(screen, null, out compartmentId, out hoverX, out hoverY))
+                return false;
+
+            var item = ui.Item;
+            InventoryDragPlacement.TryGetAnchorFromHover(
+                item.definition.shape,
+                item.rotation,
+                hoverX,
+                hoverY,
+                _dragGrabOffset,
+                (ax, ay) => inventory.Bag.CanPlace(item, compartmentId, ax, ay, item.rotation),
+                out var gx,
+                out var gy);
+
+            InventoryDragOverlay.SetMaskable(ui.Rect, false);
+            if (ui.Rect.parent != itemLayer)
+                ui.Rect.SetParent(itemLayer, false);
+
+            ui.ApplyLayout(gridUI, itemLayer, gx, gy, item.rotation);
+            ui.transform.SetAsLastSibling();
+            return true;
+        }
+
+        private void UpdateHoverPreview(Vector2 screen, Camera cam)
         {
             if (_dragging?.Item?.definition == null || gridUI == null || inventory?.Bag == null)
                 return;
 
-            if (!ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
-                    out var compartmentId, out var hoverX, out var hoverY) &&
-                !ScreenPointToGrid(eventData.position, null,
-                    out compartmentId, out hoverX, out hoverY))
+            if (!ScreenPointToGrid(screen, cam, out var compartmentId, out var hoverX, out var hoverY) &&
+                !ScreenPointToGrid(screen, null, out compartmentId, out hoverX, out hoverY))
             {
                 gridUI.ClearHighlights();
                 return;
