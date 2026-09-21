@@ -24,4 +24,4 @@ MonoBehaviour:
   autoStart: 0
   autoComplete: 1
   moneyReward: 0
-  MiscReward: Fast travel: brackish shore
+  MiscReward: 'Fast travel: brackish shore'
