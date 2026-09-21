@@ -65,7 +65,7 @@ namespace Bayou.Fishing
             while (t != null)
             {
                 var n = t.name;
-                if (n == "NetPickupVisual" || n == "LanternVisual" || n == "ThrownNetVisual" ||
+                if (n == "LanternVisual" || n == "ThrownNetVisual" ||
                     n.StartsWith("HeldNet") || n.StartsWith("HeldLantern"))
                     return true;
                 t = t.parent;

@@ -82,7 +82,7 @@ namespace Bayou.Fishing
             while (t != null)
             {
                 var n = t.name;
-                if (n == "NetPickupVisual" || n == "LanternVisual" || n == "ThrownNetVisual")
+                if (n == "LanternVisual" || n == "ThrownNetVisual")
                     return true;
                 t = t.parent;
             }

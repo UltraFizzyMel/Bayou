@@ -96,8 +96,7 @@ namespace Bayou.Fishing
 
             if (_cachedPlayer == null) return false;
 
-            var bag = InventoryDisplayUI.Active;
-            if (bag != null && bag.IsOpen) return false;
+            if (Bayou.GameplayPause.IsPaused) return false;
 
             var d = _cachedPlayer.position - transform.position;
             d.y = 0f;
@@ -166,16 +165,16 @@ namespace Bayou.Fishing
             flat.y = 0f;
             if (flat.sqrMagnitude > radius * radius)
                 return false;
-            if (!IsInsideWaterBounds(worldPos))
+            if (!IsInsideWaterCollider(worldPos))
                 return false;
-            return !IsLand(worldPos);
+            return true;
         }
 
-        /// <summary>Keeps a world point inside the spot circle and (if set) the water mesh AABB.</summary>
+        /// <summary>Keeps a world point inside the spot circle and the water collider, off land.</summary>
         public Vector3 ClampInside(Vector3 worldPos)
         {
             var pos = worldPos;
-            var center = transform.position;
+            var center = SwimCenter;
             var flat = new Vector3(pos.x - center.x, 0f, pos.z - center.z);
             var maxR = Mathf.Max(0.5f, radius - shoreMargin);
             if (flat.sqrMagnitude > maxR * maxR)
@@ -185,36 +184,19 @@ namespace Bayou.Fishing
                 pos.z = center.z + flat.z;
             }
 
-            if (waterBounds != null)
-            {
-                var b = waterBounds.bounds;
-                var m = shoreMargin;
-                var minX = b.min.x + m;
-                var maxX = b.max.x - m;
-                var minZ = b.min.z + m;
-                var maxZ = b.max.z - m;
-                if (minX <= maxX) pos.x = Mathf.Clamp(pos.x, minX, maxX);
-                if (minZ <= maxZ) pos.z = Mathf.Clamp(pos.z, minZ, maxZ);
-            }
-
-            if (IsLand(pos))
-            {
-                var inward = new Vector3(center.x - pos.x, 0f, center.z - pos.z);
-                if (inward.sqrMagnitude > 0.0001f)
-                {
-                    inward.Normalize();
-                    for (var step = 0; step < 8; step++)
-                    {
-                        pos.x += inward.x * 0.45f;
-                        pos.z += inward.z * 0.45f;
-                        if (!IsLand(pos) && IsInsideWaterBounds(pos))
-                            break;
-                    }
-                }
-            }
-
+            pos = SnapToWaterCollider(pos);
             pos.y = SurfaceYAt(pos);
             return pos;
+        }
+
+        public float RingSurfaceY
+        {
+            get
+            {
+                if (waterBounds != null)
+                    return waterBounds.bounds.max.y + 0.05f;
+                return transform.position.y + 0.05f;
+            }
         }
 
         public Vector3 SwimCenter
@@ -325,19 +307,63 @@ namespace Bayou.Fishing
             if (waterBounds == null) return true;
             var b = waterBounds.bounds;
             var m = shoreMargin * 0.5f;
-            return worldPos.x >= b.min.x - m && worldPos.x <= b.max.x + m &&
-                   worldPos.z >= b.min.z - m && worldPos.z <= b.max.z + m;
+            return worldPos.x >= b.min.x + m && worldPos.x <= b.max.x - m &&
+                   worldPos.z >= b.min.z + m && worldPos.z <= b.max.z - m;
+        }
+
+        private bool IsInsideWaterCollider(Vector3 worldPos)
+        {
+            if (waterBounds == null)
+                return true;
+
+            if (waterBounds.enabled)
+            {
+                var sample = new Vector3(worldPos.x, waterBounds.bounds.center.y, worldPos.z);
+                var closest = waterBounds.ClosestPoint(sample);
+                var dx = sample.x - closest.x;
+                var dz = sample.z - closest.z;
+                if (dx * dx + dz * dz > 0.08f * 0.08f)
+                    return false;
+            }
+            else if (!IsInsideWaterBounds(worldPos))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private Vector3 SnapToWaterCollider(Vector3 pos)
+        {
+            if (waterBounds == null || !waterBounds.enabled)
+            {
+                if (waterBounds != null)
+                {
+                    var b = waterBounds.bounds;
+                    var m = shoreMargin;
+                    if (b.max.x - b.min.x > m * 2f)
+                        pos.x = Mathf.Clamp(pos.x, b.min.x + m, b.max.x - m);
+                    if (b.max.z - b.min.z > m * 2f)
+                        pos.z = Mathf.Clamp(pos.z, b.min.z + m, b.max.z - m);
+                }
+                return pos;
+            }
+
+            var sample = new Vector3(pos.x, waterBounds.bounds.center.y, pos.z);
+            var closest = waterBounds.ClosestPoint(sample);
+            pos.x = closest.x;
+            pos.z = closest.z;
+            return pos;
         }
 
         public bool IsLand(Vector3 worldPos)
         {
-            if (waterBounds != null && IsInsideWaterBounds(worldPos))
-                return false;
+            if (waterBounds != null)
+                return !IsInsideWaterCollider(worldPos) && !IsInsideWaterBounds(worldPos);
+
+            var waterY = transform.position.y;
             if (!TryGetGroundHeight(worldPos, out var ground))
                 return false;
-            var waterY = waterBounds != null ? waterBounds.bounds.max.y : transform.position.y;
-            // Terrain under a flush water plane is at ~waterY. Only treat real banks
-            // as land so fish are not pinned to the pond surface.
             return ground > waterY + 0.22f;
         }
 
@@ -453,7 +479,7 @@ namespace Bayou.Fishing
                     from.y,
                     transform.position.z + offset.y);
                 candidate = ClampInside(candidate);
-                if (IsLand(candidate) || (!Contains(candidate) && attempt < 17))
+                if (!Contains(candidate) && attempt < 17)
                     continue;
 
                 var d = candidate - from;
@@ -479,7 +505,7 @@ namespace Bayou.Fishing
                     transform.position.y,
                     transform.position.z + offset.y);
                 candidate = ClampInside(candidate);
-                if (IsLand(candidate) || (!Contains(candidate) && attempt < 23))
+                if (!Contains(candidate) && attempt < 23)
                     continue;
 
                 var tooClose = false;

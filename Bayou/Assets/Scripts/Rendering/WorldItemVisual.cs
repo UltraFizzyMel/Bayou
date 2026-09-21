@@ -39,6 +39,8 @@ namespace Bayou.Rendering
             {
                 var r = renderers[i];
                 if (r == null) continue;
+                if (r is ParticleSystemRenderer or TrailRenderer or LineRenderer)
+                    continue;
                 if (skipHost && r.transform == root.transform)
                 {
                     r.enabled = false;

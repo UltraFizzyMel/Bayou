@@ -51,8 +51,7 @@ namespace Bayou.Inventory
             if (!CanPlace(item, anchorX, anchorY, rotation))
                 return false;
 
-            if (item.IsPlaced)
-                Remove(item);
+            ClearAllCellsFor(item);
 
             item.gridX = anchorX;
             item.gridY = anchorY;
@@ -128,19 +127,24 @@ namespace Bayou.Inventory
             {
                 var x = item.gridX + o.x;
                 var y = item.gridY + o.y;
+                if (x < 0 || y < 0 || x >= _width || y >= _height)
+                    continue;
                 _cells[x, y] = item;
             }
         }
 
         private void ClearCells(InventoryItemInstance item)
         {
-            if (!item.IsPlaced || item.definition == null) return;
-            item.definition.shape.GetOccupiedOffsets(item.rotation, _offsetBuffer);
-            foreach (var o in _offsetBuffer)
+            ClearAllCellsFor(item);
+        }
+
+        private void ClearAllCellsFor(InventoryItemInstance item)
+        {
+            if (item == null) return;
+            for (var y = 0; y < _height; y++)
+            for (var x = 0; x < _width; x++)
             {
-                var x = item.gridX + o.x;
-                var y = item.gridY + o.y;
-                if (x >= 0 && y >= 0 && x < _width && y < _height && _cells[x, y] == item)
+                if (_cells[x, y] == item)
                     _cells[x, y] = null;
             }
         }

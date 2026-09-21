@@ -26,8 +26,8 @@ namespace Bayou.Player
         [SerializeField] private float braking = 40.0f;
 
         [Header("Water — wade")]
-        [SerializeField] private float waterSpeedMultiplier = 0.45f;
-        [SerializeField] private float waterAccelerationMultiplier = 0.55f;
+        [SerializeField] private float waterSpeedMultiplier = 0.82f;
+        [SerializeField] private float waterAccelerationMultiplier = 0.88f;
         [SerializeField] private float waterExtraLinearDamping = 4.0f;
 
         [Header("Water — swim")]
@@ -67,7 +67,6 @@ namespace Bayou.Player
         private bool _hasHurtTrigger;
         private float _stunUntil;
         private bool _swimSnapArmed = true;
-        private float _deepWaterAnimLatch;
 
         public Animator animator;
 
@@ -266,18 +265,12 @@ namespace Bayou.Player
                 
             }
 
-            if (wading && !swimming)
-            {
-                var damp = Mathf.Clamp01(waterExtraLinearDamping * Time.fixedDeltaTime);
-                rb.linearVelocity = Vector3.Lerp(rb.linearVelocity, Vector3.zero, damp * 0.15f);
-            }
-
             ApplySwimBuoyancy(swimming);
             ApplyWaterAnimator(wading, swimming);
             KeepFromFallingThroughWater(wading, swimming);
             ResolveStaticOverlaps();
 
-            if (!swimming && isGrounded && rb.linearVelocity.y < 0f)
+            if (!wading && !swimming && isGrounded && rb.linearVelocity.y < 0f)
             {
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, -1f, rb.linearVelocity.z);
             }
@@ -338,10 +331,13 @@ namespace Bayou.Player
 
         private static readonly Collider[] OverlapBuffer = new Collider[12];
 
+        private bool _wasSwimming;
+
         private void ResolveStaticOverlaps()
         {
             if (bodyCapsule == null || rb == null) return;
 
+            var swimming = waterSensor != null && waterSensor.IsSwimming;
             var p = rb.position + bodyCapsule.center;
             var height = Mathf.Max(bodyCapsule.height, bodyCapsule.radius * 2f);
             var pointOff = Vector3.up * (height * 0.5f - bodyCapsule.radius);
@@ -362,25 +358,28 @@ namespace Bayou.Player
                         col, col.transform.position, col.transform.rotation,
                         out var dir, out var dist))
                 {
-                    if (dir.y > 0.7f) continue;
-                    dir.y = 0f;
+                    if (!swimming)
+                    {
+                        if (dir.y > 0.7f) continue;
+                        dir.y = 0f;
+                    }
+
                     push += dir * dist;
                 }
             }
 
-            push.y = 0f;
+            if (!swimming)
+                push.y = 0f;
             if (push.sqrMagnitude < 0.0001f) return;
-            rb.MovePosition(rb.position + Vector3.ClampMagnitude(push, 0.35f));
+            rb.MovePosition(rb.position + Vector3.ClampMagnitude(push, 0.45f));
         }
 
         private void KeepFromFallingThroughWater(bool wading, bool swimming)
         {
-            if (waterSensor == null || (!wading && !swimming) || rb == null)
+            if (waterSensor == null || !swimming || rb == null)
                 return;
 
-            var minY = swimming
-                ? waterSensor.SwimHoldY - 0.12f
-                : waterSensor.WaterSurfaceY - 0.55f;
+            var minY = waterSensor.SwimHoldY - 0.12f;
             if (rb.position.y >= minY)
                 return;
 
@@ -394,32 +393,64 @@ namespace Bayou.Player
 
         private void ApplySwimBuoyancy(bool swimming)
         {
-            if (swimming)
-            {
-                if (rb.useGravity)
-                {
-                    _gravityCached = true;
-                    rb.useGravity = false;
-                }
-
-                ApplySwimCapsule(true);
-
-                var vel = rb.linearVelocity;
-                var targetY = waterSensor != null ? waterSensor.SwimHoldY : rb.position.y;
-                var dy = targetY - rb.position.y;
-                if (Mathf.Abs(dy) < 0.04f)
-                    vel.y = 0f;
-                else
-                    vel.y = Mathf.Clamp(dy * 3.2f, -2.2f, 2.2f);
-
-                rb.linearVelocity = vel;
-            }
-            else
+            if (!swimming)
             {
                 ApplySwimCapsule(false);
                 if (!rb.useGravity && _gravityCached)
                     rb.useGravity = true;
+                _wasSwimming = false;
+                return;
             }
+
+            if (rb.useGravity)
+            {
+                _gravityCached = true;
+                rb.useGravity = false;
+            }
+
+            ApplySwimCapsule(true);
+
+            if (!_wasSwimming)
+                UnstickFromTerrainForSwim();
+            _wasSwimming = true;
+
+            var vel = rb.linearVelocity;
+            var targetY = waterSensor != null ? waterSensor.SwimHoldY : rb.position.y;
+            var dy = targetY - rb.position.y;
+            var lift = Mathf.Max(2.5f, swimRiseSpeed);
+            if (Mathf.Abs(dy) < 0.04f)
+                vel.y = 0f;
+            else
+                vel.y = Mathf.Clamp(dy * lift, -2.4f, Mathf.Max(2.6f, swimRiseSpeed));
+
+            rb.linearVelocity = vel;
+        }
+
+        private void UnstickFromTerrainForSwim()
+        {
+            if (rb == null) return;
+
+            var holdY = waterSensor != null ? waterSensor.SwimHoldY : rb.position.y;
+            var surfaceY = waterSensor != null ? waterSensor.WaterSurfaceY : rb.position.y;
+            var origin = rb.position + Vector3.up * 0.85f;
+            if (Physics.Raycast(origin, Vector3.down, out var hit, 3.2f, groundMask, QueryTriggerInteraction.Ignore) &&
+                hit.collider != null &&
+                hit.collider.GetComponentInParent<Bayou.Environment.WaterVolume>() == null &&
+                !hit.collider.CompareTag("Water") &&
+                hit.point.y >= surfaceY - 0.15f)
+            {
+                var clearance = bodyCapsule != null ? bodyCapsule.radius + 0.18f : 0.45f;
+                var y = Mathf.Max(holdY, hit.point.y + clearance);
+                var p = rb.position;
+                p.y = y;
+                rb.position = p;
+            }
+
+            var vel = rb.linearVelocity;
+            if (vel.y < 0f)
+                rb.linearVelocity = new Vector3(vel.x, 0f, vel.z);
+
+            ResolveStaticOverlaps();
         }
 
         private void ApplySwimCapsule(bool swimming)
@@ -448,13 +479,10 @@ namespace Bayou.Player
         private void ApplyWaterAnimator(bool wading, bool swimming)
         {
             if (animator == null) return;
-            if (swimming)
-                _deepWaterAnimLatch = Time.time + 0.35f;
-            var deep = swimming || Time.time < _deepWaterAnimLatch;
             if (_hasInWaterParam)
-                animator.SetBool("inWater", wading || swimming || deep);
+                animator.SetBool("inWater", wading || swimming);
             if (_hasInDeepWaterParam)
-                animator.SetBool("inDeepWater", deep);
+                animator.SetBool("inDeepWater", swimming);
         }
 
         private void CacheBindPose()

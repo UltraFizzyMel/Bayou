@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Bayou.Creatures;
 using Bayou.Fish;
 using Bayou.Inventory;
+using Bayou.Inventory.Shop;
 using Bayou.Player;
 using Bayou.Quests;
 using UnityEngine;
@@ -147,6 +148,13 @@ namespace Bayou.Fishing
                 return;
             }
 
+            if (Bayou.GameplayPause.IsPaused)
+            {
+                HideRing();
+                HideGhost();
+                return;
+            }
+
             RefreshMode();
 
             if (_mode == HandNetMode.Combat)
@@ -202,7 +210,7 @@ namespace Bayou.Fishing
                 return;
             }
 
-            if (InventoryDisplayUI.Active != null && InventoryDisplayUI.Active.IsOpen)
+            if (Bayou.GameplayPause.IsPaused)
             {
                 CancelCharge();
                 return;
@@ -233,20 +241,14 @@ namespace Bayou.Fishing
 
             var meleeRange = Mathf.Max(meleeReach + 2.5f, 6.5f);
             var hunterClose = CreatureThreat.IsPlayerPursued(transform, meleeRange);
-            if (!hunterClose)
+            var nearSpot = FishingSpot.FindNearby(transform.position, 3f);
+            if (nearSpot != null)
             {
                 _mode = HandNetMode.Fishing;
                 return;
             }
 
-            var nearSpot = FishingSpot.FindNearby(transform.position, 2.5f);
-            if (nearSpot != null && !CreatureThreat.IsPlayerPursued(transform, meleeReach + 1.2f))
-            {
-                _mode = HandNetMode.Fishing;
-                return;
-            }
-
-            _mode = HandNetMode.Combat;
+            _mode = hunterClose ? HandNetMode.Combat : HandNetMode.Fishing;
         }
 
         private void UpdateFishingCharge()
@@ -400,23 +402,15 @@ namespace Bayou.Fishing
 
         private bool TryGetNetCenter(out Vector3 center)
         {
-            center = default;
             var origin = netOrigin != null ? netOrigin.position : transform.position + Vector3.up * 0.1f;
             var flat = GetFlatForward();
-            var aimed = origin + flat * maxReach;
+            center = origin + flat * Mathf.Max(0.6f, maxReach);
 
-            var spot = FishingSpot.FindContaining(aimed)
+            var spot = FishingSpot.FindContaining(center)
                        ?? FishingSpot.FindContaining(origin)
-                       ?? FishingSpot.FindNearby(aimed, 1.8f)
-                       ?? FishingSpot.FindNearby(origin, maxReach);
-            if (spot != null)
-            {
-                center = spot.ClampInside(aimed);
-                return true;
-            }
-
-            center = default;
-            return false;
+                       ?? FishingSpot.FindNearby(origin, 2.4f);
+            center.y = spot != null ? spot.RingSurfaceY : origin.y + 0.03f;
+            return true;
         }
 
         private Vector3 GetFlatForward() => BayouFacing.GetCardinalForward8(transform);
@@ -638,7 +632,7 @@ namespace Bayou.Fishing
                 var t = (i / (float)n) * Mathf.PI * 2f;
                 var x = center.x + Mathf.Cos(t) * radius;
                 var z = center.z + Mathf.Sin(t) * radius;
-                lr.SetPosition(i, new Vector3(x, center.y + 0.03f, z));
+                lr.SetPosition(i, new Vector3(x, center.y, z));
             }
         }
     }

@@ -25,6 +25,7 @@ namespace Bayou.Fishing
         private void OnGUI()
         {
             if (!Application.isPlaying) return;
+            if (Bayou.GameplayPause.IsPaused) return;
 
             var attract = FindActiveAttract();
             var reel = FindActiveReel();

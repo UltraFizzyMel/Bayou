@@ -304,8 +304,12 @@ namespace Bayou.Fish
             var clamped = HomeSpot.ClampInside(before);
             var xz = Flat(clamped - before);
             transform.position = clamped;
-            if (xz.sqrMagnitude > 0.04f && !_hasAttractTarget)
-                PickRandomSwimTarget();
+            if (xz.sqrMagnitude > 0.04f)
+            {
+                var inward = Flat(HomeSpot.SwimCenter - transform.position);
+                if (inward.sqrMagnitude > 0.0001f)
+                    _targetDirection = inward.normalized;
+            }
         }
 
         private void SeparateFromNeighbors()

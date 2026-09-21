@@ -27,6 +27,12 @@ namespace Bayou.Inventory.UI
             return Vector2Int.zero;
         }
 
+        public static Vector2Int RotateGrabClockwise(ItemShape shape, int rotationBefore, Vector2Int grab)
+        {
+            shape.GetBounds(rotationBefore, out _, out var boundH);
+            return new Vector2Int(boundH - 1 - grab.y, grab.x);
+        }
+
         public static bool TryGetAnchorFromHover(
             ItemShape shape,
             int rotation,
@@ -41,6 +47,18 @@ namespace Bayou.Inventory.UI
             anchorY = hoverY - grabOffset.y;
             if (canPlaceAt(anchorX, anchorY))
                 return true;
+
+            // Adjacent-row off-by-one: keep the grabbed cell and nudge Y.
+            if (canPlaceAt(anchorX, anchorY - 1))
+            {
+                anchorY -= 1;
+                return true;
+            }
+            if (canPlaceAt(anchorX, anchorY + 1))
+            {
+                anchorY += 1;
+                return true;
+            }
 
             if (canPlaceAt(hoverX, hoverY))
             {

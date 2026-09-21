@@ -147,8 +147,15 @@ namespace Bayou.Fishing
         private void EnsureVisual()
         {
             _visual = GetComponent<FishingNetVisual>();
-            if (transform.Find("NetPickupVisual") == null && transform.Find("ThrownNetVisual") == null)
-                Bayou.Rendering.WorldItemVisual.BuildNet(transform, replaceExisting: true);
+            // Planted casts must not spawn the pickup hoop/bag mesh in the pond.
+            HideSpawnedNetMesh(transform.Find("NetPickupVisual"));
+            HideSpawnedNetMesh(transform.Find("NetVisual"));
+        }
+
+        private static void HideSpawnedNetMesh(Transform t)
+        {
+            if (t == null) return;
+            t.gameObject.SetActive(false);
         }
 
         public void CancelAndDestroy()

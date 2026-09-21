@@ -53,21 +53,20 @@ namespace Bayou.UI
 
             CacheDefaults();
 
-            if (_handmadeUi?.PanelRoot != null)
+            if (active)
             {
-                ApplyDock(_handmadeUi.PanelRoot, ref _handmadeDefaults, ref _hasHandmadeDefaults, active, leftSide: true);
-                SetHandmadeCanvasAboveShop(active);
-                if (active && !_handmadeUi.IsOpen)
-                    _handmadeUi.Open();
-                return;
+                _handmadeUi?.ForceClose();
+                if (_inventoryUi != null && _inventoryUi.IsOpen)
+                    _inventoryUi.Close();
             }
 
-            if (_inventoryUi?.PanelRoot == null)
-                return;
+            if (_handmadeUi?.PanelRoot != null && _hasHandmadeDefaults && !active)
+                _handmadeDefaults.Restore(_handmadeUi.PanelRoot);
 
-            ApplyDock(_inventoryUi.PanelRoot, ref _proceduralDefaults, ref _hasProceduralDefaults, active, leftSide: true);
-            if (active && !_inventoryUi.IsOpen)
-                _inventoryUi.Open();
+            if (_inventoryUi?.PanelRoot != null && _hasProceduralDefaults && !active)
+                _proceduralDefaults.Restore(_inventoryUi.PanelRoot);
+
+            SetHandmadeCanvasAboveShop(false);
         }
 
         public void ApplyShopPanelAnchors(RectTransform merchantPanel, RectTransform shopPlayerPanel, bool hideShopPlayerPanel)
@@ -86,8 +85,17 @@ namespace Bayou.UI
             merchantPanel.offsetMax = Vector2.zero;
             merchantPanel.anchoredPosition = Vector2.zero;
 
-            if (shopPlayerPanel != null)
-                shopPlayerPanel.gameObject.SetActive(!hideShopPlayerPanel);
+            if (shopPlayerPanel == null) return;
+
+            shopPlayerPanel.gameObject.SetActive(!hideShopPlayerPanel);
+            if (hideShopPlayerPanel) return;
+
+            shopPlayerPanel.anchorMin = new Vector2(margin, 0.5f - h * 0.5f);
+            shopPlayerPanel.anchorMax = new Vector2(margin + w, 0.5f + h * 0.5f);
+            shopPlayerPanel.pivot = new Vector2(0.5f, 0.5f);
+            shopPlayerPanel.offsetMin = Vector2.zero;
+            shopPlayerPanel.offsetMax = Vector2.zero;
+            shopPlayerPanel.anchoredPosition = Vector2.zero;
         }
 
         private void ApplyDock(

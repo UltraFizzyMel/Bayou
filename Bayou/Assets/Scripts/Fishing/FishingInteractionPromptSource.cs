@@ -36,8 +36,7 @@ namespace Bayou.Fishing
         {
             prompt = default;
 
-            var bag = InventoryDisplayUI.Active;
-            if (bag != null && bag.IsOpen)
+            if (Bayou.GameplayPause.IsPaused)
                 return false;
 
             // Active reel / attract on planted net — highest fishing priority.

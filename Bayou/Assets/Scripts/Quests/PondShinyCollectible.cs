@@ -48,6 +48,7 @@ namespace Bayou.Quests
             ResolveItem();
             ApplyGlow();
             Bayou.Rendering.WorldItemVisual.PatchRenderers(gameObject, force: true);
+            SoftenSparkles();
         }
 
         private void OnEnable()
@@ -164,10 +165,33 @@ namespace Bayou.Quests
         private void ApplyGlow()
         {
             if (_renderer == null)
-                _renderer = GetComponent<Renderer>();
+                _renderer = GetComponent<MeshRenderer>();
             if (_renderer == null) return;
             _renderer.sharedMaterial = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(glowColor);
             _renderer.enabled = true;
+        }
+
+        private void SoftenSparkles()
+        {
+            var particles = GetComponentsInChildren<ParticleSystem>(true);
+            for (var i = 0; i < particles.Length; i++)
+            {
+                var ps = particles[i];
+                if (ps == null) continue;
+
+                var main = ps.main;
+                main.startSize = new ParticleSystem.MinMaxCurve(0.04f, 0.12f);
+                main.maxParticles = Mathf.Min(main.maxParticles, 24);
+                main.simulationSpace = ParticleSystemSimulationSpace.World;
+
+                var rend = ps.GetComponent<ParticleSystemRenderer>();
+                if (rend == null) continue;
+                rend.enabled = true;
+                rend.renderMode = ParticleSystemRenderMode.Billboard;
+                rend.maxParticleSize = 0.06f;
+                rend.minParticleSize = 0f;
+                rend.allowRoll = false;
+            }
         }
 
         private void OnTriggerEnter(Collider other)
