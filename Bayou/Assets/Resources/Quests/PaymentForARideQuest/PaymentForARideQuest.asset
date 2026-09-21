@@ -24,4 +24,4 @@ MonoBehaviour:
   autoStart: 0
   autoComplete: 1
   moneyReward: 0
-  MiscReward: Fast travel: church and foggy marsh
+  MiscReward: 'Fast travel: church and foggy marsh'
