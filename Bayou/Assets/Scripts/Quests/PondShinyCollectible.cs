@@ -27,7 +27,7 @@ namespace Bayou.Quests
         private Vector3 _basePos;
         private bool _collected;
         private bool _playerInRange;
-        private Renderer _renderer;
+        [SerializeField]private Renderer _renderer;
 
         public ItemDefinition Item => item;
         public bool IsCollected => _collected;
@@ -38,7 +38,7 @@ namespace Bayou.Quests
         private void Awake()
         {
             _basePos = transform.position;
-            _renderer = GetComponentInChildren<Renderer>();
+            //_renderer = GetComponent<Renderer>();
             ResolveItem();
             ApplyGlow();
         }
@@ -164,7 +164,7 @@ namespace Bayou.Quests
         private void ApplyGlow()
         {
             if (_renderer == null)
-                _renderer = GetComponentInChildren<Renderer>();
+                _renderer = GetComponent<Renderer>();
             if (_renderer == null) return;
             _renderer.sharedMaterial = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(glowColor);
             _renderer.enabled = true;
