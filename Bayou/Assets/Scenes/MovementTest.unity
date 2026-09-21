@@ -15318,6 +15318,83 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2832835446313167682, guid: eb69b10eb41e2d9498401b1a20b54e08, type: 3}
   m_PrefabInstance: {fileID: 531386049}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &531864225
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.95
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.8216572
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -46.25
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 6421854cf72d74147bbb859672587d83, type: 2}
+    - target: {fileID: 919132149155446097, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
+      propertyPath: m_Name
+      value: ExclamationMark
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b45152768f3aac64b86bd3cad0fa7cd2, type: 3}
 --- !u!1 &534064956
 GameObject:
   m_ObjectHideFlags: 0
@@ -24034,6 +24111,7 @@ MonoBehaviour:
   extraCollectRadius: 0.85
   pickupPrompt: Pick up
   interactReach: 2.2
+  _renderer: {fileID: 0}
 --- !u!114 &880010007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25319,7 +25397,6 @@ MonoBehaviour:
   pickupPrompt: Pick up lantern
   endDemoOnPickup: 0
   addStraightToBag: 1
-  autoEquipHandNet: 1
 --- !u!114 &910000206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25338,6 +25415,78 @@ MonoBehaviour:
   itemId: Item_Lantern
   labelOverride: Lantern
   markerOffset: {x: 0, y: 1.4, z: 0}
+--- !u!1 &910000400
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 910000401}
+  - component: {fileID: 910000402}
+  m_Layer: 0
+  m_Name: GameplayMusic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &910000401
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000400}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &910000402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 910000400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8c4e2f19b7d4e6a9c0d1e2f3a4b5c6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Audio.GameplayMusicBootstrap
+  churchMusic: {fileID: 8300000, guid: c5fc681e76b359846bb177bb594bab1b, type: 3}
+  churchAmbient: {fileID: 8300000, guid: 0acbbb12aae08b7489db81832fb481d8, type: 3}
+  graveyardMusic: {fileID: 8300000, guid: 9c64d1ce71ad65f49844059042ba617d, type: 3}
+  graveyardAmbient: {fileID: 8300000, guid: bfdd454de13e7794f86a32dfe3dbdba4, type: 3}
+  musicGroup: {fileID: 2506030541703638831, guid: 312109c978c74d140a536bd1d851b28f, type: 2}
+  churchZoneCenter: {x: 0, y: 8, z: -20}
+  churchZoneSize: {x: 140, y: 50, z: 140}
+  graveyardZoneCenter: {x: -70, y: 8, z: 80}
+  graveyardZoneSize: {x: 110, y: 50, z: 110}
+--- !u!114 &910000710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2854489419888687003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
+  questIds:
+  - CollectPondItemQuest
+  - CollectLanternQuest
+  role: 1
+  itemId: 
+  labelOverride: Father Landry
+  markerOffset: {x: 0, y: 1.9, z: 0}
 --- !u!1 &910010300
 GameObject:
   m_ObjectHideFlags: 0
@@ -25489,78 +25638,6 @@ MonoBehaviour:
   itemId: Item_HandNet
   labelOverride: Hand net
   markerOffset: {x: 0, y: 1.2, z: 0}
---- !u!1 &910000400
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 910000401}
-  - component: {fileID: 910000402}
-  m_Layer: 0
-  m_Name: GameplayMusic
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &910000401
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000400}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &910000402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 910000400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8c4e2f19b7d4e6a9c0d1e2f3a4b5c6d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Audio.GameplayMusicBootstrap
-  churchMusic: {fileID: 8300000, guid: c5fc681e76b359846bb177bb594bab1b, type: 3}
-  churchAmbient: {fileID: 8300000, guid: 0acbbb12aae08b7489db81832fb481d8, type: 3}
-  graveyardMusic: {fileID: 8300000, guid: 9c64d1ce71ad65f49844059042ba617d, type: 3}
-  graveyardAmbient: {fileID: 8300000, guid: bfdd454de13e7794f86a32dfe3dbdba4, type: 3}
-  musicGroup: {fileID: 2506030541703638831, guid: 312109c978c74d140a536bd1d851b28f, type: 2}
-  churchZoneCenter: {x: 0, y: 8, z: -20}
-  churchZoneSize: {x: 140, y: 50, z: 140}
-  graveyardZoneCenter: {x: -70, y: 8, z: 80}
-  graveyardZoneSize: {x: 110, y: 50, z: 110}
---- !u!114 &910000710
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2854489419888687003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
-  questIds:
-  - CollectPondItemQuest
-  - CollectLanternQuest
-  role: 1
-  itemId: 
-  labelOverride: Father Landry
-  markerOffset: {x: 0, y: 1.9, z: 0}
 --- !u!1001 &911699246
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40016,6 +40093,10 @@ MonoBehaviour:
   hasKeyChurchToBrackishShore: 0
   hasKeyGraveyardOne: 0
   hasKeyGraveyardTwo: 0
+  hasKeyMazeGate: 0
+  hasKeyFoggyMarshGraveyard: 0
+  hasKeyLandryTomb: 0
+  hasKeyChurchReturn: 0
 --- !u!1 &1458496435
 GameObject:
   m_ObjectHideFlags: 0
@@ -45452,13 +45533,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fish.BayouFish
   wanderSpeed: 1.1
+  dartSpeed: 3.6
   turnSpeed: 60
-  directionChangeInterval: 2
-  randomTurnStrength: 35
-  swimWobble: 20
   fleeSpeed: 2.8
   fleeRadius: 3.5
   roamRadius: 5
+  bobAmplitude: 0.055
+  bobFrequency: 1.35
+  bankDegrees: 16
+  neighborSeparation: 2.6
   requiredTool: 0
   isStatic: 0
   player: {fileID: 2078946140}
@@ -63788,7 +63871,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33ba811fe174b5f46a56a4cb31f34671, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
-  visualCue: {fileID: 1931215764008065225}
+  buttonCue: {fileID: 0}
+  NPCIndicator: {fileID: 0}
   inkJSON: {fileID: 4900000, guid: 3c781195057b7a941bf86de918c1034e, type: 3}
   knotName: 
   talkPrompt: Talk
@@ -66417,3 +66501,4 @@ SceneRoots:
   - {fileID: 1257830424}
   - {fileID: 461988587}
   - {fileID: 1413173005}
+  - {fileID: 531864225}
