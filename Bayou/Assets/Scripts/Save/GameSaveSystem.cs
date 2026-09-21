@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.IO;
 using Bayou.Inventory;
+using Bayou.Inventory.Shop;
 using Bayou.Player;
+using Bayou.Quests;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -189,18 +191,68 @@ namespace Bayou.Save
         }
 
         /// <summary>
-        /// Death respawn. Uses a campfire rest from this session; otherwise the scene spawn.
-        /// Editor Play Mode never falls back to a previous run's save file.
+        /// Death respawn. Uses a campfire rest from this session for position and health.
+        /// Inventory, wallet, and unique pickups stay as they were — dying does not unwind
+        /// a purchase or destroy a lantern you already picked up.
         /// </summary>
         public bool RespawnAfterDeath()
         {
             CaptureSpawnIfNeeded();
+            CloseTransientUi();
 
-            if (HasSessionCheckpoint && HasSaveFile && Load())
-                return true;
+            if (HasSessionCheckpoint && HasSaveFile)
+            {
+                if (TryLoadDeathCheckpoint())
+                {
+                    QuestItemPickup.RestoreMissingUniquePickups();
+                    return true;
+                }
+            }
 
             RestoreSpawn();
+            QuestItemPickup.RestoreMissingUniquePickups();
             return false;
+        }
+
+        private static void CloseTransientUi()
+        {
+            BonfireUIController.Active?.Close();
+            if (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen)
+                ShopUIController.ActiveShop.CloseShop();
+        }
+
+        private bool TryLoadDeathCheckpoint()
+        {
+            try
+            {
+                var json = File.ReadAllText(SaveFilePath);
+                var data = JsonUtility.FromJson<GameSaveData>(json);
+                if (data == null)
+                    return false;
+
+                LastBonfireId = data.lastBonfireId;
+                HasSessionCheckpoint = true;
+
+                var player = FindPlayer();
+                if (player != null)
+                {
+                    PlacePlayer(
+                        player,
+                        new Vector3(data.playerX, data.playerY, data.playerZ),
+                        Quaternion.Euler(0f, data.playerRotY, 0f));
+                    var health = player.GetComponent<PlayerHealth>() ?? PlayerHealth.EnsureOn(player.gameObject);
+                    health.HealToFull();
+                }
+
+                SnapCamera();
+                Debug.Log($"[Save] Respawned at bonfire '{data.lastBonfireId}' (inventory kept).");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"[Save] Failed to load death checkpoint: {ex.Message}");
+                return false;
+            }
         }
 
         private void CaptureSpawnIfNeeded()

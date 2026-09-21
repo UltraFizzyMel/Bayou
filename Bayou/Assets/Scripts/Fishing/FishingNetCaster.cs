@@ -77,9 +77,9 @@ namespace Bayou.Fishing
         [SerializeField] private float trajectoryIgnoreRadius = 1.6f;
 
         [Header("Combat melee (when pursued)")]
-        [SerializeField] private float meleeReach = 2.4f;
-        [SerializeField] private float meleeArcDegrees = 140f;
-        [SerializeField] private float meleeGuaranteedRadius = 1.05f;
+        [SerializeField] private float meleeReach = 3.1f;
+        [SerializeField] private float meleeArcDegrees = 155f;
+        [SerializeField] private float meleeGuaranteedRadius = 1.45f;
         [SerializeField] private float meleeCooldown = 0.42f;
 
         private float _lastCastTime = -999f;

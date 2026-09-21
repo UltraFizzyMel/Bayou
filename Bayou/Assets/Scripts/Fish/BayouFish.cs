@@ -92,8 +92,8 @@ namespace Bayou.Fish
             isStatic = !moving;
             if (home != null)
             {
-                roamRadius = Mathf.Max(roamRadius, home.Radius * 0.9f);
-                neighborSeparation = Mathf.Clamp(neighborSeparation, 1.6f, home.Radius * 0.42f);
+                roamRadius = Mathf.Max(1.6f, home.Radius * 0.85f);
+                neighborSeparation = Mathf.Clamp(neighborSeparation, 0.8f, Mathf.Max(0.9f, home.Radius * 0.35f));
                 _spawnPosition = home.ClampInside(transform.position);
                 transform.position = _spawnPosition;
             }
@@ -228,7 +228,7 @@ namespace Bayou.Fish
 
         private void PickRandomSwimTarget()
         {
-            var minTravel = Mathf.Max(2.8f, roamRadius * 0.35f);
+            var minTravel = Mathf.Clamp(roamRadius * 0.28f, 0.7f, Mathf.Max(0.8f, roamRadius * 0.65f));
             Vector3 candidate;
             if (HomeSpot != null)
             {
@@ -272,7 +272,7 @@ namespace Bayou.Fish
 
                 if (!crowded) return;
                 if (HomeSpot != null)
-                    candidate = HomeSpot.RandomSwimPoint(transform.position, Mathf.Max(2.8f, roamRadius * 0.35f));
+                    candidate = HomeSpot.RandomSwimPoint(transform.position, Mathf.Max(0.7f, roamRadius * 0.28f));
             }
         }
 
@@ -302,11 +302,9 @@ namespace Bayou.Fish
             if (HomeSpot == null) return;
             var before = transform.position;
             var clamped = HomeSpot.ClampInside(before);
-            if ((clamped - before).sqrMagnitude <= 0.00001f)
-                return;
-
+            var xz = Flat(clamped - before);
             transform.position = clamped;
-            if (!_hasAttractTarget)
+            if (xz.sqrMagnitude > 0.04f && !_hasAttractTarget)
                 PickRandomSwimTarget();
         }
 

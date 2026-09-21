@@ -6,6 +6,9 @@ using Bayou;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace Bayou.Save
 {
@@ -29,10 +32,18 @@ namespace Bayou.Save
         private bool _isOpen;
 
         public static BonfireUIController Active { get; private set; }
-        public bool IsOpen => _isOpen;
+        public bool IsOpen =>
+            _isOpen && (overlayRoot == null || overlayRoot.gameObject.activeInHierarchy);
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => Active = null;
 
         private void Awake()
         {
+            _isOpen = false;
+            if (Active == this)
+                Active = null;
+
             if (overlayRoot != null)
                 overlayRoot.gameObject.SetActive(false);
 
@@ -69,7 +80,18 @@ namespace Bayou.Save
                 statusLabel.text = string.Empty;
 
             if (overlayRoot != null)
+            {
                 overlayRoot.gameObject.SetActive(true);
+                var dim = overlayRoot.GetComponent<Image>();
+                if (dim != null)
+                    dim.raycastTarget = true;
+            }
+
+            var canvas = GetComponent<Canvas>() ?? overlayRoot?.GetComponentInParent<Canvas>();
+            if (canvas != null)
+                canvas.sortingOrder = Mathf.Max(canvas.sortingOrder, 55);
+
+            ClosePlayerInventory();
 
             var fireAudio = Bayou.Audio.BonfireAudio.Resolve();
             fireAudio?.PlayStrikeMatch();
@@ -78,6 +100,27 @@ namespace Bayou.Save
             GameplayPause.SyncFromUiState();
             RefreshFishList();
             UpdateCookButton();
+        }
+
+        private void Update()
+        {
+            if (!_isOpen) return;
+#if ENABLE_INPUT_SYSTEM
+            var kb = Keyboard.current;
+            if (kb != null && kb.escapeKey.wasPressedThisFrame)
+                Close();
+#endif
+        }
+
+        private static void ClosePlayerInventory()
+        {
+            var handmade = InventoryDisplayUI.Active ?? Object.FindFirstObjectByType<InventoryDisplayUI>();
+            if (handmade != null && handmade.IsOpen)
+                handmade.Close();
+
+            var procedural = Object.FindFirstObjectByType<Bayou.Inventory.UI.InventoryUIController>();
+            if (procedural != null && procedural.IsOpen)
+                procedural.Close();
         }
 
         public void Close()
@@ -103,6 +146,8 @@ namespace Bayou.Save
             if (_inventory == null || fishListRoot == null || fishEntryTemplate == null)
                 return;
 
+            EnsureFishListLayout();
+
             var fish = _inventory.GetFishItems();
             if (fish.Count == 0)
             {
@@ -118,15 +163,63 @@ namespace Bayou.Save
             foreach (var item in fish)
             {
                 var btn = Instantiate(fishEntryTemplate, fishListRoot);
-                btn.gameObject.SetActive(true);
-                var label = btn.GetComponentInChildren<TextMeshProUGUI>();
-                if (label != null)
-                    label.text = item.definition.displayName;
-
+                StyleFishButton(btn, item);
                 var captured = item;
                 btn.onClick.AddListener(() => SelectFish(captured, btn));
                 _fishButtons.Add(btn);
             }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(fishListRoot);
+        }
+
+        private void EnsureFishListLayout()
+        {
+            var layout = fishListRoot.GetComponent<VerticalLayoutGroup>();
+            if (layout == null)
+                layout = fishListRoot.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 8f;
+            layout.childAlignment = TextAnchor.UpperCenter;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = false;
+            layout.padding = new RectOffset(0, 0, 4, 4);
+        }
+
+        private static void StyleFishButton(Button btn, InventoryItemInstance item)
+        {
+            btn.gameObject.SetActive(true);
+            var rt = btn.transform as RectTransform;
+            if (rt != null)
+            {
+                rt.anchorMin = new Vector2(0f, 1f);
+                rt.anchorMax = new Vector2(1f, 1f);
+                rt.pivot = new Vector2(0.5f, 1f);
+                rt.sizeDelta = new Vector2(0f, 40f);
+                rt.localScale = Vector3.one;
+            }
+
+            var layout = btn.GetComponent<LayoutElement>() ?? btn.gameObject.AddComponent<LayoutElement>();
+            layout.minHeight = 40f;
+            layout.preferredHeight = 40f;
+            layout.flexibleHeight = 0f;
+            layout.minWidth = 80f;
+
+            var label = btn.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (label != null)
+            {
+                label.text = item?.definition != null ? item.definition.displayName : "Fish";
+                label.raycastTarget = false;
+                var labelRt = label.rectTransform;
+                labelRt.anchorMin = Vector2.zero;
+                labelRt.anchorMax = Vector2.one;
+                labelRt.offsetMin = new Vector2(10f, 4f);
+                labelRt.offsetMax = new Vector2(-10f, -4f);
+            }
+
+            var img = btn.targetGraphic as Image;
+            if (img != null)
+                img.color = new Color(0.22f, 0.24f, 0.28f, 1f);
         }
 
         private void SelectFish(InventoryItemInstance fish, Button button)

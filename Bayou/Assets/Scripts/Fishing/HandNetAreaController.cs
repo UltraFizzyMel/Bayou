@@ -3,6 +3,7 @@
 #endif
 
 using System.Collections;
+using System.Collections.Generic;
 using Bayou.Creatures;
 using Bayou.Fish;
 using Bayou.Inventory;
@@ -56,11 +57,11 @@ namespace Bayou.Fishing
 
         [Header("Combat melee (when pursued)")]
         [Tooltip("Max distance from the player that a swing can connect.")]
-        [SerializeField] private float meleeReach = 2.4f;
+        [SerializeField] private float meleeReach = 3.1f;
         [Tooltip("Forward cone. Creatures inside this angle are hittable.")]
-        [SerializeField] private float meleeArcDegrees = 140f;
+        [SerializeField] private float meleeArcDegrees = 155f;
         [Tooltip("Inside this radius a swing always hits, even beside / behind you.")]
-        [SerializeField] private float meleeGuaranteedRadius = 1.05f;
+        [SerializeField] private float meleeGuaranteedRadius = 1.45f;
         [SerializeField] private float meleeCooldown = 0.42f;
         [SerializeField] private Color combatRingColor = new(0.95f, 0.25f, 0.2f, 0.9f);
         [Tooltip("How far away a hunting creature can be for combat mode to engage.")]
@@ -460,14 +461,31 @@ namespace Bayou.Fishing
                 fishMask,
                 QueryTriggerInteraction.Collide);
 
+            BayouFish best = null;
+            var bestSq = float.MaxValue;
+            var seen = BayouFishNetOverlapBuffer.SeenFish;
+            seen.Clear();
+
             for (var i = 0; i < count; i++)
             {
                 var c = BayouFishNetOverlapBuffer.Colliders[i];
                 if (c == null) continue;
                 var fish = c.GetComponentInParent<BayouFish>();
-                if (fish != null)
-                    fish.TryCatchFromNet(center, radius);
+                if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Net))
+                    continue;
+                if (!seen.Add(fish))
+                    continue;
+
+                var d = fish.transform.position - center;
+                d.y = 0f;
+                var sq = d.sqrMagnitude;
+                if (sq > radius * radius) continue;
+                if (sq >= bestSq) continue;
+                bestSq = sq;
+                best = fish;
             }
+
+            best?.TryCatchFromNet(center, radius);
         }
 
         private void PlaySwingAnim()
@@ -554,7 +572,7 @@ namespace Bayou.Fishing
             var origin = transform.position;
             origin.y += 0.04f;
             var swinging = _sweep != null && _sweep.IsSwinging;
-            var forward = swinging ? _sweep.LockedForward : GetAimForward(transform);
+            var forward = swinging ? _sweep.LockedForward : GetFlatForward();
             var range = Mathf.Max(0.6f, meleeReach);
             var half = Mathf.Clamp(meleeArcDegrees, 20f, 180f) * 0.5f;
             var n = Mathf.Clamp(ringSegments, 10, 48);
@@ -628,5 +646,6 @@ namespace Bayou.Fishing
     internal static class BayouFishNetOverlapBuffer
     {
         public static readonly Collider[] Colliders = new Collider[32];
+        public static readonly HashSet<BayouFish> SeenFish = new(16);
     }
 }

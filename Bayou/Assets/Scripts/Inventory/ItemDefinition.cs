@@ -61,15 +61,19 @@ namespace Bayou.Inventory
             }
         }
 
-        /// <summary>Fish, keys, quest pickups — the shop allows more than one.</summary>
+        /// <summary>Fish and pond pickups can restock. Keys and gear are one-per-player in the shop.</summary>
         public bool IsShopCollectible =>
-            isFish || IsKeyItem || IsPondQuestItem(Id);
+            isFish || IsPondQuestItem(Id);
 
-        /// <summary>Rod / lantern / net — one per player in the shop.</summary>
+        /// <summary>True for items the shop should only sell once (gear and keys).</summary>
+        public bool IsOnePerPlayer => IsUniqueEquipment || IsKeyItem;
+
+        /// <summary>Rod / lantern / net — holdable unique gear for the hotwheel.</summary>
         public bool IsUniqueEquipment
         {
             get
             {
+                if (IsKeyItem) return false;
                 if (isEquipment) return true;
                 if (IsShopCollectible) return false;
                 var id = Id;

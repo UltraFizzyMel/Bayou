@@ -118,6 +118,68 @@ namespace Bayou.Creatures
         public float Health => _health;
         public float MaxHealth => maxHealth;
         public bool IsNetHittable => IsAlive;
+
+        /// <summary>Closest point on the visible body, so a long snake is hittable at head or tail.</summary>
+        public Vector3 ClosestPointFrom(Vector3 origin)
+        {
+            var best = transform.position;
+            var bestSq = (best - origin).sqrMagnitude;
+            var found = false;
+
+            var colliders = GetComponentsInChildren<Collider>(true);
+            for (var i = 0; i < colliders.Length; i++)
+            {
+                var col = colliders[i];
+                if (col == null || !col.enabled || col.isTrigger) continue;
+                var p = col.ClosestPoint(origin);
+                var sq = (p - origin).sqrMagnitude;
+                if (!found || sq < bestSq)
+                {
+                    found = true;
+                    bestSq = sq;
+                    best = p;
+                }
+            }
+
+            var renderers = GetComponentsInChildren<Renderer>(true);
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                var rend = renderers[i];
+                if (rend == null || !rend.enabled) continue;
+                var p = rend.bounds.ClosestPoint(origin);
+                var sq = (p - origin).sqrMagnitude;
+                if (!found || sq < bestSq)
+                {
+                    found = true;
+                    bestSq = sq;
+                    best = p;
+                }
+            }
+
+            return best;
+        }
+
+        private void EnsureMeleeCollider()
+        {
+            var capsule = GetComponent<CapsuleCollider>();
+            if (capsule == null)
+                capsule = gameObject.AddComponent<CapsuleCollider>();
+            capsule.isTrigger = true;
+            capsule.direction = 2;
+            if (netBehavior == CreatureNetBehavior.StunOnNet)
+            {
+                capsule.height = 3.1f;
+                capsule.radius = 0.7f;
+                capsule.center = new Vector3(0f, 0.16f, 0f);
+            }
+            else
+            {
+                capsule.height = 2.8f;
+                capsule.radius = 0.55f;
+                capsule.center = new Vector3(0f, 0.12f, 0f);
+            }
+        }
+
         public bool IsLunging => _strike == StrikePhase.Lunge;
         public static IReadOnlyList<CreatureController> Living => All;
 
@@ -148,6 +210,7 @@ namespace Bayou.Creatures
                 maxHealth = 8f;
             _health = Mathf.Max(1f, maxHealth);
             _visual?.NotifyHealth(_health, maxHealth);
+            EnsureMeleeCollider();
             if (wanderArea != null)
                 _wanderTarget = wanderArea.RandomPointInside();
             else

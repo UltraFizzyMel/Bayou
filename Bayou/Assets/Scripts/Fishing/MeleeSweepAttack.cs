@@ -15,7 +15,7 @@ namespace Bayou.Fishing
     public sealed class MeleeSweepAttack : MonoBehaviour
     {
         [SerializeField] private float swingDuration = 0.28f;
-        [SerializeField] private float bladeWidthDegrees = 42f;
+        [SerializeField] private float bladeWidthDegrees = 58f;
         [SerializeField] private float trailTime = 0.32f;
         [SerializeField] private Color netTrailColor = new(0.55f, 0.95f, 1f, 0.95f);
         [SerializeField] private Color rodTrailColor = new(0.95f, 0.72f, 0.32f, 0.95f);
@@ -61,7 +61,7 @@ namespace Bayou.Fishing
             EnsureVfx();
 
             var origin = transform.position + Vector3.up * 0.35f;
-            _lockedForward = Flatten(transform.forward);
+            _lockedForward = Bayou.Player.BayouFacing.GetCardinalForward8(transform);
             var half = Mathf.Clamp(arcDegrees, 40f, 180f) * 0.5f;
             var duration = Mathf.Max(0.12f, swingDuration);
             var color = trailOverride ?? (source == NetHitSource.MeleeRod ? rodTrailColor : netTrailColor);
@@ -252,12 +252,6 @@ namespace Bayou.Fishing
             }
 
             return fallback;
-        }
-
-        private static Vector3 Flatten(Vector3 v)
-        {
-            v.y = 0f;
-            return v.sqrMagnitude < 1e-6f ? Vector3.forward : v.normalized;
         }
 
         private void OnDisable()

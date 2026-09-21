@@ -72,7 +72,8 @@ namespace Bayou.Fishing
                 if (HitIds.Contains(id))
                     continue;
 
-                var to = creature.transform.position - origin;
+                var aim = creature.ClosestPointFrom(origin);
+                var to = aim - origin;
                 to.y = 0f;
                 var distSq = to.sqrMagnitude;
                 if (distSq > rangeSq)

@@ -55,7 +55,13 @@ namespace Bayou.UI
 
         public static EquipmentHotwheel Instance { get; private set; }
         public static bool IsOpen => Instance != null && Instance._open;
-        public static bool SuppressLegacyToolKeys => IsOpen;
+
+        /// <summary>
+        /// True while this wheel is alive and will consume Tab / 1–4.
+        /// When false, <see cref="BayouFishingEquipment"/> handles those keys itself.
+        /// </summary>
+        public static bool SuppressLegacyToolKeys =>
+            Instance != null && Instance.isActiveAndEnabled && !ShouldHide();
 
         public EquipmentHotwheelSkin Skin => skin;
 
@@ -716,7 +722,7 @@ namespace Bayou.UI
             canvasGo.transform.SetParent(transform, false);
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            _canvas.sortingOrder = 18;
+            _canvas.sortingOrder = 36;
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920f, 1080f);

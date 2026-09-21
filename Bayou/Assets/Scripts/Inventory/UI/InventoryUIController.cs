@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Bayou.Inventory;
 using Bayou.Inventory.Shop;
 using Bayou;
+using Bayou.Save;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -177,6 +178,8 @@ namespace Bayou.Inventory.UI
 
         public void Toggle()
         {
+            if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen)
+                return;
             if (_isOpen)
                 Close();
             else
@@ -185,6 +188,8 @@ namespace Bayou.Inventory.UI
 
         public void Open()
         {
+            if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen)
+                return;
             _isOpen = true;
             if (panelRoot != null)
                 panelRoot.gameObject.SetActive(true);

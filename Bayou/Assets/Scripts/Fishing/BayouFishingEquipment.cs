@@ -193,8 +193,8 @@ namespace Bayou.Fishing
             UpdatePursuitContext();
             SyncHeldAnimator();
 
-            // The hotwheel owns Tab / 1–4. Don't cycle or overwrite its selection.
-            if (EquipmentHotwheel.Instance != null)
+            // The hotwheel owns Tab / 1–4 while it is actually handling input.
+            if (EquipmentHotwheel.SuppressLegacyToolKeys)
                 return;
 
             if (WasSelect(selectNoneAction, Key.Digit0, Key.Backquote))

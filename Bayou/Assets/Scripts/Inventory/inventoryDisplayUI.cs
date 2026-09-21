@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Bayou;
 using Bayou.Inventory.Shop;
 using Bayou.Inventory.UI;
+using Bayou.Save;
 using Bayou.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -65,6 +66,9 @@ namespace Bayou.Inventory
 
         /// <summary>Catch reveal/allocation: bag cannot be dismissed until place or discard.</summary>
         public bool IsLockedByCatch => CaughtFishPresenter.IsBusy;
+
+        public bool IsLockedByBonfire =>
+            BonfireUIController.Active != null && BonfireUIController.Active.IsOpen;
 
         public void SetCrossPanelDropHandler(Func<InventoryItemUI, PointerEventData, bool> handler) =>
             _crossPanelDropHandler = handler;
@@ -159,13 +163,14 @@ namespace Bayou.Inventory
 
         public void Toggle()
         {
-            if (IsLockedByShop || IsLockedByCatch) return;
+            if (IsLockedByShop || IsLockedByCatch || IsLockedByBonfire) return;
             if (_isOpen) Close();
             else Open();
         }
 
         public void Open()
         {
+            if (IsLockedByBonfire) return;
             if (inventory == null)
                 inventory = InventoryController.Instance;
 

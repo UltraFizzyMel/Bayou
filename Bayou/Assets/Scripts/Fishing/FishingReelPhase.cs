@@ -93,7 +93,8 @@ namespace Bayou.Fishing
         private void CatchNearbyFish()
         {
             var center = transform.position;
-            var caughtAny = false;
+            BayouFish best = null;
+            var bestSq = float.MaxValue;
 
             var count = Physics.OverlapSphereNonAlloc(
                 center,
@@ -108,12 +109,16 @@ namespace Bayou.Fishing
                 if (col == null) continue;
                 var fish = col.GetComponentInParent<BayouFish>();
                 if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod)) continue;
-                fish.Catch();
-                caughtAny = true;
+                var delta = fish.transform.position - center;
+                delta.y = 0f;
+                var sq = delta.sqrMagnitude;
+                if (sq > catchRadius * catchRadius) continue;
+                if (sq >= bestSq) continue;
+                bestSq = sq;
+                best = fish;
             }
 
-            // Fallback: fish often lack reliable colliders / layers in early setups.
-            if (!caughtAny)
+            if (best == null)
             {
                 var radiusSq = catchRadius * catchRadius;
                 var living = BayouFish.Living;
@@ -123,10 +128,14 @@ namespace Bayou.Fishing
                     if (fish == null || fish.IsCaught || !fish.CanCatchWith(FishCatchTool.Rod)) continue;
                     var delta = fish.transform.position - center;
                     delta.y = 0f;
-                    if (delta.sqrMagnitude <= radiusSq)
-                        fish.Catch();
+                    var sq = delta.sqrMagnitude;
+                    if (sq > radiusSq || sq >= bestSq) continue;
+                    bestSq = sq;
+                    best = fish;
                 }
             }
+
+            best?.Catch();
         }
 
         private bool IsReelInputHeld()

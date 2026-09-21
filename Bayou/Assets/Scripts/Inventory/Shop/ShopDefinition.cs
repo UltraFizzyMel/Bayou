@@ -53,11 +53,11 @@ namespace Bayou.Inventory.Shop
             return bag;
         }
 
-        /// <summary>Unique equipment stays out of stock / cannot be bought again. Fish and keys can stack.</summary>
+        /// <summary>Unique gear and keys stay out of stock / cannot be bought again while owned.</summary>
         public static bool IsUniqueAlreadyOwned(ItemDefinition item, InventoryController playerInventory)
         {
             if (item == null || playerInventory == null) return false;
-            if (!item.IsUniqueEquipment) return false;
+            if (!item.IsOnePerPlayer) return false;
             return playerInventory.HasItemsById(item.Id, 1);
         }
 

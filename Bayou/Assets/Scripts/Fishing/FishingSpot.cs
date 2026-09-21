@@ -331,12 +331,14 @@ namespace Bayou.Fishing
 
         public bool IsLand(Vector3 worldPos)
         {
+            if (waterBounds != null && IsInsideWaterBounds(worldPos))
+                return false;
             if (!TryGetGroundHeight(worldPos, out var ground))
                 return false;
             var waterY = waterBounds != null ? waterBounds.bounds.max.y : transform.position.y;
             // Terrain under a flush water plane is at ~waterY. Only treat real banks
             // as land so fish are not pinned to the pond surface.
-            return ground > waterY + 0.12f;
+            return ground > waterY + 0.22f;
         }
 
         public static bool TryGetGroundHeight(Vector3 worldPos, out float y)
@@ -438,7 +440,9 @@ namespace Bayou.Fishing
 
         public Vector3 RandomSwimPoint(Vector3 from, float minTravel)
         {
-            var minTravelSq = Mathf.Max(1.2f, minTravel) * Mathf.Max(1.2f, minTravel);
+            var minTravelSq = Mathf.Max(0.35f, minTravel) * Mathf.Max(0.35f, minTravel);
+            var swimR = Mathf.Max(0.6f, radius - shoreMargin);
+            minTravelSq = Mathf.Min(minTravelSq, (swimR * 0.55f) * (swimR * 0.55f));
             var fallback = ClampInside(from);
             for (var attempt = 0; attempt < 18; attempt++)
             {
