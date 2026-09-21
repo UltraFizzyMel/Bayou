@@ -267,6 +267,7 @@ namespace Bayou.Creatures
 
             FollowGround();
             NoteStuck(_triedMove, dt);
+            _visual?.DriveSnakeAnim(_triedMove, _strike != StrikePhase.None);
         }
 
         private void TickPassive(float dt)
@@ -501,6 +502,8 @@ namespace Bayou.Creatures
 
         private void OnGUI()
         {
+            if (Bayou.GameplayPause.BlocksWorldInteract || Bayou.GameplayPause.IsDialoguePlaying)
+                return;
             if (!IsAlive && !_dying) return;
             var show = _health < maxHealth - 0.01f || Time.time < _hudUntil || _mode == CreatureMode.Active;
             if (!show) return;

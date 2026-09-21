@@ -15,6 +15,12 @@ namespace Bayou
 
         public static bool IsPaused => Time.timeScale <= 0f;
 
+        /// <summary>Inventory, shop, catch reveal, and other menus own the interact key.</summary>
+        public static bool BlocksWorldInteract =>
+            IsPaused ||
+            IsInventoryOpen() ||
+            CaughtFishPresenter.IsBusy;
+
         public static bool IsDialoguePlaying
         {
             get

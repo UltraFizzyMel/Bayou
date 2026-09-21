@@ -96,8 +96,11 @@ public class InputManager : MonoBehaviour
     /// </summary>
     public bool GetInteractPressed()
     {
-        if (IsDialoguePlaying())
+        if (IsDialoguePlaying() || Bayou.GameplayPause.BlocksWorldInteract)
+        {
+            interactPressed = false;
             return false;
+        }
 
         bool result = interactPressed;
         interactPressed = false;

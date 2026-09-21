@@ -42,6 +42,9 @@ namespace Bayou.Player
         /// <summary>World Y the motor should hold while swimming (chest near the surface).</summary>
         public float SwimHoldY => WaterSurfaceY - Mathf.Max(0.72f, chestHeight * 0.65f);
 
+        private WaterDepthLevel _latchedDepth = WaterDepthLevel.None;
+        private bool _hasSurface;
+
         private Vector3 FeetPosition => transform.position + new Vector3(0f, footOverlapYOffset, 0f);
 
         private void OnTriggerEnter(Collider other)
@@ -134,9 +137,56 @@ namespace Bayou.Player
                     depth = WaterDepthLevel.Wade;
             }
 
-            WaterSurfaceY = foundSurface ? surface : transform.position.y;
+            var waterColumn = foundSurface && TryGetGroundY(feet, out var groundY) ? surface - groundY : (foundSurface ? surface - feet.y : 0f);
+            depth = StabilizeDepth(depth, waterColumn);
+
+            if (foundSurface)
+            {
+                WaterSurfaceY = _hasSurface ? Mathf.Lerp(WaterSurfaceY, surface, 0.4f) : surface;
+                _hasSurface = true;
+            }
+            else
+            {
+                WaterSurfaceY = transform.position.y;
+                _hasSurface = false;
+            }
+
             Submersion = InWaterOr(depth) ? WaterSurfaceY - feet.y : 0f;
             Depth = depth;
+        }
+
+        /// <summary>
+        /// Wade/swim was flipping every physics step on uneven banks, which resized the
+        /// capsule and slammed vertical velocity. Hold the current depth until the
+        /// water column clearly crosses the other threshold.
+        /// </summary>
+        private WaterDepthLevel StabilizeDepth(WaterDepthLevel raw, float column)
+        {
+            switch (_latchedDepth)
+            {
+                case WaterDepthLevel.Swim:
+                    if (column < 0.48f)
+                        _latchedDepth = raw == WaterDepthLevel.None || column < 0.1f
+                            ? WaterDepthLevel.None
+                            : WaterDepthLevel.Wade;
+                    break;
+                case WaterDepthLevel.Wade:
+                    if (raw == WaterDepthLevel.Swim && column >= 0.72f)
+                        _latchedDepth = WaterDepthLevel.Swim;
+                    else if (raw == WaterDepthLevel.None && column < 0.08f)
+                        _latchedDepth = WaterDepthLevel.None;
+                    break;
+                default:
+                    if (raw == WaterDepthLevel.Swim && column >= 0.72f)
+                        _latchedDepth = WaterDepthLevel.Swim;
+                    else if (raw != WaterDepthLevel.None && column >= 0.16f)
+                        _latchedDepth = WaterDepthLevel.Wade;
+                    else
+                        _latchedDepth = WaterDepthLevel.None;
+                    break;
+            }
+
+            return _latchedDepth;
         }
 
         private static bool TryGetGroundY(Vector3 feet, out float y)

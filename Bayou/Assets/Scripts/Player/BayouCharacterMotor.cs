@@ -418,10 +418,12 @@ namespace Bayou.Player
             var targetY = waterSensor != null ? waterSensor.SwimHoldY : rb.position.y;
             var dy = targetY - rb.position.y;
             var lift = Mathf.Max(2.5f, swimRiseSpeed);
-            if (Mathf.Abs(dy) < 0.04f)
-                vel.y = 0f;
-            else
-                vel.y = Mathf.Clamp(dy * lift, -2.4f, Mathf.Max(2.6f, swimRiseSpeed));
+            // Ease toward the hold height. Snapping vel.y every step fought the
+            // bank and made the body jitter while wading into a swim.
+            var desiredY = Mathf.Abs(dy) < 0.08f
+                ? 0f
+                : Mathf.Clamp(dy * lift * 0.45f, -1.6f, Mathf.Max(1.8f, swimRiseSpeed * 0.65f));
+            vel.y = Mathf.MoveTowards(vel.y, desiredY, 8f * Time.fixedDeltaTime);
 
             rb.linearVelocity = vel;
         }

@@ -127,12 +127,15 @@ namespace Bayou.Combat
 
         private void SpawnPopup(Vector3 world, string text, Color color)
         {
+            if (ScreenUiOwnsTheScreen())
+                return;
+
             _popups.Add(new Popup
             {
                 World = world + Vector3.up * 1.15f,
                 Text = text,
                 Color = color,
-                Born = Time.time,
+                Born = Time.unscaledTime,
                 Life = 0.7f
             });
             if (_popups.Count > MaxPopups)
@@ -165,24 +168,33 @@ namespace Bayou.Combat
                 }
             }
 
+            var popupNow = Time.unscaledTime;
             for (var i = _popups.Count - 1; i >= 0; i--)
             {
-                if (now - _popups[i].Born >= _popups[i].Life)
+                if (popupNow - _popups[i].Born >= _popups[i].Life)
                     _popups.RemoveAt(i);
             }
         }
 
         private void OnGUI()
         {
+            // Inventory, catch, shop, and the other menus freeze scaled time, which
+            // used to pin "DOWN" on the bag for the whole placement. Drop them.
+            if (ScreenUiOwnsTheScreen())
+            {
+                _popups.Clear();
+                return;
+            }
+
             if (_popups.Count == 0) return;
             var cam = Camera.main;
             if (cam == null) return;
             EnsureStyle();
 
-            for (var i = 0; i < _popups.Count; i++)
+            for (var i = _popups.Count - 1; i >= 0; i--)
             {
                 var p = _popups[i];
-                var age = Time.time - p.Born;
+                var age = Time.unscaledTime - p.Born;
                 var t = Mathf.Clamp01(age / p.Life);
                 var world = p.World + Vector3.up * (0.55f * t);
                 var screen = cam.WorldToScreenPoint(world);
@@ -195,10 +207,49 @@ namespace Bayou.Combat
                 col.a *= alpha;
                 GUI.color = col;
                 var rect = new Rect(screen.x - 50f, Screen.height - screen.y - 18f, 100f, 28f);
+                if (OverlapsInventoryGrid(rect))
+                {
+                    _popups.RemoveAt(i);
+                    continue;
+                }
+
                 GUI.Label(rect, p.Text, _popupStyle);
             }
 
             GUI.color = Color.white;
+        }
+
+        private static bool ScreenUiOwnsTheScreen()
+        {
+            return GameplayPause.BlocksWorldInteract || GameplayPause.IsDialoguePlaying;
+        }
+
+        private static bool OverlapsInventoryGrid(Rect label)
+        {
+            var bag = Bayou.Inventory.InventoryDisplayUI.Active;
+            if (bag != null && bag.IsOpen && Overlaps(label, bag.PanelRoot))
+                return true;
+
+            var procedural = Object.FindFirstObjectByType<Bayou.Inventory.UI.InventoryUIController>();
+            if (procedural != null && procedural.IsOpen && Overlaps(label, procedural.PanelRoot))
+                return true;
+
+            return false;
+        }
+
+        private static bool Overlaps(Rect label, RectTransform panel)
+        {
+            if (panel == null || !panel.gameObject.activeInHierarchy) return false;
+            var corners = new Vector3[4];
+            panel.GetWorldCorners(corners);
+            var min = RectTransformUtility.WorldToScreenPoint(null, corners[0]);
+            var max = RectTransformUtility.WorldToScreenPoint(null, corners[2]);
+            var panelRect = Rect.MinMaxRect(
+                Mathf.Min(min.x, max.x),
+                Mathf.Min(Screen.height - min.y, Screen.height - max.y),
+                Mathf.Max(min.x, max.x),
+                Mathf.Max(Screen.height - min.y, Screen.height - max.y));
+            return label.Overlaps(panelRect);
         }
 
         private void EnsureStyle()

@@ -14,7 +14,34 @@ namespace Bayou.Demo
 
         [SerializeField] private string title = "Demo Complete";
         [SerializeField] private string body =
-            "You found the lantern.\nThanks for playing this Bayou demo.";
+            "You brought the lantern back to Father Landry.\nThanks for playing this Bayou demo.";
+
+        private static bool _pending;
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetStatics() => _pending = false;
+
+        /// <summary>
+        /// Lantern turn-in happens mid-conversation. Hold the screen until that talk ends.
+        /// </summary>
+        public static void ArmAfterDialogue()
+        {
+            var dialogue = DialogueManager.GetInstance();
+            if (dialogue != null && dialogue.dialogueIsPlaying)
+            {
+                _pending = true;
+                return;
+            }
+
+            Show();
+        }
+
+        public static void TryShowIfArmed()
+        {
+            if (!_pending) return;
+            _pending = false;
+            Show();
+        }
         [SerializeField] private bool pauseGame = true;
         [SerializeField] private bool quitOnEscape = true;
 
@@ -58,7 +85,7 @@ namespace Bayou.Demo
             _visible = true;
             if (pauseGame)
                 Time.timeScale = 0f;
-            Debug.Log("[Demo] Complete — lantern found.");
+            Debug.Log("[Demo] Complete — lantern returned to Father Landry.");
         }
 
         private void Update()

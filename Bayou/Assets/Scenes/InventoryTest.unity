@@ -277,13 +277,14 @@ MonoBehaviour:
   columns: 7
   rows: 6
   fillParent: 1
-  padLeft: 28
-  padRight: 28
-  padTop: 28
-  padBottom: 28
+  padLeft: 162
+  padRight: 162
+  padTop: 102
+  padBottom: 91
   cellSpacing: 6
   forceSquareCells: 1
-  cellColor: {r: 0.92, g: 0.88, b: 0.78, a: 1}
+  cellColor: {r: 0.16, g: 0.12, b: 0.08, a: 0.42}
+  backpackFrame: 1
 --- !u!1 &406665772 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3812037432323978836, guid: 74e6980010e660f4bb91099a8df1603f, type: 3}

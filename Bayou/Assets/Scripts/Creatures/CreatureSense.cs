@@ -114,6 +114,8 @@ namespace Bayou.Creatures
                     if (hit.collider == null) continue;
                     if (hit.collider.transform == transform || hit.collider.transform.IsChildOf(transform))
                         continue;
+                    if (IsGround(hit))
+                        continue;
                     if (!found || hit.distance < closest.distance)
                     {
                         closest = hit;
@@ -126,6 +128,13 @@ namespace Bayou.Creatures
             }
 
             return true;
+        }
+
+        /// <summary>The bayou floor is not cover. Hitting it made snakes notice only at the min-sense bubble.</summary>
+        private static bool IsGround(RaycastHit hit)
+        {
+            if (hit.collider is TerrainCollider) return true;
+            return hit.normal.y > 0.65f;
         }
 
         private static bool IsPlayerHit(Collider col, Transform player)

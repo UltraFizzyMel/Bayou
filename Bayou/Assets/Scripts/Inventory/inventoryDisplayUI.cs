@@ -97,6 +97,20 @@ namespace Bayou.Inventory
             Active = this;
             _isOpen = false;
             SetPanelVisible(false);
+            ApplyBackpackArt();
+        }
+
+        private void ApplyBackpackArt()
+        {
+            var img = panelRoot != null ? panelRoot.GetComponent<UnityEngine.UI.Image>() : GetComponent<UnityEngine.UI.Image>();
+            if (img == null) return;
+            var sprite = Resources.Load<Sprite>("Bayou/Ui/BackpackBackground");
+            if (sprite == null) return;
+            img.sprite = sprite;
+            img.type = UnityEngine.UI.Image.Type.Simple;
+            img.preserveAspect = false;
+            img.color = Color.white;
+            gridUI?.UseBackpackFrame();
         }
 
         private void OnEnable()

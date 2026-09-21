@@ -113,9 +113,16 @@ namespace Bayou.Inventory
         {
             EnsureVisuals();
             if (_plate != null)
-                _plate.color = _item?.definition?.icon != null ? PlateColor : PlateEmptyIcon;
+            {
+                var plateColor = _item?.definition?.icon != null ? PlateColor : PlateEmptyIcon;
+                if (_rect != null && _item?.definition != null)
+                    ItemShapePlate.Apply(_rect, _plate, _item.definition.shape, _item.rotation, plateColor);
+                else
+                    _plate.color = plateColor;
+            }
 
             if (_icon == null) return;
+            _icon.transform.SetAsLastSibling();
             InventoryItemView.FitIcon(_icon, _item?.definition?.icon, _item?.rotation ?? 0);
         }
 

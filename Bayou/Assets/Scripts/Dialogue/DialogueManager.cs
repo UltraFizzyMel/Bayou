@@ -265,6 +265,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         FlushReceivedItems();
+        Bayou.Demo.DemoEndController.TryShowIfArmed();
     }
 
     /// <summary>Ink <c>GiveItem</c> — show the slot-in prompt after this conversation ends.</summary>

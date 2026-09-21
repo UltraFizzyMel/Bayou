@@ -72,12 +72,12 @@ public class InkExternalFunctions
     {
         var manager = QuestManager.Resolve();
         if (manager != null)
-        {
             manager.FinishQuest(questId);
-            return;
-        }
+        else
+            GameEventManager.Instance?.questEvents?.FinishQuest(questId);
 
-        GameEventManager.Instance?.questEvents?.FinishQuest(questId);
+        if (string.Equals(questId, QuestIds.CollectLantern, System.StringComparison.Ordinal))
+            Bayou.Demo.DemoEndController.ArmAfterDialogue();
     }
 
     private static bool HasItem(string itemId, int count)

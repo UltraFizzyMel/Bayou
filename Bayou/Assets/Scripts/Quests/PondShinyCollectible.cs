@@ -48,6 +48,33 @@ namespace Bayou.Quests
             ResolveItem();
             ApplyGlow();
             Bayou.Rendering.WorldItemVisual.PatchRenderers(gameObject, force: true);
+            EnsureSparkle();
+        }
+
+        private void EnsureSparkle()
+        {
+            if (GetComponentInChildren<ParticleSystem>(true) == null)
+            {
+                var go = new GameObject("Sparkle");
+                go.transform.SetParent(transform, false);
+                var ps = go.AddComponent<ParticleSystem>();
+                var main = ps.main;
+                main.loop = true;
+                main.playOnAwake = true;
+                main.startLifetime = new ParticleSystem.MinMaxCurve(0.45f, 0.9f);
+                main.startSpeed = new ParticleSystem.MinMaxCurve(0.05f, 0.28f);
+                main.startSize = new ParticleSystem.MinMaxCurve(0.06f, 0.16f);
+                main.startColor = glowColor;
+                main.maxParticles = 28;
+                main.simulationSpace = ParticleSystemSimulationSpace.World;
+                var emission = ps.emission;
+                emission.rateOverTime = 14f;
+                var shape = ps.shape;
+                shape.shapeType = ParticleSystemShapeType.Sphere;
+                shape.radius = 0.22f;
+                ps.Play();
+            }
+
             SoftenSparkles();
         }
 
@@ -186,11 +213,16 @@ namespace Bayou.Quests
 
                 var rend = ps.GetComponent<ParticleSystemRenderer>();
                 if (rend == null) continue;
+                var sparkle = Resources.Load<Material>("Bayou/RuntimeSparkle");
+                if (sparkle != null)
+                    rend.sharedMaterial = sparkle;
                 rend.enabled = true;
                 rend.renderMode = ParticleSystemRenderMode.Billboard;
-                rend.maxParticleSize = 0.06f;
+                rend.maxParticleSize = 0.35f;
                 rend.minParticleSize = 0f;
                 rend.allowRoll = false;
+                if (!ps.isPlaying)
+                    ps.Play();
             }
         }
 

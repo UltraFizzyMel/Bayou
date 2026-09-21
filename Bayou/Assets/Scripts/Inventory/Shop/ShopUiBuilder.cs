@@ -51,7 +51,18 @@ namespace Bayou.Inventory.Shop
             var overlayRt = overlay.GetComponent<RectTransform>();
             StretchFull(overlayRt);
             var overlayImg = overlay.AddComponent<Image>();
-            overlayImg.color = ShopUiStyle.OverlayDim;
+            var shopArt = Resources.Load<Sprite>("Bayou/Ui/ShopBackground");
+            if (shopArt != null)
+            {
+                overlayImg.sprite = shopArt;
+                overlayImg.type = Image.Type.Simple;
+                overlayImg.preserveAspect = false;
+                overlayImg.color = Color.white;
+            }
+            else
+            {
+                overlayImg.color = ShopUiStyle.OverlayDim;
+            }
             // Must not block the player bag (lower canvas) — sell drags start there.
             overlayImg.raycastTarget = false;
 

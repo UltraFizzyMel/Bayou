@@ -25,6 +25,7 @@ namespace Bayou.Creatures
         {
             CreaturePlaceholderVisual.PatchAll();
             CreateCreaturesInScene(replaceExisting: false);
+            AdoptLooseAnimatedSnakes();
         }
 
         public static GameObject CreateCreaturesInScene(bool replaceExisting)
@@ -177,7 +178,18 @@ namespace Bayou.Creatures
             Vector3 scale,
             bool crocodile)
         {
-            var body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            GameObject body;
+            if (crocodile)
+            {
+                body = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            }
+            else
+            {
+                // Snakes are the authored mesh on this same transform. No capsule stand-in.
+                body = new GameObject(name);
+                scale = Vector3.one;
+            }
+
             body.name = name;
             body.transform.SetParent(parent, true);
             body.transform.position = worldPos;
@@ -278,6 +290,52 @@ namespace Bayou.Creatures
             if (fromAssets != null) return fromAssets;
 #endif
             return Resources.Load<ItemDefinition>("Bayou/Items/Item_Snake");
+        }
+
+        /// <summary>
+        /// Animated snake meshes that were placed without a brain still patrol, sense, and lunge.
+        /// </summary>
+        private static void AdoptLooseAnimatedSnakes()
+        {
+            var animators = Object.FindObjectsByType<Animator>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < animators.Length; i++)
+            {
+                var anim = animators[i];
+                if (anim == null || anim.runtimeAnimatorController == null) continue;
+                if (anim.runtimeAnimatorController.name != "Snake") continue;
+                if (anim.GetComponentInParent<CreatureController>() != null) continue;
+
+                var host = anim.gameObject;
+                anim.applyRootMotion = false;
+                if (host.GetComponent<CreatureSense>() == null)
+                    host.AddComponent<CreatureSense>();
+                var brain = host.GetComponent<CreatureController>();
+                if (brain == null)
+                    brain = host.AddComponent<CreatureController>();
+                if (host.GetComponent<CreatureContactHazard>() == null)
+                    host.AddComponent<CreatureContactHazard>();
+
+                var origin = host.transform.position;
+                var holder = new GameObject(host.name + "_Waypoints");
+                var waypoints = new Transform[4];
+                var offsets = new[]
+                {
+                    new Vector3(4.2f, 0f, 0f),
+                    new Vector3(0f, 0f, 4.2f),
+                    new Vector3(-4.2f, 0f, 0f),
+                    new Vector3(0f, 0f, -4.2f)
+                };
+                for (var w = 0; w < offsets.Length; w++)
+                {
+                    var wp = new GameObject($"WP_{w + 1}");
+                    wp.transform.SetParent(holder.transform, false);
+                    wp.transform.position = origin + offsets[w];
+                    waypoints[w] = wp.transform;
+                }
+
+                ApplySnakeDefaults(brain, waypoints, LoadSnakeItem());
+                host.GetComponent<CreaturePlaceholderVisual>()?.Configure(SnakeColor, crocodileShape: false);
+            }
         }
 
         private static void RemoveExisting()

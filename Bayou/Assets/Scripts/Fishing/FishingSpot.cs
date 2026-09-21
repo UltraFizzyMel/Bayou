@@ -184,8 +184,26 @@ namespace Bayou.Fishing
                 pos.z = center.z + flat.z;
             }
 
-            pos = SnapToWaterCollider(pos);
+            if (HasSwimVolume)
+                pos = SnapToWaterCollider(pos);
+            else
+                pos = PullOffLand(pos, center);
+
             pos.y = SurfaceYAt(pos);
+            return pos;
+        }
+
+        private Vector3 PullOffLand(Vector3 pos, Vector3 center)
+        {
+            for (var i = 0; i < 6; i++)
+            {
+                if (!IsLand(pos)) return pos;
+                pos.x = Mathf.Lerp(pos.x, center.x, 0.45f);
+                pos.z = Mathf.Lerp(pos.z, center.z, 0.45f);
+            }
+
+            pos.x = center.x;
+            pos.z = center.z;
             return pos;
         }
 
@@ -293,9 +311,23 @@ namespace Bayou.Fishing
             radius = FitRadiusToWater(radius);
         }
 
+        /// <summary>
+        /// A real pond volume has width and depth. The scene water cards are
+        /// paper-thin quads; treating those as volumes pins every fish to one point.
+        /// </summary>
+        private bool HasSwimVolume
+        {
+            get
+            {
+                if (waterBounds == null) return false;
+                var size = waterBounds.bounds.size;
+                return size.x > 0.45f && size.z > 0.45f;
+            }
+        }
+
         private float FitRadiusToWater(float requested)
         {
-            if (waterBounds == null) return requested;
+            if (waterBounds == null || !HasSwimVolume) return requested;
             var e = waterBounds.bounds.extents;
             var fit = Mathf.Min(e.x, e.z) - shoreMargin;
             if (fit < 1f) fit = Mathf.Max(0.75f, Mathf.Min(e.x, e.z) * 0.85f);
@@ -313,7 +345,7 @@ namespace Bayou.Fishing
 
         private bool IsInsideWaterCollider(Vector3 worldPos)
         {
-            if (waterBounds == null)
+            if (waterBounds == null || !HasSwimVolume)
                 return true;
 
             if (waterBounds.enabled)

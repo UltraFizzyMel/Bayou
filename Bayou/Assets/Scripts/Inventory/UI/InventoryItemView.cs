@@ -78,8 +78,17 @@ namespace Bayou.Inventory.UI
                     _rt.anchoredPosition = _compartment.GridToAnchoredPosition(Item.gridX, Item.gridY, shape, Item.rotation);
             }
 
+            if (backgroundImage != null)
+            {
+                var plate = backgroundImage.color.a > 0.2f
+                    ? backgroundImage.color
+                    : new Color(0.78f, 0.68f, 0.48f, 1f);
+                ItemShapePlate.Apply(_rt, backgroundImage, shape, Item.rotation, plate);
+            }
+
             if (iconImage != null)
             {
+                iconImage.transform.SetAsLastSibling();
                 FitIcon(iconImage, Item.definition.icon, Item.rotation);
                 iconImage.raycastTarget = true;
             }
@@ -155,7 +164,9 @@ namespace Bayou.Inventory.UI
             var plate = parent != null ? parent.rect.size : new Vector2(64f, 64f);
             if (plate.x < 4f || plate.y < 4f)
                 plate = new Vector2(64f, 64f);
-            var pad = 8f;
+            // Same inset as the plate, so the sprite stays on the tan shape
+            // instead of running into the backpack frame or the empty cell.
+            var pad = Mathf.Clamp(Mathf.Min(plate.x, plate.y) * 0.08f, 4f, 10f);
             var maxW = Mathf.Max(8f, plate.x - pad * 2f);
             var maxH = Mathf.Max(8f, plate.y - pad * 2f);
             var spriteSize = sprite.rect.size;

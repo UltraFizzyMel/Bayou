@@ -24,6 +24,7 @@ namespace Bayou.Inventory
         [SerializeField] private float cellSpacing = 6f;
         [SerializeField] private bool forceSquareCells = true;
         [SerializeField] private Color cellColor = new(0.92f, 0.88f, 0.78f, 1f);
+        [SerializeField] private bool backpackFrame;
 
         private InventoryCellUI[,] _cells;
         private GridLayoutGroup _layout;
@@ -91,8 +92,32 @@ namespace Bayou.Inventory
             }
 
             _built = true;
+            if (backpackFrame)
+                TintCells();
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(_rect);
+            ApplyFillLayout();
+        }
+
+        private void TintCells()
+        {
+            if (_cells == null) return;
+            for (var y = 0; y < rows; y++)
+            for (var x = 0; x < columns; x++)
+            {
+                if (_cells[x, y] != null)
+                    _cells[x, y].SetBaseColor(cellColor);
+            }
+        }
+
+        /// <summary>
+        /// Keeps the backpack illustration as the panel background and seats the grid in the dark center.
+        /// </summary>
+        public void UseBackpackFrame()
+        {
+            backpackFrame = true;
+            cellColor = new Color(0.16f, 0.12f, 0.08f, 0.42f);
+            TintCells();
             ApplyFillLayout();
         }
 
@@ -101,6 +126,15 @@ namespace Bayou.Inventory
             if (_layout == null) _layout = GetComponent<GridLayoutGroup>();
             if (_rect == null) _rect = transform as RectTransform;
             if (_rect == null) return;
+
+            if (backpackFrame && _rect.parent is RectTransform frame &&
+                frame.rect.width > 16f && frame.rect.height > 16f)
+            {
+                padLeft = frame.rect.width * 0.18f;
+                padRight = frame.rect.width * 0.18f;
+                padTop = frame.rect.height * 0.145f;
+                padBottom = frame.rect.height * 0.13f;
+            }
 
             if (fillParent && _rect.parent is RectTransform)
             {

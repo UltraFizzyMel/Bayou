@@ -19,6 +19,9 @@ namespace Bayou.Creatures
 
         private Material _mat;
         private Renderer[] _parts;
+        private Animator _snakeAnim;
+        private Transform _snakeModel;
+        private bool _authoredSnake;
         private bool _builtCroc;
         private float _flashUntil;
         private float _health01 = 1f;
@@ -113,8 +116,26 @@ namespace Bayou.Creatures
             ApplyTint(HurtFlash);
         }
 
+        public void DriveSnakeAnim(bool moving, bool attacking)
+        {
+            if (_snakeAnim == null) return;
+            _snakeAnim.SetBool("isMoving", moving);
+            _snakeAnim.SetBool("isIdle", !moving && !attacking);
+            _snakeAnim.SetBool("isAttacking", attacking);
+        }
+
+        private void LateUpdate()
+        {
+            if (!_authoredSnake || _snakeModel == null || _snakeModel == transform) return;
+            _snakeModel.localPosition = Vector3.zero;
+            _snakeModel.localRotation = Quaternion.identity;
+        }
+
         private void Update()
         {
+            if (_authoredSnake)
+                return;
+
             if (_dying)
             {
                 var u = Mathf.Clamp01((Time.time - _dieStarted) / 0.28f);
@@ -180,7 +201,16 @@ namespace Bayou.Creatures
 
         private void EnsureShape()
         {
+            if (!crocodile)
+            {
+                DestroyPlaceholder();
+                StripHostMesh();
+                AttachAuthoredSnake();
+                return;
+            }
+
             HideBrokenHostRenderer();
+            _authoredSnake = false;
 
             var root = transform.Find(VisualRootName);
             if (root == null)
@@ -203,10 +233,7 @@ namespace Bayou.Creatures
                 for (var i = root.childCount - 1; i >= 0; i--)
                     Object.DestroyImmediate(root.GetChild(i).gameObject);
 
-                if (crocodile)
-                    BuildCroc(root);
-                else
-                    BuildSnake(root);
+                BuildCroc(root);
                 _builtCroc = crocodile;
             }
 
@@ -220,18 +247,30 @@ namespace Bayou.Creatures
                 host.enabled = false;
         }
 
-        private static void BuildSnake(Transform root)
+        private void DestroyPlaceholder()
         {
-            AddPart(root, PrimitiveType.Capsule, "Body", new Vector3(0f, 0.12f, 0f),
-                Quaternion.Euler(90f, 0f, 0f), new Vector3(0.42f, 1.05f, 0.42f));
-            AddPart(root, PrimitiveType.Sphere, "Head", new Vector3(0f, 0.18f, 1.05f),
-                Quaternion.identity, Vector3.one * 0.48f);
-            AddPart(root, PrimitiveType.Sphere, "Tail", new Vector3(0f, 0.1f, -1.05f),
-                Quaternion.identity, Vector3.one * 0.28f);
-            AddPart(root, PrimitiveType.Sphere, "EyeL", new Vector3(-0.12f, 0.32f, 1.18f),
-                Quaternion.identity, Vector3.one * 0.1f);
-            AddPart(root, PrimitiveType.Sphere, "EyeR", new Vector3(0.12f, 0.32f, 1.18f),
-                Quaternion.identity, Vector3.one * 0.1f);
+            var placeholder = transform.Find(VisualRootName);
+            if (placeholder == null) return;
+            if (Application.isPlaying)
+                Destroy(placeholder.gameObject);
+            else
+                DestroyImmediate(placeholder.gameObject);
+        }
+
+        private void StripHostMesh()
+        {
+            var rend = GetComponent<MeshRenderer>();
+            var filter = GetComponent<MeshFilter>();
+            if (Application.isPlaying)
+            {
+                if (rend != null) Destroy(rend);
+                if (filter != null) Destroy(filter);
+            }
+            else
+            {
+                if (rend != null) DestroyImmediate(rend);
+                if (filter != null) DestroyImmediate(filter);
+            }
         }
 
         private static void BuildCroc(Transform root)
@@ -280,9 +319,91 @@ namespace Bayou.Creatures
             }
         }
 
+        private void AttachAuthoredSnake()
+        {
+            var selfAnim = GetComponent<Animator>();
+            if (selfAnim != null && selfAnim.runtimeAnimatorController != null &&
+                selfAnim.runtimeAnimatorController.name == "Snake")
+            {
+                BindSnakeAnimator(gameObject);
+                _snakeModel = null;
+                _authoredSnake = true;
+                return;
+            }
+
+            var existing = transform.Find("SnakeModel");
+            GameObject model;
+            if (existing != null)
+            {
+                model = existing.gameObject;
+            }
+            else
+            {
+                var prefab = Resources.Load<GameObject>("Bayou/SnakeModel");
+                if (prefab == null)
+                {
+                    Debug.LogWarning("[Creature] Resources/Bayou/SnakeModel is missing. Snake has no mesh.");
+                    _authoredSnake = false;
+                    return;
+                }
+
+                model = Instantiate(prefab, transform);
+                model.name = "SnakeModel";
+            }
+
+            var ls = transform.localScale;
+            model.transform.localPosition = Vector3.zero;
+            model.transform.localRotation = Quaternion.identity;
+            model.transform.localScale = new Vector3(
+                1f / Mathf.Max(0.05f, Mathf.Abs(ls.x)),
+                1f / Mathf.Max(0.05f, Mathf.Abs(ls.y)),
+                1f / Mathf.Max(0.05f, Mathf.Abs(ls.z)));
+            BindSnakeAnimator(model);
+            _snakeModel = model.transform;
+            _authoredSnake = true;
+        }
+
+        private void BindSnakeAnimator(GameObject model)
+        {
+            var anims = model.GetComponentsInChildren<Animator>(true);
+            RuntimeAnimatorController controller = null;
+            Animator driven = null;
+            for (var i = 0; i < anims.Length; i++)
+            {
+                if (anims[i] == null) continue;
+                anims[i].applyRootMotion = false;
+                anims[i].cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                if (anims[i].runtimeAnimatorController != null)
+                {
+                    controller = anims[i].runtimeAnimatorController;
+                    driven = anims[i];
+                }
+                else if (driven == null)
+                {
+                    driven = anims[i];
+                }
+            }
+
+            if (driven == null)
+                driven = model.AddComponent<Animator>();
+
+            if (controller != null)
+                driven.runtimeAnimatorController = controller;
+
+            driven.applyRootMotion = false;
+            _snakeAnim = driven.runtimeAnimatorController != null ? driven : null;
+
+            for (var i = 0; i < anims.Length; i++)
+            {
+                if (anims[i] != null && anims[i] != driven)
+                    anims[i].enabled = false;
+            }
+        }
+
         private void Apply()
         {
             EnsureShape();
+            if (_authoredSnake) return;
             if (_mat == null)
                 _mat = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(color);
 

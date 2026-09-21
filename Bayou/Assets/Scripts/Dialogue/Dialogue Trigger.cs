@@ -30,7 +30,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractionPromptSource
     private void Update()
     {
         var dialogue = DialogueManager.GetInstance();
-        var canTalk = playerInRange && dialogue != null && !dialogue.dialogueIsPlaying && !ShopIsOpen();
+        var canTalk = playerInRange && dialogue != null && !dialogue.dialogueIsPlaying && !ShopIsOpen() &&
+                      !Bayou.GameplayPause.BlocksWorldInteract;
 
         if (buttonCue != null)
             buttonCue.SetActive(canTalk);
@@ -48,7 +49,8 @@ public class DialogueTrigger : MonoBehaviour, IInteractionPromptSource
     {
         prompt = default;
         var dialogue = DialogueManager.GetInstance();
-        if (!playerInRange || dialogue == null || dialogue.dialogueIsPlaying || ShopIsOpen())
+        if (!playerInRange || dialogue == null || dialogue.dialogueIsPlaying || ShopIsOpen() ||
+            Bayou.GameplayPause.BlocksWorldInteract)
             return false;
 
         prompt = new InteractionPrompt("E", talkPrompt, 60, DistToPlayerSq());
