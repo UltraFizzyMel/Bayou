@@ -50,11 +50,11 @@ namespace Bayou.Inventory.UI
 
         public Vector2 GridToAnchoredPosition(int anchorX, int anchorY, ItemShape shape, int rotation)
         {
-            shape.GetBounds(rotation, out var bw, out var bh);
-            var step = CellSize + CellSpacing;
-            var h = bh * step - CellSpacing;
-            var pos = GridToLocal(anchorX, anchorY);
-            return new Vector2(pos.x, pos.y - h + CellSize);
+            // Items use a top-left pivot (0,1). Position is the top-left of the
+            // anchor cell — do not subtract height or rotation swaps Y.
+            _ = shape;
+            _ = rotation;
+            return GridToLocal(anchorX, anchorY);
         }
 
         public Vector2 GetItemSize(ItemShape shape, int rotation)
@@ -81,11 +81,22 @@ namespace Bayou.Inventory.UI
                 return false;
 
             local -= _contentOffset;
-            var step = CellSize + CellSpacing;
+            var step = Mathf.Max(0.01f, CellSize + CellSpacing);
             gx = Mathf.FloorToInt(local.x / step);
             gy = Mathf.FloorToInt(-local.y / step);
 
-            return gx >= 0 && gy >= 0 && gx < Grid.Width && gy < Grid.Height;
+            if (gx >= 0 && gy >= 0 && gx < Grid.Width && gy < Grid.Height)
+                return true;
+
+            // Inside the grid rect (including cell gutters) — clamp to the nearest valid cell.
+            var size = GridPixelSize;
+            if (local.x < -CellSpacing || local.x > size.x + CellSpacing ||
+                -local.y < -CellSpacing || -local.y > size.y + CellSpacing)
+                return false;
+
+            gx = Mathf.Clamp(gx, 0, Grid.Width - 1);
+            gy = Mathf.Clamp(gy, 0, Grid.Height - 1);
+            return true;
         }
 
         public void SnapItemToGrid(InventoryItemInstance item, int anchorX, int anchorY, RectTransform itemRect)

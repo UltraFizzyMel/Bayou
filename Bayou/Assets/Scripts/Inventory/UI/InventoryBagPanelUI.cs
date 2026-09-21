@@ -121,7 +121,11 @@ namespace Bayou.Inventory.UI
         {
             if (_dragging == null) return;
 
+            var oldRot = _dragging.Item != null ? _dragging.Item.rotation : 0;
             _dragging.RotateClockwise();
+            if (_dragging.Item?.definition != null)
+                _dragGrabOffset = InventoryDragPlacement.RotateGrabClockwise(
+                    _dragging.Item.definition.shape, oldRot, _dragGrabOffset);
 
             if (Mouse.current != null &&
                 TryGetDragAnchor(Mouse.current.position.ReadValue(), null, _dragging,

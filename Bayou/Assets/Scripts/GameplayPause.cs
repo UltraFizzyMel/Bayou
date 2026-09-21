@@ -15,6 +15,25 @@ namespace Bayou
 
         public static bool IsPaused => Time.timeScale <= 0f;
 
+        public static bool IsDialoguePlaying
+        {
+            get
+            {
+                var dialogue = DialogueManager.GetInstance();
+                return dialogue != null && dialogue.dialogueIsPlaying;
+            }
+        }
+
+        public static void CloseInventoryMenus()
+        {
+            if (InventoryDisplayUI.Active != null && InventoryDisplayUI.Active.IsOpen)
+                InventoryDisplayUI.Active.Close();
+
+            var procedural = Object.FindFirstObjectByType<InventoryUIController>();
+            if (procedural != null && procedural.IsOpen)
+                procedural.Close();
+        }
+
         public static void SyncFromUiState()
         {
             var shouldPause =

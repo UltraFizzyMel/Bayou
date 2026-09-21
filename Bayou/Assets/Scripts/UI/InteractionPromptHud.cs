@@ -1,3 +1,4 @@
+using Bayou.Inventory;
 using Bayou.Inventory.Shop;
 using Bayou.Save;
 using TMPro;
@@ -81,10 +82,7 @@ namespace Bayou.UI
 
         private static bool ShouldHideForMenus()
         {
-            if (AudioSettings.IsOpen) return true;
-            if (QuestJournalHud.IsOpen) return true;
-            if (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) return true;
-            if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen) return true;
+            if (Bayou.GameplayPause.IsPaused) return true;
             var dialogue = DialogueManager.GetInstance();
             // During dialogue, the dialogue UI owns Continue — don't stack a world prompt.
             if (dialogue != null && dialogue.dialogueIsPlaying) return true;

@@ -50,6 +50,7 @@ namespace Bayou.Inventory
         private Vector2 _lastDragScreen;
         private Camera _lastDragCam;
         private bool _isOpen;
+        private int _relayoutFrames;
         private Func<InventoryItemUI, PointerEventData, bool> _crossPanelDropHandler;
 
         public bool IsOpen => _isOpen;
@@ -122,14 +123,6 @@ namespace Bayou.Inventory
         public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
         {
             prompt = default;
-            if (!_isOpen) return false;
-
-            if (_dragging != null)
-            {
-                prompt = new InteractionPrompt("R", "Rotate item", 80);
-                return true;
-            }
-
             return false;
         }
 
@@ -161,16 +154,29 @@ namespace Bayou.Inventory
                 RotateDraggedItem();
         }
 
+        private void LateUpdate()
+        {
+            if (_relayoutFrames <= 0 || !_isOpen) return;
+            _relayoutFrames--;
+            Canvas.ForceUpdateCanvases();
+            if (panelRoot != null)
+                LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
+            gridUI?.ApplyFillLayout();
+            Refresh();
+        }
+
         public void Toggle()
         {
             if (IsLockedByShop || IsLockedByCatch || IsLockedByBonfire) return;
+            if (GameplayPause.IsDialoguePlaying) return;
             if (_isOpen) Close();
             else Open();
         }
 
         public void Open()
         {
-            if (IsLockedByBonfire) return;
+            if (IsLockedByBonfire || IsLockedByShop) return;
+            if (GameplayPause.IsDialoguePlaying) return;
             if (inventory == null)
                 inventory = InventoryController.Instance;
 
@@ -182,15 +188,22 @@ namespace Bayou.Inventory
                 LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
             SyncGridToModel();
             Refresh();
+            _relayoutFrames = 2;
             GameplayPause.SyncFromUiState();
         }
 
         public void Close()
         {
-            if (IsLockedByShop || IsLockedByCatch) return;
+            if (IsLockedByCatch) return;
+            ForceClose();
+        }
 
+        /// <summary>Closes even during shop so the regular bag cannot sit behind the shop UI.</summary>
+        public void ForceClose()
+        {
             CancelDrag();
             _isOpen = false;
+            _relayoutFrames = 0;
             SetPanelVisible(false);
             gridUI?.ClearHighlights();
             GameplayPause.SyncFromUiState();
@@ -278,7 +291,8 @@ namespace Bayou.Inventory
                     if (ShouldShowHeldItem(item))
                     {
                         ui.gameObject.SetActive(true);
-                        LayoutHeldItem(ui, parent, item);
+                        var dock = panelRoot != null ? panelRoot : parent;
+                        LayoutHeldItem(ui, dock, item);
                     }
                     else
                     {
@@ -490,15 +504,34 @@ namespace Bayou.Inventory
             var rt = ui.Rect;
             rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0f);
             rt.pivot = new Vector2(0.5f, 0f);
-            // Sit just above the allocate bar / bottom of the case.
-            rt.anchoredPosition = new Vector2(0f, 96f);
+
+            var heldIndex = 0;
+            var heldCount = 0;
+            var bagItems = inventory.Bag.AllItems;
+            for (var i = 0; i < bagItems.Count; i++)
+            {
+                var other = bagItems[i];
+                if (other == null || other.IsPlaced || !ShouldShowHeldItem(other))
+                    continue;
+                if (other == item)
+                    heldIndex = heldCount;
+                heldCount++;
+            }
+
+            var spacing = 96f;
+            var x = heldCount <= 1 ? 0f : (heldIndex - (heldCount - 1) * 0.5f) * spacing;
+            rt.anchoredPosition = new Vector2(x, 96f);
             ui.transform.SetAsLastSibling();
         }
 
         public void RotateDraggedItem()
         {
             if (_dragging?.Item == null) return;
-            _dragging.Item.rotation = (_dragging.Item.rotation + 1) % 4;
+            var oldRot = _dragging.Item.rotation;
+            _dragging.Item.rotation = (oldRot + 1) % 4;
+            if (_dragging.Item.definition != null)
+                _dragGrabOffset = InventoryDragPlacement.RotateGrabClockwise(
+                    _dragging.Item.definition.shape, oldRot, _dragGrabOffset);
             _dragging.ApplySize(gridUI, _dragging.Item.rotation);
             TrySnapDragToGrid(_dragging, _lastDragScreen, _lastDragCam);
             UpdateHoverPreview(_lastDragScreen, _lastDragCam);

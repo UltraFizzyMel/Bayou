@@ -338,10 +338,8 @@ namespace Bayou.Inventory.Shop
             GameplayPause.SyncFromUiState();
             ApplySplitLayout(true);
 
-            if (handmadePlayerInventoryUi != null)
-                handmadePlayerInventoryUi.Open();
-            else
-                playerInventoryUi?.Refresh();
+            handmadePlayerInventoryUi?.ForceClose();
+            playerInventoryUi?.Close();
 
             var layout = shopDefinition.layout ?? _playerInventory.Layout;
             var unlock = (Func<string, bool>)(id => _playerInventory.IsCompartmentUnlocked(id));
@@ -349,7 +347,7 @@ namespace Bayou.Inventory.Shop
             playerPanel.Configure(_playerInventory.Bag, layout, unlock);
             merchantPanel.Configure(_merchantBag, layout, _ => true);
 
-            // Personal bag = handmade InventoryDisplayUI when present, else InventoryUIController.
+            // Shop chrome owns both bags. Do not open the world inventory behind it.
             playerPanel.SetCrossPanelDropHandler(TryDropPersonalToMerchant);
             merchantPanel.SetCrossPanelDropHandler(TryDropMerchantToPersonal);
             playerInventoryUi?.SetCrossPanelDropHandler(TryDropPersonalToMerchant);
@@ -357,8 +355,7 @@ namespace Bayou.Inventory.Shop
 
             // Rebuild after dock so grid cells get a real rect size.
             merchantPanel.ForceRebuild();
-            if (playerPanel.PanelRoot != null && playerPanel.PanelRoot.gameObject.activeInHierarchy)
-                playerPanel.ForceRebuild();
+            playerPanel?.ForceRebuild();
 
             RefreshBalance();
             RefreshDealSummary();
@@ -386,8 +383,10 @@ namespace Bayou.Inventory.Shop
             ApplySplitLayout(false);
             GameplayPause.SyncFromUiState();
 
+            handmadePlayerInventoryUi?.ForceClose();
+            playerInventoryUi?.Close();
+
             _playerInventory.NotifyChanged();
-            handmadePlayerInventoryUi?.Refresh();
         }
 
         private void OnCloseDeal()
@@ -425,8 +424,9 @@ namespace Bayou.Inventory.Shop
             GameplayPause.SyncFromUiState();
 
             _merchantBag = null;
+            handmadePlayerInventoryUi?.ForceClose();
+            playerInventoryUi?.Close();
             _playerInventory.NotifyChanged();
-            handmadePlayerInventoryUi?.Refresh();
 
             // Key items stay in the bag until the matching gate consumes them.
         }
@@ -443,7 +443,7 @@ namespace Bayou.Inventory.Shop
             {
                 var shopPlayer = playerPanel.PanelRoot.parent as RectTransform;
                 var merchant = merchantPanel.PanelRoot.parent as RectTransform;
-                layout?.ApplyShopPanelAnchors(merchant, shopPlayer, hideShopPlayerPanel: active);
+                layout?.ApplyShopPanelAnchors(merchant, shopPlayer, hideShopPlayerPanel: false);
             }
         }
 
@@ -520,55 +520,70 @@ namespace Bayou.Inventory.Shop
             var grabOffset = merchantPanel?.CurrentDragGrabOffset ?? Vector2Int.zero;
             System.Func<string, bool> unlocked = _playerInventory.IsCompartmentUnlocked;
 
-            // Prefer handmade player inventory (overlay-safe camera).
-            var handmade = ResolveHandmadeUnderPoint(eventData.position, null);
-            if (handmade != null)
+            string compartmentId;
+            int gx, gy;
+            var hoverX = 0;
+            var hoverY = 0;
+
+            // Shop chrome owns the personal bag — drop onto the docked player panel.
+            if (playerPanel != null &&
+                playerPanel.TryPickGrid(eventData.position, out compartmentId, out hoverX, out hoverY) &&
+                unlocked(compartmentId))
             {
-                string compartmentId;
-                int gx, gy;
-                if (handmade.ScreenPointToGrid(eventData.position, null,
-                        out compartmentId, out var hoverX, out var hoverY) &&
-                    unlocked(compartmentId))
+                ResolveAnchor(playerBag, item, compartmentId, hoverX, hoverY, grabOffset, out gx, out gy);
+                if (!playerBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&
+                    !playerBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy, unlocked))
+                    return false;
+            }
+            else if (playerPanel != null &&
+                     playerPanel.ContainsScreenPoint(eventData.position, null) &&
+                     playerBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy, unlocked))
+            {
+                // Pointer is over the bag but missed a cell — still accept the drop.
+            }
+            else
+            {
+                var handmade = ResolveHandmadeUnderPoint(eventData.position, null);
+                if (handmade != null)
                 {
-                    ResolveAnchor(playerBag, item, compartmentId, hoverX, hoverY, grabOffset, out gx, out gy);
-                    if (!playerBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&
-                        !playerBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy, unlocked))
+                    if (handmade.ScreenPointToGrid(eventData.position, null,
+                            out compartmentId, out hoverX, out hoverY) &&
+                        unlocked(compartmentId))
+                    {
+                        ResolveAnchor(playerBag, item, compartmentId, hoverX, hoverY, grabOffset, out gx, out gy);
+                        if (!playerBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&
+                            !playerBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy, unlocked))
+                            return false;
+                    }
+                    else if (!playerBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy, unlocked))
+                    {
                         return false;
+                    }
                 }
-                else if (!playerBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy, unlocked))
+                else
                 {
-                    return false;
+                    var targetUi = FindPlayerInventoryUiUnderPoint(eventData.position, eventData.pressEventCamera);
+                    if (targetUi == null)
+                        return false;
+
+                    if (targetUi.ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
+                            out compartmentId, out hoverX, out hoverY) &&
+                        unlocked(compartmentId))
+                    {
+                        ResolveAnchor(playerBag, item, compartmentId, hoverX, hoverY, grabOffset, out gx, out gy);
+                        if (!playerBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&
+                            !playerBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy, unlocked))
+                            return false;
+                    }
+                    else if (!playerBag.TryFindFirstFitAnywhere(item, out compartmentId, out gx, out gy, unlocked))
+                    {
+                        return false;
+                    }
                 }
-
-                if (!InventoryBagModel.Transfer(
-                        _merchantBag, playerBag, item, compartmentId, gx, gy, item.rotation))
-                    return false;
-
-                RefreshAfterCrossPanelMove();
-                return true;
             }
 
-            var targetUi = FindPlayerInventoryUiUnderPoint(eventData.position, eventData.pressEventCamera);
-            if (targetUi == null)
-                return false;
-
-            string cId;
-            int ax, ay;
-            if (targetUi.ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
-                    out cId, out var hx, out var hy) &&
-                unlocked(cId))
-            {
-                ResolveAnchor(playerBag, item, cId, hx, hy, grabOffset, out ax, out ay);
-                if (!playerBag.CanPlace(item, cId, ax, ay, item.rotation) &&
-                    !playerBag.TryFindFirstFitAnywhere(item, out cId, out ax, out ay, unlocked))
-                    return false;
-            }
-            else if (!playerBag.TryFindFirstFitAnywhere(item, out cId, out ax, out ay, unlocked))
-            {
-                return false;
-            }
-
-            if (!InventoryBagModel.Transfer(_merchantBag, playerBag, item, cId, ax, ay, item.rotation))
+            if (!InventoryBagModel.Transfer(
+                    _merchantBag, playerBag, item, compartmentId, gx, gy, item.rotation))
                 return false;
 
             RefreshAfterCrossPanelMove();

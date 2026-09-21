@@ -53,10 +53,7 @@ namespace Bayou.Inventory
         public void EnsureBuilt()
         {
             if (_built && _cells != null)
-            {
-                ApplyFillLayout();
                 return;
-            }
 
             BuildGrid();
         }
@@ -150,6 +147,25 @@ namespace Bayou.Inventory
             LayoutRebuilder.ForceRebuildLayoutImmediate(_rect);
         }
 
+        public Vector2 CellTopLeftLocal(int x, int y)
+        {
+            var layout = Layout;
+            var padL = layout != null ? layout.padding.left : 0;
+            var padT = layout != null ? layout.padding.top : 0;
+            var step = GetCellStep();
+            return new Vector2(padL + x * step.x, -padT - y * step.y);
+        }
+
+        public Vector2 ItemSize(int boundW, int boundH)
+        {
+            var layout = Layout;
+            var cellSize = layout != null ? layout.cellSize : new Vector2(64f, 64f);
+            var spacing = layout != null ? layout.spacing : Vector2.zero;
+            return new Vector2(
+                boundW * cellSize.x + Mathf.Max(0, boundW - 1) * spacing.x,
+                boundH * cellSize.y + Mathf.Max(0, boundH - 1) * spacing.y);
+        }
+
         public InventoryCellUI GetCell(int x, int y)
         {
             EnsureBuilt();
@@ -164,6 +180,9 @@ namespace Bayou.Inventory
             cell = null;
             if (_cells == null) return false;
 
+            InventoryCellUI nearest = null;
+            var nearestDist = float.MaxValue;
+
             for (var y = 0; y < rows; y++)
             for (var x = 0; x < columns; x++)
             {
@@ -174,6 +193,25 @@ namespace Bayou.Inventory
                     cell = c;
                     return true;
                 }
+
+                var corners = new Vector3[4];
+                c.Rect.GetWorldCorners(corners);
+                var worldCenter = (corners[0] + corners[2]) * 0.5f;
+                var screenCenter = RectTransformUtility.WorldToScreenPoint(cam, worldCenter);
+                var dist = ((Vector2)screenCenter - screen).sqrMagnitude;
+                if (dist < nearestDist)
+                {
+                    nearestDist = dist;
+                    nearest = c;
+                }
+            }
+
+            // Pointer is in the gutter between rows/columns — still snap to the closest cell.
+            if (nearest != null && _rect != null &&
+                RectTransformUtility.RectangleContainsScreenPoint(_rect, screen, cam))
+            {
+                cell = nearest;
+                return true;
             }
 
             return false;

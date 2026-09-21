@@ -205,6 +205,8 @@ public class DialogueManager : MonoBehaviour
             Bayou.Inventory.Shop.ShopUIController.ActiveShop.IsOpen)
             return;
 
+        Bayou.GameplayPause.CloseInventoryMenus();
+
         currentStory = new Story(inkJSON.text);
 
         inkExternalFunctions = new InkExternalFunctions();

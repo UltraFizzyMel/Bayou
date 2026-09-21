@@ -52,15 +52,14 @@ namespace Bayou.Inventory
             if (_rect.parent != itemLayer)
                 _rect.SetParent(itemLayer, false);
 
+            if (!TryGetFootprintLocal(grid, gridX, gridY, rotation, out var localPos, out var size))
+                return;
+
             _rect.localScale = Vector3.one;
             _rect.localRotation = Quaternion.identity;
             _rect.pivot = new Vector2(0f, 1f);
             _rect.anchorMin = new Vector2(0f, 1f);
             _rect.anchorMax = new Vector2(0f, 1f);
-
-            if (!TryGetFootprintLocal(grid, itemLayer, gridX, gridY, rotation, out var localPos, out var size))
-                return;
-
             _rect.anchoredPosition = localPos;
             _rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
             _rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
@@ -74,13 +73,7 @@ namespace Bayou.Inventory
 
             EnsureIgnoreLayout();
             GetShapeBounds(rotation, out var boundW, out var boundH);
-
-            var layout = grid.Layout;
-            var cellSize = layout != null ? layout.cellSize : new Vector2(64f, 64f);
-            var spacing = layout != null ? layout.spacing : Vector2.zero;
-            var size = new Vector2(
-                boundW * cellSize.x + Mathf.Max(0, boundW - 1) * spacing.x,
-                boundH * cellSize.y + Mathf.Max(0, boundH - 1) * spacing.y);
+            var size = grid.ItemSize(boundW, boundH);
 
             _rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, size.x);
             _rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, size.y);
@@ -113,7 +106,7 @@ namespace Bayou.Inventory
             iconRt.localScale = Vector3.one;
             iconRt.localRotation = Quaternion.identity;
             _icon.raycastTarget = false;
-            InventoryItemView.FitIcon(_icon, _item?.definition?.icon);
+            InventoryItemView.FitIcon(_icon, _item?.definition?.icon, _item?.rotation ?? 0);
         }
 
         private void ApplyIcon()
@@ -123,7 +116,7 @@ namespace Bayou.Inventory
                 _plate.color = _item?.definition?.icon != null ? PlateColor : PlateEmptyIcon;
 
             if (_icon == null) return;
-            InventoryItemView.FitIcon(_icon, _item?.definition?.icon);
+            InventoryItemView.FitIcon(_icon, _item?.definition?.icon, _item?.rotation ?? 0);
         }
 
         private void EnsureIgnoreLayout()
@@ -166,7 +159,6 @@ namespace Bayou.Inventory
 
         private bool TryGetFootprintLocal(
             InventoryGridUI grid,
-            RectTransform itemLayer,
             int gridX,
             int gridY,
             int rotation,
@@ -178,23 +170,12 @@ namespace Bayou.Inventory
             if (gridX < 0 || gridY < 0) return false;
 
             GetShapeBounds(rotation, out var boundW, out var boundH);
+            size = grid.ItemSize(boundW, boundH);
+            if (size.x < 0.5f || size.y < 0.5f)
+                return false;
 
-            var start = grid.GetCell(gridX, gridY);
-            var end = grid.GetCell(gridX + boundW - 1, gridY + boundH - 1);
-            if (start?.Rect == null || end?.Rect == null) return false;
-
-            var startCorners = new Vector3[4];
-            var endCorners = new Vector3[4];
-            start.Rect.GetWorldCorners(startCorners);
-            end.Rect.GetWorldCorners(endCorners);
-
-            // 1 = top-left, 3 = bottom-right
-            var localTL = itemLayer.InverseTransformPoint(startCorners[1]);
-            var localBR = itemLayer.InverseTransformPoint(endCorners[3]);
-
-            localPos = new Vector2(localTL.x, localTL.y);
-            size = new Vector2(Mathf.Abs(localBR.x - localTL.x), Mathf.Abs(localTL.y - localBR.y));
-            return size.x > 0.5f && size.y > 0.5f;
+            localPos = grid.CellTopLeftLocal(gridX, gridY);
+            return true;
         }
     }
 }

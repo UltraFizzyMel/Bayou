@@ -80,7 +80,7 @@ namespace Bayou.Inventory.UI
 
             if (iconImage != null)
             {
-                FitIcon(iconImage, Item.definition.icon);
+                FitIcon(iconImage, Item.definition.icon, Item.rotation);
                 iconImage.raycastTarget = true;
             }
         }
@@ -122,7 +122,7 @@ namespace Bayou.Inventory.UI
             rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f);
         }
 
-        public static void FitIcon(Image icon, Sprite sprite)
+        public static void FitIcon(Image icon, Sprite sprite, int rotation = 0)
         {
             if (icon == null) return;
 
@@ -141,7 +141,8 @@ namespace Bayou.Inventory.UI
             rt.anchorMax = new Vector2(0.5f, 0.5f);
             rt.pivot = new Vector2(0.5f, 0.5f);
             rt.localScale = Vector3.one;
-            rt.localRotation = Quaternion.identity;
+            rotation = ((rotation % 4) + 4) % 4;
+            rt.localRotation = Quaternion.Euler(0f, 0f, -90f * rotation);
 
             if (sprite == null)
             {
@@ -160,7 +161,10 @@ namespace Bayou.Inventory.UI
             var spriteSize = sprite.rect.size;
             if (spriteSize.x < 1f) spriteSize.x = 1f;
             if (spriteSize.y < 1f) spriteSize.y = 1f;
-            var scale = Mathf.Min(maxW / spriteSize.x, maxH / spriteSize.y);
+            var rot90 = rotation % 2 != 0;
+            var visW = rot90 ? spriteSize.y : spriteSize.x;
+            var visH = rot90 ? spriteSize.x : spriteSize.y;
+            var scale = Mathf.Min(maxW / visW, maxH / visH);
             rt.sizeDelta = spriteSize * scale;
             rt.anchoredPosition = Vector2.zero;
         }

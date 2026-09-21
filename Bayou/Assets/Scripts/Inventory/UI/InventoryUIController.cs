@@ -164,7 +164,11 @@ namespace Bayou.Inventory.UI
         {
             if (_dragging == null) return;
 
+            var oldRot = _dragging.Item != null ? _dragging.Item.rotation : 0;
             _dragging.RotateClockwise();
+            if (_dragging.Item?.definition != null)
+                _dragGrabOffset = InventoryDragPlacement.RotateGrabClockwise(
+                    _dragging.Item.definition.shape, oldRot, _dragGrabOffset);
 
             if (Mouse.current != null &&
                 TryGetDragAnchor(Mouse.current.position.ReadValue(), null, _dragging,
@@ -180,6 +184,10 @@ namespace Bayou.Inventory.UI
         {
             if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen)
                 return;
+            if (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen)
+                return;
+            if (GameplayPause.IsDialoguePlaying)
+                return;
             if (_isOpen)
                 Close();
             else
@@ -189,6 +197,10 @@ namespace Bayou.Inventory.UI
         public void Open()
         {
             if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen)
+                return;
+            if (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen)
+                return;
+            if (GameplayPause.IsDialoguePlaying)
                 return;
             _isOpen = true;
             if (panelRoot != null)

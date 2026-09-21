@@ -28,7 +28,7 @@ namespace Bayou.Environment
         [SerializeField] private float wadeSubmersion = 0.12f;
         [Tooltip("Submersion at or above this value counts as swimming.")]
         [SerializeField] private float swimSubmersion = 0.85f;
-        [SerializeField] private bool spawnInnerSwimZone = true;
+        [SerializeField] private bool spawnInnerSwimZone = false;
         [SerializeField] [Range(0.15f, 0.45f)] private float innerSwimInset = 0.28f;
 
         [Header("Trigger volume")]
@@ -67,38 +67,53 @@ namespace Bayou.Environment
 
         public WaterDepthLevel Evaluate(Vector3 playerFeet)
         {
-            if (StandingOnBank(playerFeet))
+            var surface = SurfaceY;
+            var submersion = surface - playerFeet.y;
+            var hasGround = TryGetGroundY(playerFeet, out var ground);
+            var column = hasGround ? surface - ground : submersion;
+
+            // Bank / dry ground: terrain at or above the waterline.
+            if (hasGround && ground >= surface - 0.04f)
                 return WaterDepthLevel.None;
 
-            var submersion = SurfaceY - playerFeet.y;
-            if (submersion < wadeSubmersion)
+            if (column < wadeSubmersion && submersion < wadeSubmersion)
                 return WaterDepthLevel.None;
 
-            if (depthLevel == WaterDepthLevel.Swim || submersion >= swimSubmersion)
+            // Swim only when the water column is actually deep — never because
+            // of an inner XZ zone. Shallow ponds stay wade even in the middle.
+            if (column >= swimSubmersion)
                 return WaterDepthLevel.Swim;
 
             return WaterDepthLevel.Wade;
         }
 
-        private bool StandingOnBank(Vector3 feet)
+        private static bool TryGetGroundY(Vector3 feet, out float y)
         {
-            var origin = feet + Vector3.up * 0.4f;
-            if (!Physics.Raycast(origin, Vector3.down, out var hit, 1.6f, ~0, QueryTriggerInteraction.Ignore))
-                return false;
-            if (IsOwnWaterCollider(hit.collider))
-                return false;
-            return hit.point.y >= SurfaceY - 0.08f;
-        }
-
-        private bool IsOwnWaterCollider(Collider col)
-        {
-            if (col == null) return false;
-            if (col == _trigger) return true;
-            if (col.transform == transform || col.transform.IsChildOf(transform))
+            var terrains = Terrain.activeTerrains;
+            for (var i = 0; i < terrains.Length; i++)
+            {
+                var terrain = terrains[i];
+                if (terrain == null || terrain.terrainData == null) continue;
+                var local = feet - terrain.transform.position;
+                var size = terrain.terrainData.size;
+                if (local.x < 0f || local.z < 0f || local.x > size.x || local.z > size.z)
+                    continue;
+                y = terrain.SampleHeight(feet) + terrain.transform.position.y;
                 return true;
-            if (col.CompareTag("Water")) return true;
-            return col.GetComponent<WaterVolume>() != null ||
-                   col.GetComponentInParent<WaterVolume>() != null;
+            }
+
+            var origin = feet + Vector3.up * 0.6f;
+            if (Physics.Raycast(origin, Vector3.down, out var hit, 4f, ~0, QueryTriggerInteraction.Ignore) &&
+                hit.collider != null &&
+                hit.collider.GetComponentInParent<WaterVolume>() == null &&
+                !hit.collider.CompareTag("Water"))
+            {
+                y = hit.point.y;
+                return true;
+            }
+
+            y = 0f;
+            return false;
         }
 
         private void Reset()
@@ -109,8 +124,7 @@ namespace Bayou.Environment
         private void Awake()
         {
             EnsureTriggerVolume();
-            if (depthLevel != WaterDepthLevel.Swim && spawnInnerSwimZone)
-                EnsureInnerSwimZone();
+            DestroyInnerSwimZone();
         }
 
         private void OnEnable()
@@ -193,6 +207,13 @@ namespace Bayou.Environment
                 else
                     DestroyImmediate(child.gameObject);
             }
+        }
+
+        private void DestroyInnerSwimZone()
+        {
+            var existing = transform.Find(DeepChildName);
+            if (existing == null) return;
+            DestroyImmediate(existing.gameObject);
         }
 
         private void EnsureInnerSwimZone()
