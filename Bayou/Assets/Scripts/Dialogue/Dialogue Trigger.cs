@@ -5,7 +5,8 @@ using UnityEngine;
 public class DialogueTrigger : MonoBehaviour, IInteractionPromptSource
 {
     [Header("Visual Cue")]
-    [SerializeField] private GameObject visualCue;
+    [SerializeField] private GameObject buttonCue;
+    [SerializeField] private GameObject NPCIndicator;
 
     [Header("Ink JSON")]
     [SerializeField] private TextAsset inkJSON;
@@ -17,8 +18,10 @@ public class DialogueTrigger : MonoBehaviour, IInteractionPromptSource
     private void Awake()
     {
         playerInRange = false;
-        if (visualCue != null)
-            visualCue.SetActive(false);
+        if (buttonCue != null)
+            buttonCue.SetActive(false);
+        if (NPCIndicator != null)
+            NPCIndicator.SetActive(true);
     }
 
     private void OnEnable() => InteractionPromptBroker.Register(this);
@@ -29,8 +32,10 @@ public class DialogueTrigger : MonoBehaviour, IInteractionPromptSource
         var dialogue = DialogueManager.GetInstance();
         var canTalk = playerInRange && dialogue != null && !dialogue.dialogueIsPlaying && !ShopIsOpen();
 
-        if (visualCue != null)
-            visualCue.SetActive(canTalk);
+        if (buttonCue != null)
+            buttonCue.SetActive(canTalk);
+        if (NPCIndicator != null)
+            NPCIndicator.SetActive(!canTalk);
 
         if (!canTalk) return;
 
