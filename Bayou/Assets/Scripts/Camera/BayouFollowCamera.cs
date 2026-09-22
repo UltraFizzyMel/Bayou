@@ -14,6 +14,12 @@ namespace Bayou.CameraControl
         [Tooltip("Camera position = target position + this offset (world space).")]
         [SerializeField] private Vector3 worldOffset = new(0f, 14f, -12f);
 
+        [Tooltip("Distance from the player. The offset is rebuilt from the pitch so the player stays centered.")]
+        [SerializeField] private float followDistance = 24f;
+
+        [Tooltip("How close the camera moves when a conversation starts. 1 = no change.")]
+        [SerializeField] private float dialogueZoom = 0.78f;
+
         [Tooltip("Seconds to ease toward the desired position (lower = snappier).")]
         [SerializeField] private float positionSmoothTime = 0.18f;
 
@@ -30,6 +36,7 @@ namespace Bayou.CameraControl
 
         private Vector3 _smoothVelocity;
         private Vector3 _punch;
+        private float _zoom = 1f;
 
         private void OnEnable()
         {
@@ -42,8 +49,16 @@ namespace Bayou.CameraControl
             if (target == null)
                 return;
 
-            var desired = target.position + worldOffset;
-            _punch = Vector3.Lerp(_punch, Vector3.zero, 1f - Mathf.Exp(-10f * Time.deltaTime));
+            var talking = false;
+            var dialogue = DialogueManager.GetInstance();
+            if (dialogue != null)
+                talking = dialogue.dialogueIsPlaying;
+            var zoomTarget = talking ? Mathf.Clamp(dialogueZoom, 0.55f, 1f) : 1f;
+            var dt = Time.unscaledDeltaTime;
+            _zoom = Mathf.Lerp(_zoom, zoomTarget, 1f - Mathf.Exp(-5f * dt));
+
+            var desired = target.position + FollowOffset(_zoom);
+            _punch = Vector3.Lerp(_punch, Vector3.zero, 1f - Mathf.Exp(-10f * dt));
             desired += _punch;
 
             if (positionSmoothTime <= 0f)
@@ -58,7 +73,7 @@ namespace Bayou.CameraControl
                     ref _smoothVelocity,
                     positionSmoothTime,
                     maxFollowSpeed > 0f ? maxFollowSpeed : Mathf.Infinity,
-                    Time.deltaTime
+                    dt
                 );
             }
 
@@ -70,7 +85,8 @@ namespace Bayou.CameraControl
         public void SnapToTarget()
         {
             if (target == null) return;
-            transform.position = target.position + worldOffset;
+            _zoom = 1f;
+            transform.position = target.position + FollowOffset(_zoom);
             _smoothVelocity = Vector3.zero;
             _punch = Vector3.zero;
             if (useFixedRotation)
@@ -80,6 +96,20 @@ namespace Bayou.CameraControl
         public void SetTarget(Transform newTarget)
         {
             target = newTarget;
+        }
+
+        /// <summary>
+        /// Offset along the fixed pitch so the view ray through the screen center hits the player.
+        /// </summary>
+        private Vector3 FollowOffset(float zoom)
+        {
+            var distance = followDistance > 1f
+                ? followDistance
+                : new Vector2(worldOffset.y, worldOffset.z).magnitude;
+            distance = Mathf.Max(6f, distance) * Mathf.Clamp(zoom, 0.55f, 1.25f);
+            var pitch = fixedEulerAngles.x * Mathf.Deg2Rad;
+            var offset = new Vector3(0f, Mathf.Sin(pitch) * distance, -Mathf.Cos(pitch) * distance);
+            return Quaternion.Euler(0f, fixedEulerAngles.y, 0f) * offset;
         }
 
         /// <summary>Short combat punch so a connecting hit is readable on an isometric rig.</summary>

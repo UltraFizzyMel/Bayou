@@ -42,6 +42,8 @@ namespace Bayou.Save
         {
             RefreshRange();
 
+            if (bonfireUi == null)
+                bonfireUi = FindFirstObjectByType<BonfireUIController>(FindObjectsInactive.Include);
             if (bonfireUi == null) return;
 
             var blocked = bonfireUi.IsOpen ||

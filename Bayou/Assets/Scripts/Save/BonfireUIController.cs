@@ -65,6 +65,11 @@ namespace Bayou.Save
 
         public void Open(string bonfireId, string bonfireDisplayName = "Campfire")
         {
+            if (!gameObject.activeSelf)
+                gameObject.SetActive(true);
+            if (transform.localScale.sqrMagnitude < 0.01f)
+                transform.localScale = Vector3.one;
+
             _inventory = InventoryController.Instance;
             _saveSystem = GameSaveSystem.Instance;
             _bonfireId = bonfireId;

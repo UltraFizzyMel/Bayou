@@ -76,6 +76,50 @@ namespace Bayou.Quests
             }
 
             SoftenSparkles();
+            EnsureGlint();
+        }
+
+        private void EnsureGlint()
+        {
+            if (transform.Find("Glint") != null) return;
+
+            var root = new GameObject("Glint");
+            root.transform.SetParent(transform, false);
+            root.transform.localPosition = new Vector3(0f, 0.55f, 0f);
+            var s = transform.lossyScale;
+            root.transform.localScale = new Vector3(
+                1f / Mathf.Max(0.05f, Mathf.Abs(s.x)),
+                1f / Mathf.Max(0.05f, Mathf.Abs(s.y)),
+                1f / Mathf.Max(0.05f, Mathf.Abs(s.z)));
+            var mat = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(new Color(1f, 0.95f, 0.65f, 1f));
+            AddGlintQuad(root.transform, mat, Quaternion.identity);
+            AddGlintQuad(root.transform, mat, Quaternion.Euler(0f, 90f, 0f));
+        }
+
+        private void PulseGlint()
+        {
+            var glint = transform.Find("Glint");
+            if (glint == null) return;
+            glint.Rotate(0f, 90f * Time.deltaTime, 0f, Space.Self);
+            var pulse = 0.85f + 0.35f * Mathf.Sin(Time.time * 5.5f);
+            for (var i = 0; i < glint.childCount; i++)
+                glint.GetChild(i).localScale = new Vector3(0.16f, 0.48f * pulse, 0.16f);
+        }
+
+        private static void AddGlintQuad(Transform parent, Material mat, Quaternion localRot)
+        {
+            var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            go.name = "GlintFlare";
+            go.transform.SetParent(parent, false);
+            go.transform.localRotation = localRot;
+            go.transform.localScale = new Vector3(0.22f, 0.55f, 0.22f);
+            var col = go.GetComponent<Collider>();
+            if (col != null)
+                Destroy(col);
+            var rend = go.GetComponent<MeshRenderer>();
+            rend.sharedMaterial = mat;
+            rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            rend.receiveShadows = false;
         }
 
         private void OnEnable()
@@ -98,6 +142,7 @@ namespace Bayou.Quests
 
             var y = _basePos.y + Mathf.Sin(Time.time * bobSpeed) * bobAmplitude;
             transform.position = new Vector3(_basePos.x, y, _basePos.z);
+            PulseGlint();
 
             if (!CanCollectNow())
                 return;
@@ -207,8 +252,8 @@ namespace Bayou.Quests
                 if (ps == null) continue;
 
                 var main = ps.main;
-                main.startSize = new ParticleSystem.MinMaxCurve(0.04f, 0.12f);
-                main.maxParticles = Mathf.Min(main.maxParticles, 24);
+                main.startSize = new ParticleSystem.MinMaxCurve(0.08f, 0.22f);
+                main.maxParticles = Mathf.Min(main.maxParticles, 32);
                 main.simulationSpace = ParticleSystemSimulationSpace.World;
 
                 var rend = ps.GetComponent<ParticleSystemRenderer>();
@@ -218,7 +263,7 @@ namespace Bayou.Quests
                     rend.sharedMaterial = sparkle;
                 rend.enabled = true;
                 rend.renderMode = ParticleSystemRenderMode.Billboard;
-                rend.maxParticleSize = 0.35f;
+                rend.maxParticleSize = 0.5f;
                 rend.minParticleSize = 0f;
                 rend.allowRoll = false;
                 if (!ps.isPlaying)

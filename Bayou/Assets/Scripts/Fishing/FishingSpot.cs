@@ -129,6 +129,9 @@ namespace Bayou.Fishing
 
         private void Start()
         {
+            // Water volumes add their box collider in Awake; refit once that exists.
+            if (waterBounds != null)
+                radius = FitRadiusToWater(radius);
             if (spawnOnStart)
                 SpawnContents();
         }
@@ -152,9 +155,10 @@ namespace Bayou.Fishing
 
         public float SurfaceYAt(Vector3 worldPos)
         {
-            var waterY = waterBounds != null ? waterBounds.bounds.max.y : transform.position.y;
+            var waterY = WaterSurfaceY();
             var swimY = waterY - Mathf.Clamp(spawnY, 0.02f, 0.35f);
-            if (TryGetGroundHeight(worldPos, out var ground))
+            // Lift off the pond bottom only. Never ride the fish up onto the bank.
+            if (TryGetGroundHeight(worldPos, out var ground) && ground < waterY - 0.05f)
                 swimY = Mathf.Max(swimY, ground + 0.06f);
             return swimY;
         }
@@ -170,13 +174,29 @@ namespace Bayou.Fishing
             return true;
         }
 
-        /// <summary>Keeps a world point inside the spot circle and the water collider, off land.</summary>
+        /// <summary>How far fish may wander. Half the spot radius, so they stay in the pond.</summary>
+        private float FishSwimRadius => Mathf.Max(0.75f, (radius - shoreMargin) * 0.5f);
+
+        /// <summary>Keeps a world point inside the fish swim circle and the water, off land.</summary>
         public Vector3 ClampInside(Vector3 worldPos)
         {
             var pos = worldPos;
             var center = SwimCenter;
+            pos = LimitToSwimCircle(pos, center);
+
+            if (HasSwimVolume)
+                pos = SnapToWaterCollider(pos);
+            pos = PullOffLand(pos, center);
+            pos = LimitToSwimCircle(pos, center);
+
+            pos.y = SurfaceYAt(pos);
+            return pos;
+        }
+
+        private Vector3 LimitToSwimCircle(Vector3 pos, Vector3 center)
+        {
             var flat = new Vector3(pos.x - center.x, 0f, pos.z - center.z);
-            var maxR = Mathf.Max(0.5f, radius - shoreMargin);
+            var maxR = FishSwimRadius;
             if (flat.sqrMagnitude > maxR * maxR)
             {
                 flat = flat.normalized * maxR;
@@ -184,12 +204,6 @@ namespace Bayou.Fishing
                 pos.z = center.z + flat.z;
             }
 
-            if (HasSwimVolume)
-                pos = SnapToWaterCollider(pos);
-            else
-                pos = PullOffLand(pos, center);
-
-            pos.y = SurfaceYAt(pos);
             return pos;
         }
 
@@ -319,16 +333,65 @@ namespace Bayou.Fishing
         {
             get
             {
-                if (waterBounds == null) return false;
-                var size = waterBounds.bounds.size;
-                return size.x > 0.45f && size.z > 0.45f;
+                var col = SwimCollider;
+                if (col == null) return false;
+                var size = col.bounds.size;
+                if (size.x <= 0.45f || size.z <= 0.45f) return false;
+                // A collision sheet buried under the terrain is not the pond.
+                if (TryGetGroundHeight(col.bounds.center, out var ground) &&
+                    col.bounds.max.y < ground - 0.2f)
+                    return false;
+                return true;
             }
+        }
+
+        /// <summary>
+        /// Prefer the water volume's box over a paper-thin mesh. A quad under the
+        /// terrain reports every point as "inside" and lets fish walk onto land.
+        /// </summary>
+        private Collider SwimCollider
+        {
+            get
+            {
+                if (waterBounds == null) return null;
+                var box = waterBounds.GetComponent<BoxCollider>();
+                if (box != null && box.enabled)
+                {
+                    var size = box.bounds.size;
+                    if (size.x > 0.45f && size.z > 0.45f)
+                        return box;
+                }
+
+                return waterBounds;
+            }
+        }
+
+        private float WaterSurfaceY()
+        {
+            var col = SwimCollider;
+            var rend = col != null ? col.GetComponent<Renderer>() : null;
+            if (rend == null && waterBounds != null)
+                rend = waterBounds.GetComponent<Renderer>();
+
+            if (rend != null)
+            {
+                var size = rend.bounds.size;
+                // Horizontal sheet: the thin axis is vertical, so the top is the surface.
+                if (size.y <= size.x && size.y <= size.z)
+                    return rend.bounds.max.y;
+                return rend.transform.position.y;
+            }
+
+            if (col != null)
+                return col.bounds.max.y;
+            return transform.position.y;
         }
 
         private float FitRadiusToWater(float requested)
         {
-            if (waterBounds == null || !HasSwimVolume) return requested;
-            var e = waterBounds.bounds.extents;
+            var col = SwimCollider;
+            if (col == null || !HasSwimVolume) return requested;
+            var e = col.bounds.extents;
             var fit = Mathf.Min(e.x, e.z) - shoreMargin;
             if (fit < 1f) fit = Mathf.Max(0.75f, Mathf.Min(e.x, e.z) * 0.85f);
             return Mathf.Min(requested, fit);
@@ -336,8 +399,9 @@ namespace Bayou.Fishing
 
         private bool IsInsideWaterBounds(Vector3 worldPos)
         {
-            if (waterBounds == null) return true;
-            var b = waterBounds.bounds;
+            var col = SwimCollider;
+            if (col == null) return true;
+            var b = col.bounds;
             var m = shoreMargin * 0.5f;
             return worldPos.x >= b.min.x + m && worldPos.x <= b.max.x - m &&
                    worldPos.z >= b.min.z + m && worldPos.z <= b.max.z - m;
@@ -345,13 +409,14 @@ namespace Bayou.Fishing
 
         private bool IsInsideWaterCollider(Vector3 worldPos)
         {
-            if (waterBounds == null || !HasSwimVolume)
+            var col = SwimCollider;
+            if (col == null || !HasSwimVolume)
                 return true;
 
-            if (waterBounds.enabled)
+            if (col.enabled && SupportsClosestPoint(col))
             {
-                var sample = new Vector3(worldPos.x, waterBounds.bounds.center.y, worldPos.z);
-                var closest = waterBounds.ClosestPoint(sample);
+                var sample = new Vector3(worldPos.x, col.bounds.center.y, worldPos.z);
+                var closest = col.ClosestPoint(sample);
                 var dx = sample.x - closest.x;
                 var dz = sample.z - closest.z;
                 if (dx * dx + dz * dz > 0.08f * 0.08f)
@@ -367,11 +432,12 @@ namespace Bayou.Fishing
 
         private Vector3 SnapToWaterCollider(Vector3 pos)
         {
-            if (waterBounds == null || !waterBounds.enabled)
+            var col = SwimCollider;
+            if (col == null || !col.enabled)
             {
-                if (waterBounds != null)
+                if (col != null)
                 {
-                    var b = waterBounds.bounds;
+                    var b = col.bounds;
                     var m = shoreMargin;
                     if (b.max.x - b.min.x > m * 2f)
                         pos.x = Mathf.Clamp(pos.x, b.min.x + m, b.max.x - m);
@@ -381,22 +447,40 @@ namespace Bayou.Fishing
                 return pos;
             }
 
-            var sample = new Vector3(pos.x, waterBounds.bounds.center.y, pos.z);
-            var closest = waterBounds.ClosestPoint(sample);
+            if (!SupportsClosestPoint(col))
+            {
+                var b = col.bounds;
+                var m = shoreMargin;
+                if (b.max.x - b.min.x > m * 2f)
+                    pos.x = Mathf.Clamp(pos.x, b.min.x + m, b.max.x - m);
+                if (b.max.z - b.min.z > m * 2f)
+                    pos.z = Mathf.Clamp(pos.z, b.min.z + m, b.max.z - m);
+                return pos;
+            }
+
+            var sample = new Vector3(pos.x, col.bounds.center.y, pos.z);
+            var closest = col.ClosestPoint(sample);
             pos.x = closest.x;
             pos.z = closest.z;
             return pos;
         }
 
+        private static bool SupportsClosestPoint(Collider col)
+        {
+            var mesh = col as MeshCollider;
+            return mesh == null || mesh.convex;
+        }
+
         public bool IsLand(Vector3 worldPos)
         {
-            if (waterBounds != null)
+            var waterY = WaterSurfaceY();
+            if (TryGetGroundHeight(worldPos, out var ground) && ground > waterY + 0.05f)
+                return true;
+
+            if (waterBounds != null && HasSwimVolume)
                 return !IsInsideWaterCollider(worldPos) && !IsInsideWaterBounds(worldPos);
 
-            var waterY = transform.position.y;
-            if (!TryGetGroundHeight(worldPos, out var ground))
-                return false;
-            return ground > waterY + 0.22f;
+            return false;
         }
 
         public static bool TryGetGroundHeight(Vector3 worldPos, out float y)
@@ -499,12 +583,12 @@ namespace Bayou.Fishing
         public Vector3 RandomSwimPoint(Vector3 from, float minTravel)
         {
             var minTravelSq = Mathf.Max(0.35f, minTravel) * Mathf.Max(0.35f, minTravel);
-            var swimR = Mathf.Max(0.6f, radius - shoreMargin);
+            var swimR = FishSwimRadius;
             minTravelSq = Mathf.Min(minTravelSq, (swimR * 0.55f) * (swimR * 0.55f));
             var fallback = ClampInside(from);
             for (var attempt = 0; attempt < 18; attempt++)
             {
-                var r = radius * 0.9f;
+                var r = swimR * 0.9f;
                 var offset = UnityEngine.Random.insideUnitCircle * r;
                 var candidate = new Vector3(
                     transform.position.x + offset.x,
@@ -530,7 +614,7 @@ namespace Bayou.Fishing
             var minSpacingSq = minSpacing * minSpacing;
             for (var attempt = 0; attempt < 24; attempt++)
             {
-                var r = radius * 0.9f;
+                var r = FishSwimRadius * 0.9f;
                 var offset = UnityEngine.Random.insideUnitCircle * r;
                 var candidate = new Vector3(
                     transform.position.x + offset.x,

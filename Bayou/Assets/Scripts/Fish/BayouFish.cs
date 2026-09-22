@@ -92,7 +92,7 @@ namespace Bayou.Fish
             isStatic = !moving;
             if (home != null)
             {
-                roamRadius = Mathf.Max(1.6f, home.Radius * 0.85f);
+                roamRadius = Mathf.Max(1.2f, home.Radius * 0.5f);
                 neighborSeparation = Mathf.Clamp(neighborSeparation, 0.8f, Mathf.Max(0.9f, home.Radius * 0.35f));
                 _spawnPosition = home.ClampInside(transform.position);
                 transform.position = _spawnPosition;

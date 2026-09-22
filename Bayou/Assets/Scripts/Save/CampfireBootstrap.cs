@@ -25,7 +25,7 @@ namespace Bayou.Save
             if (string.Equals(scene.name, "MainMenu", System.StringComparison.OrdinalIgnoreCase))
                 return;
 
-            var ui = Object.FindFirstObjectByType<BonfireUIController>();
+            var ui = Object.FindFirstObjectByType<BonfireUIController>(FindObjectsInactive.Include);
             var roots = Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             var index = 1;
             for (var i = 0; i < roots.Length; i++)
