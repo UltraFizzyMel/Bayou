@@ -19,6 +19,16 @@ namespace Bayou.Quests
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Boot()
         {
+            // AfterSceneLoad only runs for the first scene. Player builds start on MainMenu.
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            Ensure();
+        }
+
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) => Ensure();
+
+        private static void Ensure()
+        {
             if (!IsGameplayScene()) return;
             if (Object.FindFirstObjectByType<StarterLoadout>() != null) return;
             var go = new GameObject("StarterLoadout");
@@ -50,6 +60,9 @@ namespace Bayou.Quests
                 return false;
             if (string.Equals(name, "InventoryTest", System.StringComparison.OrdinalIgnoreCase))
                 return false;
+            if (string.Equals(name, "TerrainTest", System.StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, "MovementTest", System.StringComparison.OrdinalIgnoreCase))
+                return true;
             return Object.FindFirstObjectByType<QuestManager>(FindObjectsInactive.Include) != null ||
                    Object.FindFirstObjectByType<BayouFishingEquipment>(FindObjectsInactive.Include) != null;
         }

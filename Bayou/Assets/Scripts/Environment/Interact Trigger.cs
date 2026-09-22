@@ -43,6 +43,25 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
 
         if (requiredKeyItem != null && string.IsNullOrWhiteSpace(requiredItemId))
             requiredItemId = requiredKeyItem.Id;
+
+        // The church entrance gate is already open. Its trigger has no key and
+        // would only show "Locked — need key".
+        if (IsOpenChurchEntrance())
+        {
+            _isOpen = true;
+            var volume = GetComponent<Collider>();
+            if (volume != null)
+                volume.enabled = false;
+        }
+    }
+
+    private bool IsOpenChurchEntrance()
+    {
+        var gate = transform.parent;
+        if (gate == null || gate.name != "Gate (1)")
+            return false;
+        var area = gate.parent;
+        return area != null && area.name == "Church Area";
     }
 
     private void OnEnable()
@@ -140,7 +159,7 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
     public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
     {
         prompt = default;
-        if (_isOpen || !playerInRange) return false;
+        if (_isOpen || IsOpenChurchEntrance() || !playerInRange) return false;
 
         var dist = DistToPlayerSq();
         if (CanUnlock())

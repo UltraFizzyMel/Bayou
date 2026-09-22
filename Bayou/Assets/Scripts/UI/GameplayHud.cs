@@ -89,7 +89,8 @@ namespace Bayou.UI
             if (Object.FindFirstObjectByType<QuestManager>(FindObjectsInactive.Include) != null)
                 return true;
 
-            return string.Equals(name, "MovementTest", System.StringComparison.OrdinalIgnoreCase);
+            return string.Equals(name, "MovementTest", System.StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(name, "TerrainTest", System.StringComparison.OrdinalIgnoreCase);
         }
 
         private static void EnsureInScene()
