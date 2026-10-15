@@ -31,10 +31,10 @@ public class FogParticleFade : MonoBehaviour
             { 
                 float newAlpha = col.a - (fadeSpeed * Time.deltaTime * 255);
                 col.a = (byte)Mathf.Max(newAlpha, 0);
-                //p.GetCurrentColor(ps) = col;
+                p.color = col;
 
             }
-            if (col.a == 0)
+            else if (col.a == 0)
             {
                 p.remainingLifetime = remaininglife;
             }
