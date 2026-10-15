@@ -69575,7 +69575,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5096320245925656991, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
       propertyPath: InitialModule.maxNumParticles
-      value: 800
+      value: 600
       objectReference: {fileID: 0}
     - target: {fileID: 5096320245925656991, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
       propertyPath: InitialModule.startSize.scalar
@@ -69591,7 +69591,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5096320245925656991, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
-      value: 80
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 5096320245925656991, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
       propertyPath: InitialModule.startLifetime.scalar
@@ -80179,6 +80179,14 @@ PrefabInstance:
       propertyPath: 'TriggerModule.primitives.Array.data[0]'
       value: 
       objectReference: {fileID: 216905680}
+    - target: {fileID: 5096320245925656991, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
+      propertyPath: 'TriggerModule.primitives.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100433184}
+    - target: {fileID: 5096320245925656991, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
+      propertyPath: 'TriggerModule.primitives.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1461095477}
     - target: {fileID: 5912943020947646508, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
       propertyPath: m_Name
       value: WaterfallMist (12)
@@ -92259,6 +92267,14 @@ PrefabInstance:
       propertyPath: 'TriggerModule.primitives.Array.data[0]'
       value: 
       objectReference: {fileID: 216905680}
+    - target: {fileID: 5096320245925656991, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
+      propertyPath: 'TriggerModule.primitives.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100433184}
+    - target: {fileID: 5096320245925656991, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
+      propertyPath: 'TriggerModule.primitives.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1461095477}
     - target: {fileID: 5912943020947646508, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
       propertyPath: m_Name
       value: WaterfallMist (10)
@@ -101281,8 +101297,9 @@ GameObject:
   - component: {fileID: 2100433184}
   - component: {fileID: 2100433186}
   - component: {fileID: 2100433185}
+  - component: {fileID: 2100433187}
   m_Layer: 0
-  m_Name: Light (1)
+  m_Name: Light (1) Fog Zone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -101397,6 +101414,27 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!135 &2100433187
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100433183}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.07137454
+  m_Center: {x: 0, y: -5.9771337e-17, z: 0.009263052}
 --- !u!1 &2104402123 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: b104b86ca07d051418fdb6c7c5ec85bc, type: 3}
