@@ -35392,6 +35392,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!4 &800897869 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6797524622364177450, guid: d0eee295eef89e2499df008d4086606a, type: 3}
@@ -45638,6 +45639,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!4 &1001306512 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4457145576227965664, guid: d42fdb603a060fa4ab784d51dce29d59, type: 3}
@@ -47321,6 +47323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1001 &1032018783
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -51206,6 +51209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1 &1113667675 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: f0097ed778c5e264fa3f02d5ccf0e71e, type: 3}
@@ -53064,6 +53068,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1001 &1144294347
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -56512,6 +56517,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1 &1212046529
 GameObject:
   m_ObjectHideFlags: 0
@@ -62330,6 +62336,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1001 &1321802833
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -70822,6 +70829,10 @@ PrefabInstance:
       propertyPath: InitialModule.startLifetime.minScalar
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 5096320245925656991, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
+      propertyPath: 'TriggerModule.primitives.Array.data[0]'
+      value: 
+      objectReference: {fileID: 216905680}
     - target: {fileID: 5912943020947646508, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
       propertyPath: m_Name
       value: WaterfallMist (6)
@@ -70884,6 +70895,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1 &1495790840
 GameObject:
   m_ObjectHideFlags: 0
@@ -79433,6 +79445,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1001 &1674269999
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -83174,6 +83187,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1 &1740295994 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5912943020947646508, guid: 808afbe750942614e8ab0efbd8656b3d, type: 3}
@@ -88352,6 +88366,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!4 &1842982405 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2832835446313167682, guid: eb69b10eb41e2d9498401b1a20b54e08, type: 3}
@@ -92015,6 +92030,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1001 &1913101108
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -93889,6 +93905,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1001 &1954629799
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -94734,6 +94751,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1 &1981946818
 GameObject:
   m_ObjectHideFlags: 0
@@ -98745,6 +98763,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!4 &2056610909 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4457145576227965664, guid: d42fdb603a060fa4ab784d51dce29d59, type: 3}
@@ -100651,6 +100670,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!4 &2090953900 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4457145576227965664, guid: d42fdb603a060fa4ab784d51dce29d59, type: 3}
@@ -100858,6 +100878,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FogParticleFade
   remaininglife: 2
+  fadeSpeed: 2
 --- !u!1001 &2097008581
 PrefabInstance:
   m_ObjectHideFlags: 0

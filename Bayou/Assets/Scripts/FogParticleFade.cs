@@ -6,6 +6,7 @@ using DG.Tweening;
 public class FogParticleFade : MonoBehaviour
 {
     [SerializeField] private float remaininglife;
+    [SerializeField] private float fadeSpeed = 2f;
     ParticleSystem ps;
 
     // these lists are used to contain the particles which match
@@ -25,9 +26,20 @@ public class FogParticleFade : MonoBehaviour
         for (int i = 0; i < numEnter; i++)
         {
             ParticleSystem.Particle p = enter[i];
-            p.remainingLifetime = remaininglife;
-            p.color = p.GetCurrentColor.DOFade(0f, 2f);
+            Color col = p.GetCurrentColor(ps);
+            if (col.a > 0)
+            { 
+                float newAlpha = col.a - (fadeSpeed * Time.deltaTime * 255);
+                col.a = (byte)Mathf.Max(newAlpha, 0);
+                //p.GetCurrentColor(ps) = col;
+
+            }
+            if (col.a == 0)
+            {
+                p.remainingLifetime = remaininglife;
+            }
             
+
             enter[i] = p;
             
         }
