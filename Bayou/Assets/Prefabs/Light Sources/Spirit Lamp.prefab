@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4149450083341337723
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 95.98
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899089262055335271, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Name
+      value: Spirit Lamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838373683240808253, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Color.b
+      value: 0.78462213
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838373683240808253, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838373683240808253, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Color.r
+      value: 0.4235294
+      objectReference: {fileID: 0}
+    - target: {fileID: 7838373683240808253, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Intensity
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7991558505341762813, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Color.b
+      value: 0.78462213
+      objectReference: {fileID: 0}
+    - target: {fileID: 7991558505341762813, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Color.g
+      value: 0.9529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 7991558505341762813, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Color.r
+      value: 0.4235294
+      objectReference: {fileID: 0}
+    - target: {fileID: 7991558505341762813, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Intensity
+      value: 7
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
