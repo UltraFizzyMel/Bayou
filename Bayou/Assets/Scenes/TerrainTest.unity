@@ -10929,27 +10929,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2ce337c36e93a7f43a904b25551c4749, type: 3}
   m_PrefabInstance: {fileID: 1261396491}
   m_PrefabAsset: {fileID: 0}
---- !u!135 &216905681
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 216905678}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 7.370602
-  m_Center: {x: 0.099298954, y: 0.33559322, z: 0}
 --- !u!136 &216905682
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -49887,22 +49866,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 762243719}
     m_Modifications:
-    - target: {fileID: 1691803315876521093, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
-      propertyPath: inkJSON
-      value: 
-      objectReference: {fileID: 4900000, guid: f0c65883855f5194fb5a956ea5966d71, type: 3}
-    - target: {fileID: 1691803315876521093, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
-      propertyPath: buttonCue
-      value: 
-      objectReference: {fileID: 980556950}
-    - target: {fileID: 1691803315876521093, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
-      propertyPath: NPCIndicator
-      value: 
-      objectReference: {fileID: 1714884085}
-    - target: {fileID: 3295293092880802749, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
-      propertyPath: m_Name
-      value: button cue
-      objectReference: {fileID: 0}
     - target: {fileID: 95801423253959223, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
       propertyPath: m_SortingOrder
       value: 1
@@ -49922,6 +49885,30 @@ PrefabInstance:
     - target: {fileID: 1534635692298339364, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
       propertyPath: m_Center.z
       value: -0.4759655
+      objectReference: {fileID: 0}
+    - target: {fileID: 1691803315876521093, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
+      propertyPath: inkJSON
+      value: 
+      objectReference: {fileID: 4900000, guid: f0c65883855f5194fb5a956ea5966d71, type: 3}
+    - target: {fileID: 1691803315876521093, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
+      propertyPath: buttonCue
+      value: 
+      objectReference: {fileID: 980556950}
+    - target: {fileID: 1691803315876521093, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
+      propertyPath: NPCIndicator
+      value: 
+      objectReference: {fileID: 1714884085}
+    - target: {fileID: 2469138775637448677, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2926554715081972382, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
+      propertyPath: m_Name
+      value: Marie Claire Baptiste
+      objectReference: {fileID: 0}
+    - target: {fileID: 3295293092880802749, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
+      propertyPath: m_Name
+      value: button cue
       objectReference: {fileID: 0}
     - target: {fileID: 6769560163115967866, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
       propertyPath: m_LocalPosition.x
@@ -49961,14 +49948,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6769560163115967866, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2926554715081972382, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
-      propertyPath: m_Name
-      value: Marie Claire Baptiste
-      objectReference: {fileID: 0}
-    - target: {fileID: 2469138775637448677, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -66072,9 +66051,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2ce337c36e93a7f43a904b25551c4749, type: 3}
       insertIndex: -1
       addedObject: {fileID: 216905679}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2ce337c36e93a7f43a904b25551c4749, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 216905681}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2ce337c36e93a7f43a904b25551c4749, type: 3}
       insertIndex: -1
       addedObject: {fileID: 216905682}
@@ -114453,6 +114429,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 762243719}
     m_Modifications:
+    - target: {fileID: 2210164008586039373, guid: 013aae3e982d8ea48a476cbecdeafd53, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590187311878797369, guid: 013aae3e982d8ea48a476cbecdeafd53, type: 3}
+      propertyPath: m_Name
+      value: Olivier Baptiste
+      objectReference: {fileID: 0}
     - target: {fileID: 5915353127857419392, guid: 013aae3e982d8ea48a476cbecdeafd53, type: 3}
       propertyPath: inkJSON
       value: 
@@ -114465,14 +114449,6 @@ PrefabInstance:
       propertyPath: NPCIndicator
       value: 
       objectReference: {fileID: 7820525}
-    - target: {fileID: 8978300302557598434, guid: 013aae3e982d8ea48a476cbecdeafd53, type: 3}
-      propertyPath: m_Name
-      value: button cue
-      objectReference: {fileID: 0}
-    - target: {fileID: 7101130325160706027, guid: 013aae3e982d8ea48a476cbecdeafd53, type: 3}
-      propertyPath: m_SortingOrder
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6120887848499096766, guid: 013aae3e982d8ea48a476cbecdeafd53, type: 3}
       propertyPath: m_Size.x
       value: 3.749524
@@ -114529,13 +114505,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4590187311878797369, guid: 013aae3e982d8ea48a476cbecdeafd53, type: 3}
-      propertyPath: m_Name
-      value: Olivier Baptiste
+    - target: {fileID: 7101130325160706027, guid: 013aae3e982d8ea48a476cbecdeafd53, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2210164008586039373, guid: 013aae3e982d8ea48a476cbecdeafd53, type: 3}
-      propertyPath: m_IsActive
-      value: 0
+    - target: {fileID: 8978300302557598434, guid: 013aae3e982d8ea48a476cbecdeafd53, type: 3}
+      propertyPath: m_Name
+      value: button cue
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -115730,6 +115706,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1398498923}
     m_Modifications:
+    - target: {fileID: 7362175911657185564, guid: c1e9980b34181b54ba98b1a9712b4b1b, type: 3}
+      propertyPath: m_Name
+      value: Spirit Lamp (1)
+      objectReference: {fileID: 0}
     - target: {fileID: 7881408546082126758, guid: c1e9980b34181b54ba98b1a9712b4b1b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 71.06
@@ -115769,10 +115749,6 @@ PrefabInstance:
     - target: {fileID: 7881408546082126758, guid: c1e9980b34181b54ba98b1a9712b4b1b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7362175911657185564, guid: c1e9980b34181b54ba98b1a9712b4b1b, type: 3}
-      propertyPath: m_Name
-      value: Spirit Lamp (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
