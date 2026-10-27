@@ -36571,6 +36571,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.CameraControl.BayouFollowCamera
   target: {fileID: 2078946140}
   worldOffset: {x: 0, y: 14, z: -12}
+  followDistance: 24
+  dialogueZoom: 0.78
   positionSmoothTime: 0.18
   maxFollowSpeed: 80
   useFixedRotation: 1
