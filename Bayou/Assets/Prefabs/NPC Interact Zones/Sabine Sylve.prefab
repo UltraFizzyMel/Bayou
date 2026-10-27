@@ -68,7 +68,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueTrigger
   buttonCue: {fileID: 246925337982860621}
   NPCIndicator: {fileID: 2208797868282897882}
-  inkJSON: {fileID: 4900000, guid: f0c65883855f5194fb5a956ea5966d71, type: 3}
+  inkJSON: {fileID: 4900000, guid: c6596607377c0634a97e2d4b861f67a8, type: 3}
   knotName: 
   talkPrompt: Talk
   playerInRange: 1
