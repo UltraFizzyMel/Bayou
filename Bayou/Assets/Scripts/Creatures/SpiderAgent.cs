@@ -19,10 +19,10 @@ namespace Bayou.Creatures
     public sealed class SpiderAgent : MonoBehaviour, INetHittable
     {
         public const string BiteDeathTip =
-            "The spider bites when it gets close. Stay off the web — you are slower there, and the spider is faster.";
+            "Beware the spider closing in, for its bite is worse than its bark. Stay off its web — for it will slow you while giving the spide a burst of speed.";
 
         public const string PoisonDeathTip =
-            "The venom kept working after the bite. Break away, and don't stand in the web while it ticks.";
+            "The spider's venom kept eating away at you...  Break away, and don't stand in its web while it ticks.";
 
         [Header("Movement")]
         [SerializeField] private float passiveSpeed = 1.35f;
@@ -50,6 +50,7 @@ namespace Bayou.Creatures
         [SerializeField] private float hitStunSeconds = 0.28f;
 
         private CreatureSense _sense;
+        private Animator _animator;
         private Vector3 _spawn;
         private Vector3 _wander;
         private float _nextWander;
@@ -66,6 +67,7 @@ namespace Bayou.Creatures
         public bool IsNetHittable => !_dead && _health > 0f;
         public SpiderAttack LastAttack => _lastAttack;
         public string DeathTip => _lastAttack == SpiderAttack.Poison ? PoisonDeathTip : BiteDeathTip;
+
 
         private void Awake()
         {
@@ -97,9 +99,10 @@ namespace Bayou.Creatures
                 {
                     _windingUp = false;
                     TickWander(Time.deltaTime);
+                    _animator.SetBool("isAgro", false);
                     return;
                 }
-
+                _animator.SetBool("isAgro", true);
                 player = _sense.Player;
             }
 
@@ -110,6 +113,7 @@ namespace Bayou.Creatures
             if (_windingUp)
             {
                 Face(to, Time.deltaTime);
+                _animator.Play("Bite_Attack");
                 if (Time.time < _windupUntil) return;
                 _windingUp = false;
                 _nextBite = Time.time + biteCooldown;
@@ -155,10 +159,14 @@ namespace Bayou.Creatures
             _health -= amount;
             _stunUntil = Time.time + hitStunSeconds;
             if (_health > 0f)
+            {
+                _animator.Play("Hurt");
                 return NetHitResult.Damaged;
+            }
 
             _dead = true;
             gameObject.SetActive(false);
+            _animator.Play("Die");
             return NetHitResult.Killed;
         }
 
@@ -189,6 +197,7 @@ namespace Bayou.Creatures
 
         private void ShootWeb(Vector3 target)
         {
+            _animator.Play("Web_Attack");
             var from = transform.position + Vector3.up * 0.35f;
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             go.name = "SpiderWeb";
