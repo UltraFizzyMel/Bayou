@@ -33,6 +33,12 @@ namespace Bayou.Player
         private int[] _flashPropIds = Array.Empty<int>();
         private SfxPlayer _sfx;
         private BayouCharacterMotor _motor;
+        private float _poisonPerSecond;
+        private float _poisonUntil;
+        private float _poisonDebt;
+        private string _poisonDeathTip;
+
+        public static string DeathScreenText { get; private set; } = "You collapsed.";
 
         private static readonly int ColorId = Shader.PropertyToID("_Color");
         private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
@@ -146,7 +152,91 @@ namespace Bayou.Player
             PlayHurtFeedback();
 
             if (_current <= 0)
-                StartCoroutine(DieRoutine());
+            {
+                Kill(TipForSource(info.Source));
+                return;
+            }
+        }
+
+        /// <summary>Damage over time from a spider bite. The tip is shown if the venom is what drops the player.</summary>
+        public void ApplyVenom(float damagePerSecond, float seconds, string deathTip)
+        {
+            if (!IsAlive) return;
+            _poisonPerSecond = Mathf.Max(0.1f, damagePerSecond);
+            _poisonUntil = Time.time + Mathf.Max(0.5f, seconds);
+            if (!string.IsNullOrWhiteSpace(deathTip))
+                _poisonDeathTip = deathTip;
+        }
+
+        private void Update()
+        {
+            if (!IsAlive || _poisonPerSecond <= 0f || Time.time >= _poisonUntil)
+                return;
+
+            _poisonDebt += _poisonPerSecond * Time.deltaTime;
+            if (_poisonDebt < 1f) return;
+
+            var points = Mathf.FloorToInt(_poisonDebt);
+            _poisonDebt -= points;
+            _current = Mathf.Max(0, _current - points);
+            Changed?.Invoke();
+            PlayHurtFeedback();
+            if (_current <= 0)
+                Kill(string.IsNullOrWhiteSpace(_poisonDeathTip)
+                    ? SpiderAgent.PoisonDeathTip
+                    : _poisonDeathTip);
+        }
+
+        private void Kill(string causeTip)
+        {
+            if (_dying || _current > 0) return;
+            DeathScreenText = ComposeDeathText(causeTip);
+            StartCoroutine(DieRoutine());
+        }
+
+        private static string ComposeDeathText(string causeTip)
+        {
+            var quest = QuestTip();
+            var body = string.IsNullOrWhiteSpace(causeTip) ? quest : causeTip;
+            if (string.IsNullOrWhiteSpace(body))
+                body = "Keep your net ready, and don't stand in the open when something is chasing you.";
+
+            var questLine = "";
+            if (!string.IsNullOrWhiteSpace(causeTip) &&
+                !string.IsNullOrWhiteSpace(quest) &&
+                !string.Equals(body, quest, System.StringComparison.Ordinal))
+                questLine = "\n\n<size=18>" + quest + "</size>";
+
+            return "<b>You collapsed.</b>\n\n" + body + questLine;
+        }
+
+        private static string QuestTip()
+        {
+            var manager = QuestManager.Resolve();
+            if (manager == null || !manager.TryGetPrimaryActiveQuest(out var quest) || quest?.info == null)
+                return "";
+
+            var name = string.IsNullOrWhiteSpace(quest.info.displayName) ? "Current quest" : quest.info.displayName;
+            var objective = quest.GetHudObjectiveText();
+            if (string.IsNullOrWhiteSpace(objective))
+                return "Quest: " + name + ".";
+            return "Quest — " + name + ": " + objective + ".";
+        }
+
+        private static string TipForSource(GameObject source)
+        {
+            if (source == null)
+                return "";
+
+            var spider = source.GetComponent<SpiderAgent>() ?? source.GetComponentInParent<SpiderAgent>();
+            if (spider != null)
+                return spider.DeathTip;
+
+            var creature = source.GetComponent<CreatureController>() ?? source.GetComponentInParent<CreatureController>();
+            if (creature != null)
+                return creature.DeathTip;
+
+            return "Something in the bayou got you. Give it more room next time.";
         }
 
         private void PlayHurtFeedback()
@@ -180,10 +270,11 @@ namespace Bayou.Player
             _dying = true;
             Changed?.Invoke();
 
+            var hold = Mathf.Max(3.4f, deathHoldSeconds);
             if (_motor != null)
-                _motor.ApplyHitReaction(Vector3.zero, deathHoldSeconds);
+                _motor.ApplyHitReaction(Vector3.zero, hold);
 
-            yield return new WaitForSeconds(deathHoldSeconds);
+            yield return new WaitForSeconds(hold);
 
             var save = GameSaveSystem.Instance;
             if (save != null)
@@ -200,6 +291,9 @@ namespace Bayou.Player
 
             _dying = false;
             _invulnerableUntil = Time.time + 1.4f;
+            _poisonPerSecond = 0f;
+            _poisonDebt = 0f;
+            _poisonUntil = 0f;
             Changed?.Invoke();
         }
 

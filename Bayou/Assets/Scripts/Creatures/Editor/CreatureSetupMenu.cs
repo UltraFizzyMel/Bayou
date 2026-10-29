@@ -104,6 +104,19 @@ namespace Bayou.Creatures.Editor
             MarkDirty();
         }
 
+        [MenuItem("Bayou/Creatures/Create Spider At Scene View")]
+        public static void CreateSpiderAtView()
+        {
+            var pos = ScenePivot();
+            var spider = CreatureBootstrap.CreateSpider(
+                FindOrCreateRoot().transform,
+                "Spider_New",
+                pos);
+            Undo.RegisterCreatedObjectUndo(spider, "Create Spider");
+            Selection.activeGameObject = spider;
+            MarkDirty();
+        }
+
         [MenuItem("Bayou/Creatures/Add Tall Grass Volume to selection")]
         public static void AddTallGrass()
         {

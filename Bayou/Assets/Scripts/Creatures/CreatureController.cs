@@ -16,7 +16,7 @@ namespace Bayou.Creatures
     {
         /// <summary>Type 1 — snake: net catch → inventory.</summary>
         CatchOnNet,
-        /// <summary>Type 2 — crocodile: net temporarily stuns, then resumes chase.</summary>
+        /// <summary>Type 2 — crocodile: cannot be killed. Net and melee stun it, then it resumes the chase.</summary>
         StunOnNet
     }
 
@@ -181,6 +181,10 @@ namespace Bayou.Creatures
         }
 
         public bool IsLunging => _strike == StrikePhase.Lunge;
+
+        public string DeathTip => netBehavior == CreatureNetBehavior.StunOnNet
+            ? "Crocodiles cannot be killed. A net stuns them — use that moment to get away."
+            : "Snakes lunge in a straight line. Step aside, then catch them in the net.";
         public static IReadOnlyList<CreatureController> Living => All;
 
         private void OnEnable()
@@ -542,6 +546,13 @@ namespace Bayou.Creatures
                     return NetHitResult.Ignored;
 
                 var amount = info.Damage > 0f ? info.Damage : meleeHitDamage;
+                if (netBehavior == CreatureNetBehavior.StunOnNet)
+                {
+                    ApplyDamage(amount, info.HitPoint);
+                    CombatFeedback.PlayHit(transform.position, NetHitResult.Stunned, transform.position - info.HitPoint);
+                    return NetHitResult.Stunned;
+                }
+
                 var killed = ApplyDamage(amount, info.HitPoint);
                 var result = killed ? NetHitResult.Killed : NetHitResult.Damaged;
                 CombatFeedback.PlayHit(transform.position, result, transform.position - info.HitPoint);
@@ -581,20 +592,30 @@ namespace Bayou.Creatures
             if (Time.time < _invulnUntil)
                 return false;
 
-            _health = Mathf.Max(0f, _health - amount);
-            _invulnUntil = Time.time + Mathf.Max(0.05f, hitInvulnSeconds);
-            _stunUntil = Mathf.Max(_stunUntil, Time.time + Mathf.Max(0.05f, hitStunSeconds));
-            _mode = CreatureMode.Active;
-            _hudUntil = Time.time + 3.2f;
-            _hpFlashUntil = Time.time + 0.16f;
-
             var away = transform.position - hitPoint;
             away.y = 0f;
             if (away.sqrMagnitude < 0.001f)
                 away = -transform.forward;
             _knockVel = away.normalized * Mathf.Max(hitKnockbackSpeed, hitKnockback * 4f);
-
+            _mode = CreatureMode.Active;
+            _hudUntil = Time.time + 3.2f;
+            _hpFlashUntil = Time.time + 0.16f;
             _visual?.FlashHurt();
+
+            // Crocs are not killable. Hits and the net only stun them.
+            if (netBehavior == CreatureNetBehavior.StunOnNet)
+            {
+                _health = maxHealth;
+                _stunUntil = Time.time + Mathf.Max(stunSeconds, hitStunSeconds);
+                _invulnUntil = Time.time + Mathf.Max(0.05f, hitInvulnSeconds);
+                _visual?.SetStunned(true);
+                _visual?.NotifyHealth(_health, maxHealth);
+                return false;
+            }
+
+            _health = Mathf.Max(0f, _health - amount);
+            _invulnUntil = Time.time + Mathf.Max(0.05f, hitInvulnSeconds);
+            _stunUntil = Mathf.Max(_stunUntil, Time.time + Mathf.Max(0.05f, hitStunSeconds));
             _visual?.NotifyHealth(_health, maxHealth);
 
             if (_health > 0f)

@@ -26,6 +26,7 @@ namespace Bayou.Creatures
             CreaturePlaceholderVisual.PatchAll();
             CreateCreaturesInScene(replaceExisting: false);
             AdoptLooseAnimatedSnakes();
+            EnsureDemoSpider();
         }
 
         public static GameObject CreateCreaturesInScene(bool replaceExisting)
@@ -154,6 +155,34 @@ namespace Bayou.Creatures
             body.GetComponent<CreaturePlaceholderVisual>()?.Configure(CrocColor, crocodileShape: true);
 
             return group;
+        }
+
+        public static GameObject CreateSpider(Transform parent, string name, Vector3 position)
+        {
+            var body = new GameObject(name);
+            if (parent != null)
+                body.transform.SetParent(parent, true);
+            body.transform.position = position;
+            body.AddComponent<CreatureSense>();
+            body.AddComponent<SpiderAgent>();
+            return body;
+        }
+
+        private static void EnsureDemoSpider()
+        {
+            if (Object.FindFirstObjectByType<SpiderAgent>() != null)
+                return;
+
+            var root = GameObject.Find(RootName);
+            if (root == null)
+                root = new GameObject(RootName);
+
+            var player = Object.FindFirstObjectByType<Bayou.Player.BayouCharacterMotor>();
+            var origin = player != null
+                ? player.transform.position + new Vector3(7f, 0f, 3.5f)
+                : new Vector3(8f, 1f, 4f);
+            var spider = CreateSpider(root.transform, "Spider_Demo", origin);
+            CreatureController.SnapBodyToGround(spider.transform, 0.28f);
         }
 
         private static void EnsureSnake(Transform parent, string name, Vector3 start, Vector3[] worldWaypoints)

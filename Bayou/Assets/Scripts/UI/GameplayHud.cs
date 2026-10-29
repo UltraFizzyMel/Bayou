@@ -484,7 +484,11 @@ namespace Bayou.UI
                 healthLabel.text = $"Health  {health.Current} / {health.Max}";
 
             if (deathPanel != null)
+            {
                 deathPanel.SetActive(health.IsDying);
+                if (health.IsDying)
+                    ShowDeathTip();
+            }
         }
 
         private void BindHealth(PlayerHealth health)
@@ -582,17 +586,45 @@ namespace Bayou.UI
             if (deathPanel == null)
             {
                 deathPanel = CreatePanel("Death", rootCanvas.transform,
-                    new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(520f, 90f));
+                    new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(680f, 240f));
                 var rt = deathPanel.GetComponent<RectTransform>();
                 rt.pivot = new Vector2(0.5f, 0.5f);
                 var img = deathPanel.GetComponent<Image>();
                 if (img != null)
-                    img.color = new Color(0.08f, 0.04f, 0.04f, 0.82f);
+                    img.color = new Color(0.08f, 0.04f, 0.04f, 0.88f);
                 deathLabel = CreateTmp("DeathText", deathPanel.transform,
                     "You collapsed.", 22f, FontStyles.Bold, TextAlignmentOptions.Center);
-                StretchTmp(deathLabel.rectTransform, 16f, 12f, 16f, 12f);
+                StretchTmp(deathLabel.rectTransform, 22f, 18f, 22f, 18f);
                 deathPanel.SetActive(false);
             }
+
+            FitDeathPanel();
+        }
+
+        private void ShowDeathTip()
+        {
+            FitDeathPanel();
+            if (deathLabel == null && deathPanel != null)
+                deathLabel = deathPanel.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (deathLabel == null) return;
+            deathLabel.alignment = TextAlignmentOptions.Center;
+            deathLabel.fontSize = 22f;
+            deathLabel.overflowMode = TextOverflowModes.Overflow;
+            deathLabel.text = string.IsNullOrWhiteSpace(PlayerHealth.DeathScreenText)
+                ? "You collapsed."
+                : PlayerHealth.DeathScreenText;
+        }
+
+        private void FitDeathPanel()
+        {
+            if (deathPanel == null) return;
+            var rt = deathPanel.GetComponent<RectTransform>();
+            if (rt == null) return;
+            if (rt.sizeDelta.x < 640f || rt.sizeDelta.y < 200f)
+                rt.sizeDelta = new Vector2(680f, 240f);
+            var img = deathPanel.GetComponent<Image>();
+            if (img != null)
+                img.color = new Color(0.08f, 0.04f, 0.04f, 0.88f);
         }
 
         private static GameObject CreatePanel(

@@ -231,8 +231,9 @@ namespace Bayou.Player
                 return;
             }
 
-            var speedMul = swimming ? swimSpeedMultiplier : (wading ? waterSpeedMultiplier : 1f);
-            var accelMul = swimming ? swimAccelerationMultiplier : (wading ? waterAccelerationMultiplier : 1f);
+            var webMul = Bayou.Creatures.SpiderWeb.PlayerSpeedMultiplier;
+            var speedMul = (swimming ? swimSpeedMultiplier : (wading ? waterSpeedMultiplier : 1f)) * webMul;
+            var accelMul = (swimming ? swimAccelerationMultiplier : (wading ? waterAccelerationMultiplier : 1f)) * webMul;
             var speed = maxSpeed * speedMul;
             var accel = acceleration * accelMul;
 
