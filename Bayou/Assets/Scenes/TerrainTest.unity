@@ -1146,15 +1146,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6690852716000987392, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.1729498
+      value: 0.70000064
       objectReference: {fileID: 0}
     - target: {fileID: 6690852716000987392, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.5769231
+      value: 1.5747328
       objectReference: {fileID: 0}
     - target: {fileID: 6690852716000987392, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.949054
+      value: 7.4310255
       objectReference: {fileID: 0}
     - target: {fileID: 6690852716000987392, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3493,7 +3493,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -14.673204
+      value: -16.23
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3501,7 +3501,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.730435
+      value: -5.71
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3841,6 +3841,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1618979962}
     m_Modifications:
+    - target: {fileID: -299369895860571695, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: title
+      value: Richard Williams
+      objectReference: {fileID: 0}
     - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
       propertyPath: m_LocalScale.x
       value: 128.20512
@@ -3895,7 +3899,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6786068617480349359, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
       propertyPath: m_Name
-      value: Normal Stone Baked
+      value: Richard Williams Grave
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4246,8 +4250,17 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1207406508}
+    m_TransformParent: {fileID: 549503005}
     m_Modifications:
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: body
+      value: "1796-1885 \nPassant, soyez heureux. Ma vie a commenc\xE9 dans la mis\xE8re,
+        mais j'ai trouv\xE9 la joie partout.\r\n"
+      objectReference: {fileID: 0}
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: title
+      value: 'Cora Jackson Toussaint '
+      objectReference: {fileID: 0}
     - target: {fileID: 1642655919470353911, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_Name
       value: Cross Stone (1)
@@ -4258,7 +4271,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.4993078
+      value: 1.4993079
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10170,9 +10183,20 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: body
+      value: '__31-__25
+
+        A Grandfather of note, with a library all your own.
+        You were a knowledge keeper worth listening to. '
+      objectReference: {fileID: 0}
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: title
+      value: David John Wannell
+      objectReference: {fileID: 0}
     - target: {fileID: 1642655919470353911, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_Name
-      value: Cross Stone
+      value: David Wannell Grave
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -12500,6 +12524,41 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
+--- !u!1 &240554379
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 240554380}
+  m_Layer: 0
+  m_Name: Soileau Graves
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &240554380
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 240554379}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1398432128}
+  - {fileID: 634891149}
+  - {fileID: 1525671207}
+  - {fileID: 1239651519}
+  m_Father: {fileID: 246824404}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &242056315 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6797524622364177450, guid: d0eee295eef89e2499df008d4086606a, type: 3}
@@ -12544,12 +12603,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1398432128}
+  - {fileID: 857355695}
+  - {fileID: 240554380}
   - {fileID: 815470001}
-  - {fileID: 1466178380}
-  - {fileID: 1041000353}
-  - {fileID: 1445372061}
-  - {fileID: 624444428}
   - {fileID: 1456990913}
   - {fileID: 628729704}
   - {fileID: 1422189886}
@@ -12558,9 +12614,6 @@ Transform:
   - {fileID: 15606871}
   - {fileID: 621622021}
   - {fileID: 1881022430}
-  - {fileID: 634891149}
-  - {fileID: 1525671207}
-  - {fileID: 1239651519}
   - {fileID: 624821336}
   - {fileID: 1586768502}
   - {fileID: 417431492}
@@ -14528,7 +14581,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 246824404}
+    m_TransformParent: {fileID: 240554380}
     m_Modifications:
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalPosition.x
@@ -14573,6 +14626,16 @@ PrefabInstance:
     - target: {fileID: 4590092225152362168, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_Name
       value: Pointier Stone
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: body
+      value: '1807-1848
+
+        Priez pour eux'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: title
+      value: Arcigeous Soileau
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -20159,15 +20222,19 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1207406508}
+    m_TransformParent: {fileID: 549503005}
     m_Modifications:
+    - target: {fileID: -4206114601645459774, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
+      propertyPath: body
+      value: "\r\nRosalee Toussaint -La lumi\xE8re te guidera, toujours"
+      objectReference: {fileID: 0}
     - target: {fileID: 5888293501775004368, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
       propertyPath: m_LocalPosition.x
       value: 103.46999
       objectReference: {fileID: 0}
     - target: {fileID: 5888293501775004368, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.23845357
+      value: 0.23845363
       objectReference: {fileID: 0}
     - target: {fileID: 5888293501775004368, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
       propertyPath: m_LocalPosition.z
@@ -20574,6 +20641,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1618979962}
     m_Modifications:
+    - target: {fileID: -3799392401747368023, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
+      propertyPath: title
+      value: Ava
+      objectReference: {fileID: 0}
     - target: {fileID: 6957869378835597313, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_LocalScale.x
       value: 128.20514
@@ -20628,7 +20699,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7765474565913842363, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_Name
-      value: Circle Top Stone (1)
+      value: Ava Grave
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -25045,6 +25116,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
+      propertyPath: body
+      value: '__50-__26
+
+        Remembered for her sparkle and zest, you were truly
+        one of a kind.'
+      objectReference: {fileID: 0}
+    - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
+      propertyPath: title
+      value: Sigrid Ross
+      objectReference: {fileID: 0}
     - target: {fileID: 1547489498792421317, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.7245789
@@ -25087,7 +25169,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2175829249286159743, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: m_Name
-      value: Cross Circle Stone
+      value: Sigrid Ross Grave
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -26942,15 +27024,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6957869378835597313, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -14.339873
+      value: -16.98
       objectReference: {fileID: 0}
     - target: {fileID: 6957869378835597313, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.8589745
+      value: 1.86
       objectReference: {fileID: 0}
     - target: {fileID: 6957869378835597313, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -14.38428
+      value: -14.28
       objectReference: {fileID: 0}
     - target: {fileID: 6957869378835597313, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_LocalRotation.w
@@ -28597,6 +28679,40 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 549424446}
   m_Mesh: {fileID: 8254687373856176130, guid: 408c011fa9e8ffd4fbecf2c160c89044, type: 3}
+--- !u!1 &549503004
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 549503005}
+  m_Layer: 0
+  m_Name: Toussaint Graves
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &549503005
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549503004}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 622359605}
+  - {fileID: 2018471954}
+  - {fileID: 1587466081}
+  m_Father: {fileID: 1207406508}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &550309377
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29728,6 +29844,10 @@ PrefabInstance:
     - target: {fileID: 6533970979056866544, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9131555104093018776, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
+      propertyPath: body
+      value: The writing looks as if it has been scratched away with a knife
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -35281,8 +35401,18 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 246824404}
+    m_TransformParent: {fileID: 240554380}
     m_Modifications:
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: body
+      value: '1832-1848
+
+        Repose en paix.'
+      objectReference: {fileID: 0}
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: title
+      value: Lula Soileau
+      objectReference: {fileID: 0}
     - target: {fileID: 1642655919470353911, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_Name
       value: Cross Stone (4)
@@ -38333,8 +38463,13 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 246824404}
+    m_TransformParent: {fileID: 857355695}
     m_Modifications:
+    - target: {fileID: -3799392401747368023, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
+      propertyPath: body
+      value: "Edmond Louis Boudreaux \n1827-1854\nPo\xE8te et \xE9crivain pas publi\xE9.
+        Je prends mes histoires avec moi.\r\n"
+      objectReference: {fileID: 0}
     - target: {fileID: 6957869378835597313, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.2899933
@@ -38502,6 +38637,19 @@ PrefabInstance:
     - target: {fileID: 4590092225152362168, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_Name
       value: Pointier Stone (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: body
+      value: '17__ - 1__9
+
+        R_st i_ _____
+
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: title
+      value: ______ ______________
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -39763,8 +39911,16 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 246824404}
+    m_TransformParent: {fileID: 240554380}
     m_Modifications:
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: body
+      value: "1846-1848\nEnfant innocent. Regrett\xE9 de tous, parti trop t\xF4t.\r\n"
+      objectReference: {fileID: 0}
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: title
+      value: Loville Soileau
+      objectReference: {fileID: 0}
     - target: {fileID: 1642655919470353911, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_Name
       value: Cross Stone (3)
@@ -39775,7 +39931,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.4993094
+      value: 1.4993093
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.z
@@ -44672,6 +44828,42 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2832835446313167682, guid: eb69b10eb41e2d9498401b1a20b54e08, type: 3}
   m_PrefabInstance: {fileID: 1273630642}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &857355694
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 857355695}
+  m_Layer: 0
+  m_Name: Boudreaux Graves
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &857355695
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 857355694}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1419531565}
+  - {fileID: 1466178380}
+  - {fileID: 1041000353}
+  - {fileID: 1445372061}
+  - {fileID: 624444428}
+  m_Father: {fileID: 246824404}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &858003430 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6034371276866032029, guid: dfc4159b9ee9140409564a7a5f5aca45, type: 3}
@@ -47391,7 +47583,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1419531565}
   - {fileID: 719483380}
   - {fileID: 1076729865}
   m_Father: {fileID: 408650097}
@@ -62412,15 +62603,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.1219227
+      value: -3.5948718
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.923077
+      value: 1.9208866
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.474694
+      value: 6.9566655
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -62553,6 +62744,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1207406508}
     m_Modifications:
+    - target: {fileID: -299369895860571695, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: body
+      value: The grave looks fresh, no name adorns it yet.
+      objectReference: {fileID: 0}
     - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 48.13198
@@ -66052,9 +66247,7 @@ Transform:
   - {fileID: 1614470359}
   - {fileID: 1668736850}
   - {fileID: 1270596746}
-  - {fileID: 622359605}
-  - {fileID: 2018471954}
-  - {fileID: 1587466081}
+  - {fileID: 549503005}
   - {fileID: 1556496744}
   - {fileID: 1715960254}
   - {fileID: 1613290482}
@@ -68963,8 +69156,17 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 246824404}
+    m_TransformParent: {fileID: 857355695}
     m_Modifications:
+    - target: {fileID: -3799392401747368023, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
+      propertyPath: body
+      value: 'Sidonia Boudreaux
+
+        1798-1867
+
+        Une femme qui brillait
+        dans le noir'
+      objectReference: {fileID: 0}
     - target: {fileID: 6957869378835597313, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.2899933
@@ -70809,7 +71011,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 889307761}
+    m_TransformParent: {fileID: 857355695}
     m_Modifications:
     - target: {fileID: 5901548742172282442, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: m_Name
@@ -70817,15 +71019,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6533970979056866544, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.3088074
+      value: 2.7687988
       objectReference: {fileID: 0}
     - target: {fileID: 6533970979056866544, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.2651768
+      value: 1.5651767
       objectReference: {fileID: 0}
     - target: {fileID: 6533970979056866544, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 15.218609
+      value: -44.241394
       objectReference: {fileID: 0}
     - target: {fileID: 6533970979056866544, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: m_LocalRotation.w
@@ -70854,6 +71056,10 @@ PrefabInstance:
     - target: {fileID: 6533970979056866544, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 89.909
+      objectReference: {fileID: 0}
+    - target: {fileID: 9131555104093018776, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
+      propertyPath: body
+      value: "Ci-g\xEEt Augustine Boudreaux, ami de tous ceux qui l'ont connu \n1793-1867"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -77037,15 +77243,23 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 246824404}
+    m_TransformParent: {fileID: 240554380}
     m_Modifications:
+    - target: {fileID: -4206114601645459774, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
+      propertyPath: body
+      value: "1811-1849\nReste maintenant, la r\xE9surrection merveilleuse attend.\r\n"
+      objectReference: {fileID: 0}
+    - target: {fileID: -4206114601645459774, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
+      propertyPath: title
+      value: 'Herodia Soileau '
+      objectReference: {fileID: 0}
     - target: {fileID: 5888293501775004368, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
       propertyPath: m_LocalPosition.x
       value: 57.64
       objectReference: {fileID: 0}
     - target: {fileID: 5888293501775004368, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.23845665
+      value: 0.23845673
       objectReference: {fileID: 0}
     - target: {fileID: 5888293501775004368, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
       propertyPath: m_LocalPosition.z
@@ -79862,7 +80076,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -15.365513
+      value: -16.33
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalPosition.y
@@ -79870,7 +80084,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10.448382
+      value: -10.48
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalRotation.w
@@ -82861,15 +83075,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.1729493
+      value: 5.7
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.9221904
+      value: 1.92
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6.808027
+      value: 9.29
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -91390,6 +91604,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1618979962}
     m_Modifications:
+    - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
+      propertyPath: title
+      value: Bruno
+      objectReference: {fileID: 0}
     - target: {fileID: 1547489498792421317, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: m_LocalScale.x
       value: 128.20511
@@ -91444,7 +91662,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2175829249286159743, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: m_Name
-      value: Cross Circle Stone (1)
+      value: Bruno Grave
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -96753,8 +96971,16 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 246824404}
+    m_TransformParent: {fileID: 857355695}
     m_Modifications:
+    - target: {fileID: -825404408243981055, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
+      propertyPath: body
+      value: "1822-1887\nPassant, ne pleure pas. J'\xE9tais un connard"
+      objectReference: {fileID: 0}
+    - target: {fileID: -825404408243981055, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
+      propertyPath: title
+      value: Tina Marie Boudreaux
+      objectReference: {fileID: 0}
     - target: {fileID: 6309964968003507130, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: m_Name
       value: Coffin Stone
@@ -96765,7 +96991,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6690852716000987392, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.2334636
+      value: 1.2334635
       objectReference: {fileID: 0}
     - target: {fileID: 6690852716000987392, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: m_LocalPosition.z
@@ -97333,6 +97559,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1618979962}
     m_Modifications:
+    - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
+      propertyPath: title
+      value: Margaret Shibambo
+      objectReference: {fileID: 0}
     - target: {fileID: 1547489498792421317, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: m_LocalScale.x
       value: 128.20512
@@ -97387,7 +97617,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2175829249286159743, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: m_Name
-      value: Cross Circle Stone
+      value: Margaret Shibambo
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -97683,8 +97913,17 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1207406508}
+    m_TransformParent: {fileID: 549503005}
     m_Modifications:
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: body
+      value: "1788-1863\nComme Icarus il a vol\xE9 et il est tomb\xE9\r\nMais Mon
+        Dieux, il a rit\r\n"
+      objectReference: {fileID: 0}
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: title
+      value: Olin Toussaint
+      objectReference: {fileID: 0}
     - target: {fileID: 1642655919470353911, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_Name
       value: Cross Stone
@@ -97695,7 +97934,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.4993082
+      value: 1.4993083
       objectReference: {fileID: 0}
     - target: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_LocalPosition.z
@@ -104841,6 +105080,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 179.353
       objectReference: {fileID: 0}
+    - target: {fileID: 8093598176856366886, guid: 5b00f82d4e6e83449907f7d7a5604201, type: 3}
+      propertyPath: body
+      value: '1820-1847
+
+        Trop confiant, vivant et mort. Reste en paix parmi
+        les anges.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8093598176856366886, guid: 5b00f82d4e6e83449907f7d7a5604201, type: 3}
+      propertyPath: title
+      value: Ed Toussaint
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -111575,8 +111825,13 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 246824404}
+    m_TransformParent: {fileID: 857355695}
     m_Modifications:
+    - target: {fileID: -825404408243981055, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
+      propertyPath: body
+      value: "Ci-g\xEEt Lillian Boudreaux, m\xE8re, amie, et professeure. Soyez toujours
+        curieux\r\n1816-1878"
+      objectReference: {fileID: 0}
     - target: {fileID: 6309964968003507130, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: m_Name
       value: Coffin Stone (1)
