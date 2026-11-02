@@ -83,6 +83,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fa9134207acb53542a9822cd5ccb21d2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 708002677957008151}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fa9134207acb53542a9822cd5ccb21d2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3799392401747368023}
   m_SourcePrefab: {fileID: 100100000, guid: fa9134207acb53542a9822cd5ccb21d2, type: 3}
 --- !u!1 &7765474565913842363 stripped
 GameObject:
@@ -104,9 +107,25 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 0.014009781, y: 0.002102581, z: 0.02235084}
   m_Center: {x: 0.0000001823064, y: -0.000000029802322, z: -0.0033652412}
+--- !u!114 &-3799392401747368023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7765474565913842363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21a20dcf43003b145896dfb79c2acbe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.ReadableSign
+  title: 
+  body: The writing is faded.
+  readPrompt: Read
+  interactRadius: 3.5
