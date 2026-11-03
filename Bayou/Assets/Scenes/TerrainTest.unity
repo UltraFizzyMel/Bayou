@@ -2145,6 +2145,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 756000928}
     m_Modifications:
+    - target: {fileID: 6621681150212174895, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
+      propertyPath: body
+      value: "1818-1846\nShe went looking for silence\u2026 she found it."
+      objectReference: {fileID: 0}
+    - target: {fileID: 6621681150212174895, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
+      propertyPath: title
+      value: Vanilla Moore
+      objectReference: {fileID: 0}
     - target: {fileID: 8276628640928223716, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 96.53
@@ -6535,7 +6543,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -4206114601645459774, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
       propertyPath: body
-      value: '1863-1892
+      value: '1843-1892
 
         May your love keep you safe, just as you tried to
         keep us safe.'
@@ -12891,6 +12899,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 756000928}
     m_Modifications:
+    - target: {fileID: 6621681150212174895, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
+      propertyPath: body
+      value: 'Multiple names and dates are scratched away.
+
+        As if a whole
+        family has been forgotten.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6621681150212174895, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
+      propertyPath: title
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8276628640928223716, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 199.75092
@@ -13259,6 +13278,15 @@ PrefabInstance:
     - target: {fileID: 6533970979056866544, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 3.298
+      objectReference: {fileID: 0}
+    - target: {fileID: 9131555104093018776, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
+      propertyPath: body
+      value: "1805-1867\nLa mort tient le corps mais pas l'esprit. Ta g\xE9n\xE9rosit\xE9
+        aide encore ceux et celles en besoin"
+      objectReference: {fileID: 0}
+    - target: {fileID: 9131555104093018776, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
+      propertyPath: title
+      value: 'Fleur Sylve '
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -18534,6 +18562,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 179.353
       objectReference: {fileID: 0}
+    - target: {fileID: 8093598176856366886, guid: 5b00f82d4e6e83449907f7d7a5604201, type: 3}
+      propertyPath: body
+      value: '1789-1862
+
+        A mother with no love left for her children. May
+        her depature bring peace that has yet to be felt.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8093598176856366886, guid: 5b00f82d4e6e83449907f7d7a5604201, type: 3}
+      propertyPath: title
+      value: 'Camille Vidrine '
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -21400,6 +21439,15 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 756000928}
     m_Modifications:
+    - target: {fileID: -1483558088098076750, guid: 446d82689cc8b3448aeb2228f89a2b26, type: 3}
+      propertyPath: body
+      value: "Waltham Baptiste \n1763-1844\r\nBuehla Baptiste\n1782-1844\r\nMarie-Claire
+        Baptiste \n1823-\r\nOlivier Baptiste\n1817- "
+      objectReference: {fileID: 0}
+    - target: {fileID: -1483558088098076750, guid: 446d82689cc8b3448aeb2228f89a2b26, type: 3}
+      propertyPath: title
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8211735195350942023, guid: 446d82689cc8b3448aeb2228f89a2b26, type: 3}
       propertyPath: m_LocalPosition.x
       value: 127
@@ -25135,9 +25183,9 @@ PrefabInstance:
         I have ceased to be and gone to meet our heavenly
         father.
 
-        
 
-        
+
+
 
 '
       objectReference: {fileID: 0}
@@ -26953,7 +27001,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: title
-      value: Sigrid Ross
+      value: Sigrid Regina Ross
       objectReference: {fileID: 0}
     - target: {fileID: 1547489498792421317, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -30978,6 +31026,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -3799392401747368023, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
+      propertyPath: body
+      value: It was always a delight to be in your presense, we miss you Oma.
+      objectReference: {fileID: 0}
+    - target: {fileID: -3799392401747368023, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
+      propertyPath: title
+      value: Eva Martha Margaretta Maria Engelhardt
+      objectReference: {fileID: 0}
     - target: {fileID: 6957869378835597313, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.31477356
@@ -32986,6 +33042,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
+      propertyPath: body
+      value: '1706-1759
+
+        I absolved you of your sins. I hope you can do the
+        same for me.'
+      objectReference: {fileID: 0}
+    - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
+      propertyPath: title
+      value: 'Minnon Landry '
+      objectReference: {fileID: 0}
     - target: {fileID: 1547489498792421317, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -18.39
@@ -35148,6 +35215,23 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -3799392401747368023, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
+      propertyPath: body
+      value: '1748-1853
+
+        Do not kneel here for the dark recesses of hell
+        are closer than you think.
+
+        
+
+        
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: -3799392401747368023, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
+      propertyPath: title
+      value: Ena Eva Landry
+      objectReference: {fileID: 0}
     - target: {fileID: 6957869378835597313, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_LocalScale.x
       value: 100.000015
@@ -42042,16 +42126,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: body
-      value: '17__ - 1__9
+      value: '1775-1838
 
-        R_st i_ _____
-
-
-'
+        Repose en paix '
       objectReference: {fileID: 0}
     - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: title
-      value: ______ ______________
+      value: 'Antoine Preston Vidrine '
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -47834,6 +47915,76 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6156686744542779153, guid: 82a1a2224445a7e4690d46e804ea61e0, type: 3}
   m_PrefabInstance: {fileID: 831002257}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &831883821
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1939458925}
+    m_Modifications:
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 100.000015
+      objectReference: {fileID: 0}
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -24.089996
+      objectReference: {fileID: 0}
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3.2600002
+      objectReference: {fileID: 0}
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 50.990005
+      objectReference: {fileID: 0}
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6162957
+      objectReference: {fileID: 0}
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.6162957
+      objectReference: {fileID: 0}
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.34666944
+      objectReference: {fileID: 0}
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.34666935
+      objectReference: {fileID: 0}
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -58.716
+      objectReference: {fileID: 0}
+    - target: {fileID: 4590092225152362168, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: m_Name
+      value: Pointier Stone (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: body
+      value: "When it\u2019s time to pay up, wait for me on your knees."
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+--- !u!4 &831883822 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+  m_PrefabInstance: {fileID: 831883821}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &832228411
 GameObject:
   m_ObjectHideFlags: 0
@@ -52891,6 +53042,10 @@ PrefabInstance:
     - target: {fileID: 4590092225152362168, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_Name
       value: Pointier Stone (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: body
+      value: 'I can see you through the grass. '
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -64494,6 +64649,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 756000928}
     m_Modifications:
+    - target: {fileID: 6621681150212174895, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
+      propertyPath: body
+      value: '1782-1872
+
+        Repose en paix'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6621681150212174895, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
+      propertyPath: title
+      value: Francois Sylve
+      objectReference: {fileID: 0}
     - target: {fileID: 8276628640928223716, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 110.51
@@ -65926,6 +66091,15 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 756000928}
     m_Modifications:
+    - target: {fileID: -1483558088098076750, guid: 446d82689cc8b3448aeb2228f89a2b26, type: 3}
+      propertyPath: body
+      value: "1786-1863\nMari, p\xE9re, grand-p\xE8re\r\nUn champion parmi des champions/un
+        champion insurpassable"
+      objectReference: {fileID: 0}
+    - target: {fileID: -1483558088098076750, guid: 446d82689cc8b3448aeb2228f89a2b26, type: 3}
+      propertyPath: title
+      value: Octave Rousseau
+      objectReference: {fileID: 0}
     - target: {fileID: 8211735195350942023, guid: 446d82689cc8b3448aeb2228f89a2b26, type: 3}
       propertyPath: m_LocalPosition.x
       value: 162.31
@@ -69337,6 +69511,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1207406508}
     m_Modifications:
+    - target: {fileID: -299369895860571695, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: body
+      value: '1824-1843
+
+        Failure'
+      objectReference: {fileID: 0}
+    - target: {fileID: -299369895860571695, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: title
+      value: 'Allain Vidrine  '
+      objectReference: {fileID: 0}
     - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 78.71
@@ -70338,6 +70522,14 @@ PrefabInstance:
     - target: {fileID: 7717114033399789917, guid: 5b00f82d4e6e83449907f7d7a5604201, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 179.353
+      objectReference: {fileID: 0}
+    - target: {fileID: 8093598176856366886, guid: 5b00f82d4e6e83449907f7d7a5604201, type: 3}
+      propertyPath: body
+      value: "1824-1872\rHere lies a man who would rather die than admit to his faults.\r\n\r\n"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8093598176856366886, guid: 5b00f82d4e6e83449907f7d7a5604201, type: 3}
+      propertyPath: title
+      value: 'Lawrence Rousseau '
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -72140,6 +72332,7 @@ Transform:
   - {fileID: 1556496744}
   - {fileID: 1715960254}
   - {fileID: 1613290482}
+  - {fileID: 1484934509}
   - {fileID: 539254721}
   m_Father: {fileID: 2038419726}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -72324,6 +72517,20 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -3799392401747368023, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
+      propertyPath: body
+      value: '1746-1853
+
+        Sometimes secrets are best left buried in the sand.
+
+        
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: -3799392401747368023, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
+      propertyPath: title
+      value: 'Edwise Landry '
+      objectReference: {fileID: 0}
     - target: {fileID: 6957869378835597313, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
       propertyPath: m_LocalPosition.x
       value: -27.961319
@@ -77469,6 +77676,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1207406508}
     m_Modifications:
+    - target: {fileID: -825404408243981055, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
+      propertyPath: body
+      value: '1835-1874
+
+        He died childless, wishing his parents had done
+        the same.
+
+        
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: -825404408243981055, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
+      propertyPath: title
+      value: 'Victor Vidrine '
+      objectReference: {fileID: 0}
     - target: {fileID: 6309964968003507130, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: m_Name
       value: Coffin Stone
@@ -81376,31 +81598,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -21.25
+      value: -21.249817
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.26
+      value: 3.2600002
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 54.03
+      value: 54.029816
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.6301766
+      value: 0.6679263
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.63017666
+      value: -0.6679264
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.32074514
+      value: -0.23210871
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.32074508
+      value: -0.23210867
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -81412,11 +81634,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3816967963186920450, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -53.95
+      value: -38.325
       objectReference: {fileID: 0}
     - target: {fileID: 4590092225152362168, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
       propertyPath: m_Name
       value: Pointier Stone (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: body
+      value: 'I can see you wading through the water. '
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -85040,6 +85266,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: body
+      value: '1756-1773
+
+        You deserved better than us.'
+      objectReference: {fileID: 0}
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: title
+      value: Eloise Landry
+      objectReference: {fileID: 0}
     - target: {fileID: 1642655919470353911, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_Name
       value: Cross Stone (1)
@@ -85608,6 +85844,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -4206114601645459774, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
+      propertyPath: body
+      value: Nothing is written on this grave
+      objectReference: {fileID: 0}
     - target: {fileID: 5888293501775004368, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
       propertyPath: m_LocalScale.x
       value: 100.000015
@@ -90418,6 +90658,78 @@ Transform:
   - {fileID: 1244999855}
   m_Father: {fileID: 1171158581}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1484934508
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1207406508}
+    m_Modifications:
+    - target: {fileID: -299369895860571695, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: body
+      value: '1799-1857
+
+        The Unfortunate'
+      objectReference: {fileID: 0}
+    - target: {fileID: -299369895860571695, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: title
+      value: 'Estrelle Sylve '
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 22.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.41
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 54.273926
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6786068617480349359, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: m_Name
+      value: Normal Stone Baked (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+--- !u!4 &1484934509 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+  m_PrefabInstance: {fileID: 1484934508}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1485945962
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -91068,6 +91380,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
+      propertyPath: body
+      value: '1714-1746
+
+        A soul left to suffer will be stronger than a soul
+        which only ever rejoices.
+
+        
+
+        
+
+        
+
+        
+
+        
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
+      propertyPath: title
+      value: 'Marguerite Landry '
+      objectReference: {fileID: 0}
     - target: {fileID: 1547489498792421317, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.975632
@@ -100037,6 +100372,17 @@ PrefabInstance:
     - target: {fileID: 6533970979056866544, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 58.395
+      objectReference: {fileID: 0}
+    - target: {fileID: 9131555104093018776, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
+      propertyPath: body
+      value: " 1775 - \nREMEMBERed for their wit and devout worship of our saviour.
+        WHERE people needed them most they would always appear. Blessed are YOU who
+        believe in redemption for all people yearn to BELONG somewhere. \n\nThrough
+        ZENON we can remain amoung the living."
+      objectReference: {fileID: 0}
+    - target: {fileID: 9131555104093018776, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
+      propertyPath: title
+      value: Zenon Landry
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -111671,6 +112017,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pointier Stone (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: body
+      value: Do unto othErs As you wish THem to do unto you.  do this And you Will
+        be rewArded In The heavenS above.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5575402115368881221, guid: e656354fd5b6ea041a1a611ff79c9023, type: 3}
+      propertyPath: title
+      value: ________ landry
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -115498,6 +115853,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: body
+      value: ' 1732-1754
+
+        Repose en paix '
+      objectReference: {fileID: 0}
+    - target: {fileID: -9138389986813893223, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
+      propertyPath: title
+      value: Ulalie Landry
+      objectReference: {fileID: 0}
     - target: {fileID: 1642655919470353911, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
       propertyPath: m_Name
       value: Cross Stone (2)
@@ -118640,6 +119005,7 @@ Transform:
   - {fileID: 2086903335}
   - {fileID: 913725674}
   - {fileID: 1351473191}
+  - {fileID: 831883822}
   m_Father: {fileID: 2123800572}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1941880599
@@ -123689,6 +124055,17 @@ PrefabInstance:
       propertyPath: m_Intensity
       value: 15.43
       objectReference: {fileID: 0}
+    - target: {fileID: 6621681150212174895, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
+      propertyPath: body
+      value: '1833-1871
+
+        From dust she came, to dust she shall return. May
+        her spirit haunt those who harmed her.'
+      objectReference: {fileID: 0}
+    - target: {fileID: 6621681150212174895, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
+      propertyPath: title
+      value: Anesia Ernestine Rousseau
+      objectReference: {fileID: 0}
     - target: {fileID: 8276628640928223716, guid: 1e741c59fc7c286439e1d73e6079b44e, type: 3}
       propertyPath: m_LocalScale.x
       value: 50.02911
@@ -124616,11 +124993,17 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: body
-      value: "1818-1846\nShe went looking for silence\u2026 she found it."
+      value: '1862-1878
+
+        Left to the judgment of the lord.
+
+        
+
+'
       objectReference: {fileID: 0}
     - target: {fileID: -3080396064763889384, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: title
-      value: 'Vanilla Moore '
+      value: 'Ernest Rousseau '
       objectReference: {fileID: 0}
     - target: {fileID: 1547489498792421317, guid: c5510299435ba544bbb7d8c2e1dbe93a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -126649,6 +127032,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1939458925}
     m_Modifications:
+    - target: {fileID: -299369895860571695, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
+      propertyPath: body
+      value: 'I can see you behind the trees. '
+      objectReference: {fileID: 0}
     - target: {fileID: 6153929027832249365, guid: fee155fdb164f9d4a804f333adf6e76c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -16.940002
