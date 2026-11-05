@@ -27,9 +27,9 @@ Don't gotta answer, wanna hear some of my tunes?
 
 { PaymentForARideQuestState :
 
-    - "IN_PROGRESS": -> A
+//    - "IN_PROGRESS": -> A
 
-    - "CAN_FINISH": -> LanternFound
+ //   - "CAN_FINISH": -> LanternFound
 
     - "FINISHED": -> ExpandedHorizonsStart
 
@@ -41,9 +41,9 @@ Don't gotta answer, wanna hear some of my tunes?
 
  { ExpandedHorizonsQuestState :
 
-    - "IN_PROGRESS": -> A
+ //   - "IN_PROGRESS": -> A
 
-    - "CAN_FINISH": -> LanternFound
+  //  - "CAN_FINISH": -> LanternFound
 
     - "FINISHED": -> AcordianDisposalStart
 
@@ -55,9 +55,9 @@ Don't gotta answer, wanna hear some of my tunes?
  
 { AcordianDisposalQuestState :
 
-    - "IN_PROGRESS": -> A
+ //   - "IN_PROGRESS": -> A
 
-    - "CAN_FINISH": -> LanternFound
+  //  - "CAN_FINISH": -> LanternFound
 
     - "FINISHED": -> AMealToDieForStart
 
@@ -66,13 +66,13 @@ Don't gotta answer, wanna hear some of my tunes?
  } 
  
  === AMealToDieForStart ===
- { AcordianDisposalQuestState :
+ { AMealToDieForQuestState :
 
-    - "IN_PROGRESS": -> A
+  //  - "IN_PROGRESS": -> A
 
-    - "CAN_FINISH": -> LanternFound
+  //  - "CAN_FINISH": -> LanternFound
 
-    - "FINISHED": -> AfterLantern
+  //  - "FINISHED": -> AfterLantern
 
     - else: -> firstmeeting
 
@@ -85,7 +85,7 @@ Don't gotta answer, wanna hear some of my tunes?
  -> goodbye
  
  === firstmeeting ===
-{ marie_firstmeetingfirstmeeting:
+{ marie_firstmeeting:
 
     ~ marie_firstmeeting = false
 My, my, who do we have here?
@@ -123,7 +123,7 @@ I trust I can count on you?
  +[I can't help right now.]
  -> ChangedMind
 +{HasItem("Item_Flounder", 2)}[I have some right here.]
--> HandOverFlounders
+//-> HandOverFlounders
 ~StartQuest(CollectPondItemQuestId)
 
 Run along now, don’t keep me waiting
@@ -149,7 +149,7 @@ Accordian Disposal:
 
 
 Since you’re in the area, I have another request for you
-
+->END
 
 
 
