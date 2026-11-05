@@ -20,7 +20,9 @@ VAR CollectLanternQuestState = "CAN_START"
 //Olivier Variables
 VAR olivier_known = ""
 
-
+//Marie Variables
+VAR marie_known = ""
+VAR marie_firstmeeting = true
 
 //Caliste Variables
 VAR caliste_known = ""

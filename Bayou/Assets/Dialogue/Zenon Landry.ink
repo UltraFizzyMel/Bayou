@@ -218,17 +218,13 @@ Excellent! To venture into the bayou's depths, you'll need to first fetch a lant
 
 ~StartQuest(CollectLanternQuestId)
 
-Take this key, it will unlock the NorthWest gate to the graveyard.
+Take this key, it will unlock the NorthWest gate to the graveyard. What better place to do some soul searching?
 
 ~ GiveItem("Item_ChurchGraveyardKey", 1)
 
 ~ GrantKey("hasKeyChurchToGraveyard")
 
-What better place to do some soul searching?
-
-Be careful out there. Not everything is as it seems…
-
-Your eyes and ears will be your greatest deceivers.
+Be careful out there. Not everything is as it seems… Your eyes and ears will be your greatest deceivers.
 
 ->END
 

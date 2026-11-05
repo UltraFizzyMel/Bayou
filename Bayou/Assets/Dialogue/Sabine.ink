@@ -1,4 +1,15 @@
 INCLUDE globals.ink
+
+
+EXTERNAL StartQuest(questId)
+
+EXTERNAL AdvanceQuest(questId)
+
+EXTERNAL FinishQuest(questId)
+
+EXTERNAL HasItem(itemId, count)
+
+EXTERNAL HandOverItem(itemId, count)
   
  #portrait: sabine_sylve_neutral #layout: left #background: bayouBG
  {olivier_known == "":-> main |-> knownName}
