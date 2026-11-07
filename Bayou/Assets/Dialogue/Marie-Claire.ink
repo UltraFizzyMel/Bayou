@@ -27,9 +27,9 @@ Don't gotta answer, wanna hear some of my tunes?
 
 { PaymentForARideQuestState :
 
-//    - "IN_PROGRESS": -> A
+    - "IN_PROGRESS": -> PendingFlounder
 
- //   - "CAN_FINISH": -> LanternFound
+    - "CAN_FINISH": -> PendingFlounder
 
     - "FINISHED": -> ExpandedHorizonsStart
 
@@ -47,7 +47,7 @@ Don't gotta answer, wanna hear some of my tunes?
 
     - "FINISHED": -> AcordianDisposalStart
 
-    - else: -> firstmeeting
+    - else: -> MarieStandardIntro
 
  } 
 
@@ -61,7 +61,7 @@ Don't gotta answer, wanna hear some of my tunes?
 
     - "FINISHED": -> AMealToDieForStart
 
-    - else: -> firstmeeting
+    - else: -> MarieStandardIntro
 
  } 
  
@@ -72,9 +72,9 @@ Don't gotta answer, wanna hear some of my tunes?
 
   //  - "CAN_FINISH": -> LanternFound
 
-  //  - "FINISHED": -> AfterLantern
+    - "FINISHED": -> DeadAliveOrHappy
 
-    - else: -> firstmeeting
+    - else: -> MarieStandardIntro
 
  } 
 
@@ -97,6 +97,10 @@ Care to do me a favour?
  -> ASimpleFavour
  -else:
  You had a change of heart?
+ +[I have.]
+ -> AFavourIntroduction
++[I haven't]
+ -> ChangedMind
 }
 
 === Rhetorical
@@ -111,29 +115,109 @@ How... unfortunate...
 Well, should you ever change your mind you know where to find me dear.
 -> END
 
-=== ASimpleFavour ===
+===AFavourIntroduction ===
+Excellent dear! 
+->ASimpleFavour
 
-Well you see, I have been living in squalor for far too long. 
+=== ASimpleFavour ===
+Now you see, I have been living in squalor for far too long. 
 Mr Baptiste simply refuses to put in the effort of securing and preparing one of my favourite dishes. 
 Instead, he opts to catch his own preferences. Thus, all I ask is that you catch me two flounders. Simple Really.
 I trust I can count on you?
 +[Sure thing.]
-~StartQuest(CollectPondItemQuestId)
- -> ASimpleFavour
+~StartQuest(PaymentForARideQuestId)
+ -> AcceptedFirstFavour
  +[I can't help right now.]
  -> ChangedMind
 +{HasItem("Item_Flounder", 2)}[I have some right here.]
-//-> HandOverFlounders
-~StartQuest(CollectPondItemQuestId)
-
-Run along now, don’t keep me waiting
-
-I’ll be back
-Wait, Who are you?
+-> HandOverFlounders
+~StartQuest(PaymentForARideQuestId)
 
 
+=== PendingFlounder
+Do you have the flounders for me yet???
++[Not Yet.]
+->WastedTime
++{HasItem("Item_Flounder", 2)}[I have them right here.]
+-> HandOverFlounders
 
-Expanded Horizons:
+=== WastedTime
+Do not waste my time then dear.
+->END
+
+=== AcceptedFirstFavour
+Thank you dear! 
+...
+What are you waiting for? Run along now, don’t keep me waiting.
+->END
+
+=== HandOverFlounders
+Fabulous! Look at you go. As Promised you will be rewarded.
+Should you ever need passage down to the Brackish Shore Church Entrance then we shall take you all the way there for the price of a single fish.
+
+~ FinishQuest(PaymentForARideQuestId)
+
+->MarieStandardBranching
+
+
+=== MarieStandardIntro
+Well, look who it is! Good Evening dear.
+->MarieStandardBranching
+
+=== MarieStandardBranching ===
+What can I do for you?
++[I have a question.]
+->MarieQuestions
++[I need a Ride.]
+->BoatLocations
++[Not at this moment.]
+->WastedTime
+
+===MarieQuestions
+Ask away, just make it quick
++[Who are you?]
+->Name
+
+=== Name 
+Well if you must know, I'm Mrs Baptiste. 
+->MarieStandardBranching
+
+=== BoatLocations
+Well... spit it out, where to?
+{ is_in_foggy_marsh: 
++[Near the Church]
+-> ChurchTrip
++[Near the Sunken Grove]
+-> GroveTrip
+-else: 
+-> BoatLocations2
+}
+
+=== BoatLocations2
+{is_at_first_brackishshore:
++[To the Foggy Marsh]
+-> MarshTrip
++[Near the Sunken Grove]
+-> GroveTrip
+-else:
++[Near the Church]
+-> ChurchTrip
++[To the Foggy Marsh]
+-> MarshTrip
+}
+
+=== ChurchTrip
+->END
+
+//Takes player to brackish shore location closest to the Sunken Grove
+=== GroveTrip
+->END
+
+//Takes player to foggy Marsh Location
+===MarshTrip
+->END
+
+=== ExpandedHorizons ===
 
 I have another task for you. It should not be too hard for someone like you.
 Someone like me?
@@ -144,6 +228,28 @@ I have not met anyone more capable of providing exactly what I am asking for?
 What would that be?
 Only two crabs and two crawfish. They’d be enough for a wonderful crab pot pie or crustacean stew! Don’t worry I’ll make it worth your while. I can add an extra stop closer to the sunken grove entrance after you’ve helped me out.
 Thank you dear! I’ll be seeing you.
+->END
+
+=== ExpandedHorizonsInProgress
+Have you procured the crustaceons yet?!
++[Not yet...]
+->WastedTime
++[I came for something else]
+->Fine
++{HasItem("Item_Crab", 1) && HasItem("Item_Crawfish", 1)}[I have.]
+-> HandOverCrustaceons
+~StartQuest(ExpandedHorizonsQuestId)
+
+=== Fine ===
+...
+Alright...
+->MarieStandardBranching
+
+
+===HandOverCrustaceons
+
+~FinishQuest(ExpandedHorizonsQuestId)
+
 
 Accordian Disposal:
 
@@ -152,7 +258,8 @@ Since you’re in the area, I have another request for you
 ->END
 
 
-
+===DeadAliveOrHappy ===
+->END
  
  === goodbye ===
  until next time my friend.

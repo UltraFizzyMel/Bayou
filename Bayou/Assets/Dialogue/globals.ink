@@ -23,6 +23,9 @@ VAR olivier_known = ""
 //MARIE Variables
 VAR marie_known = ""
 VAR marie_firstmeeting = true
+VAR is_in_foggy_marsh = true
+VAR is_at_first_brackishshore = false
+//VAR canStart
 
  //quest ids(questID + "Id" for variable name
 VAR PaymentForARideQuestId = "PaymentForARideQuest"
