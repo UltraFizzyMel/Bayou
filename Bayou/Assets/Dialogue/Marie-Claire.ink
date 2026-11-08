@@ -10,6 +10,7 @@ EXTERNAL FinishQuest(questId)
 EXTERNAL HasItem(itemId, count)
 
 EXTERNAL HandOverItem(itemId, count)
+
   
  #portrait: marie_claire_baptiste_neutral #layout: left #background: houseboatBG
  {marie_known == "":-> main |-> knownName}
@@ -172,18 +173,59 @@ What can I do for you?
 ->MarieQuestions
 +[I need a Ride.]
 ->BoatLocations
-+[Not at this moment.]
++[Nothing at this moment.]
 ->WastedTime
 
 ===MarieQuestions
-Ask away, just make it quick
-+[Who are you?]
+Ask away, just make it quick.
+->MarieBranchingQuestions
+
+===MoreQuestions
+Anything else dear?
+->MarieBranchingQuestions
+
+===MarieBranchingQuestions
+*[Who are you?]
+{mariequestionsasked + 1}
 ->Name
++ [How are things with Mr. Baptiste.]
+->MrBaptiste
+*[Have you seen the roaming shadow?]
+{mariequestionsasked + 1}
+->Shadow
+
+*{mariequestionsasked >= 2}[Do you know Father Landry?]
+{mariequestionsasked + 1}
+->Landry
+
++[That'll be all]
+->RunAlong
+
+===MrBaptiste
+...
+->MoreQuestions
+
+===RunAlong
+Run along then dear.
+->END
 
 === Name 
 Well if you must know, I'm Mrs Baptiste. 
 ~ marie_known = "true"
 ->MarieStandardBranching
+
+===Shadow
+If you know what's good for you you won't ask me about them again.
+*[but...]
+->DONT
+
+=== Landry
+->END
+
+=== DONT
+Don't.
+->MoreQuestions
+
 
 === BoatLocations
 Well... spit it out, where to?
@@ -313,22 +355,22 @@ You're taking this quest dear.
 
 === AcceptedPuffer
 Return with the three puffers and you will never need to pay fish for a boat trip again. 
-Goodluck dear.
+Goodluck.
 ->END
 
 === HandOverPuffer
+~ is_olivier_alive = false
 ->END
 
 ===AMealToDieForInProgress
-Have you disposed of the squeezebox?!
+Do you have all three pufferfish?
 +[Not yet...]
 ->WastedTime
 +[I came for something else.]
 ->Fine
-+{accordian_disposed == true}[I have.]
++{HasItem("Puffer_Fish", 1)}[I have.]
 -> DisposedAccordion
-+{accordian_returned == true}[I returned it.]
-->HowDisappointing
+
 
 ===DeadAliveOrHappy ===
 ->END

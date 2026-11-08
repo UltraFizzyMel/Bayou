@@ -20,6 +20,7 @@ VAR CollectLanternQuestState = "CAN_START"
 //OLIVIER Variables
 VAR olivier_known = ""
 VAR accordian_returned = false
+VAR is_olivier_alive = true
 
 //MARIE Variables
 VAR marie_known = ""
@@ -27,7 +28,8 @@ VAR marie_firstmeeting = true
 VAR is_in_foggy_marsh = true
 VAR is_at_first_brackishshore = false
 VAR accordian_disposed = false
-//VAR canStart
+VAR is_marie_alive = true
+VAR mariequestionsasked = 0
 
  //quest ids(questID + "Id" for variable name
 VAR PaymentForARideQuestId = "PaymentForARideQuest"
