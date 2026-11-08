@@ -41,23 +41,23 @@ Don't gotta answer, wanna hear some of my tunes?
 
  { ExpandedHorizonsQuestState :
 
- //   - "IN_PROGRESS": -> A
+    - "IN_PROGRESS": -> ExpandedHorizonsInProgress
 
-  //  - "CAN_FINISH": -> LanternFound
+    - "CAN_FINISH": -> ExpandedHorizonsInProgress
 
-    - "FINISHED": -> AcordianDisposalStart
+    - "FINISHED": -> AccordianDisposalStart
 
     - else: -> MarieStandardIntro
 
  } 
 
-=== AcordianDisposalStart ===
+=== AccordianDisposalStart ===
  
-{ AcordianDisposalQuestState :
+{ AccordianDisposalQuestState :
 
- //   - "IN_PROGRESS": -> A
+    - "IN_PROGRESS": -> AccordianDisposalInProgress
 
-  //  - "CAN_FINISH": -> LanternFound
+    - "CAN_FINISH": -> AccordianDisposalInProgress
 
     - "FINISHED": -> AMealToDieForStart
 
@@ -65,12 +65,14 @@ Don't gotta answer, wanna hear some of my tunes?
 
  } 
  
+ 
+ 
  === AMealToDieForStart ===
  { AMealToDieForQuestState :
 
-  //  - "IN_PROGRESS": -> A
+    - "IN_PROGRESS": -> AMealToDieForInProgress
 
-  //  - "CAN_FINISH": -> LanternFound
+    - "CAN_FINISH": -> AMealToDieForInProgress
 
     - "FINISHED": -> DeadAliveOrHappy
 
@@ -78,11 +80,6 @@ Don't gotta answer, wanna hear some of my tunes?
 
  } 
 
-=== questions ===
-+[Who are you?]
- -> goodbye
-+[Chat Later]
- -> goodbye
  
  === firstmeeting ===
 { marie_firstmeeting:
@@ -152,7 +149,7 @@ What are you waiting for? Run along now, don’t keep me waiting.
 ->END
 
 === HandOverFlounders
-Fabulous! Look at you go. As Promised you will be rewarded.
+Fabulous! Look at you go. As promised you will be rewarded.
 Should you ever need passage down to the Brackish Shore Church Entrance then we shall take you all the way there for the price of a single fish.
 
 ~ FinishQuest(PaymentForARideQuestId)
@@ -163,6 +160,11 @@ Should you ever need passage down to the Brackish Shore Church Entrance then we 
 === MarieStandardIntro
 Well, look who it is! Good Evening dear.
 ->MarieStandardBranching
+
+->ExpandedHorizons
+
+->AccordianDisposal
+
 
 === MarieStandardBranching ===
 What can I do for you?
@@ -180,6 +182,7 @@ Ask away, just make it quick
 
 === Name 
 Well if you must know, I'm Mrs Baptiste. 
+~ marie_known = "true"
 ->MarieStandardBranching
 
 === BoatLocations
@@ -220,25 +223,37 @@ Well... spit it out, where to?
 === ExpandedHorizons ===
 
 I have another task for you. It should not be too hard for someone like you.
-Someone like me?
-What’s the task?
++[Someone like me?]
+->SomeoneLikeWho
++[What’s the task?]
+->Crustaceons
 
+=== SomeoneLikeWho ===
 Why yes! You with your big arms and those trusty fishing doodads of yours. 
-I have not met anyone more capable of providing exactly what I am asking for?
-What would that be?
-Only two crabs and two crawfish. They’d be enough for a wonderful crab pot pie or crustacean stew! Don’t worry I’ll make it worth your while. I can add an extra stop closer to the sunken grove entrance after you’ve helped me out.
+I have not met anyone more capable of providing exactly what I am asking for.
++[What would that be?]
+->Crustaceons
+
+=== Crustaceons
+I just need you to retrieve two crabs and two crawfish. They’d be enough for a wonderful crab pot pie or crustacean stew! 
+Don’t worry, I’ll make it worth your while. I can add an extra stop closer to the Sunken Grove entrance after you’ve helped me out.
+~StartQuest(ExpandedHorizonsQuestId)
++[I'll help you]
+->QuickGoodbye
+
+===QuickGoodbye
 Thank you dear! I’ll be seeing you.
 ->END
 
 === ExpandedHorizonsInProgress
-Have you procured the crustaceons yet?!
+Have you netted the crustaceons I asked for yet?!
 +[Not yet...]
 ->WastedTime
 +[I came for something else]
 ->Fine
 +{HasItem("Item_Crab", 1) && HasItem("Item_Crawfish", 1)}[I have.]
 -> HandOverCrustaceons
-~StartQuest(ExpandedHorizonsQuestId)
+
 
 === Fine ===
 ...
@@ -247,20 +262,74 @@ Alright...
 
 
 ===HandOverCrustaceons
-
+Bless your hands and your heart. Thank you dear. 
+In future, just say the word and I will drop you off closer to the Sunken Grove.
+Just know... I will not take any responsibility for what happens to you should you venture too deep.
 ~FinishQuest(ExpandedHorizonsQuestId)
-
-
-Accordian Disposal:
-
-
-Since you’re in the area, I have another request for you
+I'll be seeing you dear.
 ->END
 
+===AccordianDisposal
+Since you’re in the area, I have another request for you.
+I have not been able to to get a good nights rest ever since you returned his accordian... 
+Olivier's incesant playing sounds to me like grinding gears, that was why I got rid of it in the first place you see. 
+//player prompted to put accordian in inventory
+All I ask is that you dispose of it, so that I never have to hear its awful noises ever again.
+Come back once you're rid of it.
+->END
+
+===AccordianDisposalInProgress
+Have you disposed of the squeezebox?!
++[Not yet...]
+->WastedTime
++[I came for something else.]
+->Fine
++{accordian_disposed == true}[I have.]
+-> DisposedAccordion
++{accordian_returned == true}[I returned it.]
+->HowDisappointing
+
+===DisposedAccordion ===
+->END
+Since you’re in the area, I have another request for you.
+
+===HowDisappointing ===
+How... Disappointing...
+I suppose it cannot be helped now...
+Since you failed my last request, the least you could do is complete my next one. 
+I assure you this will be the last thing I ask of you. 
+Please bring me three pufferfish. I have an enticing dinner plan that requires them.
++[I don't know...]
+->UncertainPuffer
++[Sure thing]
+->AcceptedPuffer
++[I have some right here]
+->HandOverPuffer
+
+=== UncertainPuffer
+Well I do know. 
+You're taking this quest dear.
+->AcceptedPuffer
+
+=== AcceptedPuffer
+Return with the three puffers and you will never need to pay fish for a boat trip again. 
+Goodluck dear.
+->END
+
+=== HandOverPuffer
+->END
+
+===AMealToDieForInProgress
+Have you disposed of the squeezebox?!
++[Not yet...]
+->WastedTime
++[I came for something else.]
+->Fine
++{accordian_disposed == true}[I have.]
+-> DisposedAccordion
++{accordian_returned == true}[I returned it.]
+->HowDisappointing
 
 ===DeadAliveOrHappy ===
 ->END
  
- === goodbye ===
- until next time my friend.
- -> END

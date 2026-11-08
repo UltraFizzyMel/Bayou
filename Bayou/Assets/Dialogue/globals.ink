@@ -19,12 +19,14 @@ VAR CollectLanternQuestState = "CAN_START"
 
 //OLIVIER Variables
 VAR olivier_known = ""
+VAR accordian_returned = false
 
 //MARIE Variables
 VAR marie_known = ""
 VAR marie_firstmeeting = true
 VAR is_in_foggy_marsh = true
 VAR is_at_first_brackishshore = false
+VAR accordian_disposed = false
 //VAR canStart
 
  //quest ids(questID + "Id" for variable name
@@ -38,9 +40,9 @@ VAR ExpandedHorizonsQuestId = "ExpandedHorizonsQuest"
 VAR ExpandedHorizonsQuestState = "CAN_START"
 
  //quest ids(questID + "Id" for variable name
-VAR AcordianDisposalQuestId = "AcordianDisposalQuest"
+VAR AccordianDisposalQuestId = "AccordianDisposalQuest"
 //quest states (questId + "State" for variable name)
-VAR AcordianDisposalQuestState = "CAN_START"
+VAR AccordianDisposalQuestState = "CAN_START"
 
  //quest ids(questID + "Id" for variable name
 VAR AMealToDieForQuestId = "AMealToDieForQuest"
