@@ -22,6 +22,22 @@ VAR olivier_known = ""
 VAR accordian_returned = false
 VAR is_olivier_alive = true
 
+//quest ids(questID + "Id" for variable name
+VAR EmergencyDinnerQuestId = "EmergencyDinnerQuest"
+//quest states (questId + "State" for variable name)
+VAR EmergencyDinnerQuestState = "CAN_START"
+
+ //quest ids(questID + "Id" for variable name
+VAR LostAccordionQuestId = "LostAccordionQuest"
+//quest states (questId + "State" for variable name)
+VAR LostAccordionQuestState = "CAN_START"
+
+ //quest ids(questID + "Id" for variable name
+VAR AMealToDieForOlivierQuestId = "AMealToDieForOlivierQuest"
+//quest states (questId + "State" for variable name)
+VAR AMealToDieForOlivierQuestState = "CAN_START"
+
+
 //MARIE Variables
 VAR marie_known = ""
 VAR marie_firstmeeting = true

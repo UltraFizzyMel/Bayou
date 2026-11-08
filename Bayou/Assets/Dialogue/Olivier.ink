@@ -3,6 +3,48 @@
  #portrait: olivier_baptiste_neutral #layout: left #background: olivier
  {olivier_known == "":-> main |-> knownName}
  
+ === PaymentForARideStart ===
+
+{ EmergencyDinnerQuestState :
+
+    - "IN_PROGRESS": -> PendingFlounder
+
+    - "CAN_FINISH": -> PendingFlounder
+
+    - "FINISHED": -> ExpandedHorizonsStart
+
+    - else: -> firstmeeting
+
+ } 
+ 
+=== ExpandedHorizonsStart ===
+
+ { LostAccordionQuestState :
+
+    - "IN_PROGRESS": -> ExpandedHorizonsInProgress
+
+    - "CAN_FINISH": -> ExpandedHorizonsInProgress
+
+    - "FINISHED": -> AccordianDisposalStart
+
+    - else: -> MarieStandardIntro
+
+ } 
+
+=== AccordianDisposalStart ===
+ 
+{ AMealToDieForOlivierQuestState :
+
+    - "IN_PROGRESS": -> AccordianDisposalInProgress
+
+    - "CAN_FINISH": -> AccordianDisposalInProgress
+
+    - "FINISHED": -> AMealToDieForStart
+
+    - else: -> MarieStandardIntro
+
+ } 
+ 
 === knownName ===
 #speaker: Mr. Baptiste
 You look in need of a touch of musical delight, alright!

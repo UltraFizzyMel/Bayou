@@ -40,6 +40,18 @@
 
 }
 
+{ SnapperAndMollyQuestState :
+
+    - "FINISHED":  {caliste_known == "":-> notKnown |-> knownName}
+
+    - "IN_PROGRESS": -> waiting
+
+    - "CAN_FINISH": -> waiting
+
+    - else: -> main
+
+}
+
 
 
 === notKnown ===
