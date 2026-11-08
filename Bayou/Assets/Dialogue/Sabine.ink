@@ -12,17 +12,57 @@ EXTERNAL HasItem(itemId, count)
 EXTERNAL HandOverItem(itemId, count)
   
  #portrait: sabine_sylve_neutral #layout: left #background: bayouBG
- {olivier_known == "":-> main |-> knownName}
+ {sabine_known == "":-> main |-> knownName}
  
 === knownName ===
 #speaker: Sabine
-You look in need of a touch of musical delight, alright!
 -> questions
 
 === main ===
-Who might you be?
-Don't gotta answer, wanna hear some of my tunes?
 -> questions
+
+ === EmergencyDinnerStart ===
+
+{ EmergencyDinnerQuestState :
+
+    - "IN_PROGRESS": -> EmergencyDinnerInProgress
+
+    - "CAN_FINISH": -> EmergencyDinnerInProgress
+
+    - "FINISHED": -> LostAccordionStart
+
+    - else: -> firstmeeting
+
+ } 
+ 
+=== LostAccordionStart ===
+
+ { LostAccordionQuestState :
+
+    - "IN_PROGRESS": -> LostAccordionInProgress
+
+    - "CAN_FINISH": -> LostAccordionInProgress
+
+    - "FINISHED": -> AMealToDieForOlivierStart
+
+    - else: -> OlivierStandardIntro
+
+ } 
+
+=== AMealToDieForOlivierStart ===
+ 
+{ AMealToDieForOlivierQuestState :
+
+    - "IN_PROGRESS": -> AccordianDisposalInProgress
+
+    - "CAN_FINISH": -> AccordianDisposalInProgress
+
+    - "FINISHED": -> AMealToDieForStart
+
+    - else: -> OlivierStandardIntro
+
+ } 
+
 
 === questions ===
 +[Who are you?]

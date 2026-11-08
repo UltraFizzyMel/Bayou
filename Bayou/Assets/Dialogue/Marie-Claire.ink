@@ -20,8 +20,6 @@ EXTERNAL HandOverItem(itemId, count)
 -> PaymentForARideStart
 
 === main ===
-Who might you be?
-Don't gotta answer, wanna hear some of my tunes?
 -> PaymentForARideStart
  
 === PaymentForARideStart ===

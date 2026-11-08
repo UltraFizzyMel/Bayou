@@ -21,6 +21,7 @@ VAR CollectLanternQuestState = "CAN_START"
 VAR olivier_known = ""
 VAR accordian_returned = false
 VAR is_olivier_alive = true
+VAR olivier_firstmeeting = true
 
 //quest ids(questID + "Id" for variable name
 VAR EmergencyDinnerQuestId = "EmergencyDinnerQuest"
@@ -67,7 +68,7 @@ VAR AMealToDieForQuestId = "AMealToDieForQuest"
 //quest states (questId + "State" for variable name)
 VAR AMealToDieForQuestState = "CAN_START"
 
-AMealToDieForQuest
+
 //CALISTE Variables
 VAR caliste_known = ""
 
@@ -75,3 +76,6 @@ VAR SnapperAndMollyQuestId = "SnapperAndMollyQuest"
 
 //quest states (questId + "State" for variable name)
 VAR SnapperAndMollyQuestState = "CAN_START"
+
+//SABINE Variables
+VAR sabine_known = ""
