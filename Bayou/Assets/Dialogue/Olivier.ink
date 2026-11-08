@@ -1,4 +1,14 @@
  INCLUDE globals.ink
+ 
+ EXTERNAL StartQuest(questId)
+
+ EXTERNAL AdvanceQuest(questId)
+
+ EXTERNAL FinishQuest(questId)
+
+ EXTERNAL HasItem(itemId, count)
+
+ EXTERNAL HandOverItem(itemId, count)
   
  #portrait: olivier_baptiste_neutral #layout: left #background: olivier
  {olivier_known == "":-> main |-> knownName}
@@ -14,13 +24,13 @@
 
 { EmergencyDinnerQuestState :
 
-    - "IN_PROGRESS": -> EmergencyDinnerInProgress
+    - "IN_PROGRESS": -> firstmeetingolivier
 
-    - "CAN_FINISH": -> EmergencyDinnerInProgress
+    - "CAN_FINISH": -> firstmeetingolivier
 
     - "FINISHED": -> LostAccordionStart
 
-    - else: -> firstmeeting
+    - else: -> firstmeetingolivier
 
  } 
  
@@ -46,13 +56,13 @@
 
     - "CAN_FINISH": -> AMealToDieForOlivierInProgress
 
-    - "FINISHED": -> AMealToDieForStart
+    - "FINISHED": -> OlivierStandardIntro
 
     - else: -> OlivierStandardIntro
 
  } 
  
-=== firstmeeting
+=== firstmeetingolivier
 { olivier_firstmeeting:
 ~olivier_firstmeeting = false
 Look at what the wind's blown in. Come on in, dry yourself off a bit!
@@ -116,7 +126,7 @@ Thank you so much my friend!
 Here's that key I promised ya!
 Please visit whenever you wish to, I just need to prepare dinner real quick.
 Stay safe out in the fog my friend.
-~EndQuest(EmergencyDinnerQuestId)
+~FinishQuest(EmergencyDinnerQuestId)
 ->END
 
 === OlivierStandardIntro
@@ -127,14 +137,15 @@ How can I help ya?
 
 ->LostAccordion
 
-
+->AMealToDieForOlivier
 
 ===OlivierOptions
 +[Can I ask you something?]
 ->questions
-+{is_marie_alive = false}[Could you give me a ride?]
++{is_marie_alive}[Could you give me a ride?]
 ->OlivierBoatLocations
 +{HasItem("Item_Accordion", 1)}[I have your accordion...]
+->AMealToDieForOlivier
 +[It was great seeing you!]
 ->goodbye
 
@@ -164,7 +175,7 @@ Where you needa go?
 +[Near the Sunken Grove]
 -> OlivierGroveTrip
 -else: 
--> OliverBoatLocations2
+-> OlivierBoatLocations2
 }
 
 === OlivierBoatLocations2
@@ -172,12 +183,12 @@ Where you needa go?
 +[To the Foggy Marsh]
 -> OlivierMarshTrip
 +[Near the Sunken Grove]
--> GroveTrip
+-> OlivierGroveTrip
 -else:
 +[Near the Church]
--> ChurchTrip
+-> OlivierChurchTrip
 +[To the Foggy Marsh]
--> MarshTrip
+-> OlivierMarshTrip
 }
 
 === OlivierChurchTrip
@@ -195,3 +206,17 @@ Where you needa go?
 Likewise my friend!
 Don't let the bayou take ya, I still have some tunes to share with you!
 ->END
+
+===LostAccordion
+->END
+
+===LostAccordionInProgress
+->END
+
+
+===AMealToDieForOlivier
+->END
+
+=== AMealToDieForOlivierInProgress
+->END
+

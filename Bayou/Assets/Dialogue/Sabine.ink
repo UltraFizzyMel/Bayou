@@ -21,47 +21,47 @@ EXTERNAL HandOverItem(itemId, count)
 === main ===
 -> questions
 
- === EmergencyDinnerStart ===
+ //=== EmergencyDinnerStart ===
 
-{ EmergencyDinnerQuestState :
+//{ EmergencyDinnerQuestState :
 
-    - "IN_PROGRESS": -> EmergencyDinnerInProgress
+  //  - "IN_PROGRESS": -> EmergencyDinnerInProgress
 
-    - "CAN_FINISH": -> EmergencyDinnerInProgress
+   // - "CAN_FINISH": -> EmergencyDinnerInProgress
 
-    - "FINISHED": -> LostAccordionStart
+   // - "FINISHED": -> LostAccordionStart
 
-    - else: -> firstmeeting
+   // - else: -> firstmeeting
 
- } 
+// } 
  
-=== LostAccordionStart ===
+//=== LostAccordionStart ===
 
- { LostAccordionQuestState :
+ //{ LostAccordionQuestState :
 
-    - "IN_PROGRESS": -> LostAccordionInProgress
+   // - "IN_PROGRESS": -> LostAccordionInProgress
 
-    - "CAN_FINISH": -> LostAccordionInProgress
+   // - "CAN_FINISH": -> LostAccordionInProgress
 
-    - "FINISHED": -> AMealToDieForOlivierStart
+   // - "FINISHED": -> AMealToDieForOlivierStart
 
-    - else: -> OlivierStandardIntro
+    //- else: -> OlivierStandardIntro
 
  } 
 
-=== AMealToDieForOlivierStart ===
+//=== AMealToDieForOlivierStart ===
  
-{ AMealToDieForOlivierQuestState :
+//{ AMealToDieForOlivierQuestState :
 
-    - "IN_PROGRESS": -> AccordianDisposalInProgress
+  //  - "IN_PROGRESS": -> AccordianDisposalInProgress
 
-    - "CAN_FINISH": -> AccordianDisposalInProgress
+    //- "CAN_FINISH": -> AccordianDisposalInProgress
 
-    - "FINISHED": -> AMealToDieForStart
+    //- "FINISHED": -> AMealToDieForStart
 
-    - else: -> OlivierStandardIntro
+   // - else: -> OlivierStandardIntro
 
- } 
+// } 
 
 
 === questions ===
