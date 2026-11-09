@@ -60,7 +60,7 @@
 
     - "CAN_FINISH": -> AMealToDieForOlivierInProgress
 
-    - "FINISHED": -> OlivierAfterEelIntro
+    - "FINISHED": -> OlivierDeadHappyOrAlive
 
     - else: -> OlivierStandardIntro
 
@@ -71,14 +71,14 @@
 ~olivier_firstmeeting = false
 Look at what the wind's blown in. Come on in, dry yourself off a bit!
 Who might you be?
-+[I don't know]
++[I don't know.]
 ->Philosophical
  -else:
  Hello again!
  Have you decided to help me friend?!
  +[I will help.]
  -> AgreeToCatch
-+[I haven't]
++[I haven't.]
  -> Refusal
  +{HasItem("Item_Grar", 2)}[I have the Grar.]
 ->HandOverGrar
@@ -163,7 +163,7 @@ Stay safe out in the fog my friend.
 
 
 === questions ===
-+[Who are you?]
++{!repeatName >= 1}[Who are you?]
  {olivier_known == "":-> introduction("Olivier Baptiste") | -> repeatName}
 +[Chat Later]
  -> goodbye
@@ -330,4 +330,7 @@ Good Evening. Have you managed to get those eels?
 
 ===EelHandOver
 ~FinishQuest(AMealToDieForOlivierQuestId)
+->END
+
+===OlivierDeadHappyOrAlive
 ->END

@@ -36,13 +36,14 @@
 
     - "CAN_FINISH": -> waiting
 
-    - else: -> main
+    - else: -> calisteFirstMeeting
 
 }
 
-{ SnapperAndMollyQuestState :
+===ASearchForAHerbalistQuestStart
+{ ASearchForAHerbalistQuestState :
 
-    - "FINISHED":  {caliste_known == "":-> notKnown |-> knownName}
+    - "FINISHED":  ->SharedDinnerQuestStart
 
     - "IN_PROGRESS": -> waiting
 
@@ -52,6 +53,34 @@
 
 }
 
+===SharedDinnerQuestStart
+{ SharedDinnerQuestState:
+
+    - "FINISHED":  {caliste_known == "":-> notKnown |-> knownName}
+
+    - "IN_PROGRESS": -> waiting
+
+    - "CAN_FINISH": -> waiting
+
+    - else: -> CalisteStandardIntroduction
+
+}
+
+===LostCargoQuestStart
+{ LostCargoQuestState:
+
+    - "FINISHED":  {caliste_known == "":-> notKnown |-> knownName}
+
+    - "IN_PROGRESS": -> waiting
+
+    - "CAN_FINISH": -> waiting
+
+    - else: -> CalisteStandardIntroduction
+
+}
+
+===CalisteStandardIntroduction
+{caliste_known == "":-> notKnown |-> knownName}
 
 
 === notKnown ===
@@ -76,7 +105,7 @@ You want to see my wares?
 
 
 
-=== main ===
+=== calisteFirstMeeting ===
 
 <b>DON'T COME ANY CLOSER!!!</b>
 

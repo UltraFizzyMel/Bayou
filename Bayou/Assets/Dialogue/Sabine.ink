@@ -21,7 +21,7 @@ EXTERNAL HandOverItem(itemId, count)
 === main ===
 -> questions
 
- //=== EmergencyDinnerStart ===
+ //=== SpecialDeliveryStart ===
 
 //{ EmergencyDinnerQuestState :
 
