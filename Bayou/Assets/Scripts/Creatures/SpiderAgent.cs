@@ -19,7 +19,7 @@ namespace Bayou.Creatures
     public sealed class SpiderAgent : MonoBehaviour, INetHittable
     {
         public const string BiteDeathTip =
-            "Beware the spider closing in, for its bite is worse than its bark. Stay off its web — for it will slow you while giving the spide a burst of speed.";
+            "Beware the spider closing in, for its bite is worse than its bark. Stay off its web — it slows you and gives the spider a burst of speed.";
 
         public const string PoisonDeathTip =
             "The spider's venom kept eating away at you...  Break away, and don't stand in its web while it ticks.";
@@ -29,6 +29,7 @@ namespace Bayou.Creatures
         [SerializeField] private float chaseSpeed = 3.3f;
         [SerializeField] private float turnSpeedDegrees = 220f;
         [SerializeField] private float wanderRadius = 4.5f;
+        [SerializeField] private float leashRadius = 18f;
 
         [Header("Web")]
         [SerializeField] private int maxWebs = 3;
@@ -51,6 +52,7 @@ namespace Bayou.Creatures
 
         private CreatureSense _sense;
         private Animator _animator;
+        private bool _snapToGround;
         private Vector3 _spawn;
         private Vector3 _wander;
         private float _nextWander;
@@ -72,6 +74,14 @@ namespace Bayou.Creatures
         private void Awake()
         {
             _sense = GetComponent<CreatureSense>();
+            _animator = GetComponentInChildren<Animator>();
+            if (_animator != null)
+                _animator.applyRootMotion = false;
+            var hasArt = HasArtBody();
+            _snapToGround = !hasArt;
+            // The placed red spider faces away from the porch. Sense a full circle
+            // so walking up to it is enough to start the hunt.
+            _sense.Configure(hasArt ? 12f : 6f, hasArt ? 18f : 12f, hasArt ? 360f : 140f);
             _sense.EnsurePlayer();
             _spawn = transform.position;
             _wander = _spawn;
@@ -85,7 +95,8 @@ namespace Bayou.Creatures
             if (Bayou.GameplayPause.BlocksWorldInteract && Time.timeScale <= 0f)
                 return;
 
-            CreatureController.SnapBodyToGround(transform, 0.22f);
+            if (_snapToGround)
+                CreatureController.SnapBodyToGround(transform, 0.22f);
 
             if (Time.time < _stunUntil)
             {
@@ -99,10 +110,10 @@ namespace Bayou.Creatures
                 {
                     _windingUp = false;
                     TickWander(Time.deltaTime);
-                    _animator.SetBool("isAgro", false);
+                    SetAgro(false);
                     return;
                 }
-                _animator.SetBool("isAgro", true);
+                SetAgro(true);
                 player = _sense.Player;
             }
 
@@ -110,10 +121,24 @@ namespace Bayou.Creatures
             to.y = 0f;
             var dist = to.magnitude;
 
+            if (Flat(player.position - _spawn).magnitude > leashRadius)
+            {
+                _windingUp = false;
+                SetAgro(false);
+                var home = Flat(_spawn - transform.position);
+                if (home.sqrMagnitude > 0.4f)
+                    MoveToward(home.normalized, passiveSpeed, Time.deltaTime);
+                else
+                    TickWander(Time.deltaTime);
+                return;
+            }
+
+            SetAgro(true);
+
             if (_windingUp)
             {
                 Face(to, Time.deltaTime);
-                _animator.Play("Bite_Attack");
+                PlayAnim("Bite_Attack");
                 if (Time.time < _windupUntil) return;
                 _windingUp = false;
                 _nextBite = Time.time + biteCooldown;
@@ -160,13 +185,13 @@ namespace Bayou.Creatures
             _stunUntil = Time.time + hitStunSeconds;
             if (_health > 0f)
             {
-                _animator.Play("Hurt");
+                PlayAnim("Hurt");
                 return NetHitResult.Damaged;
             }
 
             _dead = true;
             gameObject.SetActive(false);
-            _animator.Play("Die");
+            PlayAnim("Die");
             return NetHitResult.Killed;
         }
 
@@ -197,7 +222,7 @@ namespace Bayou.Creatures
 
         private void ShootWeb(Vector3 target)
         {
-            _animator.Play("Web_Attack");
+            PlayAnim("Web_Attack");
             var from = transform.position + Vector3.up * 0.35f;
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             go.name = "SpiderWeb";
@@ -241,6 +266,34 @@ namespace Bayou.Creatures
             transform.rotation = Quaternion.RotateTowards(transform.rotation, look, turnSpeedDegrees * dt);
         }
 
+        private void Start()
+        {
+            FitCollider();
+        }
+
+        private void SetAgro(bool value)
+        {
+            if (_animator == null || _animator.runtimeAnimatorController == null) return;
+            _animator.SetBool("IsAgro", value);
+        }
+
+        private void PlayAnim(string state)
+        {
+            if (_animator == null || _animator.runtimeAnimatorController == null) return;
+            var trigger = state switch
+            {
+                "Bite_Attack" => "Bite",
+                "Web_Attack" => "Web",
+                "Hurt" => "Hurt",
+                "Die" => "Die",
+                _ => null
+            };
+            if (trigger != null)
+                _animator.SetTrigger(trigger);
+            else
+                _animator.Play(state);
+        }
+
         private void EnsureBody()
         {
             if (GetComponent<Collider>() == null)
@@ -252,7 +305,7 @@ namespace Bayou.Creatures
                 capsule.center = new Vector3(0f, 0.2f, 0f);
             }
 
-            if (transform.Find("SpiderMesh") != null) return;
+            if (HasArtBody() || transform.Find("SpiderMesh") != null) return;
 
             var root = new GameObject("SpiderMesh");
             root.transform.SetParent(transform, false);
@@ -286,6 +339,38 @@ namespace Bayou.Creatures
                 StripCollider(leg);
                 Tint(leg, mat);
             }
+        }
+
+        private bool HasArtBody()
+        {
+            if (_animator != null &&
+                _animator.runtimeAnimatorController != null &&
+                _animator.runtimeAnimatorController.name == "Spider")
+                return true;
+            return GetComponentInChildren<Renderer>(true) != null;
+        }
+
+        private void FitCollider()
+        {
+            var capsule = GetComponent<CapsuleCollider>();
+            if (capsule == null) return;
+            var renderers = GetComponentsInChildren<Renderer>(true);
+            if (renderers == null || renderers.Length == 0) return;
+
+            var bounds = renderers[0].bounds;
+            for (var i = 1; i < renderers.Length; i++)
+            {
+                if (renderers[i] != null)
+                    bounds.Encapsulate(renderers[i].bounds);
+            }
+
+            if (bounds.size.y > 6f || bounds.size.x > 8f || bounds.size.z > 8f)
+                return;
+
+            capsule.isTrigger = true;
+            capsule.height = Mathf.Max(0.55f, bounds.size.y);
+            capsule.radius = Mathf.Clamp(Mathf.Max(bounds.extents.x, bounds.extents.z), 0.35f, 1.5f);
+            capsule.center = transform.InverseTransformPoint(bounds.center);
         }
 
         private static void StripCollider(GameObject go)

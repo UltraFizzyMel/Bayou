@@ -115,12 +115,19 @@ public static class QuestRewards
                     worldFlags: new[] { WorldFlags.FastTravelCostTwo });
                 return true;
             case QuestIds.LostCargo:
-                spec = new Spec(consume: new[]
-                {
-                    ("Item_CalisteCargoGraveyard", 1),
-                    ("Item_CalisteCargoFoggy", 1),
-                    ("Item_CalisteCargoBrackish", 1)
-                });
+                spec = new Spec(
+                    consume: new[]
+                    {
+                        ("Item_CalisteCargoGraveyard", 1),
+                        ("Item_CalisteCargoFoggy", 1),
+                        ("Item_CalisteCargoBrackish", 1)
+                    },
+                    worldFlags: new[]
+                    {
+                        WorldFlags.FoundBoxGraveyard,
+                        WorldFlags.FoundBoxFoggyMarsh,
+                        WorldFlags.FoundBoxBrackishShore
+                    });
                 return true;
             case QuestIds.SearchForHerbalist:
                 spec = new Spec(

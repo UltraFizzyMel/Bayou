@@ -310,6 +310,7 @@ I'll be seeing you dear.
 ->END
 
 ===AccordianDisposal
+~ StartQuest(AccordianDisposalQuestId)
 Since you’re in the area, I have another request for you.
 I have not been able to to get a good nights rest ever since you returned his accordian... 
 Olivier's incesant playing sounds to me like grinding gears, that was why I got rid of it in the first place you see. 
@@ -330,8 +331,8 @@ Have you disposed of the squeezebox?!
 ->HowDisappointing
 
 ===DisposedAccordion ===
+~ FinishQuest(AccordianDisposalQuestId)
 ->END
-Since you’re in the area, I have another request for you.
 
 ===HowDisappointing ===
 How... Disappointing...
@@ -352,13 +353,21 @@ You're taking this quest dear.
 ->AcceptedPuffer
 
 === AcceptedPuffer
+~ StartQuest(AMealToDieForQuestId)
 Return with the three puffers and you will never need to pay fish for a boat trip again. 
 Goodluck.
 ->END
 
 === HandOverPuffer
-~ is_olivier_alive = false
-->END
+{ HasItem("Item_Pufferfish", 3):
+    ~ StartQuest(AMealToDieForQuestId)
+    ~ FinishQuest(AMealToDieForQuestId)
+    ~ is_olivier_alive = false
+    ->END
+- else:
+    Three pufferfish, dear. Come back when you have them.
+    ->END
+}
 
 ===AMealToDieForInProgress
 Do you have all three pufferfish?
@@ -366,8 +375,8 @@ Do you have all three pufferfish?
 ->WastedTime
 +[I came for something else.]
 ->Fine
-+{HasItem("Puffer_Fish", 1)}[I have.]
--> DisposedAccordion
++{HasItem("Item_Pufferfish", 3)}[I have.]
+-> HandOverPuffer
 
 
 ===DeadAliveOrHappy ===

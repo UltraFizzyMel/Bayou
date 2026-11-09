@@ -18,7 +18,7 @@ namespace Bayou.UI
     {
         private const string ControlsText =
             "<b>Controls</b>\n" +
-            "I  Inventory  ·  J  Journal  ·  Esc close\n" +
+            "I  Inventory  ·  J  Journal  ·  Esc pause\n" +
             "E  Interact  ·  Space / click  Dialogue\n" +
             "R  Rotate item\n" +
             "Tab  Cycle tools\n" +

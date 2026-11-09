@@ -30,6 +30,7 @@ namespace Bayou.Inventory
         [SerializeField] private InventoryController inventory;
         [SerializeField] private InventoryGridUI gridUI;
         [SerializeField] private RectTransform panelRoot;
+        private Text _bagStatus;
         [SerializeField] private RectTransform itemLayer;
         [SerializeField] private InventoryItemUI itemPrefab;
 
@@ -157,6 +158,7 @@ namespace Bayou.Inventory
         {
             if (_isOpen && WasClosePressed())
             {
+                EscapeGate.Consume();
                 Close();
             }
             else if (WasTogglePressed())
@@ -170,6 +172,7 @@ namespace Bayou.Inventory
 
         private void LateUpdate()
         {
+            UpdateBagStatus();
             if (_relayoutFrames <= 0 || !_isOpen) return;
             _relayoutFrames--;
             Canvas.ForceUpdateCanvases();
@@ -805,6 +808,48 @@ namespace Bayou.Inventory
 
             var kb = Keyboard.current;
             return kb != null && kb.iKey.wasPressedThisFrame;
+        }
+
+        private void UpdateBagStatus()
+        {
+            if (_bagStatus == null)
+                _bagStatus = CreateBagStatus();
+            if (_bagStatus == null) return;
+
+            var show = _isOpen && panelRoot != null && panelRoot.gameObject.activeInHierarchy;
+            if (_bagStatus.gameObject.activeSelf != show)
+                _bagStatus.gameObject.SetActive(show);
+            if (!show) return;
+
+            var corners = new Vector3[4];
+            panelRoot.GetWorldCorners(corners);
+            var top = (corners[1] + corners[2]) * 0.5f;
+            _bagStatus.rectTransform.position = top + new Vector3(0f, -28f, 0f);
+
+            var wallet = PlayerWallet.Instance;
+            var money = wallet != null ? wallet.Balance : 0;
+            _bagStatus.text = $"${money}          Esc  close    I  close";
+        }
+
+        private Text CreateBagStatus()
+        {
+            var canvas = panelRoot != null
+                ? panelRoot.GetComponentInParent<Canvas>()
+                : GetComponentInParent<Canvas>();
+            if (canvas == null) return null;
+
+            var go = new GameObject("BagStatus", typeof(RectTransform));
+            go.transform.SetParent(canvas.transform, false);
+            var rt = go.GetComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(520f, 36f);
+            var text = go.AddComponent<Text>();
+            text.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            text.fontSize = 22;
+            text.alignment = TextAnchor.MiddleCenter;
+            text.color = new Color(0.96f, 0.91f, 0.78f, 1f);
+            text.raycastTarget = false;
+            text.horizontalOverflow = HorizontalWrapMode.Overflow;
+            return text;
         }
 
         private static bool WasClosePressed()

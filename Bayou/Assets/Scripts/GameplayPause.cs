@@ -48,7 +48,8 @@ namespace Bayou
                 AudioSettings.IsOpen ||
                 Bayou.UI.QuestJournalHud.IsOpen ||
                 (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) ||
-                (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen);
+                (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen) ||
+                Bayou.UI.PauseMenu.IsOpen;
 
             if (shouldPause)
             {

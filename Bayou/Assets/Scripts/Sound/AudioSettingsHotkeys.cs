@@ -38,7 +38,10 @@ public sealed class AudioSettingsHotkeys : MonoBehaviour
             AudioSettings.ToggleOpen();
 
         if (AudioSettings.IsOpen && WasClosePressed())
+        {
+            EscapeGate.Consume();
             AudioSettings.CloseIfOpen();
+        }
     }
 
     private static bool WasTogglePressed()

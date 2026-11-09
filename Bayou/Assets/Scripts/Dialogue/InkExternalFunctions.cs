@@ -39,6 +39,7 @@ public class InkExternalFunctions
 
     private void StartQuest(string questId)
     {
+        questId = QuestIdMap.Canonical(questId);
         if (string.IsNullOrWhiteSpace(questId))
         {
             Debug.LogWarning("[Ink] StartQuest called with empty id.");
@@ -58,6 +59,7 @@ public class InkExternalFunctions
 
     private void AdvanceQuest(string questId)
     {
+        questId = QuestIdMap.Canonical(questId);
         var manager = QuestManager.Resolve();
         if (manager != null)
         {
@@ -70,6 +72,7 @@ public class InkExternalFunctions
 
     private void FinishQuest(string questId)
     {
+        questId = QuestIdMap.Canonical(questId);
         var manager = QuestManager.Resolve();
         if (manager != null)
             manager.FinishQuest(questId);
@@ -91,7 +94,20 @@ public class InkExternalFunctions
     {
         var inv = InventoryController.Instance;
         if (inv == null) return false;
-        return inv.TryRemoveItemsById(itemId, Mathf.Max(1, count));
+        var removed = inv.TryRemoveItemsById(itemId, Mathf.Max(1, count));
+        if (removed)
+            NoteReturnedCargo(itemId);
+        return removed;
+    }
+
+    private static void NoteReturnedCargo(string itemId)
+    {
+        if (string.Equals(itemId, "Item_CalisteCargoGraveyard", System.StringComparison.OrdinalIgnoreCase))
+            WorldFlags.Set(WorldFlags.FoundBoxGraveyard, true);
+        else if (string.Equals(itemId, "Item_CalisteCargoFoggy", System.StringComparison.OrdinalIgnoreCase))
+            WorldFlags.Set(WorldFlags.FoundBoxFoggyMarsh, true);
+        else if (string.Equals(itemId, "Item_CalisteCargoBrackish", System.StringComparison.OrdinalIgnoreCase))
+            WorldFlags.Set(WorldFlags.FoundBoxBrackishShore, true);
     }
 
     private static bool GiveItem(string itemId, int count)

@@ -204,7 +204,10 @@ namespace Bayou.Inventory.Shop
             }
 
             if (WasClosePressed())
+            {
+                EscapeGate.Consume();
                 CloseShop();
+            }
 
             if (InventoryDragInput.WasRotatePressedThisFrame(rotateItemAction))
             {

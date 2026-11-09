@@ -65,6 +65,12 @@ namespace Bayou.Fishing
                 FishingZoneManager.Instance.UnregisterZone(this);
         }
 
+        public void ConfigureBox(Vector3 size)
+        {
+            shape = ZoneShape.Box;
+            boxSize = size;
+        }
+
         public bool IsPositionInZone(Vector3 position)
         {
             switch (shape)

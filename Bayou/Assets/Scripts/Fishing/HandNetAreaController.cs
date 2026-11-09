@@ -255,6 +255,7 @@ namespace Bayou.Fishing
         {
             if (WasCancelPressed())
             {
+                EscapeGate.Consume();
                 CancelCharge();
                 return;
             }

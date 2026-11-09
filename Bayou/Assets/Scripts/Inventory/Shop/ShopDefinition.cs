@@ -50,6 +50,7 @@ namespace Bayou.Inventory.Shop
                     Debug.LogWarning($"[Shop] Could not place {entry.item.displayName} in merchant stock.");
             }
 
+            ShopProgression.Append(bag, playerInventory);
             return bag;
         }
 

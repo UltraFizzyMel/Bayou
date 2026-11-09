@@ -414,11 +414,17 @@ namespace Bayou.Fishing
         {
             var a = cancelCastAction?.action;
             if (a != null && a.WasPressedThisFrame())
+            {
+                EscapeGate.Consume();
                 return true;
+            }
 
             var kb = Keyboard.current;
             if (kb != null && (kb.escapeKey.wasPressedThisFrame || kb.qKey.wasPressedThisFrame))
+            {
+                EscapeGate.Consume();
                 return true;
+            }
 
             var mouse = Mouse.current;
             return mouse != null && mouse.rightButton.wasPressedThisFrame;

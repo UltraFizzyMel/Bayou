@@ -9,9 +9,9 @@ using TMPro;
 /// </summary>
 public class AudioSettings : MonoBehaviour
 {
-    const string PrefMaster = "Bayou.Audio.MasterVolume";
-    const string PrefSfx = "Bayou.Audio.SFXVolume";
-    const string PrefMusic = "Bayou.Audio.MusicVolume";
+    public const string PrefMaster = "Bayou.Audio.MasterVolume";
+    public const string PrefSfx = "Bayou.Audio.SFXVolume";
+    public const string PrefMusic = "Bayou.Audio.MusicVolume";
     const float DefaultDb = 0f;
 
     [SerializeField] AudioMixer targetMixer;
@@ -204,6 +204,25 @@ public class AudioSettings : MonoBehaviour
     {
         var canvas = GetComponentInParent<Canvas>(true);
         return canvas != null ? canvas.gameObject : gameObject;
+    }
+
+    public static float GetBusDb(string prefKey, float fallback = 0f)
+    {
+        return PlayerPrefs.GetFloat(prefKey, fallback);
+    }
+
+    public static void SetBusDb(string prefKey, string mixerParam, float db)
+    {
+        db = Mathf.Clamp(db, -80f, 0f);
+        PlayerPrefs.SetFloat(prefKey, db);
+        PlayerPrefs.Save();
+
+        var settings = ResolveAny();
+        if (settings != null)
+            settings.ApplyDb(mixerParam, db);
+
+        if (mixerParam == "MasterVolume")
+            AudioListener.volume = db <= -80f ? 0f : Mathf.Pow(10f, db / 20f);
     }
 
     private static AudioSettings ResolveAny()

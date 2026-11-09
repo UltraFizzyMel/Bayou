@@ -680,6 +680,7 @@ namespace Bayou.UI
         private static bool ShouldHide()
         {
             if (AudioSettings.IsOpen) return true;
+            if (PauseMenu.IsOpen) return true;
             if (QuestJournalHud.IsOpen) return true;
             if (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) return true;
             if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen) return true;
@@ -767,11 +768,12 @@ namespace Bayou.UI
             var plateSize = skin != null ? skin.slotPlateSize : new Vector2(96f, 96f);
             if (plateSize.x < 72f || plateSize.y < 72f)
                 plateSize = new Vector2(96f, 96f);
+            plateSize *= 1.28f;
 
             _equippedRoot = CreateRect("EquippedItem", canvas);
             _equippedRoot.anchorMin = _equippedRoot.anchorMax = new Vector2(0f, 0f);
             _equippedRoot.pivot = new Vector2(0f, 0f);
-            _equippedRoot.anchoredPosition = new Vector2(28f, 28f);
+            _equippedRoot.anchoredPosition = new Vector2(32f, 32f);
             _equippedRoot.sizeDelta = plateSize;
 
             var plate = _equippedRoot.gameObject.AddComponent<Image>();
@@ -783,7 +785,8 @@ namespace Bayou.UI
             plate.raycastTarget = false;
 
             var iconRt = CreateRect("Icon", _equippedRoot);
-            iconRt.sizeDelta = skin != null ? skin.iconSize : new Vector2(72f, 72f);
+            var iconSize = skin != null ? skin.iconSize : new Vector2(72f, 72f);
+            iconRt.sizeDelta = iconSize * 1.28f;
             _equippedIcon = iconRt.gameObject.AddComponent<Image>();
             _equippedIcon.preserveAspect = true;
             _equippedIcon.raycastTarget = false;

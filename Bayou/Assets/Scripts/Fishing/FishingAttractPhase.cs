@@ -83,6 +83,7 @@ namespace Bayou.Fishing
 
             if (WasCancelPressed())
             {
+                EscapeGate.Consume();
                 CancelAttract();
                 Destroy(gameObject);
                 return;

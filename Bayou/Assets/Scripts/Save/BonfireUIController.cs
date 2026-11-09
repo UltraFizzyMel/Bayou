@@ -113,7 +113,10 @@ namespace Bayou.Save
 #if ENABLE_INPUT_SYSTEM
             var kb = Keyboard.current;
             if (kb != null && kb.escapeKey.wasPressedThisFrame)
+            {
+                EscapeGate.Consume();
                 Close();
+            }
 #endif
         }
 

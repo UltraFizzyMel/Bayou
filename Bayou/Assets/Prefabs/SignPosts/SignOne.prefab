@@ -102,6 +102,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1981720999169776027, guid: 9ba8812c976dc7342b967c11fd5209b2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6630574162092199939}
+    - targetCorrespondingSourceObject: {fileID: 1981720999169776027, guid: 9ba8812c976dc7342b967c11fd5209b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8123456789012345001}
   m_SourcePrefab: {fileID: 100100000, guid: 9ba8812c976dc7342b967c11fd5209b2, type: 3}
 --- !u!1 &2633682937717056853 stripped
 GameObject:
@@ -157,3 +160,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.0015731095, y: 0.0148995025, z: 0.0067445054}
   m_Center: {x: -0.00004556909, y: 0.0016683562, z: 0.00026505842}
+--- !u!114 &8123456789012345001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5288806854848201808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21a20dcf43003b145896dfb79c2acbe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.ReadableSign
+  title: Church road
+  body: White posts mark the church road. Don't follow lights off the path after dark.
+  readPrompt: Read
+  interactRadius: 3.5

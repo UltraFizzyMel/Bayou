@@ -28,6 +28,13 @@ namespace Bayou.Creatures
         [Tooltip("Stay Active this long after last sensing the player.")]
         [SerializeField] private float loseSightGraceSeconds = 1.25f;
 
+        public void Configure(float minSense, float vision, float angleDegrees)
+        {
+            minSenseRange = Mathf.Max(0.5f, minSense);
+            visionRange = Mathf.Max(minSenseRange, vision);
+            visionAngleDegrees = Mathf.Clamp(angleDegrees, 10f, 360f);
+        }
+
         public float MinSenseRange => minSenseRange;
         public float VisionRange => visionRange;
         public float VisionAngleDegrees => visionAngleDegrees;

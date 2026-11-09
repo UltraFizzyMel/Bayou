@@ -308,6 +308,7 @@ public class QuestManager : MonoBehaviour
     {
         quest = null;
         if (questMap == null || string.IsNullOrWhiteSpace(id)) return false;
+        id = QuestIdMap.Canonical(id);
         return questMap.TryGetValue(id, out quest) && quest != null;
     }
 

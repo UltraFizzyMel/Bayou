@@ -26,7 +26,8 @@ namespace Bayou.Creatures
             CreaturePlaceholderVisual.PatchAll();
             CreateCreaturesInScene(replaceExisting: false);
             AdoptLooseAnimatedSnakes();
-            EnsureDemoSpider();
+            AdoptAnimatedSpiders();
+            EnsurePlacedSpiders();
         }
 
         public static GameObject CreateCreaturesInScene(bool replaceExisting)
@@ -44,17 +45,20 @@ namespace Bayou.Creatures
             var marshGate = Anchor("Foggy Marsh Transition", new Vector3(32.6f, 0.2f, 2.19f));
             var lanternPath = Vector3.Lerp(marshGate, lantern, 0.55f);
 
-            // Near player spawn — easy to test chase / net melee.
+            var foggy = Anchor("Foggy Marsh Area", new Vector3(4.56f, 1f, 164.4f));
+            var brackish = Anchor("Brackish Shore Area", new Vector3(76.2f, 1f, -59.6f));
+
+            // Church road, north of the porch — not standing on the spawn.
             EnsureSnake(
                 root.transform,
-                "Snake_TestNearSpawn",
-                new Vector3(-4f, 1.6f, -82f),
+                "Snake_ChurchRoad",
+                new Vector3(-8f, 1.6f, -54f),
                 new[]
                 {
-                    new Vector3(-4f, 1.6f, -82f),
-                    new Vector3(2f, 1.6f, -78f),
-                    new Vector3(-1f, 1.6f, -74f),
-                    new Vector3(-8f, 1.6f, -78f)
+                    new Vector3(-8f, 1.6f, -54f),
+                    new Vector3(-2f, 1.6f, -48f),
+                    new Vector3(-12f, 1.6f, -46f),
+                    new Vector3(-14f, 1.6f, -56f)
                 });
 
             EnsureSnake(
@@ -94,6 +98,29 @@ namespace Bayou.Creatures
                 "Crocodile_LanternMarsh",
                 lantern + new Vector3(8.5f, 0.2f, 6f),
                 radius: 6.5f);
+
+            // Foggy marsh grass, off the dock. Brackish shore water and the path beside it.
+            EnsureSnake(
+                root.transform,
+                "Snake_FoggyMarsh",
+                foggy + new Vector3(14f, 1f, 6f),
+                Ring(foggy + new Vector3(14f, 1f, 6f), 5f));
+
+            EnsureCrocodile(
+                root.transform,
+                "Crocodile_BrackishShore",
+                brackish + new Vector3(8f, 1f, -2f),
+                radius: 8f);
+
+            EnsureSnake(
+                root.transform,
+                "Snake_BrackishPath",
+                brackish + new Vector3(-10f, 1f, 12f),
+                Ring(brackish + new Vector3(-10f, 1f, 12f), 5f));
+
+            EnsureSpider(root.transform, "Spider_FoggyTrees", foggy + new Vector3(22f, 2f, -8f));
+            EnsureSpider(root.transform, "Spider_GraveyardWeb", graveyard + new Vector3(12f, 2f, -8f));
+            EnsureSpider(root.transform, "Spider_BrackishCypress", brackish + new Vector3(-6f, 2f, -14f));
 
             CreaturePlaceholderVisual.PatchAll();
             return root;
@@ -168,20 +195,24 @@ namespace Bayou.Creatures
             return body;
         }
 
-        private static void EnsureDemoSpider()
+        private static void EnsurePlacedSpiders()
         {
-            if (Object.FindFirstObjectByType<SpiderAgent>() != null)
-                return;
-
             var root = GameObject.Find(RootName);
             if (root == null)
                 root = new GameObject(RootName);
 
-            var player = Object.FindFirstObjectByType<Bayou.Player.BayouCharacterMotor>();
-            var origin = player != null
-                ? player.transform.position + new Vector3(7f, 0f, 3.5f)
-                : new Vector3(8f, 1f, 4f);
-            var spider = CreateSpider(root.transform, "Spider_Demo", origin);
+            var foggy = Anchor("Foggy Marsh Area", new Vector3(4.56f, 1f, 164.4f));
+            var brackish = Anchor("Brackish Shore Area", new Vector3(76.2f, 1f, -59.6f));
+            var graveyard = Anchor("Graveyard_Entrance_Net", new Vector3(66.31f, 0.2f, -26.35f));
+            EnsureSpider(root.transform, "Spider_FoggyTrees", foggy + new Vector3(22f, 2f, -8f));
+            EnsureSpider(root.transform, "Spider_GraveyardWeb", graveyard + new Vector3(12f, 2f, -8f));
+            EnsureSpider(root.transform, "Spider_BrackishCypress", brackish + new Vector3(-6f, 2f, -14f));
+        }
+
+        private static void EnsureSpider(Transform parent, string name, Vector3 position)
+        {
+            if (GameObject.Find(name) != null) return;
+            var spider = CreateSpider(parent, name, position);
             CreatureController.SnapBodyToGround(spider.transform, 0.28f);
         }
 
@@ -364,6 +395,21 @@ namespace Bayou.Creatures
 
                 ApplySnakeDefaults(brain, waypoints, LoadSnakeItem());
                 host.GetComponent<CreaturePlaceholderVisual>()?.Configure(SnakeColor, crocodileShape: false);
+            }
+        }
+
+        private static void AdoptAnimatedSpiders()
+        {
+            var animators = Object.FindObjectsByType<Animator>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < animators.Length; i++)
+            {
+                var anim = animators[i];
+                if (anim == null || anim.runtimeAnimatorController == null) continue;
+                if (anim.runtimeAnimatorController.name != "Spider") continue;
+                if (anim.GetComponent<SpiderAgent>() != null) continue;
+
+                anim.applyRootMotion = false;
+                anim.gameObject.AddComponent<SpiderAgent>();
             }
         }
 

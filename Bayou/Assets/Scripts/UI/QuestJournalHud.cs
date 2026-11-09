@@ -106,7 +106,10 @@ namespace Bayou.UI
             }
 
             if (_isOpen && WasClosePressed())
+            {
+                EscapeGate.Consume();
                 SetOpen(false);
+            }
 
             TickFirstQuestHint();
         }

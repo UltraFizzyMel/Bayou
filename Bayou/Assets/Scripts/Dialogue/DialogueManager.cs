@@ -158,8 +158,13 @@ public class DialogueManager : MonoBehaviour
     private void ApplyQuestStateToDialogue(string questId, QuestState state)
     {
         var value = new StringValue(state.ToString());
-        dialogueVariables?.VariableChanged(questId + "State", value);
-        GameEventManager.Instance?.dialogueEvents?.UpdateDialogueVariable(questId + "State", value);
+        foreach (var variableName in QuestIdMap.StateVariableNames(questId))
+        {
+            dialogueVariables?.VariableChanged(variableName, value);
+            GameEventManager.Instance?.dialogueEvents?.UpdateDialogueVariable(variableName, value);
+            if (currentStory != null && currentStory.variablesState.GlobalVariableExistsWithName(variableName))
+                currentStory.variablesState.SetGlobal(variableName, value);
+        }
     }
 
     private void UpdateDialogueVariable(string name, Ink.Runtime.Object value)

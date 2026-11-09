@@ -59,6 +59,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 25fb640f637ddbd439767439f597cd9e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8843804758774241787}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 25fb640f637ddbd439767439f597cd9e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8843804758774241788}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 25fb640f637ddbd439767439f597cd9e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8843804758774241789}
   m_SourcePrefab: {fileID: 100100000, guid: 25fb640f637ddbd439767439f597cd9e, type: 3}
 --- !u!1 &9113939288327811519 stripped
 GameObject:
@@ -87,3 +93,54 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8843804758774241788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9113939288327811519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d5f73854de8a5a4ebbc173b7088ae22, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Creatures.CreatureSense
+  minSenseRange: 12
+  visionRange: 18
+  visionAngleDegrees: 360
+  occlusionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  eyeHeight: 0.6
+  playerChestHeight: 1.1
+  loseSightGraceSeconds: 1.25
+--- !u!114 &8843804758774241789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9113939288327811519}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48ecef0fceb6ae04bbca9c1288f84433, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Creatures.SpiderAgent
+  passiveSpeed: 1.35
+  chaseSpeed: 3.3
+  turnSpeedDegrees: 220
+  wanderRadius: 4.5
+  leashRadius: 22
+  maxWebs: 3
+  webMinRange: 2.8
+  webMaxRange: 8.5
+  webCooldown: 2.6
+  webShotSpeed: 11
+  biteRange: 1.45
+  biteWindup: 0.36
+  biteCooldown: 1.7
+  biteDamage: 1
+  venomPerSecond: 0.55
+  venomSeconds: 4.5
+  maxHealth: 4
+  hitStunSeconds: 0.28

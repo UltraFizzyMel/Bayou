@@ -98,6 +98,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -2869518465879308920, guid: d78acea692127b646bb08ebb40674752, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1976424420928897456}
+    - targetCorrespondingSourceObject: {fileID: -2869518465879308920, guid: d78acea692127b646bb08ebb40674752, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8123456789012345002}
   m_SourcePrefab: {fileID: 100100000, guid: d78acea692127b646bb08ebb40674752, type: 3}
 --- !u!1 &2851900418694508268 stripped
 GameObject:
@@ -153,3 +156,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.0010710671, y: 0.016104627, z: 0.009499427}
   m_Center: {x: 5.2107307e-15, y: -0.00038417662, z: 0.00017851428}
+--- !u!114 &8123456789012345002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6422383561096827857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21a20dcf43003b145896dfb79c2acbe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.ReadableSign
+  title: Foggy marsh
+  body: Crocodiles own this water. A net stuns them. It does not kill them.
+  readPrompt: Read
+  interactRadius: 3.5
