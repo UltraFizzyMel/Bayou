@@ -314,7 +314,7 @@ Please return as soon as you have them.
 
 ===HowClumsy
 How clumsy of me, thank you again!
-I'll make sure to keep it by my side going forward.
+I'll make sure to keep my accordion by my side going forward.
 Best of luck out in the Bayou youngun!
 ->END
 

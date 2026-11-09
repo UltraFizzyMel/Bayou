@@ -15,7 +15,7 @@ VAR CollectLanternQuestId = "CollectLanternQuest"
 //quest states (questId + "State" for variable name)
 VAR CollectLanternQuestState = "CAN_START"
 
-
+VAR SeenShadow = false
 
 //OLIVIER Variables
 VAR olivier_known = ""

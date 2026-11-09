@@ -157,7 +157,7 @@ Should you ever need passage down to the Brackish Shore Church Entrance then we 
 
 
 === MarieStandardIntro
-Well, look who it is! Good Evening dear.
+{MarieHappy != 1}Well, look who it is! Good Evening dear.
 ->MarieStandardBranching
 
 ->ExpandedHorizons
@@ -182,25 +182,49 @@ Ask away, just make it quick.
 Anything else dear?
 ->MarieBranchingQuestions
 
+
 ===MarieBranchingQuestions
 *[Who are you?]
 {mariequestionsasked + 1}
 ->Name
 + [How are things with Mr. Baptiste.]
 ->MrBaptiste
-*[Have you seen the roaming shadow?]
+*{SeenShadow}[Have you seen the roaming shadow?]
 {mariequestionsasked + 1}
 ->Shadow
 
-*{mariequestionsasked >= 2}[Do you know Father Landry?]
+*{mariequestionsasked >= 1}[Do you know Father Landry?]
 {mariequestionsasked + 1}
 ->Landry
+
+*{mariequestionsasked >=3 && sabine_known != ""}[What do you think of Sabine?]
+{mariequestionsasked + 1}
+->Sabine
+
+*{mariequestionsasked >=2 && caliste_known != ""}
+{mariequestionsasked + 1}
+->Caliste
+
+*{mariequestionsasked >=5}[Do you... do you remember a hospital?]
+->TheHospital
 
 +[That'll be all]
 ->RunAlong
 
+
 ===MrBaptiste
 ...
+{!ExpandedHorizonsStart}Should you really be prying?
+{!ExpandedHorizonsStart}No. No you should not.
+{ExpandedHorizonsStart && !AccordianDisposalStart} Honestly... never been worse.
+{ExpandedHorizonsStart && !AccordianDisposalStart} Not once since being bound to this boat have they remembered my preferences.
+{AccordianDisposalStart && !AMealToDieForStart} They are getting on my final nerve. 
+{AccordianDisposalStart && !AMealToDieForStart} All I want from them is to show an ounce of care for what I actually want.
+{AMealToDieForStart && !DeadAliveOrHappy}They're about to get a whole lot better.
+{Happy}Surprisingly, they've improved substantially. I finally feel heard.
+{Happy}Well... when he takes his breaks from playing at least.
+{Alive}They're good...
+{Alive}I... convinced them to stop with their incessant music.
 ->MoreQuestions
 
 ===RunAlong
@@ -218,15 +242,47 @@ If you know what's good for you you won't ask me about them again.
 ->DONT
 
 === Landry
-->END
+That's the name of the priest? I last saw them a few years ago dear.
+Unfortunately, Mr Baptiste and I are bound to this boat. If not I would be dragging him to Landry to repent for how he's cursed us.
+->MoreQuestions
 
 === DONT
 Don't.
 ->MoreQuestions
 
+=== Sabine
+Who? Never heard of them.
++[She's someone I saw deeper in the swamp. ]
+->SabineContinued
+
+===SabineContinued
+Never met them. I would suggest you be careful who you trust.
+->MoreQuestions
+
+===Caliste
+I haven't heard that name in a few years.
+They used to be very friendly. 
+->MoreQuestions
+
+=== TheHospital
+Where's this coming from dear?
+A hospital? I remember a low class clinic. 
++[Can you... tell me more?]
+->MoreHospital
+
+===MoreHospital
+I suppose I could, I vaguely remember my last visit.
+They refused to treat me first, instead favouring a little girl. 
+In the end that girl didn't even make it. 
+That's when I knew they could not be trusted with my health.
+...
+That's all I recall dear.
+...
+->MoreQuestions
 
 === BoatLocations
-Well... spit it out, where to?
+{!MarieHappy}Well... spit it out, where to?
+{MarieHappy}Where to dear?
 { is_in_foggy_marsh: 
 +[Near the Church]
 -> ChurchTrip
@@ -249,6 +305,7 @@ Well... spit it out, where to?
 -> MarshTrip
 }
 
+//Takes player to brackish shore location closest to the church
 === ChurchTrip
 ->END
 
@@ -380,5 +437,17 @@ Do you have all three pufferfish?
 
 
 ===DeadAliveOrHappy ===
-->END
+->MarieAlive
+->MarieHappy
+
+=== MarieAlive
+->MarieStandardIntro
+
+===MarieHappy
+{MarieHappy = 1}Well, look who it is! Good Evening dear.
+{MarieHappy = 1}You won't believe what Olivier and I had for dinner last night!
+{MarieHappy = 1}Things are finally looking up for us. We did however discuss something important...
+{MarieHappy = 1}The trips we're giving you... we're gonna need to up the cost to two fish per trip unfortunately.
+{MarieHappy = 1}That'll be all.
+->MarieStandardIntro
  
