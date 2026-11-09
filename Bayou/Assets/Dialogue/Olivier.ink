@@ -297,7 +297,7 @@ I'm in need of three eels. That's all.
 ->AcceptedEels
 +[What for?]
 ->AvoidingExplanation
-+[I have three!]
++{HasItem("Item_Eel", 3)}[I have three!]
 ->EelHandOver
 
 ===AvoidingExplanation
@@ -319,6 +319,13 @@ Best of luck out in the Bayou youngun!
 ->END
 
 === AMealToDieForOlivierInProgress
+Good Evening. Have you managed to get those eels?
++[I'll help you get them.]
+->AcceptedEels
++[What for?]
+->AvoidingExplanation
++[I have three!]
+->EelHandOver
 ->END
 
 ===EelHandOver

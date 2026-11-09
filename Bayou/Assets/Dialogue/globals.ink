@@ -80,3 +80,4 @@ VAR SnapperAndMollyQuestState = "CAN_START"
 
 //SABINE Variables
 VAR sabine_known = ""
+VAR sabineBaptisteSolution = false
