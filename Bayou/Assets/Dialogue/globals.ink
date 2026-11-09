@@ -23,6 +23,7 @@ VAR accordian_returned = false
 VAR is_olivier_alive = true
 VAR olivier_firstmeeting = true
 
+
 //quest ids(questID + "Id" for variable name
 VAR EmergencyDinnerQuestId = "EmergencyDinnerQuest"
 //quest states (questId + "State" for variable name)

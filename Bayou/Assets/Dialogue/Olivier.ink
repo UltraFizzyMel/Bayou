@@ -9,15 +9,19 @@
  EXTERNAL HasItem(itemId, count)
 
  EXTERNAL HandOverItem(itemId, count)
+ 
+ VAR Sad = false
   
  #portrait: olivier_baptiste_neutral #layout: left #background: olivier
  {olivier_known == "":-> main |-> knownName}
  
  === knownName ===
 #speaker: Mr. Baptiste
+~Sad = false
 -> EmergencyDinnerStart
 
 === main ===
+~Sad = false
 -> EmergencyDinnerStart
  
  === EmergencyDinnerStart ===
@@ -56,7 +60,7 @@
 
     - "CAN_FINISH": -> AMealToDieForOlivierInProgress
 
-    - "FINISHED": -> OlivierStandardIntro
+    - "FINISHED": -> OlivierAfterEelIntro
 
     - else: -> OlivierStandardIntro
 
@@ -103,7 +107,7 @@ Please hurry, I cannot keep Marie waiting.
 ->END
 
 === Refusal ===
-Ah... That's a shame, please reconsider...
+Please reconsider...
 If you ever change your mind please let me know.
 ->END
 
@@ -130,22 +134,30 @@ Stay safe out in the fog my friend.
 ->END
 
 === OlivierStandardIntro
-Good Evening my friend!
-You look in need of a touch of musical delight, alright!
-How can I help ya?
+{!Sad}Good Evening my friend!
+{!Sad}You look in need of a touch of musical delight, alright!
+{!Sad}How can I help ya?
+{Sad}Evening friend.
+{Sad}I'm afraid I don't have any tunes for you tonight, my accordion is lost yet again.
+{Sad}Still, how could I help you?
 ->OlivierOptions
 
 ->LostAccordion
 
 ->AMealToDieForOlivier
 
+=== OlivierAfterEelIntro
+->END
+
 ===OlivierOptions
 +[Can I ask you something?]
 ->questions
-+{is_marie_alive}[Could you give me a ride?]
++{!is_marie_alive}[Could you give me a ride?]
 ->OlivierBoatLocations
-+{HasItem("Item_Accordion", 1)}[I have your accordion...]
+*{HasItem("Item_Accordion", 1) && OtherThing && !FoundAccordion}[I have your Accordion.]
 ->AMealToDieForOlivier
+*{accordian_returned && !MarieYouSay}[About your accordion...]
+->MarieYouSay
 +[It was great seeing you!]
 ->goodbye
 
@@ -204,19 +216,111 @@ Where you needa go?
  
 === goodbye
 Likewise my friend!
-Don't let the bayou take ya, I still have some tunes to share with you!
+Don't let the bayou take ya while I still have tunes to share. 
 ->END
 
 ===LostAccordion
+Ah... Hello friend.
+Sorry, I'm a little low spirits today.
+How can I help ya?
++[What's wrong?]
+->AccordionExplanation
++[Well, there is something.]
+->OlivierOptions
+
+=== AccordionExplanation
+Oh, well I seem to have misplaced my Accordion. 
+I last remember having it while we were in the Foggy Marsh.
+If you have spare time on your hands please it would mean the world to me if you returned it.
++[I will do my best]
+-> ThankYouForAccepting
++{HasItem("Item_Accordion", 1)}[I have your Accordion]
+->FoundAccordion
+
+=== ThankYouForAccepting
+~StartQuest(LostAccordionQuestId)
+Thank you my friend. 
+...
+Could I have a moment alone?
++[You may]
 ->END
 
 ===LostAccordionInProgress
+Ah... Hello friend.
+Sorry to bother but have you managed to find my Accordion?
++{HasItem("Item_Accordion", 1)}[Yes.]
+->FoundAccordion
++[Not, yet.]
+->NoAccordion
++[I came for something else.]
+->OtherThing
+
+=== FoundAccordion
+I extend my deepest gratitude towards you. Thank you.
+I have an extra satchel I can give you as thanks.
+If you ever need anything, don't hesitate to ask.
+Stay safe and don't swim too deep my friend.
+~FinishQuest(LostAccordionQuestId)
+->END
+
+=== OtherThing
+~Sad = true
+Oh...
+Um, How can I help you?
+->OlivierOptions
+
+=== NoAccordion
+Let me know if you do find it please, stay safe out there friend.
 ->END
 
 
 ===AMealToDieForOlivier
+Oh my! Where? where did you find my accordion?
++[Mrs Baptiste gave it to me.]
+->MarieYouSay
++[It was in the swamp again.]
+->HowClumsy
+
+
+===MarieYouSay
+Oh... Marie gave the accordion to you...
+That's...
+That's good to know.
+I have a request for you. If you're up for it. 
+I can take over the workings of the boat to give you free rides if you complete it.
++[What's the request?]
+->EelRequest
+
+===EelRequest
+I'm in need of three eels. That's all.
++[I'll help you get them.]
+->AcceptedEels
++[What for?]
+->AvoidingExplanation
++[I have three!]
+->EelHandOver
+
+===AvoidingExplanation
+A little... project of mine.
+I cannot say more yet my friend.
++[I'll Help you]
+->AcceptedEels
+
+=== AcceptedEels
+Thank you friend...
+Please return as soon as you have them.
+~StartQuest(AMealToDieForOlivierQuestId)
+->END
+
+===HowClumsy
+How clumsy of me, thank you again!
+I'll make sure to keep it by my side going forward.
+Best of luck out in the Bayou youngun!
 ->END
 
 === AMealToDieForOlivierInProgress
 ->END
 
+===EelHandOver
+~FinishQuest(AMealToDieForOlivierQuestId)
+->END
