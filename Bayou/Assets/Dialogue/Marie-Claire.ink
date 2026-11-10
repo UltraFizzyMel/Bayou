@@ -226,6 +226,7 @@ Anything else dear?
 {Happy:Well... when he takes his breaks from playing at least.}
 {Alive:They're good...}
 {Alive:I... convinced them to stop with their incessant music.}
+{Alive:Don't bother them, they want some time to reflect.}
 ->MoreQuestions
 
 ===RunAlong
@@ -420,7 +421,10 @@ Goodluck.
 { HasItem("Item_Pufferfish", 3):
     ~ StartQuest(AMealToDieForQuestId)
     ~ FinishQuest(AMealToDieForQuestId)
+    //Cancel the catfish and grar quest for sabine
     ~ is_olivier_alive = false
+    Thank you dear, your boat trips shall be provided for free going forward.
+    Scurry along now. I have dinner to serve.
     ->END
 - else:
     Three pufferfish, dear. Come back when you have them.
@@ -438,8 +442,8 @@ Do you have all three pufferfish?
 
 
 ===DeadAliveOrHappy ===
-->MarieAlive
-->MarieHappy
+{is_olivier_alive == false}->MarieAlive
+{is_olivier_alive == true}->MarieHappy
 
 === MarieAlive
 ->MarieStandardIntro

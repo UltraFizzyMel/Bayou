@@ -165,17 +165,44 @@ Stay safe out in the fog my friend.
 === questions ===
 +{!repeatName >= 1}[Who are you?]
  {olivier_known == "":-> introduction("Olivier Baptiste") | -> repeatName}
-+[Chat Later]
++{marie_known != ""}[How are things with Marie?]
+->OlivierMarie
+*{olivierquestionsasked >=2}[Do you know Caliste?]
+->OlivierCaliste
+*[Do you know Father Landry?]
+->OlivierLandry
+*{sabine_known && olivierquestionsasked >=3}
+->OlivierSabine
+*{olivierquestionsasked >=4}
+->OlivierLost
++[Chat Later.]
  -> goodbye
+ 
+ ===OlivierMarie
+ 
+ 
+ ===OlivierCaliste
+ ~ olivierquestionsasked = olivierquestionsasked +1
+ 
+ ===OlivierLandry
+ ~ olivierquestionsasked = olivierquestionsasked +1
+ 
+ ===OlivierSabine
+ ~ olivierquestionsasked = olivierquestionsasked +1
+ 
+ ===OlivierLost
+ ~ olivierquestionsasked = olivierquestionsasked +1
  
  === introduction(name) ===
  ~ olivier_known = name
+ ~ olivierquestionsasked = olivierquestionsasked +1
  Oh right!! How rude of me, I'm the one and only <color=\#F8FF30>Olivier Baptiste!</color> 
  However, that'll be <color=\#F8FF30>Mr.Baptiste</color> to you.#speaker: Mr. Baptiste
  -> questions
  
  === repeatName ===
  Forget me already?
+ ~ olivierquestionsasked = olivierquestionsasked +1
  ->questions
  
  
@@ -329,8 +356,23 @@ Good Evening. Have you managed to get those eels?
 ->END
 
 ===EelHandOver
+Thank you. Should you need a ride in future, make sure to come to me.
+Wouldn't want to burden Marie.
+~is_marie_alive = false
 ~FinishQuest(AMealToDieForOlivierQuestId)
+//Cancel the catfish and grar quest for sabine
 ->END
 
 ===OlivierDeadHappyOrAlive
-->END
+{is_marie_alive == false}->OlivierAlive
+{is_marie_alive == true}->OlivierHappy
+
+===OlivierAlive
+->OlivierOptions
+
+===OlivierHappy
+Good evening my friend!
+{OlivierHappy ==1: 
+->OlivierOptions
+
+

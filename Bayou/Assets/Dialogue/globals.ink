@@ -22,6 +22,14 @@ VAR CollectLanternQuestId = "CollectLanternQuest"
 //quest states (questId + "State" for variable name)
 VAR CollectLanternQuestState = "CAN_START"
 
+//quest ids(questID + "Id" for variable name
+VAR BreakTheSealsQuestId = "BreakTheSealsQuest"
+
+//quest states (questId + "State" for variable name)
+VAR BreakTheSealsQuestState = "CAN_START"
+
+
+
 VAR SeenShadow = false
 
 //OLIVIER Variables
@@ -110,3 +118,8 @@ VAR sabineBaptisteSolution = false
 VAR deliveredFlower = false
 VAR sabinequestionsasked = 0
 VAR sabinealive = true
+
+VAR SpecialDeliveryQuestId = "SpecialDeliveryQuest"
+
+//quest states (questId + "State" for variable name)
+VAR SpecialDeliveryQuestState = "CAN_START"

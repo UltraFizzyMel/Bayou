@@ -74,9 +74,7 @@ No-one can walk into these waters unscathed.
 
 I might be able to help you if you return the favour.
 
-Find the rosary in the church pond.
-
-You'll know it when you see it.
+Find the rosary in the church pond. You'll know it when you see it.
 
 + {HasItem("Item_RosaryNecklace", 1)} [Do you mean this?]
 
@@ -100,7 +98,7 @@ You'll know it when you see it.
 
     - "CAN_FINISH": -> LanternFound
 
-    - "FINISHED": -> AfterLantern
+    - "FINISHED": -> BreakTheSealsStart
 
     - else: -> Agree
 
@@ -108,15 +106,29 @@ You'll know it when you see it.
  
  === BreakTheSealsStart ===
 
-{ BreakTheSealsStartQuestState :
+{ BreakTheSealsQuestState :
 
     - "IN_PROGRESS": -> BreakTheSealsInProgress
 
     - "CAN_FINISH": -> BreakTheSealsInProgress
 
-    - "FINISHED": -> AfterLantern
+    - "FINISHED": -> PurgeTheWitchStart
 
-    - else: -> Agree
+    - else: -> AfterLantern
+
+ }
+ 
+  === PurgeTheWitchStart ===
+
+{ BreakTheSealsQuestState :
+
+    - "IN_PROGRESS": -> PurgeTheWitchInProgress
+
+    - "CAN_FINISH": -> PurgeTheWitchInProgress
+
+    - "FINISHED": -> AfterTheWitch
+
+    - else: -> AfterTheSeals
 
  }
 
@@ -144,7 +156,7 @@ Be careful out there.
 
     The lantern… you found it.
 
-    Rest now, child. You've seen enough of this bayou for one night.
+    Well done, my child. You've seen enough of this bayou for one night.
 
     -> END
 
@@ -249,7 +261,6 @@ Be careful out there. Not everything is as it seems… Your eyes and ears will b
 #speaker: Father Landry
 
 It's good to see you again.
-
 -> service
 
 
@@ -257,7 +268,6 @@ It's good to see you again.
 === service ===
 
 How might I be of service?
-
 ->questions
 
 
@@ -265,15 +275,12 @@ How might I be of service?
 === questions ===
 
 +[Who are you?]
-
  { priest_name == "":-> introduction("Landry") | -> repeatName}
 
 +[Where am I?]
-
  -> location
 
 +[Chat Later]
-
  -> goodbye
 
 
@@ -281,31 +288,36 @@ How might I be of service?
  === introduction(name) ===
 
  ~ priest_name = name
-
  The name is <color=\#F8FF30>Father Landry.</color> #speaker: Father Landry
-
  -> questions
 
 
 
  === repeatName ===
-
  Call me Landry...
-
  ->questions
 
 
 
  === location ===
-
  The Bayou... You must have hit your head hard.
-
  -> questions
 
 
 
  === goodbye ===
-
  until next time my friend.
 
  -> END
+ 
+ === BreakTheSealsInProgress
+ ->END
+ 
+ === PurgeTheWitchInProgress
+ ->END
+ 
+ ===AfterTheWitch 
+ ->END
+ 
+ ===AfterTheSeals
+ ->END

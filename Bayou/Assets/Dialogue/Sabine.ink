@@ -16,10 +16,10 @@ EXTERNAL HandOverItem(itemId, count)
  
 === knownName ===
 #speaker: Sabine
--> StandardSabineIntro
+-> SpecialDeliveryStart
 
 === main ===
--> StandardSabineIntro
+-> SpecialDeliveryStart
 
  === SpecialDeliveryStart ===
 
@@ -33,29 +33,29 @@ EXTERNAL HandOverItem(itemId, count)
 
     - else: -> firstmeeting
 
- } 
+ }
  
-//=== LostAccordionStart ===
+//=== ACatfishAndAGrarStart ===
 
  //{ LostAccordionQuestState :
 
-   // - "IN_PROGRESS": -> LostAccordionInProgress
+   // - "IN_PROGRESS": -> ACatfishAndAGrarInProgress
 
-   // - "CAN_FINISH": -> LostAccordionInProgress
+   // - "CAN_FINISH": -> ACatfishAndAGrarInProgress
 
    // - "FINISHED": -> AMealToDieForOlivierStart
 
     //- else: -> OlivierStandardIntro
 
- } 
+// } 
 
-//=== AMealToDieForOlivierStart ===
+//=== TheseRitualComponentsSeemSlipperyStart ===
  
-//{ AMealToDieForOlivierQuestState :
+//{ TheseRitualComponentsSeemSlipperyQuestState :
 
-  //  - "IN_PROGRESS": -> AccordianDisposalInProgress
+  //  - "IN_PROGRESS": -> TheseRitualComponentsSeemSlipperyInProgress
 
-    //- "CAN_FINISH": -> AccordianDisposalInProgress
+    //- "CAN_FINISH": -> TheseRitualComponentsSeemSlipperyInProgress
 
     //- "FINISHED": -> AMealToDieForStart
 
@@ -63,10 +63,12 @@ EXTERNAL HandOverItem(itemId, count)
 
 // } 
 
+===StandardSabineIntro
+->StandardSabineBranching
 
 === StandardSabineBranching ===
 +[Who are you?]
- {sabine_known == "":-> introduction("Olivier Baptiste") | -> repeatName}
+ {sabine_known == "":-> introduction("Sabine") | -> repeatName}
 +{not knownName}[Tunes?]
  -> music
  +{knownName}[Let me hear your Tunes!]
@@ -78,20 +80,23 @@ EXTERNAL HandOverItem(itemId, count)
  ~ olivier_known = name
  I'm the one and only <color=\#F8FF30>Olivier Baptiste!</color> 
  However, that'll be <color=\#F8FF30>Mr.Baptiste</color> to you.#speaker: Sabine
- -> questions
+ -> StandardSabineBranching
  
  === repeatName ===
  Forget me already?
- ->questions
+ ->StandardSabineBranching
  
  === music ===
  Well, ain't it kind of you to ask.
  Listen closely youngun.(INSERT MUSIC PLAYING HERE)
  +[I should get going.]
- -> questions
+ ->StandardSabineBranching
  
- ===
+ 
  
  === goodbye ===
  until next time my friend.
  -> END
+ 
+ ===SpecialDeliveryInProgress
+ ->END
