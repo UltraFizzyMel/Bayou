@@ -163,35 +163,86 @@ Stay safe out in the fog my friend.
 
 
 === questions ===
-+{!repeatName >= 1}[Who are you?]
++{!repeatName >= 1 && olivierquestionsasked <=3}[Who are you?]
  {olivier_known == "":-> introduction("Olivier Baptiste") | -> repeatName}
+
 +{marie_known != ""}[How are things with Marie?]
 ->OlivierMarie
+
 *{olivierquestionsasked >=2}[Do you know Caliste?]
 ->OlivierCaliste
+
 *[Do you know Father Landry?]
 ->OlivierLandry
-*{sabine_known && olivierquestionsasked >=3}
+
+*{sabine_known && olivierquestionsasked >=3}[What do you think of Sabine?]
 ->OlivierSabine
-*{olivierquestionsasked >=4}
+
+*{olivierquestionsasked >=4}[Have you lost something too?]
 ->OlivierLost
 +[Chat Later.]
  -> goodbye
  
  ===OlivierMarie
+ {!LostAccordionStart:I hope they're getting better but I have a feeling I have done something to annoy them...}
+{!LostAccordionStart:I don't even have my music to help clear the tension between us.}
+{FoundAccordion && !AMealToDieForStart: Definitely on the upswing! We've had many big dinners thanks to you! }
+{FoundAccordion && !AMealToDieForStart: I'm going to serenade them more going forward to show them my love still reigns true.}
+{AMealToDieForStart && !OlivierDeadHappyOrAlive:They're been... better but soon they won't have a lot to worry them anymore.}
+{OlivierHappy:Ever since you worked your magic they've never been better. }
+{OlivierHappy:Well... maybe on our wedding night...}
+{OlivierHappy:Other than that night, never better!}
+{OlivierAlive:They're... they've never been better...}
+{OlivierAlive:I ran a bubble bath for them that definitly shocked them!}
+{OlivierAlive:They've decided to step back from the limelight for the moment. Best leave them be. }
+ {OlivierAlive:Wouldn't want to find yourself on their badside. Um...Anything else I could help you with?->OlivierOptions }
+ ->EnoughOnMarie
  
+ 
+ ===EnoughOnMarie
+ Don't worry yourself too much about our situation, I have it handled from here my friend. 
+ What can I help you with?
+ ->OlivierOptions
  
  ===OlivierCaliste
  ~ olivierquestionsasked = olivierquestionsasked +1
+ Hmmm... not well, it was a shame what happened to them. 
+ They were definitly the best salesperson in these waters.
+ -> AnythingElseOlivier
  
  ===OlivierLandry
  ~ olivierquestionsasked = olivierquestionsasked +1
+ Oh that Priest felt like trouble to me. I didn't like their face.
+ To be fair it could just be the whole religion thing.
+ Don't tell Marie I said that.
+ -> AnythingElseOlivier
  
  ===OlivierSabine
  ~ olivierquestionsasked = olivierquestionsasked +1
+ UM... next question?
+ ...
+ Ok fine...
+ I don't know them well.
+ I occasionally see them through the fog. 
+ Anyone or anything that can survive out there for as long as she has should be commended.
+ I can't say more.
+ -> OlivierOptions
  
  ===OlivierLost
  ~ olivierquestionsasked = olivierquestionsasked +1
+ Wow... that's certainly a question friend.
+ ...
+ I've lost a bunch but gained a fortune in return.
+ Being bound to this boat was a sacrifice worth making.
+ ...
+ I've...
+ I've said too much.
+ Come back when they're not listening.
+ ->END
+ 
+ ===AnythingElseOlivier
+ Anything after that question?
+ ->OlivierOptions
  
  === introduction(name) ===
  ~ olivier_known = name
@@ -368,11 +419,17 @@ Wouldn't want to burden Marie.
 {is_marie_alive == true}->OlivierHappy
 
 ===OlivierAlive
+Evening my friend.
+How can I help ya?
 ->OlivierOptions
 
 ===OlivierHappy
 Good evening my friend!
-{OlivierHappy ==1: 
+{OlivierHappy ==1:I don't know what you did but things are looking up for me and Marie!}
+{OlivierHappy ==1:If we're to spend eternity together I can spend a little less time on my music.}
+{OlivierHappy ==1: Anything I can do for ya?}
+{OlivierHappy >1: You look in need of a touch of musical delight, alright!
+{OlivierHappy >1: How can I help ya?
 ->OlivierOptions
 
 
