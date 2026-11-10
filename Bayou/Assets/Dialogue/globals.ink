@@ -1,3 +1,10 @@
+
+VAR inGraveyard = false
+VAR inFoggyMarsh = false
+VAR inBrackishShore = false
+
+
+
 //ZENON Variables
 
 VAR priest_name = ""
@@ -78,6 +85,23 @@ VAR SnapperAndMollyQuestId = "SnapperAndMollyQuest"
 //quest states (questId + "State" for variable name)
 VAR SnapperAndMollyQuestState = "CAN_START"
 
+VAR ASearchForAHerbalistQuestId = "ASearchForAHerbalistQuest"
+
+//quest states (questId + "State" for variable name)
+VAR ASearchForAHerbalistQuestState = "CAN_START"
+
+VAR SharedDinnerQuestId = "SharedDinnerQuest"
+
+//quest states (questId + "State" for variable name)
+VAR SharedDinnerQuestState = "CAN_START"
+
+VAR LostCargoQuestId = "LostCargoQuest"
+
+//quest states (questId + "State" for variable name)
+VAR LostCargoQuestState = "CAN_START"
+
+
 //SABINE Variables
 VAR sabine_known = ""
 VAR sabineBaptisteSolution = false
+VAR deliveredFlower = false
