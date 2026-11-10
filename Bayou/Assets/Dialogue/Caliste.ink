@@ -187,23 +187,46 @@ My wares may be of interest...
 
 ===BranchingQuestions
 
-+[Who are you?]
++{calistequestionsasked < 3}[Who are you?]
 {caliste_known == "":-> introduction("Caliste") | -> repeatName}
 
+*[Do you know Father Landry?]
+->CalisteLandry
+*[Do you know Sabine?]
+->CalisteSabine
+*{SeenShadow}[Have you seen the shadow?]
+->CalisteShadow
+
+===CalisteLandry
+~ calistequestionsasked = calistequestionsasked +1
+->Thatall
+===CalisteSabine
+->Thatall
+===CalisteShadow
+<b>Shadow?!</b>
+<b>Where?!</b>
+Don't play with me sonny.
+You best come back later.
+->END
 === introduction(name) ===
 
  ~ caliste_known = name
 
  <color=\#F8FF30>Caliste.</color> #speaker: Caliste
-
+~ calistequestionsasked = calistequestionsasked +1
  +[Ah...]
 
- -> questions
+ -> Thatall
+
+===Thatall
+That all?
+->questions
 
 ===MissingBoxes
 That ain't ideal...
-Yep I recognize that box.
-Wait... Did you steal that there box right under my nose?
+Yep, I recognize that box.
+Wait... 
+Did you steal that there box right under my nose?
 +[I promise I didn't!]
 ->PromiseOfInnocence
 
@@ -233,9 +256,8 @@ Thank you sonny!
 #speaker: Caliste
 
  Tsk...
-
- ->questions
-
+~ calistequestionsasked = calistequestionsasked +1
+ ->Thatall
 
 
 === shop ===
@@ -335,13 +357,17 @@ Don't let the bayou get ya.
 <b>DON'T...</b> Oh it's you.
 { HasItem("Item_Flounder", 1) && HasItem("Item_LargeMouthBass", 1)&& HasItem("Item_BlueCrab", 1)}Did you get the three fish?
 +{deliveredFlower}[I have.]
-->SatchelReward
+->KeyReward
 +[Not Yet]
 ->TakeYourTime
 
 
 ===TakeYourTime
 Keep your eyes out for em if you can.
+->BasicWaresIntro
+
+===KeyReward
+Much Obliged! Here's that key I promised ya. 
 ->BasicWaresIntro
 
 === goodbye ===
