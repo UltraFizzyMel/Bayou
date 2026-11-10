@@ -16,8 +16,6 @@
 
  EXTERNAL GiveMoney(amount)
 
-
-
 #portrait: caliste_ardoin_neutral #layout: left #background: merchant
 {caliste_known == "":-> notKnown |-> knownName}
 
@@ -28,7 +26,6 @@
 === knownName ===
 #speaker: Caliste
 ->SnapperAndMollyQuestStart
-
 
 
 === SnapperAndMollyQuestStart ===
@@ -65,22 +62,9 @@
 
     - "FINISHED":  {caliste_known == "":-> notKnown |-> knownName}
 
-    - "IN_PROGRESS": -> waiting
+    - "IN_PROGRESS": -> ASharedDinnerInProgress
 
-    - "CAN_FINISH": -> waiting
-
-    - else: -> CalisteStandardIntroduction
-
-}
-
-===LostCargoQuestStart
-{ LostCargoQuestState:
-
-    - "FINISHED":  {caliste_known == "":-> notKnown |-> knownName}
-
-    - "IN_PROGRESS": -> waiting
-
-    - "CAN_FINISH": -> waiting
+    - "CAN_FINISH": -> ASharedDinnerInProgress
 
     - else: -> CalisteStandardIntroduction
 
@@ -90,6 +74,7 @@
 <b>DON'T...</b> Oh it's you.
 -> BasicWaresIntro
 -> ASearchForAHerbalist
+->ASharedDinner
 
 
 ===BasicWaresIntro
@@ -182,17 +167,16 @@ My wares may be of interest...
 - else:
 
     Hmm. Bring me one Snapper and one Molly.
-
     -> END
-
 }
-
-
 
 === questions ===
 
 +[I have a question for you.]
 ->BranchingQuestions
+
++{ (HasItem("Item_CalisteBox", 1)) }[{MissingBoxes:I have something for you.  else: Do you recognise this box?}]
+{MissingBoxes:->ReturnBox |->MissingBoxes}
 
 +[Wares?]
  -> shop
@@ -216,7 +200,33 @@ My wares may be of interest...
 
  -> questions
 
+===MissingBoxes
+That ain't ideal...
+Yep I recognize that box.
+Wait... Did you steal that there box right under my nose?
++[I promise I didn't!]
+->PromiseOfInnocence
 
+===PromiseOfInnocence
+Hmmm...
+Alright sonny, I believe that innocent twinkle in your eye.
+Much obliged. I believe I've lost two other boxes somewhere out in that there swamp.
+Should you find them please return em. 
+I'll be able to expand my wares if you do!
+~StartQuest(LostCargoQuestId)
+~ calisteboxesreturned = calisteboxesreturned  + 1
+->AnythingElse
+
+===AnythingElse
+Want to look at my new wares?
+->questions
+
+===ReturnBox
+~ calisteboxesreturned = calisteboxesreturned  + 1
+Thank you sonny! 
+{calisteboxesreturned == 2: I have only one other missing box for you to find.}
+{calisteboxesreturned >= 3: That should be all of my boxes. }
+->AnythingElse
 
 === repeatName ===
 
@@ -292,6 +302,46 @@ Since you're here...
 
 ===StillSearching
 I have a feeling you'll find them sooner than you know.
+->BasicWaresIntro
+
+===ASharedDinner
+Sorry sonny, could you spare a moment for good ol' me?
++[I can!]
+->ASharedDinnerStart
++[I can't.]
+->refusetohelp
+->END
+
+===ASharedDinnerStart
+{ASharedDinnerStart == 1: I need help catching three fish for a special Dinner.}
+{ASharedDinnerStart == 1:Could you do that for me?}
+{ASharedDinnerStart > 1: You changed your mind about helping me with the fish?}
++{ASharedDinnerStart == 1}[I will.]
+->SharedDinnerAgree
++{ASharedDinnerStart == 1}[Not right now.]
+->refusetohelp
++{ASharedDinnerStart > 1}[I have.]
+->SharedDinnerAgree
++{ASharedDinnerStart > 1}[Not yet.]
+->refusetohelp
+
+===SharedDinnerAgree
+Thank you kindly. All I need from you is a Flounder, a Largemouth Bass and a Blue Crab.
+Return with them and I can give you my key from the Brackish Shore to the Church.
+Don't let the bayou get ya.
+->END
+
+===ASharedDinnerInProgress
+<b>DON'T...</b> Oh it's you.
+{ HasItem("Item_Flounder", 1) && HasItem("Item_LargeMouthBass", 1)&& HasItem("Item_BlueCrab", 1)}Did you get the three fish?
++{deliveredFlower}[I have.]
+->SatchelReward
++[Not Yet]
+->TakeYourTime
+
+
+===TakeYourTime
+Keep your eyes out for em if you can.
 ->BasicWaresIntro
 
 === goodbye ===

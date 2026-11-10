@@ -190,22 +190,23 @@ Anything else dear?
 + [How are things with Mr. Baptiste.]
 ->MrBaptiste
 *{SeenShadow}[Have you seen the roaming shadow?]
-{mariequestionsasked + 1}
+~ mariequestionsasked = mariequestionsasked + 1
 ->Shadow
 
 *{mariequestionsasked >= 1}[Do you know Father Landry?]
-{mariequestionsasked + 1}
+~ mariequestionsasked = mariequestionsasked + 1
 ->Landry
 
 *{mariequestionsasked >=3 && sabine_known != ""}[What do you think of Sabine?]
-{mariequestionsasked + 1}
+~ mariequestionsasked = mariequestionsasked + 1
 ->Sabine
 
-*{mariequestionsasked >=2 && caliste_known != ""}
-{mariequestionsasked + 1}
+*{mariequestionsasked >=2 && caliste_known != ""}[Do you know Caliste?]
+~ mariequestionsasked = mariequestionsasked + 1
 ->Caliste
 
 *{mariequestionsasked >=5}[Do you... do you remember a hospital?]
+~ mariequestionsasked = mariequestionsasked + 1
 ->TheHospital
 
 +[That'll be all]
@@ -214,17 +215,17 @@ Anything else dear?
 
 ===MrBaptiste
 ...
-{!ExpandedHorizonsStart}Should you really be prying?
-{!ExpandedHorizonsStart}No. No you should not.
-{ExpandedHorizonsStart && !AccordianDisposalStart} Honestly... never been worse.
-{ExpandedHorizonsStart && !AccordianDisposalStart} Not once since being bound to this boat have they remembered my preferences.
-{AccordianDisposalStart && !AMealToDieForStart} They are getting on my final nerve. 
-{AccordianDisposalStart && !AMealToDieForStart} All I want from them is to show an ounce of care for what I actually want.
-{AMealToDieForStart && !DeadAliveOrHappy}They're about to get a whole lot better.
-{Happy}Surprisingly, they've improved substantially. I finally feel heard.
-{Happy}Well... when he takes his breaks from playing at least.
-{Alive}They're good...
-{Alive}I... convinced them to stop with their incessant music.
+{!ExpandedHorizonsStart:Should you really be prying?}
+{!ExpandedHorizonsStart:No. No you should not.}
+{ExpandedHorizonsStart && !AccordianDisposalStart: Honestly... never been worse.}
+{ExpandedHorizonsStart && !AccordianDisposalStart: Not once since being bound to this boat have they remembered my preferences.}
+{AccordianDisposalStart && !AMealToDieForStart: They are getting on my final nerve. }
+{AccordianDisposalStart && !AMealToDieForStart: All I want from them is to show an ounce of care for what I actually want.}
+{AMealToDieForStart && !DeadAliveOrHappy:They're about to get a whole lot better.}
+{Happy:Surprisingly, they've improved substantially.}
+{Happy:Well... when he takes his breaks from playing at least.}
+{Alive:They're good...}
+{Alive:I... convinced them to stop with their incessant music.}
 ->MoreQuestions
 
 ===RunAlong

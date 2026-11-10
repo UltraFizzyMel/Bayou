@@ -14430,7 +14430,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 938784669}
-  - {fileID: 744777156}
   - {fileID: 1283926432}
   - {fileID: 124255213}
   - {fileID: 1714402464}
@@ -40482,6 +40481,59 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4845822323681349829, guid: c697e1fad0d6ea24385327cade99ca01, type: 3}
   m_PrefabInstance: {fileID: 706304725}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &706398580
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 706398581}
+  - component: {fileID: 706398582}
+  m_Layer: 0
+  m_Name: Foggy Marsh Transition (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &706398581
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706398580}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.72025377, z: -0, w: 0.69371074}
+  m_LocalPosition: {x: 120.32, y: 0, z: 37.63}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1108513359}
+  m_LocalEulerAnglesHint: {x: 0, y: 92.151, z: 0}
+--- !u!65 &706398582
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 706398580}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 12.559174, y: 10.945681, z: 4.5510077}
+  m_Center: {x: -0.8817119, y: 4.972867, z: -1.7755011}
 --- !u!1001 &707078845
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43222,59 +43274,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8558058058566484023, guid: 0cc50aebe4ed7b84d8732db5ad0de808, type: 3}
   m_PrefabInstance: {fileID: 744028031}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &744777155
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 744777156}
-  - component: {fileID: 744777157}
-  m_Layer: 0
-  m_Name: Church
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &744777156
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744777155}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.26840723, z: -0, w: 0.9633056}
-  m_LocalPosition: {x: 32.6, y: 0, z: 2.19}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 259293718}
-  m_LocalEulerAnglesHint: {x: 0, y: 31.139, z: 0}
---- !u!65 &744777157
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 744777155}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 12.559174, y: 10.945681, z: 4.5510077}
-  m_Center: {x: -0.8817119, y: 4.972867, z: -1.7755011}
 --- !u!4 &745468732 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
@@ -46140,13 +46139,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 782166143}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.85223716, z: -0, w: 0.5231556}
-  m_LocalPosition: {x: 26.857395, y: -5.3, z: 141.19673}
+  m_LocalRotation: {x: -0, y: -0.97947097, z: -0, w: 0.20158532}
+  m_LocalPosition: {x: 5.83, y: -5.3, z: 122.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1782009611}
-  m_LocalEulerAnglesHint: {x: 0, y: -116.912, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -156.741, z: 0}
 --- !u!65 &782166145
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -60900,6 +60899,59 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1007311168}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1009025707
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1009025708}
+  - component: {fileID: 1009025709}
+  m_Layer: 0
+  m_Name: Foggy Marsh Transition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1009025708
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1009025707}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.59613633, z: -0, w: 0.8028832}
+  m_LocalPosition: {x: -31.58, y: 0, z: 32.74}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1782009611}
+  m_LocalEulerAnglesHint: {x: 0, y: -73.187, z: 0}
+--- !u!65 &1009025709
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1009025707}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 12.559174, y: 10.945681, z: 4.5510077}
+  m_Center: {x: -0.8817119, y: 4.972867, z: -1.7755011}
 --- !u!1001 &1009637695
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -61433,7 +61485,7 @@ Transform:
   m_GameObject: {fileID: 1013002464}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.9672755, z: -0, w: 0.25372857}
-  m_LocalPosition: {x: 3.35, y: -5.3, z: 118.77}
+  m_LocalPosition: {x: 0.73, y: -3.02, z: 114.12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -66615,7 +66667,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 706398581}
   m_Father: {fileID: 2051705270}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1108950301
@@ -67620,6 +67673,59 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6797524622364177450, guid: d0eee295eef89e2499df008d4086606a, type: 3}
   m_PrefabInstance: {fileID: 637859167}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1121303354
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1121303355}
+  - component: {fileID: 1121303356}
+  m_Layer: 0
+  m_Name: Foggy Marsh Transition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1121303355
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1121303354}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0.72025377, z: -0, w: 0.69371074}
+  m_LocalPosition: {x: 111.82, y: 0, z: 37.95}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1782009611}
+  m_LocalEulerAnglesHint: {x: 0, y: 92.151, z: 0}
+--- !u!65 &1121303356
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1121303354}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 12.559174, y: 10.945681, z: 4.5510077}
+  m_Center: {x: -0.8817119, y: 4.972867, z: -1.7755011}
 --- !u!1001 &1123541747
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -69725,7 +69831,7 @@ Transform:
   m_GameObject: {fileID: 1148931900}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.017077986, z: -0, w: 0.99985415}
-  m_LocalPosition: {x: 20.5, y: 0, z: 56.6}
+  m_LocalPosition: {x: 14.34, y: 0, z: 56.39}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -79933,7 +80039,7 @@ Transform:
   m_GameObject: {fileID: 1298188646}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.2579814, z: -0, w: 0.9661499}
-  m_LocalPosition: {x: -35.83, y: 0, z: 3.91}
+  m_LocalPosition: {x: -37.7, y: 0, z: 2.84}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -94232,6 +94338,59 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6797524622364177450, guid: d0eee295eef89e2499df008d4086606a, type: 3}
   m_PrefabInstance: {fileID: 445425367}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1530520182
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1530520183}
+  - component: {fileID: 1530520184}
+  m_Layer: 0
+  m_Name: Foggy Marsh Transition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1530520183
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530520182}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.017077988, z: -0, w: 0.9998542}
+  m_LocalPosition: {x: 18.66, y: 0, z: 49.14}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1782009611}
+  m_LocalEulerAnglesHint: {x: 0, y: -1.957, z: 0}
+--- !u!65 &1530520184
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1530520182}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 12.559174, y: 10.945681, z: 4.5510077}
+  m_Center: {x: -0.8817119, y: 4.972867, z: -1.7755011}
 --- !u!1001 &1531517578
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -111249,6 +111408,9 @@ Transform:
   m_Children:
   - {fileID: 782166144}
   - {fileID: 2049985099}
+  - {fileID: 1009025708}
+  - {fileID: 1530520183}
+  - {fileID: 1121303355}
   m_Father: {fileID: 2051705270}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1782474063

@@ -29,6 +29,7 @@ VAR olivier_known = ""
 VAR accordian_returned = false
 VAR is_olivier_alive = true
 VAR olivier_firstmeeting = true
+VAR olivierquestionsasked = 0
 
 
 //quest ids(questID + "Id" for variable name
@@ -79,6 +80,8 @@ VAR AMealToDieForQuestState = "CAN_START"
 
 //CALISTE Variables
 VAR caliste_known = ""
+VAR calistequestionsasked = 0
+VAR calisteboxesreturned = 0
 
 VAR SnapperAndMollyQuestId = "SnapperAndMollyQuest"
 
@@ -105,3 +108,5 @@ VAR LostCargoQuestState = "CAN_START"
 VAR sabine_known = ""
 VAR sabineBaptisteSolution = false
 VAR deliveredFlower = false
+VAR sabinequestionsasked = 0
+VAR sabinealive = true
