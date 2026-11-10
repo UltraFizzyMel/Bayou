@@ -192,26 +192,61 @@ My wares may be of interest...
 
 *[Do you know Father Landry?]
 ->CalisteLandry
-*[Do you know Sabine?]
+*{sabine_known != ""}[Do you know Sabine?]
 ->CalisteSabine
-*{SeenShadow}[Have you seen the shadow?]
++{CalisteSabine}[How are things with Sabine?]
+->CalisteSabineOpinion
+*{SeenShadow && calistequestionsasked >=3}[Have you seen the shadow?]
 ->CalisteShadow
+*{olivier_known  && marie_known && calistequestionsasked >=3}[Have you met the Baptistes?]
+->CalisteBaptistes
+*{calistequestionsasked >=5 }[What have you... lost?]
+->CalisteLost
 
 ===CalisteLandry
 ~ calistequestionsasked = calistequestionsasked +1
+That name sounds so... familiar like it's scratching around in the back of my brain.
+Landry, Landry, Landry...
+Oh...
+That family been part of the church here long before anyone else set up houses nearby.
+I don't think I remember nothin' else.
 ->Thatall
+
 ===CalisteSabine
+~ calistequestionsasked = calistequestionsasked +1
+Sabine... that's the name of the sweet herbalist woman.
+I do know her?
+I do know her!
+Don't look at me with that frown of yours boy.
+->MovingOn
+
+===CalisteSabineOpinion
+{sabinealive == false}
+->MovingOn
+
+===CalisteBaptistes
+~ calistequestionsasked = calistequestionsasked +1
+Baptiste... I think they were another family tainted by the Bayou. 
+I remember the sound of an accordion. That Mr Baptiste would spend hours practising.
+Mrs. Baptiste, her ambition. It soared higher than the heavens. A pretty one she was too.
+None could traverse these waters better than her. Well... except for me of course.
+...
 ->Thatall
+
 ===CalisteShadow
+~ calistequestionsasked = calistequestionsasked +1
 <b>Shadow?!</b>
 <b>Where?!</b>
 Don't play with me sonny.
 You best come back later.
 ->END
+
+===CalisteLost
+->MovingOn
+
 === introduction(name) ===
 
  ~ caliste_known = name
-
  <color=\#F8FF30>Caliste.</color> #speaker: Caliste
 ~ calistequestionsasked = calistequestionsasked +1
  +[Ah...]
@@ -220,6 +255,10 @@ You best come back later.
 
 ===Thatall
 That all?
+->questions
+
+===MovingOn
+Anything else...?
 ->questions
 
 ===MissingBoxes
@@ -332,7 +371,6 @@ Sorry sonny, could you spare a moment for good ol' me?
 ->ASharedDinnerStart
 +[I can't.]
 ->refusetohelp
-->END
 
 ===ASharedDinnerStart
 {ASharedDinnerStart == 1: I need help catching three fish for a special Dinner.}
