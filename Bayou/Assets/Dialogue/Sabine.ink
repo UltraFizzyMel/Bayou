@@ -16,24 +16,24 @@ EXTERNAL HandOverItem(itemId, count)
  
 === knownName ===
 #speaker: Sabine
--> questions
+-> StandardSabineIntro
 
 === main ===
--> questions
+-> StandardSabineIntro
 
- //=== SpecialDeliveryStart ===
+ === SpecialDeliveryStart ===
 
-//{ EmergencyDinnerQuestState :
+{ SpecialDeliveryQuestState :
 
-  //  - "IN_PROGRESS": -> EmergencyDinnerInProgress
+    - "IN_PROGRESS": -> SpecialDeliveryInProgress
 
-   // - "CAN_FINISH": -> EmergencyDinnerInProgress
+    - "CAN_FINISH": -> SpecialDeliveryInProgress
 
-   // - "FINISHED": -> LostAccordionStart
+    - "FINISHED": -> LostAccordionStart
 
-   // - else: -> firstmeeting
+    - else: -> firstmeeting
 
-// } 
+ } 
  
 //=== LostAccordionStart ===
 
@@ -64,9 +64,9 @@ EXTERNAL HandOverItem(itemId, count)
 // } 
 
 
-=== questions ===
+=== StandardSabineBranching ===
 +[Who are you?]
- {olivier_known == "":-> introduction("Olivier Baptiste") | -> repeatName}
+ {sabine_known == "":-> introduction("Olivier Baptiste") | -> repeatName}
 +{not knownName}[Tunes?]
  -> music
  +{knownName}[Let me hear your Tunes!]
@@ -89,6 +89,9 @@ EXTERNAL HandOverItem(itemId, count)
  Listen closely youngun.(INSERT MUSIC PLAYING HERE)
  +[I should get going.]
  -> questions
+ 
+ ===
+ 
  === goodbye ===
  until next time my friend.
  -> END

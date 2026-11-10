@@ -221,8 +221,20 @@ Don't look at me with that frown of yours boy.
 ->MovingOn
 
 ===CalisteSabineOpinion
-{sabinealive == false}
-->MovingOn
+{sabinealive == true &&  !ASharedDinnerInProgress: They are nice enough, I seem to know them from my life before...}
+{sabinealive == true &&  !ASharedDinnerInProgress: I don't remember them but I yearn to do so.}
+{sabinealive == true && ASharedDinnerInProgress && !KeyReward: }
+{sabinealive == true && ASharedDinnerInProgress && !KeyReward: hh}
+{sabinealive == true && ASharedDinnerInProgress && KeyReward: hbh}
+{sabinealive == false: ...}
+{sabinealive == false: }
+->SabineMovingOn
+
+===SabineMovingOn
+...
+That's all I'm willing for now sonny.
+Anything else you need from me?
+->questions
 
 ===CalisteBaptistes
 ~ calistequestionsasked = calistequestionsasked +1
@@ -242,7 +254,15 @@ You best come back later.
 ->END
 
 ===CalisteLost
-->MovingOn
+...
+That's a heavy question sonny.
+...
+I've lost everyone close to me from my life before my success.
+You ain't gonna get a better deal than what I can offer, but I can't comprehend what I've lost... 
+I no longer remember anyone who was dear to me.
+...
+Could you give me a moment?
+->END
 
 === introduction(name) ===
 

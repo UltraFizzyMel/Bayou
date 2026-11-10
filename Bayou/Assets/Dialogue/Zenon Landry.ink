@@ -105,6 +105,20 @@ You'll know it when you see it.
     - else: -> Agree
 
  }
+ 
+ === BreakTheSealsStart ===
+
+{ BreakTheSealsStartQuestState :
+
+    - "IN_PROGRESS": -> BreakTheSealsInProgress
+
+    - "CAN_FINISH": -> BreakTheSealsInProgress
+
+    - "FINISHED": -> AfterLantern
+
+    - else: -> Agree
+
+ }
 
 
 
