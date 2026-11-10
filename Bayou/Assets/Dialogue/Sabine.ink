@@ -31,7 +31,7 @@ EXTERNAL HandOverItem(itemId, count)
 
     - "FINISHED": -> LostAccordionStart
 
-    - else: -> firstmeeting
+    - else: -> SabineFirstmeeting
 
  }
  
@@ -62,19 +62,27 @@ EXTERNAL HandOverItem(itemId, count)
    // - else: -> OlivierStandardIntro
 
 // } 
+===SabineFirstmeeting
+->END
 
 ===StandardSabineIntro
 ->StandardSabineBranching
 
 === StandardSabineBranching ===
++[Can I ask you Something?]
+->SabineQuestions
 +[Who are you?]
  {sabine_known == "":-> introduction("Sabine") | -> repeatName}
 +{not knownName}[Tunes?]
  -> music
- +{knownName}[Let me hear your Tunes!]
+ 
+ +[I have something for you.]
  -> music
 +[Chat Later]
  -> goodbye
+ 
+ ===SabineQuestions
+ ->END
  
  === introduction(name) ===
  ~ olivier_known = name
