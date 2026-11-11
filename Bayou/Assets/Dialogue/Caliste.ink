@@ -367,7 +367,7 @@ Ah... that's alright.
 
 ===ASearchForAHerbalistInProgress
 <b>DON'T...</b> Oh it's you.
-Did you find them?
+Did you find em and show em the flower ?
 +{deliveredFlower}[I did.]
 ->SatchelReward
 +[I have not.]

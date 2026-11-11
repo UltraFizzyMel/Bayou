@@ -186,9 +186,9 @@ Stay safe out in the fog my friend.
  ===OlivierMarie
  {!LostAccordionStart:I hope they're getting better but I have a feeling I have done something to annoy them...}
 {!LostAccordionStart:I don't even have my music to help clear the tension between us.}
-{FoundAccordion && !AMealToDieForStart: Definitely on the upswing! We've had many big dinners thanks to you! }
-{FoundAccordion && !AMealToDieForStart: I'm going to serenade them more going forward to show them my love still reigns true.}
-{AMealToDieForStart && !OlivierDeadHappyOrAlive:They're been... better but soon they won't have a lot to worry them anymore.}
+{FoundAccordion && !AMealToDieForOlivierStart: Definitely on the upswing! We've had many big dinners thanks to you! }
+{FoundAccordion && !AMealToDieForOlivierStart: I'm going to serenade them more going forward to show them my love still reigns true.}
+{AMealToDieForOlivierStart && !OlivierDeadHappyOrAlive:They're been... better but soon they won't have a lot to worry them anymore.}
 {OlivierHappy:Ever since you worked your magic they've never been better. }
 {OlivierHappy:Well... maybe on our wedding night...}
 {OlivierHappy:Other than that night, never better!}
@@ -428,8 +428,8 @@ Good evening my friend!
 {OlivierHappy ==1:I don't know what you did but things are looking up for me and Marie!}
 {OlivierHappy ==1:If we're to spend eternity together I can spend a little less time on my music.}
 {OlivierHappy ==1: Anything I can do for ya?}
-{OlivierHappy >1: You look in need of a touch of musical delight, alright!
-{OlivierHappy >1: How can I help ya?
+{OlivierHappy >1: You look in need of a touch of musical delight, alright!}
+{OlivierHappy >1: How can I help ya?}
 ->OlivierOptions
 
 

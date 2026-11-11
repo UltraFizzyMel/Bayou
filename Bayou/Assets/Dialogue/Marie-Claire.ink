@@ -222,11 +222,11 @@ Anything else dear?
 {AccordianDisposalStart && !AMealToDieForStart: They are getting on my final nerve. }
 {AccordianDisposalStart && !AMealToDieForStart: All I want from them is to show an ounce of care for what I actually want.}
 {AMealToDieForStart && !DeadAliveOrHappy:They're about to get a whole lot better.}
-{Happy:Surprisingly, they've improved substantially.}
-{Happy:Well... when he takes his breaks from playing at least.}
-{Alive:They're good...}
-{Alive:I... convinced them to stop with their incessant music.}
-{Alive:Don't bother them, they want some time to reflect.}
+{MarieHappy:Surprisingly, they've improved substantially.}
+{MarieHappy:Well... when he takes his breaks from playing at least.}
+{MarieAlive:They're good...}
+{MarieAlive:I... convinced them to stop with their incessant music.}
+{MarieAlive:Don't bother them, they want some time to reflect.}
 ->MoreQuestions
 
 ===RunAlong
@@ -449,10 +449,10 @@ Do you have all three pufferfish?
 ->MarieStandardIntro
 
 ===MarieHappy
-{MarieHappy = 1}Well, look who it is! Good Evening dear.
-{MarieHappy = 1}You won't believe what Olivier and I had for dinner last night!
-{MarieHappy = 1}Things are finally looking up for us. We did however discuss something important...
-{MarieHappy = 1}The trips we're giving you... we're gonna need to up the cost to two fish per trip unfortunately.
-{MarieHappy = 1}That'll be all.
+{MarieHappy == 1}Well, look who it is! Good Evening dear.
+{MarieHappy == 1}You won't believe what Olivier and I had for dinner last night!
+{MarieHappy == 1}Things are finally looking up for us. We did however discuss something important...
+{MarieHappy == 1}The trips we're giving you... we're gonna need to up the cost to two fish per trip unfortunately.
+{MarieHappy == 1}That'll be all.
 ->MarieStandardIntro
  

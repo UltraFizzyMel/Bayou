@@ -123,3 +123,18 @@ VAR SpecialDeliveryQuestId = "SpecialDeliveryQuest"
 
 //quest states (questId + "State" for variable name)
 VAR SpecialDeliveryQuestState = "CAN_START"
+
+VAR TheseRitualComponentsSeemSlipperyQuestId = "TheseRitualComponentsSeemSlipperyQuest"
+
+//quest states (questId + "State" for variable name)
+VAR TheseRitualComponentsSeemSlipperyQuestState = "CAN_START"
+
+VAR AGraveRevelationQuestId = "AGraveRevelationQuest"
+
+//quest states (questId + "State" for variable name)
+VAR AGraveRevelationQuestState = "CAN_START"
+
+VAR ACatfishAndAGrarQuestId = "ACatfishAndAGrarQuest"
+
+//quest states (questId + "State" for variable name)
+VAR ACatfishAndAGrarQuestState = "CAN_START"
