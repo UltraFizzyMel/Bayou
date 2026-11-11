@@ -88,9 +88,10 @@ We meet again.
 The bayou waters have eroded who you once were.
 #speaker: Sabine
 You once knew me as a shape across the pond, Sabine.
+...
 ~sabine_known = "Sabine"
 You must be yearning to find her.
-+[Who...?]
++[Find who...?]
 ->FindHer
 
 ===FindHer
@@ -121,34 +122,57 @@ What help are you seeking?
 +[Can I ask you Something?]
 ->SabineQuestions
 
- +[I placed the flower]
+ *{flowerPlaced == true}[I placed the flower]
  ->PlacedFlower
- +[I have something for you.]
- -> HaveSomething 
-+[Chat Later]
- -> goodbye
+ *{ HasItem("Item_Catfish", 1) && HasItem("Item_Grar", 1) && BaptistesFued && !ACatfishAndAGrar}[I have the Catfish and the Grar.]->ACatfishAndAGrar
  
- ===HaveSomething
- +[Deliver 2 Fish]
- ->ACatfishAndAGrar
- +[deliver Flower]
- ->DeliverFlower
+ *{HasHerbalistFlower == true && !DeliverFlower}[I have a flower for you.]
+ -> DeliverFlower 
++[Stay safe Sabine.]
+ -> goodbye
  
  ===ACatfishAndAGrar
  ~FinishQuest(ACatfishAndAGrarQuestId)
  ->END
  
  ===SabineQuestions
+ *[Baptistesss]
+ ->BaptistesExplanation
  
- +[Baptistes]
+ *{BaptistesExplanation && marie_known && olivier_known}[Baptistes]
+ ~sabinequestionsasked = sabinequestionsasked + 1
  ->BaptistesFued
- +[Caliste]
+ 
+ *[Do you know Caliste?]
+ ->SabineCaliste
+ 
+ *{PlacedFlower}[You called me Mr. Lafleur?]
+ ~sabinequestionsasked = sabinequestionsasked + 1
+ ->MrLafleur
+ 
+ *{ASlipUp}[Who is Fabian?]
+ ~sabinequestionsasked = sabinequestionsasked + 1
+ ->Fabian
+ 
  ->END
+ 
+=== BaptistesExplanation
+->END
  
 ===BaptistesFued
 Simple solution
 Bring me 2 fish and they can make both happy.
  ~StartQuest(ACatfishAndAGrarQuestId)
+->END
+
+===SabineCaliste
+~StartQuest(SpecialDeliveryQuestId)
+->END
+
+===MrLafleur
+->END
+
+===Fabian
 ->END
 
  ===DeliverFlower
@@ -157,7 +181,7 @@ Bring me 2 fish and they can make both happy.
  oh my flower.
  I cannot take.
 Please place.
-[I can do so]
++[I can do so]
 ->DeliverFlowerToGrave
 
 ===DeliverFlowerToGrave
@@ -166,15 +190,28 @@ Please place.
 
  
  ===PlacedFlower
- Thank you.
+ //On placing the flower the player should get key for deeper in the graveyard not on returning to Sabine.
+I trust you found a missing thread on the tapestry you're walking?
+Keep a gentle touch lest the thread dissolves your painted silk into a river of loose fibres.
+That key you found leads deeper into the graveyards depths.
+...
+Thank you Mr. Lafleur.
  ~FinishQuest(AGraveRevelationQuestId)
  ->END
  
  === goodbye ===
- until next time my friend.
- -> END
+ {goodbye <=16:Stay safe. -> END}
+ {goodbye >= 16 && !TheseRitualComponentsSeemSlipperyStart &&!ASlipUp: Stay safe.->END}
+ {goodbye >= 16 && TheseRitualComponentsSeemSlipperyStart &&!ASlipUp: Stay safe. Fabian.->ASlipUp}
+ {goodbye >= 16 && ASlipUp: Stay safe...->END}
+
+===ASlipUp
+->END
  
  ===SpecialDeliveryInProgress
+ ~ASpecialMollyDelivery = true
+ Hello there.
+ The echo 
  ->END
  
  ===APleadForHelp

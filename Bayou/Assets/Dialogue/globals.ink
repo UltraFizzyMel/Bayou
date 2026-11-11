@@ -90,6 +90,7 @@ VAR AMealToDieForQuestState = "CAN_START"
 VAR caliste_known = ""
 VAR calistequestionsasked = 0
 VAR calisteboxesreturned = 0
+VAR HasHerbalistFlower = false
 
 VAR SnapperAndMollyQuestId = "SnapperAndMollyQuest"
 
@@ -118,6 +119,8 @@ VAR sabineBaptisteSolution = false
 VAR deliveredFlower = false
 VAR sabinequestionsasked = 0
 VAR sabinealive = true
+VAR flowerPlaced = false
+VAR ASpecialMollyDelivery = false
 
 VAR SpecialDeliveryQuestId = "SpecialDeliveryQuest"
 
