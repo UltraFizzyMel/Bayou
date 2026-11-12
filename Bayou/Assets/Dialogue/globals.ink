@@ -10,6 +10,7 @@ VAR hasFoundThirdBoatLoaction = false
 
 VAR priest_name = ""
 VAR first_meeting = true
+VAR landryquestionsasked = 0
 
  //quest ids(questID + "Id" for variable name
 VAR CollectPondItemQuestId = "CollectPondItemQuest"

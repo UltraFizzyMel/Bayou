@@ -270,11 +270,18 @@ How might I be of service?
 
 === questions ===
 
-+[Who are you?]
++{!repeatName}[Who are you?]
  { priest_name == "":-> introduction("Landry") | -> repeatName}
 
-+[Where am I?]
++{!location}[Where am I?]
  -> location
+ 
+*{caliste_known}[Do you know Caliste?]
+->ZenonCaliste
+*{olivier_known && marie_known}[Thoughts on the Baptistes?]
+->ZenonBaptistes
+*{landryquestionsasked >=8}[You have a grave?]
+->ZenonGrave
 
 +[Chat Later]
  -> goodbye
@@ -290,12 +297,25 @@ How might I be of service?
 
  === repeatName ===
  Call me Landry...
+ ~landryquestionsasked = landryquestionsasked + 1
  ->questions
 
  === location ===
  The Bayou... You must have hit your head hard.
+ ~landryquestionsasked = landryquestionsasked + 1
  -> questions
 
+===ZenonCaliste
+~landryquestionsasked = landryquestionsasked + 1
+->END
+
+===ZenonBaptistes
+~landryquestionsasked = landryquestionsasked + 1
+->END
+
+===ZenonGrave
+~landryquestionsasked = landryquestionsasked + 1
+->END
 
  === goodbye ===
  until next time my friend.
