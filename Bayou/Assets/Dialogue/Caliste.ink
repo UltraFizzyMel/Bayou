@@ -72,9 +72,10 @@
 
 ===CalisteStandardIntroduction
 <b>DON'T...</b> Oh it's you.
+{ASearchForAHerbalistQuestState == "FINISHED" && ASpecialMollyDeliveryQuestState == "FINISHED" && !ASharedDinnerAgree: ->ASharedDinner}
+{!ASearchForAHerbalistStart && SnapperAndMollyQuestState == "FINISHED: -> ASearchForAHerbalist}
 -> BasicWaresIntro
--> ASearchForAHerbalist
-->ASharedDinner
+
 
 
 ===BasicWaresIntro
@@ -221,18 +222,24 @@ Don't look at me with that frown of yours boy.
 ->MovingOn
 
 ===CalisteSabineOpinion
-{sabinealive == true &&  !ASharedDinnerInProgress: They are nice enough, I seem to know them from my life before...}
-{sabinealive == true &&  !ASharedDinnerInProgress: I don't remember them but I yearn to do so.}
-{sabinealive == true && ASharedDinnerInProgress && !KeyReward: }
-{sabinealive == true && ASharedDinnerInProgress && !KeyReward: hh}
+{sabinealive == true &&  !ASharedDinnerInProgress: The Herbalist? I don't remember thier face.}
+{sabinealive == true &&  !ASharedDinnerInProgress: They are nice enough... I want to see them again. }
+{sabinealive == true && ASharedDinnerInProgress && !KeyReward: Their eyes see my unsaid worries aloud.}
+{sabinealive == true && ASharedDinnerInProgress && !KeyReward: I don't remember them but I yearn to do so... They seem to have known me from my life before.}
 {sabinealive == true && ASharedDinnerInProgress && KeyReward: hbh}
-{sabinealive == false: ...}
-{sabinealive == false: }
+{sabinealive == false: They haven't come past in a while...}
+{sabinealive == false: Did I... do something wrong?->SomethingWrong}
 ->SabineMovingOn
+
+===SomethingWrong
+Oh...
+Don't mind me sonny.
+Anything else you need?
+->questions
 
 ===SabineMovingOn
 ...
-That's all I'm willing for now sonny.
+That's all I'm willing to say for now sonny.
 Anything else you need from me?
 ->questions
 
