@@ -264,7 +264,7 @@ Thank you Mr. Lafleur.
  ->goodbye
  
  ===APleadForHelp
- The moon sits high above the mortal realm. Yet its light is struggling to reach the Bayou's recesses. 
+ The moon sits high above the mortal realm. Yet its silver light still struggles to reach the Bayou's recesses. 
  Please, there is another way, all I need is a word of confirmation and the ritual can begin.
  ->PleadChoices
  ===PleadChoices
@@ -288,7 +288,7 @@ Thank you Mr. Lafleur.
  I will need you to find three fish from across the Bayou.
  An Alligator Grar, the living nightmare from the Sunken Grove.
  A Largemouth Bass from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
- A Blue Catfish from the Brackish Shore. Closer to the start of your journey than you may evr have realised.
+ A Blue Catfish from the Brackish Shore. Closer to the start of your journey than you may ever have realised.
 Retrieve these three for me and you might just find what you've lost.
 Your remaining light is but a flicker, I hope it will be enough...
  ->END
@@ -299,18 +299,26 @@ I hope your change your mind.
  ->END
  
  === TheseRitualComponentsSeemSlipperyInProgress
- Have you the fish?
- +[Yes]
+ Hello there.
+ Have you found the three scaley wonders? Or has the cold air frozen your progress?
+ +{HasItem("Item_AlligatorGrar", 1) && HasItem("Item_BlueCatfish", 1) && HasItem("Item_LargemouthBass", 1)}[I have all three.]
  ->Ritualcomplete
- +[No]
+ +[I've forgot them.]
  ->UtmostImportance
- +[Here for something else.]
+ +[I'm here for something else.]
  ->StandardSabineBranching
+ +[Stay safe Sabine.]
+ ->goodbye
  
  ===Ritualcomplete
  ~FinishQuest(TheseRitualComponentsSeemSlipperyQuestId)
  ->END
  ===UtmostImportance
+ Their importance dwarfs either one of us. Let me remind you of the three.
+ An Alligator Grar, the living nightmare from the Sunken Grove.
+ A Largemouth Bass from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
+ A Blue Catfish from the Brackish Shore. Closer to the start of your journey than you may ever have realised.
+ Make haste but be careful, the Bayou is always listening.
  ->END
  
  ===ASecondWayOutInProgress
