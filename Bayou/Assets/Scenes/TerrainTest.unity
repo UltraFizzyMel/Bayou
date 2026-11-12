@@ -32964,7 +32964,6 @@ MonoBehaviour:
   disableCollidersOnOpen:
   - {fileID: 932761031}
   - {fileID: 639459365}
-  autoOpenWhenUnlocked: 1
   openPrompt: Open gate
   lockedPrompt: "Locked \u2014 need key"
 --- !u!65 &576376264
@@ -36820,7 +36819,6 @@ MonoBehaviour:
   meleeGuaranteedRadius: 1.05
   meleeCooldown: 0.42
   combatRingColor: {r: 0.95, g: 0.25, b: 0.2, a: 0.9}
-  pursuitDetectRange: 8.5
   surfaceMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -45685,7 +45683,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -48307,7 +48304,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -49375,7 +49371,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -60615,7 +60610,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -60816,7 +60810,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -76594,7 +76587,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -81601,7 +81593,6 @@ MonoBehaviour:
   sfxVolume: {fileID: 285772932}
   musicVolumeLabel: {fileID: 1645500545}
   musicVolume: {fileID: 145645792}
-  handleHotkeys: 1
 --- !u!114 &1324236453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -84605,7 +84596,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -92900,7 +92890,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -93181,7 +93170,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -95929,7 +95917,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -108709,7 +108696,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fish.BayouFish
   wanderSpeed: 1.1
-  dartSpeed: 2.55
   turnSpeed: 60
   fleeSpeed: 2.8
   fleeRadius: 3.5
@@ -113543,7 +113529,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -122167,7 +122152,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
@@ -122399,7 +122383,6 @@ MonoBehaviour:
   shopUi: {fileID: 0}
   visualCue: {fileID: 0}
   interactRadius: 3
-  playerTag: Player
   openOnInteract: 0
   shopPrompt: Open shop
 --- !u!1 &1974477214 stripped
@@ -132429,7 +132412,6 @@ MonoBehaviour:
   depthLevel: 1
   wadeSubmersion: 0.12
   swimSubmersion: 0.85
-  spawnInnerSwimZone: 1
   innerSwimInset: 0.28
   triggerDepth: 2.6
   triggerAboveSurface: 0.4
