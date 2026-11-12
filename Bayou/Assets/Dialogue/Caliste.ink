@@ -201,7 +201,7 @@ My wares may be of interest...
 ->CalisteSabineOpinion
 *{SeenShadow && calistequestionsasked >=3}[Have you seen the shadow?]
 ->CalisteShadow
-*{olivier_known  && marie_known && calistequestionsasked >=3}[Have you met the Baptistes?]
+*{olivier_known != ""  && marie_known != "" && calistequestionsasked >=3}[Have you met the Baptistes?]
 ->CalisteBaptistes
 *{calistequestionsasked >=5 }[What have you... lost?]
 ->CalisteLost

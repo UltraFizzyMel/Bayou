@@ -173,7 +173,7 @@ Stay safe out in the fog my friend.
 *[Do you know Father Landry?]
 ->OlivierLandry
 
-*{sabine_known && olivierquestionsasked >=3}[What do you think of Sabine?]
+*{sabine_known != "" && olivierquestionsasked >=3}[What do you think of Sabine?]
 ->OlivierSabine
 
 *{olivierquestionsasked >=4}[Have you lost something too?]

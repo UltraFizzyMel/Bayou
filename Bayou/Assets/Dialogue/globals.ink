@@ -32,7 +32,7 @@ VAR BreakTheSealsQuestState = "CAN_START"
 
 
 
-VAR SeenShadow = false
+VAR SeenShadow = true
 
 //OLIVIER Variables
 VAR olivier_known = ""

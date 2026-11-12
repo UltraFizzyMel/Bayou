@@ -277,9 +277,9 @@ How might I be of service?
 +{!location}[Where am I?]
  -> location
  
-*{caliste_known}[Do you know Caliste?]
+*{caliste_known != ""}[Do you know Caliste?]
 ->ZenonCaliste
-*{olivier_known && marie_known}[Thoughts on the Baptistes?]
+*{olivier_known != "" && marie_known != ""}[Thoughts on the Baptistes?]
 ->ZenonBaptistes
 *{landryquestionsasked >=8}[You have a grave?]
 ->ZenonGrave

@@ -156,10 +156,10 @@ What help are you seeking?
  ->SabineCaliste
  +{SabineCaliste}[How are things with Caliste?]
  ->SabineCalisteRelationship
- *{marie_known && olivier_known}[Do you know the Baptistes?]
+ *{marie_known != "" && olivier_known != ""}[Do you know the Baptistes?]
  ->BaptistesExplanation
  
- *{BaptistesExplanation && marie_known && olivier_known && sabinequestionsasked >=2}[What would you do about the Baptistes?]
+ *{BaptistesExplanation && marie_known != "" && olivier_known != "" && sabinequestionsasked >=2}[What would you do about the Baptistes?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->BaptistesFued
  
