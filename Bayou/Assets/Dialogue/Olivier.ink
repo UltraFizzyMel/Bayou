@@ -28,9 +28,9 @@
 
 { EmergencyDinnerQuestState :
 
-    - "IN_PROGRESS": -> firstmeetingolivier
+    - "IN_PROGRESS": -> EmergencyDinnerInProgress
 
-    - "CAN_FINISH": -> firstmeetingolivier
+    - "CAN_FINISH": -> EmergencyDinnerInProgress
 
     - "FINISHED": -> LostAccordionStart
 
@@ -140,11 +140,9 @@ Stay safe out in the fog my friend.
 {Sad}Evening friend.
 {Sad}I'm afraid I don't have any tunes for you tonight, my accordion is lost yet again.
 {Sad}Still, how could I help you?
+
+{!AccordionExplanation && LostAccordionStart && inBrackishShore == true}->LostAccordion
 ->OlivierOptions
-
-->LostAccordion
-
-->AMealToDieForOlivier
 
 === OlivierAfterEelIntro
 ->END
@@ -354,6 +352,7 @@ Let me know if you do find it please, stay safe out there friend.
 
 ===AMealToDieForOlivier
 Oh my! Where? where did you find my accordion?
+~accordian_returned = true
 +[Mrs Baptiste gave it to me.]
 ->MarieYouSay
 +[It was in the swamp again.]

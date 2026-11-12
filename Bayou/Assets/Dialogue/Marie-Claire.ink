@@ -158,11 +158,13 @@ Should you ever need passage down to the Brackish Shore Church Entrance then we 
 
 === MarieStandardIntro
 {MarieHappy != 1}Well, look who it is! Good Evening dear.
+{!ExpandedHorizonsInProgress && ExpandedHorizonsStart}->ExpandedHorizons
+
+{LostAccordionQuestState == "FINISHED" && hasFoundThirdBoatLoaction == true && !AccordianDisposal}->AccordianDisposal
+
 ->MarieStandardBranching
 
-->ExpandedHorizons
 
-->AccordianDisposal
 
 
 === MarieStandardBranching ===
@@ -276,7 +278,7 @@ A hospital? I remember a low class clinic.
 I suppose I could, I vaguely remember my last visit.
 They refused to treat me first, instead favouring a little girl. 
 In the end that girl didn't even make it. 
-That's when I knew they could not be trusted with my health.
+That's when I knew they could not be trusted with my own health.
 ...
 That's all I recall dear.
 ...

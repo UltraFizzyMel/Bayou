@@ -122,24 +122,37 @@ What help are you seeking?
 +[Can I ask you Something?]
 ->SabineQuestions
 
- *{flowerPlaced == true}[I placed the flower]
+ *{flowerPlaced == true}[I placed the flower.]
  ->PlacedFlower
  *{ HasItem("Item_Catfish", 1) && HasItem("Item_Grar", 1) && BaptistesFued && !ACatfishAndAGrar}[I have the Catfish and the Grar.]->ACatfishAndAGrar
  
  *{HasHerbalistFlower == true && !DeliverFlower}[I have a flower for you.]
  -> DeliverFlower 
+ 
 +[Stay safe Sabine.]
  -> goodbye
  
  ===ACatfishAndAGrar
+ Hopefully this offering will lead to a new spark.
+ Doesn't it feel good to share your flame with another?
+ +[I don't remember.]
+ ->ForgottenFlame
+ 
+ ===ForgottenFlame
+ Well...That warmth has the potential to create a cozy cove that keeps your heart safe.
+ It once did for me...
+ ...
+ Thank you for your assistance.
+ Is there anything you still need from me?
  ~FinishQuest(ACatfishAndAGrarQuestId)
- ->END
+ ->StandardSabineBranching
  
  ===SabineQuestions
- *[Baptistesss]
+ What question {shuffle:eats away at you?|plagues your mind?}
+ *{marie_known && olivier_known}[Do you know the Baptistes?]
  ->BaptistesExplanation
  
- *{BaptistesExplanation && marie_known && olivier_known}[Baptistes]
+ *{BaptistesExplanation && marie_known && olivier_known}[What would you do about the Baptistes?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->BaptistesFued
  
@@ -154,7 +167,8 @@ What help are you seeking?
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->Fabian
  
- ->END
+ +[That's all for now.]
+ ->goodbye
  
 === BaptistesExplanation
 ->END
@@ -211,7 +225,7 @@ Thank you Mr. Lafleur.
  ===SpecialDeliveryInProgress
  ~ASpecialMollyDelivery = true
  Hello there.
- The echo 
+ 
  ->END
  
  ===APleadForHelp

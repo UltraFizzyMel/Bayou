@@ -2,6 +2,7 @@
 VAR inGraveyard = false
 VAR inFoggyMarsh = false
 VAR inBrackishShore = false
+VAR hasFoundThirdBoatLoaction = false
 
 
 
@@ -38,6 +39,7 @@ VAR accordian_returned = false
 VAR is_olivier_alive = true
 VAR olivier_firstmeeting = true
 VAR olivierquestionsasked = 0
+
 
 
 //quest ids(questID + "Id" for variable name

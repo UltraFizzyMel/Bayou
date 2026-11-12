@@ -147,7 +147,6 @@ Be careful out there.
 -> END
 
 
-
 === LanternFound ===
 
 { HasItem("Item_Lantern", 1):
@@ -167,7 +166,6 @@ Be careful out there.
 }
 
 
-
 === AfterLantern ===
 
 #speaker: Father Landry
@@ -175,7 +173,6 @@ Be careful out there.
 It's good to see you again.
 
 -> service
-
 
 
 ===DeliverItem
@@ -189,11 +186,9 @@ Did you find it?
     +{HasItem("Item_RosaryNecklace", 1)}[I have.] ->DeliveredItem
 
 
-
 ===UnDeliveredItem
 
 Come back as soon as you have it. ->END
-
 
 
 === DeliveredItem ===
@@ -221,7 +216,6 @@ Come back as soon as you have it. ->END
 }
 
 
-
 === Agree ===
 
 Agree to do a little favor for me and it's all yours.
@@ -235,7 +229,6 @@ Agree to do a little favor for me and it's all yours.
     Come back when you're ready.
 
     -> END
-
 
 
 ===Agreed ===
@@ -255,7 +248,6 @@ Be careful out there. Not everything is as it seems… Your eyes and ears will b
 ->END
 
 
-
 === knownName ===
 
 #speaker: Father Landry
@@ -264,12 +256,10 @@ It's good to see you again.
 -> service
 
 
-
 === service ===
 
 How might I be of service?
 ->questions
-
 
 
 === questions ===
@@ -284,7 +274,6 @@ How might I be of service?
  -> goodbye
 
 
-
  === introduction(name) ===
 
  ~ priest_name = name
@@ -297,12 +286,9 @@ How might I be of service?
  Call me Landry...
  ->questions
 
-
-
  === location ===
  The Bayou... You must have hit your head hard.
  -> questions
-
 
 
  === goodbye ===
