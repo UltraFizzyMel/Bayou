@@ -166,16 +166,27 @@ What help are you seeking?
  *{PlacedFlower}[You called me Mr. Lafleur?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->MrLafleur
+ *{sabinequestionsasked >=3}[What have you lost?]
+ ~sabinequestionsasked = sabinequestionsasked + 1
+ ->SabineLost
+ 
+ *{sabinequestionsasked >=4 && TheseRitualComponentsSeemSlipperyInProgress}[What have I lost?]
+ ->Who
+ 
  
  +[That's all for now.]
  ->goodbye
  
 === BaptistesExplanation
+An pair destined for eternity but is eternity destined for them?
+They need to listen to the unspoken storm brewing between them before it consumes them both.
+...
+Don't let yourself be consumed by their storm.
 ->END
  
 ===BaptistesFued
 What do you mean?
-+[They seem to want to kill one another...]
++[They're at their wits end...]
 ->SimpleBaptisteSolution
 
 ===SimpleBaptisteSolution
@@ -195,7 +206,23 @@ Without them they will refuse to see me for who I am.
 ===SabineCalisteRelationship
 ->END
 
+===SabineLost
+What haven't I lost? 
+They slipped away into the mist after I warned them against their...
+...
+Seeing them again was worth my binding.
+Don't 
+->END
+
+===Who
+Is that the right question to be asking?
+Perhaps asking 'who' would be a better place to start.
+Not that I can tell you more about them...
+->END
+
 ===MrLafleur
+...
+Please stay safe out in the swirling waters.
 ->END
 
 
@@ -311,7 +338,22 @@ I hope your change your mind.
  ->goodbye
  
  ===Ritualcomplete
+ Ah! The final ember will not need to disolve into a thread of smoke!
+ Hand over the Three. 
+ Oh and your Rosary too.
  ~FinishQuest(TheseRitualComponentsSeemSlipperyQuestId)
+ +[My rosary?]->HandOverTheRosary
+ 
+ ===HandOverTheRosary
+ Yes, clensing it will remove that which has been clouding your mind in the moment it matters most. 
+ ~StartQuest(ASecondWayOutQuestId)
+ +[HandOverTheRosary]->FinishedRitual
+ 
+ ===FinishedRitual
+ ....
+ Tshhhhhhhhh//Play a sound hear tied to ritual?
+ ...
+ Go now Fabian into the core of the Sunken Grove. There you will find what you have been searching for.
  ->END
  
  ===UtmostImportance
@@ -323,4 +365,7 @@ I hope your change your mind.
  ->END
  
  ===ASecondWayOutInProgress
+ Every second you stay is a second it can draw in more strength.
+ ...
+ Go.
  ->END

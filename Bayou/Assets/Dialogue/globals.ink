@@ -144,3 +144,8 @@ VAR ACatfishAndAGrarQuestId = "ACatfishAndAGrarQuest"
 
 //quest states (questId + "State" for variable name)
 VAR ACatfishAndAGrarQuestState = "CAN_START"
+
+VAR ASecondWayOutQuestId = "ASecondWayOutQuest"
+
+//quest states (questId + "State" for variable name)
+VAR ASecondWayOutQuestState = "CAN_START"
