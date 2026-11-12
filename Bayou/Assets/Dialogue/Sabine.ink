@@ -187,7 +187,7 @@ Bring me a catfish and a grar and don't tell them anything.
 I do...
 I haven't seen them in the flesh for quite the long time.
 Should you have a moment to spare could you please get me a Red Snapper and a Sailfin Molly?
-Without them they will refuse to see me for me.
+Without them they will refuse to see me for who I am.
 ~StartQuest(SpecialDeliveryQuestId)
 ->END
 
@@ -240,18 +240,31 @@ Thank you Mr. Lafleur.
  ===SpecialDeliveryInProgress
  ~ASpecialMollyDelivery = true
  Hello there.
- Have you found me a Snapper and a Molly?
- +{HasItem("Item_Snapper", 1) && HasItem("Item_Molly", 1)}[I have.]->SpecialDeliverDelivered
+ Have you found a Snapper and a Molly?
+ +{HasItem("Item_Snapper", 1) && HasItem("Item_Molly", 1)}[I have.]->SpecialDeliveryDelivered
  +[I haven't.]
- ->END
+ ->needhelpYourself
  
- ===SpecialDeliverDelivered
- ->END
+ ===needhelpYourself
+ Do you need any help yourself?
+ ->StandardSabineBranching
+ 
+ ===SpecialDeliveryDelivered
+ Your actions have not gone unnoticed.
+ Let me give that lantern of yours a little tap.
+ ...
+ +[Alright?]
+ ->ALittleTap
+ 
+ ===ALittleTap
+ ...
+ Your light should reach further... Scaring away the shadows better than before.
+ ->goodbye
  
  ===APleadForHelp
  please helkp ritual
  +[yes]
-  ~StartQuest(AGraveRevelationQuestId)
+  ~StartQuest(TheseRitualComponentsSeemSlipperyQuestId)
   ->Helpritual
   +[No.]
   ->NoHelpritual
@@ -275,7 +288,7 @@ Thank you Mr. Lafleur.
  ->StandardSabineBranching
  
  ===Ritualcomplete
- ~FinishQuest(AGraveRevelationQuestId)
+ ~FinishQuest(TheseRitualComponentsSeemSlipperyQuestId)
  ->END
  ===UtmostImportance
  ->END
