@@ -352,7 +352,7 @@ Please Sonny, take this and find them for me.
 ===AcceptedHerbalistQuest
 Thank you, Please keep this flower safe.
 Anything you need before you go?
-~{HasHerbalistFlower = true}
+~HasHerbalistFlower = true
 ~ StartQuest(ASearchForAHerbalistQuestId)
 ->questions
 

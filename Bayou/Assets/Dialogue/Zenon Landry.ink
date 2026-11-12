@@ -153,9 +153,16 @@ Be careful out there.
 
     ~ FinishQuest(CollectLanternQuestId)
 
-    The lantern… you found it.
+    The lantern... you found it.
 
-    Well done, my child. You've seen enough of this bayou for one night.
+    Well done, my child! 
+    Now you are ready to brave the fog beyond the next church gate.
+    Here, take this key. It should make your travels a little bit easier.
+    Oh! Before you go. I have an important task to entrust you with.
+    ~StartQuest(BreakTheSealsStart)
+    There are three altars scattered around the Bayou.
+    Each needs to be burned to help you reclaim what you have lost.
+    Once you burn them all return to me and I can give you the power you need to reach the Sunken Grove.
 
     -> END
 
@@ -164,7 +171,6 @@ Be careful out there.
     -> LanternReminder
 
 }
-
 
 === AfterLantern ===
 
