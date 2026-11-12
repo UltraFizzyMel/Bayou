@@ -28,7 +28,6 @@ namespace Bayou.Environment
         [SerializeField] private float wadeSubmersion = 0.12f;
         [Tooltip("Submersion at or above this value counts as swimming.")]
         [SerializeField] private float swimSubmersion = 0.85f;
-        [SerializeField] private bool spawnInnerSwimZone = false;
         [SerializeField] [Range(0.15f, 0.45f)] private float innerSwimInset = 0.28f;
 
         [Header("Trigger volume")]
@@ -257,7 +256,6 @@ namespace Bayou.Environment
             var deep = go.AddComponent<WaterVolume>();
             deep.requiredTag = requiredTag;
             deep.depthLevel = WaterDepthLevel.Swim;
-            deep.spawnInnerSwimZone = false;
             deep.wadeSubmersion = wadeSubmersion;
             deep.swimSubmersion = 0.01f;
             deep.triggerDepth = triggerDepth;

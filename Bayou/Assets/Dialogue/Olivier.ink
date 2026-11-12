@@ -80,7 +80,7 @@ Who might you be?
  -> AgreeToCatch
 +[I haven't.]
  -> Refusal
- +{HasItem("Item_Grar", 2)}[I have the Grar.]
+ +{HasItem("Item_SpottedGar", 2)}[I have the Grar.]
 ->HandOverGrar
  }
 
@@ -97,7 +97,7 @@ I have a key for any gates linking the Foggy Marsh and the Graveyard I could giv
 ->AgreeToCatch
 +[I'd rather not.]
 ->Refusal
-+{HasItem("Item_Grar", 2)}[I have some right here.]
++{HasItem("Item_SpottedGar", 2)}[I have some right here.]
 ->HandOverGrar
 
 === AgreeToCatch ===
@@ -114,7 +114,7 @@ If you ever change your mind please let me know.
 === EmergencyDinnerInProgress
 Hello again!
 My, my, have you caught the Grar already?
-+{HasItem("Item_Grar", 2)}[I have them right here.]
++{HasItem("Item_SpottedGar", 2)}[I have them right here.]
 ->HandOverGrar
 +[I have not]
 -> MissingGrar
@@ -352,8 +352,8 @@ Let me know if you do find it please, stay safe out there friend.
 
 ===AMealToDieForOlivier
 Oh my! Where? where did you find my accordion?
-~accordian_returned = true
 +[Mrs Baptiste gave it to me.]
+~ accordian_returned = true
 ->MarieYouSay
 +[It was in the swamp again.]
 ->HowClumsy
@@ -374,7 +374,7 @@ I'm in need of three eels. That's all.
 ->AcceptedEels
 +[What for?]
 ->AvoidingExplanation
-+{HasItem("Item_Eel", 3)}[I have three!]
++{HasItem("Item_ElectricEel", 3)}[I have three!]
 ->EelHandOver
 
 ===AvoidingExplanation
@@ -401,7 +401,7 @@ Good Evening. Have you managed to get those eels?
 ->AcceptedEels
 +[What for?]
 ->AvoidingExplanation
-+[I have three!]
++{HasItem("Item_ElectricEel", 3)}[I have three!]
 ->EelHandOver
 ->END
 

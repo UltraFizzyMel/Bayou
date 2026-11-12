@@ -567,6 +567,16 @@ public class DialogueManager : MonoBehaviour
         }     
     }
 
+    /// <summary>Persists an Ink global (for example flowerPlaced) from gameplay, not only from a story line.</summary>
+    public void SetBoolVariable(string name, bool value)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return;
+        var inkValue = new Ink.Runtime.BoolValue(value);
+        dialogueVariables?.VariableChanged(name, inkValue);
+        if (currentStory != null && currentStory.variablesState.GlobalVariableExistsWithName(name))
+            currentStory.variablesState.SetGlobal(name, inkValue);
+    }
+
     public Ink.Runtime.Object GetVariableState(string variableName)
     {
         Ink.Runtime.Object variableValue = null;

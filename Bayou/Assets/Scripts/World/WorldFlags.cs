@@ -26,6 +26,7 @@ public static class WorldFlags
     public const string ShopWadingBoots = "shop_wading_boots";
     public const string ShopStraps = "shop_straps";
     public const string ShopSatchel = "shop_satchel";
+    public const string LanternRadiusUpgrade = "lantern_radius_upgrade";
 
     private static readonly HashSet<string> Flags = new(StringComparer.OrdinalIgnoreCase);
 

@@ -25,9 +25,6 @@ public class AudioSettings : MonoBehaviour
     [SerializeField] TMP_Text musicVolumeLabel;
     [SerializeField] Slider musicVolume;
 
-    [Tooltip("Unused — hotkeys are handled by AudioSettingsHotkeys (always active).")]
-    [SerializeField] private bool handleHotkeys = true;
-
     public static bool IsOpen { get; private set; }
     public static AudioSettings Instance { get; private set; }
 

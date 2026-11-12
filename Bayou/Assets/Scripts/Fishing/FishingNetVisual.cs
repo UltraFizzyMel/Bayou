@@ -20,7 +20,6 @@ namespace Bayou.Fishing
 
         private GameObject _root;
         private GameObject _bobber;
-        private bool _planted;
 
         private void Awake()
         {
@@ -37,7 +36,6 @@ namespace Bayou.Fishing
         public void ShowPlanted()
         {
             if (!ShouldShow()) return;
-            _planted = true;
             SetVisible(true);
         }
 

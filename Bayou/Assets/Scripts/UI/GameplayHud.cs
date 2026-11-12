@@ -667,7 +667,7 @@ namespace Bayou.UI
             tmp.alignment = align;
             tmp.color = new Color(0.92f, 0.94f, 0.9f, 0.95f);
             tmp.raycastTarget = false;
-            tmp.enableWordWrapping = true;
+            tmp.textWrappingMode = TextWrappingModes.Normal;
             tmp.overflowMode = TextOverflowModes.Ellipsis;
             // Builds strip missing fonts — always pin TMP default (LiberationSans SDF).
             if (TMP_Settings.defaultFontAsset != null)

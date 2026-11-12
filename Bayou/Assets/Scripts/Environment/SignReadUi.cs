@@ -164,7 +164,7 @@ namespace Bayou.Environment
             tmp.fontStyle = style;
             tmp.alignment = align;
             tmp.color = new Color(0.94f, 0.91f, 0.82f, 1f);
-            tmp.enableWordWrapping = true;
+            tmp.textWrappingMode = TextWrappingModes.Normal;
             tmp.raycastTarget = false;
             tmp.overflowMode = TextOverflowModes.Overflow;
             var font = TMP_Settings.defaultFontAsset;

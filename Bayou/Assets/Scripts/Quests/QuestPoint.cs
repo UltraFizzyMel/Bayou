@@ -1,4 +1,3 @@
-using Bayou.Player;
 using UnityEngine;
 
 
@@ -11,8 +10,6 @@ public class QuestPoint : MonoBehaviour
     [SerializeField] private bool startPoint = true;
     [SerializeField] private bool finishPoint = true;
 
-
-    private bool playerIsNear = false;
     private string questId;
     private QuestState currentQuestState;
 
@@ -57,18 +54,6 @@ public class QuestPoint : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<BayouCharacterMotor>() != null)
-        {
-            playerIsNear = true;
-        }
         CheckQuest();
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.GetComponent<BayouCharacterMotor>() != null)
-        {
-            playerIsNear = false;
-        }
     }
 }

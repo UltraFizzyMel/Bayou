@@ -11,7 +11,6 @@ namespace Bayou.Fish
     {
         [Header("Movement")]
         [SerializeField] private float wanderSpeed = 2.35f;
-        [SerializeField] private float dartSpeed = 3.6f;
         [SerializeField] private float turnSpeed = 140f;
         [SerializeField] private float fleeSpeed = 4.1f;
         [SerializeField] private float fleeRadius = 3.5f;
@@ -102,7 +101,6 @@ namespace Bayou.Fish
             {
                 wanderSpeed = 0f;
                 fleeSpeed = 0f;
-                dartSpeed = 0f;
             }
 
             PickRandomSwimTarget();

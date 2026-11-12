@@ -132,6 +132,9 @@ namespace Bayou.Player
         {
             if (!IsAlive) return;
             if (Time.time < _invulnerableUntil) return;
+            // Landry's cross: "protected from that which lurks in the Bayou's shadows."
+            if (ShadowBlockedByCross(info.Source))
+                return;
 
             var damage = Mathf.Max(1, Mathf.RoundToInt(info.Damage));
             _current = Mathf.Max(0, _current - damage);
@@ -192,6 +195,27 @@ namespace Bayou.Player
             if (_dying || _current > 0) return;
             DeathScreenText = ComposeDeathText(causeTip);
             StartCoroutine(DieRoutine());
+        }
+
+        private static bool ShadowBlockedByCross(GameObject source)
+        {
+            if (!IsShadowSource(source)) return false;
+            var inv = Bayou.Inventory.InventoryController.Instance
+                ?? FindFirstObjectByType<Bayou.Inventory.InventoryController>();
+            return inv != null && inv.HasItemsById("Item_Cross", 1);
+        }
+
+        private static bool IsShadowSource(GameObject source)
+        {
+            var t = source != null ? source.transform : null;
+            while (t != null)
+            {
+                if (t.name.IndexOf("Shadow", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                    return true;
+                t = t.parent;
+            }
+
+            return false;
         }
 
         private static string ComposeDeathText(string causeTip)

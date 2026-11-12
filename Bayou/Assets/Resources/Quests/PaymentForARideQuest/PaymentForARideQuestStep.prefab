@@ -45,9 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CollectItemsQuestStep
   needs:
-  - itemId: Item_ChannelCatfish
-    count: 2
-    label: channel catfish
   - itemId: Item_Flounder
-    count: 1
+    count: 2
     label: flounder

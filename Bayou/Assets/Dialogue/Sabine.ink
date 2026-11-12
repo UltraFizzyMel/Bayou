@@ -65,13 +65,13 @@ EXTERNAL HandOverItem(itemId, count)
  
  === ASecondWayOutStart ===
  
- { TheseRitualComponentsSeemSlipperyQuestState :
+ { ASecondWayOutQuestState :
 
     - "IN_PROGRESS": -> ASecondWayOutInProgress
 
     - "CAN_FINISH": -> ASecondWayOutInProgress
 
-  //  - "FINISHED": -> ASecondWayOutStart
+    - "FINISHED": -> StandardSabineIntro
 
     - else: -> StandardSabineIntro
 
@@ -125,7 +125,7 @@ What help are you seeking?
 
  *{flowerPlaced == true}[I placed the flower.]
  ->PlacedFlower
- *{ HasItem("Item_Catfish", 1) && HasItem("Item_Grar", 1) && BaptistesFued && !ACatfishAndAGrar}[I have the Catfish and the Grar.]->ACatfishAndAGrar
+ *{ HasItem("Item_ChannelCatfish", 1) && HasItem("Item_AlligatorGar", 1) && BaptistesFued && !ACatfishAndAGrar}[I have the Catfish and the Grar.]->ACatfishAndAGrar
  
  *{HasHerbalistFlower == true && !DeliverFlower}[I have a flower for you.]
  -> DeliverFlower 
@@ -269,7 +269,7 @@ Thank you Mr. Lafleur.
  ~ASpecialMollyDelivery = true
  Hello there.
  Have you found a Snapper and a Molly?
- +{HasItem("Item_Snapper", 1) && HasItem("Item_Molly", 1)}[I have.]->SpecialDeliveryDelivered
+ +{HasItem("Item_RedSnapper", 1) && HasItem("Item_SailfinMolly", 1)}[I have.]->SpecialDeliveryDelivered
  +[I haven't.]
  ->needhelpYourself
  
@@ -328,7 +328,7 @@ I hope your change your mind.
  === TheseRitualComponentsSeemSlipperyInProgress
  Hello there.
  Have you found the three scaley wonders? Or has the cold air frozen your progress?
- +{HasItem("Item_AlligatorGrar", 1) && HasItem("Item_BlueCatfish", 1) && HasItem("Item_LargemouthBass", 1)}[I have all three.]
+ +{HasItem("Item_AlligatorGar", 1) && HasItem("Item_BlueCatfish", 1) && HasItem("Item_LargemouthBass", 1)}[I have all three.]
  ->Ritualcomplete
  +[I've forgot them.]
  ->UtmostImportance

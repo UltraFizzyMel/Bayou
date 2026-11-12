@@ -23,8 +23,6 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
     [SerializeField] private KeyGateManager keyGateManager;
         [SerializeField] private bool consumeKeyOnOpen = true;
     [SerializeField] private Collider[] disableCollidersOnOpen;
-    [Tooltip("Legacy field — gates never auto-open. Player must press Interact (E) after they have the key.")]
-    [SerializeField] private bool autoOpenWhenUnlocked = false;
     [SerializeField] private string openPrompt = "Open gate";
     [SerializeField] private string lockedPrompt = "Locked — need key";
 

@@ -11,6 +11,8 @@ EXTERNAL HasItem(itemId, count)
 
 EXTERNAL HandOverItem(itemId, count)
 
+EXTERNAL GiveItem(itemId, count)
+
   
  #portrait: marie_claire_baptiste_neutral #layout: left #background: houseboatBG
  {marie_known == "":-> main |-> knownName}
@@ -352,7 +354,7 @@ Have you netted the crustaceons I asked for yet?!
 ->WastedTime
 +[I came for something else]
 ->Fine
-+{HasItem("Item_Crab", 1) && HasItem("Item_Crawfish", 1)}[I have.]
++{HasItem("Item_BlueCrab", 2) && HasItem("Item_Crawfish", 2)}[I have.]
 -> HandOverCrustaceons
 
 
@@ -372,6 +374,7 @@ I'll be seeing you dear.
 
 ===AccordianDisposal
 ~ StartQuest(AccordianDisposalQuestId)
+~ GiveItem("Item_Accordion", 1)
 Since you’re in the area, I have another request for you.
 I have not been able to to get a good nights rest ever since you returned his accordian... 
 Olivier's incesant playing sounds to me like grinding gears, that was why I got rid of it in the first place you see. 

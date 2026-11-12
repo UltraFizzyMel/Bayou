@@ -695,7 +695,7 @@ namespace Bayou.UI
             tmp.alignment = align;
             tmp.color = color;
             tmp.raycastTarget = false;
-            tmp.enableWordWrapping = true;
+            tmp.textWrappingMode = TextWrappingModes.Normal;
             tmp.overflowMode = TextOverflowModes.Overflow;
             if (TMP_Settings.defaultFontAsset != null)
                 tmp.font = TMP_Settings.defaultFontAsset;

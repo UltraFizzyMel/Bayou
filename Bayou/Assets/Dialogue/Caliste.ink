@@ -16,6 +16,8 @@
 
  EXTERNAL GiveMoney(amount)
 
+ EXTERNAL GiveItem(itemId, count)
+
 #portrait: caliste_ardoin_neutral #layout: left #background: merchant
 {caliste_known == "":-> notKnown |-> knownName}
 
@@ -34,7 +36,7 @@
 
 { SnapperAndMollyQuestState :
 
-    - "FINISHED":  {caliste_known == "":-> notKnown |-> knownName}
+    - "FINISHED":  -> ASearchForAHerbalistQuestStart
 
     - "IN_PROGRESS": -> waiting
 
@@ -60,7 +62,7 @@
 ===SharedDinnerQuestStart
 { SharedDinnerQuestState:
 
-    - "FINISHED":  {caliste_known == "":-> notKnown |-> knownName}
+    - "FINISHED":  -> BasicWaresIntro
 
     - "IN_PROGRESS": -> ASharedDinnerInProgress
 
@@ -73,7 +75,7 @@
 ===CalisteStandardIntroduction
 <b>DON'T...</b> Oh it's you.
 {ASearchForAHerbalistQuestState == "FINISHED" && SpecialDeliveryQuestState == "FINISHED" && !SharedDinnerAgree: ->ASharedDinner}
-{!ASearchForAHerbalistStart && SnapperAndMollyQuestState == "FINISHED: -> ASearchForAHerbalist}
+{!ASearchForAHerbalist && SnapperAndMollyQuestState == "FINISHED": -> ASearchForAHerbalist}
 -> BasicWaresIntro
 
 
@@ -176,7 +178,7 @@ My wares may be of interest...
 +[I have a question for you.]
 ->BranchingQuestions
 
-+{ (HasItem("Item_CalisteBox", 1)) }[{MissingBoxes:I have something for you.  else: Do you recognise this box?}]
++{ HasItem("Item_CalisteCargoGraveyard", 1) || HasItem("Item_CalisteCargoFoggy", 1) || HasItem("Item_CalisteCargoBrackish", 1) }[{MissingBoxes:I have something for you.  else: Do you recognise this box?}]
 {MissingBoxes:->ReturnBox |->MissingBoxes}
 
 +[Wares?]
@@ -302,20 +304,47 @@ Alright sonny, I believe that innocent twinkle in your eye.
 Much obliged. I believe I've lost two other boxes somewhere out in that there swamp.
 Should you find them please return em. 
 I'll be able to expand my wares if you do!
-~StartQuest(LostCargoQuestId)
-~ calisteboxesreturned = calisteboxesreturned  + 1
-->AnythingElse
+~ StartQuest(LostCargoQuestId)
+-> TakeCargo
 
 ===AnythingElse
 Want to look at my new wares?
 ->questions
 
 ===ReturnBox
-~ calisteboxesreturned = calisteboxesreturned  + 1
-Thank you sonny! 
-{calisteboxesreturned == 2: I have only one other missing box for you to find.}
-{calisteboxesreturned >= 3: That should be all of my boxes. }
-->AnythingElse
+-> TakeCargo
+
+=== TakeCargo
+~ temp grave = false
+~ temp fog = false
+~ temp shore = false
+{ HasItem("Item_CalisteCargoGraveyard", 1):
+    ~ grave = HandOverItem("Item_CalisteCargoGraveyard", 1)
+}
+{ HasItem("Item_CalisteCargoFoggy", 1):
+    ~ fog = HandOverItem("Item_CalisteCargoFoggy", 1)
+}
+{ HasItem("Item_CalisteCargoBrackish", 1):
+    ~ shore = HandOverItem("Item_CalisteCargoBrackish", 1)
+}
+{ grave:
+    ~ calisteboxesreturned = calisteboxesreturned + 1
+}
+{ fog:
+    ~ calisteboxesreturned = calisteboxesreturned + 1
+}
+{ shore:
+    ~ calisteboxesreturned = calisteboxesreturned + 1
+}
+Thank you sonny!
+{ calisteboxesreturned >= 3:
+    ~ FinishQuest(LostCargoQuestId)
+    That should be all of my boxes. I'll be able to expand my wares.
+- else:
+    { calisteboxesreturned == 1: I believe I've lost two other boxes somewhere out in that there swamp. Should you find them please return em. }
+    { calisteboxesreturned == 2: I have only one other missing box for you to find. }
+}
+-> AnythingElse
 
 === repeatName ===
 
@@ -359,7 +388,8 @@ Please Sonny, take this and find them for me.
 ===AcceptedHerbalistQuest
 Thank you, Please keep this flower safe.
 Anything you need before you go?
-~HasHerbalistFlower = true
+~ HasHerbalistFlower = true
+~ GiveItem("Item_HerbalistFlower", 1)
 ~ StartQuest(ASearchForAHerbalistQuestId)
 ->questions
 
@@ -376,7 +406,7 @@ Ah... that's alright.
 ===ASearchForAHerbalistInProgress
 <b>DON'T...</b> Oh it's you.
 Did you find em and show em the flower ?
-+{deliveredFlower}[I did.]
++{flowerPlaced}[I did.]
 ->SatchelReward
 +[I have not.]
 ->StillSearching
@@ -414,6 +444,7 @@ Sorry sonny, could you spare a moment for good ol' me?
 ->refusetohelp
 
 ===SharedDinnerAgree
+~ StartQuest(SharedDinnerQuestId)
 Thank you kindly. All I need from you is a Flounder, a Largemouth Bass and a Blue Crab.
 Return with them and I can give you my key from the Brackish Shore to the Church.
 Don't let the bayou get ya.
@@ -421,8 +452,8 @@ Don't let the bayou get ya.
 
 ===ASharedDinnerInProgress
 <b>DON'T...</b> Oh it's you.
-{ HasItem("Item_Flounder", 1) && HasItem("Item_LargeMouthBass", 1)&& HasItem("Item_BlueCrab", 1)}Did you get the three fish?
-+{deliveredFlower}[I have.]
+{ HasItem("Item_Flounder", 1) && HasItem("Item_LargemouthBass", 1) && HasItem("Item_BlueCrab", 1)}Did you get the three fish?
++{ HasItem("Item_Flounder", 1) && HasItem("Item_LargemouthBass", 1) && HasItem("Item_BlueCrab", 1)}[I have.]
 ->KeyReward
 +[Not Yet]
 ->TakeYourTime
@@ -433,6 +464,7 @@ Keep your eyes out for em if you can.
 ->BasicWaresIntro
 
 ===KeyReward
+~ FinishQuest(SharedDinnerQuestId)
 Much Obliged! Here's that key I promised ya. 
 ->BasicWaresIntro
 

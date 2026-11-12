@@ -214,6 +214,8 @@ public class QuestManager : MonoBehaviour
 
         ClaimRewards(quest);
         ChangeQuestState(quest.info.id, QuestState.FINISHED);
+        if (string.Equals(quest.info.id, QuestIds.VisitGraves, System.StringComparison.Ordinal))
+            DialogueManager.GetInstance()?.SetBoolVariable("flowerPlaced", true);
     }
 
     private void ClaimRewards(Quest quest)

@@ -86,7 +86,7 @@ public static class QuestRewards
                 return true;
             case QuestIds.PaymentForARide:
                 spec = new Spec(
-                    consume: new[] { ("Item_ChannelCatfish", 2), ("Item_Flounder", 1) },
+                    consume: new[] { ("Item_Flounder", 2) },
                     worldFlags: new[] { WorldFlags.FastTravelChurchFoggy });
                 return true;
             case QuestIds.ExpandedHorizons:
@@ -130,9 +130,8 @@ public static class QuestRewards
                     });
                 return true;
             case QuestIds.SearchForHerbalist:
-                spec = new Spec(
-                    consume: new[] { ("Item_HerbalistFlower", 1) },
-                    grantItems: new[] { "Item_Satchel" });
+                // The flower is placed on Caliste's grave (VisitGraves), then she upgrades the satchel.
+                spec = new Spec(grantItems: new[] { "Item_Satchel" });
                 return true;
             case QuestIds.SharedDinner:
                 spec = new Spec(
@@ -148,10 +147,11 @@ public static class QuestRewards
             case QuestIds.SpecialDelivery:
                 spec = new Spec(
                     consume: new[] { ("Item_RedSnapper", 1), ("Item_SailfinMolly", 1) },
-                    worldFlags: new[] { "lantern_radius_upgrade" });
+                    worldFlags: new[] { WorldFlags.LanternRadiusUpgrade });
                 return true;
             case QuestIds.VisitGraves:
                 spec = new Spec(
+                    consume: new[] { ("Item_HerbalistFlower", 1) },
                     grantItems: new[] { "Item_LandryTombKey" },
                     keyFlags: new[] { KeyGateManager.LandryTombKeyFlag });
                 return true;

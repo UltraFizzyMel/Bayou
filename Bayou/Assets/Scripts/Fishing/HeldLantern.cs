@@ -62,6 +62,7 @@ namespace Bayou.Fishing
             var flicker = 1f + Mathf.Sin(Time.time * 9.3f) * flickerAmount * 0.5f
                           + Mathf.Sin(Time.time * 17.1f) * flickerAmount * 0.35f;
             lanternLight.intensity = intensity * flicker;
+            lanternLight.range = EffectiveRange();
             if (_glowRenderer != null && _glowMat != null)
             {
                 var c = color;
@@ -169,11 +170,19 @@ namespace Bayou.Fishing
             }
         }
 
+        private float EffectiveRange()
+        {
+            var reach = range;
+            if (WorldFlags.Has(WorldFlags.LanternRadiusUpgrade))
+                reach *= 1.75f;
+            return reach;
+        }
+
         private void ConfigureLight(Light light)
         {
             light.type = LightType.Point;
             light.intensity = intensity;
-            light.range = range;
+            light.range = EffectiveRange();
             light.color = color;
             light.shadows = LightShadows.None;
             light.renderMode = LightRenderMode.ForcePixel;

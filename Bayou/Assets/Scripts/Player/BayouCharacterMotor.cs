@@ -28,14 +28,12 @@ namespace Bayou.Player
         [Header("Water — wade")]
         [SerializeField] private float waterSpeedMultiplier = 0.82f;
         [SerializeField] private float waterAccelerationMultiplier = 0.88f;
-        [SerializeField] private float waterExtraLinearDamping = 4.0f;
 
         [Header("Water — swim")]
         [SerializeField] private float swimSpeedMultiplier = 0.7f;
         [SerializeField] private float swimAccelerationMultiplier = 0.75f;
         [SerializeField] private float swimRiseSpeed = 6f;
         [SerializeField] private float swimCapsuleHeight = 0.55f;
-        [SerializeField] private float swimBoneMoveLimit = 0.85f;
 
         [Header("Turning")]
         [Tooltip("Character Y rotation follows movement direction — typical for 3D top-down.")]

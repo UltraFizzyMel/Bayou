@@ -65,8 +65,6 @@ namespace Bayou.Fishing
         [SerializeField] private float meleeGuaranteedRadius = 1.45f;
         [SerializeField] private float meleeCooldown = 0.42f;
         [SerializeField] private Color combatRingColor = new(0.95f, 0.25f, 0.2f, 0.9f);
-        [Tooltip("How far away a hunting creature can be for combat mode to engage.")]
-        [SerializeField] private float pursuitDetectRange = 8.5f;
 
         [Header("Shared")]
         [SerializeField] private LayerMask surfaceMask = ~0;

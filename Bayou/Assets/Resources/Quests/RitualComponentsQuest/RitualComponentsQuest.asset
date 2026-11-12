@@ -25,6 +25,6 @@ MonoBehaviour:
   questStepPrefabs:
   - {fileID: 1000000000000000001, guid: a11e5701b5ea1500020000000000000d, type: 3}
   autoStart: 0
-  autoComplete: 1
+  autoComplete: 0
   moneyReward: 0
   MiscReward: Upgraded spirit lantern

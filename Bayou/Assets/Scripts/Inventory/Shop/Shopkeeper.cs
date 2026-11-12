@@ -14,7 +14,6 @@ namespace Bayou.Inventory.Shop
         [SerializeField] private ShopUIController shopUi;
         [SerializeField] private GameObject visualCue;
         [SerializeField] private float interactRadius = 3f;
-        [SerializeField] private string playerTag = "Player";
         [Tooltip("If on, pressing Interact near this object opens the shop (debug). Prefer Caliste dialogue.")]
         [SerializeField] private bool openOnInteract;
         [SerializeField] private string shopPrompt = "Open shop";

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Ink still uses a few quest ids that don't match the QuestInfoSO assets.
 /// Canonical names are what <see cref="QuestManager"/> stores.
+/// Dialogue state variables stay on the ink names (questId + "State").
 /// </summary>
 public static class QuestIdMap
 {
@@ -17,6 +18,16 @@ public static class QuestIdMap
                 return QuestIds.MealToDieForMarie;
             case "AccordianDisposalQuest":
                 return QuestIds.AccordionDisposal;
+            case "ASearchForAHerbalistQuest":
+                return QuestIds.SearchForHerbalist;
+            case "TheseRitualComponentsSeemSlipperyQuest":
+                return QuestIds.RitualComponents;
+            case "AGraveRevelationQuest":
+                return QuestIds.VisitGraves;
+            case "ACatfishAndAGrarQuest":
+                return QuestIds.CatfishAndGar;
+            case "ASecondWayOutQuest":
+                return QuestIds.SecondWayOut;
             default:
                 return questId.Trim();
         }
@@ -36,5 +47,15 @@ public static class QuestIdMap
             yield return "AMealToDieForQuestState";
         else if (canonical == QuestIds.AccordionDisposal)
             yield return "AccordianDisposalQuestState";
+        else if (canonical == QuestIds.SearchForHerbalist)
+            yield return "ASearchForAHerbalistQuestState";
+        else if (canonical == QuestIds.RitualComponents)
+            yield return "TheseRitualComponentsSeemSlipperyQuestState";
+        else if (canonical == QuestIds.VisitGraves)
+            yield return "AGraveRevelationQuestState";
+        else if (canonical == QuestIds.CatfishAndGar)
+            yield return "ACatfishAndAGrarQuestState";
+        else if (canonical == QuestIds.SecondWayOut)
+            yield return "ASecondWayOutQuestState";
     }
 }

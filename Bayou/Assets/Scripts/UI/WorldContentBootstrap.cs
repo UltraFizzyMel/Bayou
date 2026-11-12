@@ -22,6 +22,7 @@ namespace Bayou.UI
             if (string.IsNullOrEmpty(sceneName) || sceneName == "MainMenu") return;
             FishingZoneBootstrap.EnsureInScene();
             CalisteLocationDiscovery.Ensure();
+            AccordionDisposal.Ensure();
             PauseMenu.Ensure();
             MinimapHud.Ensure();
         }
