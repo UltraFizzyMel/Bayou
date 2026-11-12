@@ -200,18 +200,33 @@ I do...
 I haven't seen them in the flesh for quite the long time.
 Should you have a moment to spare could you please get me a Red Snapper and a Sailfin Molly?
 Without them they will refuse to see me for who I am.
+...
+Stay safe out there.
 ~StartQuest(SpecialDeliveryQuestId)
 ->END
 
 ===SabineCalisteRelationship
+{SabineCalisteRelationship == 9: You really are a curious one, aren't you?}
+{SpecialDeliveryQuestState != "FINISHED": Honestly, I do not know.}
+{SpecialDeliveryQuestState != "FINISHED": Would you be able to understand a riddle spoken by the wind if that wind no longer blows?}
+{SpecialDeliveryQuestState != "FINISHED": Stay Safe...}
+{SpecialDeliveryQuestState == "FINISHED" && SharedDinnerQuestState != "FINISHED": Thanks to you, I saw them again and they saw me too... they saw me too.}
+{SpecialDeliveryQuestState == "FINISHED" && SharedDinnerQuestState != "FINISHED": It's as if the tree we grew together so long ago has dropped a new seed.}
+{SpecialDeliveryQuestState == "FINISHED" && SharedDinnerQuestState != "FINISHED": I only hope this seed can grow to rival what came before.}
+{SharedDinnerQuestState == "FINISHED": They're better than they have been for three years.}
+{SharedDinnerQuestState == "FINISHED": Little by little her acts of kindness will help set up new roots for us.}
+{SharedDinnerQuestState == "FINISHED": While these roots cannot anchor them they will have to do. }
+...
+Thank you, stay safe out in the maze of trees.
 ->END
 
 ===SabineLost
 What haven't I lost? 
-They slipped away into the mist after I warned them against their...
+They slipped away into the mist after I warned them against the silver tongued dec...
 ...
-Seeing them again was worth my binding.
-Don't 
+Seeing them again was worth my binding...
+...
+Don't let the mist take you too.
 ->END
 
 ===Who
@@ -229,14 +244,15 @@ Please stay safe out in the swirling waters.
  ===DeliverFlower
  ~deliveredFlower = true
  ~StartQuest(AGraveRevelationQuestId)
-oh my flower.
-I cannot take.
-Please place.
+oh my...
+I cannot take a flower as delicate as that from her...
+Please place it in a place more suited.
 +[I can do so]
 ->DeliverFlowerToGrave
 
 ===DeliverFlowerToGrave
- Grave in the Graveyard. Caliste grave
+ Back in the dead's final home, you will find a grave near Lover's Nook with a cross full of beads.
+ That would be a much better place to lay that flower to rest.
  ->END
 
  
@@ -274,7 +290,7 @@ Thank you Mr. Lafleur.
  ->needhelpYourself
  
  ===needhelpYourself
- Do you need any help yourself?
+ Do you need anything else?
  ->StandardSabineBranching
  
  ===SpecialDeliveryDelivered
@@ -322,7 +338,7 @@ Your remaining light is but a flicker, I hope it will be enough...
  
  ===NoHelpritual
 If you do not join me on this path then everything you've yet to find will be suffocated by the dark.
-I hope your change your mind.
+I hope you change your mind.
  ->END
  
  === TheseRitualComponentsSeemSlipperyInProgress
@@ -365,6 +381,7 @@ I hope your change your mind.
  ->END
  
  ===ASecondWayOutInProgress
+ {ASecondWayOutInProgress >= 5: ...->END}
  Every second you stay is a second it can draw in more strength.
  ...
  Go.
