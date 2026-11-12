@@ -106,6 +106,7 @@ Dwell no further on what is past. Do you have anything you need from me?
 ->StandardSabineBranching
 
 ===StandardSabineIntro
+{SpecialDeliveryQuestState == "FINISHED" && AGraveRevelationQuestState == "FINISHED" && ACatfishAndAGrarQuestState == "FINISHED":->APleadForHelp}
 Hello there.
 {shuffle:
 - The grasses are still whispering your name. 
