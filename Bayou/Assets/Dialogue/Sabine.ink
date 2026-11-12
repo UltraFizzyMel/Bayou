@@ -106,7 +106,7 @@ Dwell no further on what is past. Do you have anything you need from me?
 ->StandardSabineBranching
 
 ===StandardSabineIntro
-{SpecialDeliveryQuestState == "FINISHED" && AGraveRevelationQuestState == "FINISHED" && ACatfishAndAGrarQuestState == "FINISHED":->APleadForHelp}
+{SpecialDeliveryQuestState == "FINISHED" && AGraveRevelationQuestState == "FINISHED" && ACatfishAndAGrarQuestState == "FINISHED" && BreakTheSealsQuestState == "FINISHED":->APleadForHelp}
 Hello there.
 {shuffle:
 - The grasses are still whispering your name. 
@@ -264,20 +264,38 @@ Thank you Mr. Lafleur.
  ->goodbye
  
  ===APleadForHelp
- please helkp ritual
- +[yes]
+ The moon sits high above the mortal realm. Yet its light is struggling to reach the Bayou's recesses. 
+ Please, there is another way, all I need is a word of confirmation and the ritual can begin.
+ ->PleadChoices
+ ===PleadChoices
+ +[I will help.]
   ~StartQuest(TheseRitualComponentsSeemSlipperyQuestId)
   ->Helpritual
-  +[No.]
+  +[I don't want to help.]
   ->NoHelpritual
+  *[What Ritual?]
+  ->RitualExplanation
   +[I came for something else.]
   ->StandardSabineBranching
   
+  ===RitualExplanation
+  The seals are broken. We must show you the truth, for my tongue cannot utter it without...
+  I cannot say more...
+  So... what say you?
+  ->PleadChoices
+  
  === Helpritual
- thank you get 3 fish
+ I will need you to find three fish from across the Bayou.
+ An Alligator Grar, the living nightmare from the Sunken Grove.
+ A Largemouth Bass from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
+ A Blue Catfish from the Brackish Shore. Closer to the start of your journey than you may evr have realised.
+Retrieve these three for me and you might just find what you've lost.
+Your remaining light is but a flicker, I hope it will be enough...
  ->END
  
  ===NoHelpritual
+If you do not join me on this path then everything you've yet to find will be suffocated by the dark.
+I hope your change your mind.
  ->END
  
  === TheseRitualComponentsSeemSlipperyInProgress
