@@ -251,6 +251,7 @@ Thank you Mr. Lafleur.
  ->StandardSabineBranching
  
  ===SpecialDeliveryDelivered
+ ~FinishQuest(SpecialDeliveryQuestId)
  Your actions have not gone unnoticed.
  Let me give that lantern of yours a little tap.
  ...
@@ -285,7 +286,7 @@ Thank you Mr. Lafleur.
  ->Ritualcomplete
  +[No]
  ->UtmostImportance
- +[Here for something else]
+ +[Here for something else.]
  ->StandardSabineBranching
  
  ===Ritualcomplete
