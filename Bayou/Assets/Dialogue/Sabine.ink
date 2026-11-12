@@ -149,23 +149,22 @@ What help are you seeking?
  
  ===SabineQuestions
  What question {shuffle:eats away at you?|plagues your mind?}
+ 
+ *[Do you know Caliste?]
+ ~sabinequestionsasked = sabinequestionsasked + 1
+ ->SabineCaliste
+ +{SabineCaliste}[How are things with Caliste?]
+ ->SabineCalisteRelationship
  *{marie_known && olivier_known}[Do you know the Baptistes?]
  ->BaptistesExplanation
  
- *{BaptistesExplanation && marie_known && olivier_known}[What would you do about the Baptistes?]
+ *{BaptistesExplanation && marie_known && olivier_known && sabinequestionsasked >=2}[What would you do about the Baptistes?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->BaptistesFued
- 
- *[Do you know Caliste?]
- ->SabineCaliste
  
  *{PlacedFlower}[You called me Mr. Lafleur?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->MrLafleur
- 
- *{ASlipUp}[Who is Fabian?]
- ~sabinequestionsasked = sabinequestionsasked + 1
- ->Fabian
  
  +[That's all for now.]
  ->goodbye
@@ -174,26 +173,36 @@ What help are you seeking?
 ->END
  
 ===BaptistesFued
-Simple solution
-Bring me 2 fish and they can make both happy.
+What do you mean?
++[They seem to want to kill one another...]
+->SimpleBaptisteSolution
+
+===SimpleBaptisteSolution
+Nothing a heartfelt meal can't fix. The way to someone's heart can often be through their stomach afterall.
+Bring me a catfish and a grar and don't tell them anything. 
  ~StartQuest(ACatfishAndAGrarQuestId)
 ->END
 
 ===SabineCaliste
+I do...
+I haven't seen them in the flesh for quite the long time.
+Should you have a moment to spare could you please get me a Red Snapper and a Sailfin Molly?
+Without them they will refuse to see me for me.
 ~StartQuest(SpecialDeliveryQuestId)
+->END
+
+===SabineCalisteRelationship
 ->END
 
 ===MrLafleur
 ->END
 
-===Fabian
-->END
 
  ===DeliverFlower
  ~deliveredFlower = true
  ~StartQuest(AGraveRevelationQuestId)
- oh my flower.
- I cannot take.
+oh my flower.
+I cannot take.
 Please place.
 +[I can do so]
 ->DeliverFlowerToGrave
@@ -220,12 +229,23 @@ Thank you Mr. Lafleur.
  {goodbye >= 16 && ASlipUp: Stay safe...->END}
 
 ===ASlipUp
+*[Who is Fabian?]
+ ->Fabian
+ 
+ ===Fabian
+ ...
+ You should know better than me.
 ->END
  
  ===SpecialDeliveryInProgress
  ~ASpecialMollyDelivery = true
  Hello there.
+ Have you found me a Snapper and a Molly?
+ +{HasItem("Item_Snapper", 1) && HasItem("Item_Molly", 1)}[I have.]->SpecialDeliverDelivered
+ +[I haven't.]
+ ->END
  
+ ===SpecialDeliverDelivered
  ->END
  
  ===APleadForHelp
