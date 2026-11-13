@@ -374,11 +374,11 @@ I'll be seeing you dear.
 
 ===AccordianDisposal
 ~ StartQuest(AccordianDisposalQuestId)
-~ GiveItem("Item_Accordion", 1)
 Since you’re in the area, I have another request for you.
 I have not been able to to get a good nights rest ever since you returned his accordian... 
 Olivier's incesant playing sounds to me like grinding gears, that was why I got rid of it in the first place you see. 
 //player prompted to put accordian in inventory
+~ GiveItem("Item_Accordion", 1)
 All I ask is that you dispose of it, so that I never have to hear its awful noises ever again.
 Come back once you're rid of it.
 ->END
@@ -408,7 +408,7 @@ Please bring me three pufferfish. I have an enticing dinner plan that requires t
 ->UncertainPuffer
 +[Sure thing]
 ->AcceptedPuffer
-+[I have some right here]
++{ HasItem("Item_Pufferfish", 3)}[I have some right here]
 ->HandOverPuffer
 
 === UncertainPuffer

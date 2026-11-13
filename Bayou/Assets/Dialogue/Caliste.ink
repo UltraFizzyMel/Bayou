@@ -203,8 +203,10 @@ My wares may be of interest...
 ->CalisteShadow
 *{olivier_known != ""  && marie_known != "" && calistequestionsasked >=3}[Have you met the Baptistes?]
 ->CalisteBaptistes
-*{calistequestionsasked >=5 }[What have you... lost?]
++{calistequestionsasked >=5 }[What have you... lost?]
 ->CalisteLost
++[Nevermind.]
+->Thatall
 
 ===CalisteLandry
 ~ calistequestionsasked = calistequestionsasked +1
@@ -224,14 +226,22 @@ Don't look at me with that frown of yours boy.
 ->MovingOn
 
 ===CalisteSabineOpinion
-{sabinealive == true &&  !ASharedDinnerInProgress: The Herbalist? I don't remember thier face.}
-{sabinealive == true &&  !ASharedDinnerInProgress: They are nice enough... I want to see them again. }
-{sabinealive == true && ASharedDinnerInProgress && !KeyReward: Their eyes see my unsaid worries aloud.}
-{sabinealive == true && ASharedDinnerInProgress && !KeyReward: I don't remember them but I yearn to do so... They seem to have known me from my life before.}
-{sabinealive == true && ASharedDinnerInProgress && KeyReward: hbh}
-{sabinealive == false: They haven't come past in a while...}
-{sabinealive == false: Did I... do something wrong?->SomethingWrong}
+{is_sabine_alive == true &&  !ASharedDinnerInProgress: The Herbalist? I don't remember their face.}
+{is_sabine_alive == true &&  !ASharedDinnerInProgress: They are nice enough... I want to see them again. }
+{is_sabine_alive == true && ASharedDinnerInProgress && !KeyReward: Their eyes say my unsaid worries aloud.}
+{is_sabine_alive == true && ASharedDinnerInProgress && !KeyReward: I don't remember them but I yearn to do so... They seem to have known me from my life before.}
+{is_sabine_alive == true && ASharedDinnerInProgress && KeyReward: It's as is I have known them my whole life.}
+{is_sabine_alive == true && ASharedDinnerInProgress && KeyReward: My favourite part of any day is either seeing them or thinking about them! ->Stilldreaming}
+{is_sabine_alive == false: They haven't come past in a while...}
+{is_sabine_alive == false: Did I... do something wrong?->SomethingWrong}
 ->SabineMovingOn
+
+===Stilldreaming
+Sonny wipe that smirk off your face or I won't be sellin' to you no more.
+...
+Alright... You can keep the smirk...
+Anything else I can do for you?
+->questions
 
 ===SomethingWrong
 Oh...

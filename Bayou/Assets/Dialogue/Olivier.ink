@@ -134,6 +134,7 @@ Stay safe out in the fog my friend.
 ->END
 
 === OlivierStandardIntro
+{!AccordionExplanation && LostAccordionStart && inBrackishShore == true: ->LostAccordion}
 {!Sad}Good Evening my friend!
 {!Sad}You look in need of a touch of musical delight, alright!
 {!Sad}How can I help ya?
@@ -141,7 +142,6 @@ Stay safe out in the fog my friend.
 {Sad}I'm afraid I don't have any tunes for you tonight, my accordion is lost yet again.
 {Sad}Still, how could I help you?
 
-{!AccordionExplanation && LostAccordionStart && inBrackishShore == true}->LostAccordion
 ->OlivierOptions
 
 === OlivierAfterEelIntro
