@@ -212,7 +212,7 @@ Come back as soon as you have it. ->END
 
     As long as you wear it, you'll be protected from that which lurks in the Bayou's shadows.
 
-    ->Agreed
+    ->Agree
 
 - else:
 
