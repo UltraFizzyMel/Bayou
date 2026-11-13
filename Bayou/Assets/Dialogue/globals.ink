@@ -90,6 +90,10 @@ VAR AMealToDieForQuestId = "AMealToDieForQuest"
 //quest states (questId + "State" for variable name)
 VAR AMealToDieForQuestState = "CAN_START"
 
+//Variables for marie text fixes
+VAR MarieHappyVisitedAmount = 0
+VAR SeenAccordionDisposal = false
+
 
 //CALISTE Variables
 VAR caliste_known = ""

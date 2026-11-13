@@ -479,8 +479,5 @@ Much Obliged! Here's that key I promised ya.
 ->BasicWaresIntro
 
 === goodbye ===
-#speaker: Caliste
-
  I'll be seeing you.
-
  -> END
