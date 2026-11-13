@@ -83251,6 +83251,7 @@ GameObject:
   - component: {fileID: 1346707351}
   - component: {fileID: 1346707353}
   - component: {fileID: 1346707352}
+  - component: {fileID: 1346707354}
   m_Layer: 0
   m_Name: Panel
   m_TagString: Untagged
@@ -83296,7 +83297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.1, g: 0.08, b: 0.06, a: 0.96}
+  m_Color: {r: 0.5018867, g: 0.35157898, b: 0.22632252, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -83321,6 +83322,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1346707350}
   m_CullTransparentMesh: 1
+--- !u!114 &1346707354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1346707350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 740f1de33ba9ce749a87722f44610eb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ImageCycler
+  targetImage: {fileID: 1346707352}
+  images:
+  - {fileID: 21300000, guid: b369ceea0b1ee2e4a913706a9e3530b6, type: 3}
+  - {fileID: 21300000, guid: 3a699309a9a89d8488b5e6393add511e, type: 3}
+  interval: 0.5
+  fadeSpeed: 0.5
 --- !u!4 &1346884611 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4454315674264744496, guid: d6b6a1d2340b6af4fa24ee48629337ea, type: 3}
