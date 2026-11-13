@@ -10620,6 +10620,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: body
+      value: '                                       /\
+
+        The Mirewood  _____|
+
+        
+
+        <---
+        Journey''s End Church
+
+        
+
+        Brackish Shore  --->
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: title
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8675817873126578536, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.06546483
@@ -45406,6 +45427,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -16.956
       objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: body
+      value: '                                           /\
+
+        The Foggy Marsh_____|
+
+        
+
+        <---
+        Journey''s End Graveyard
+
+        
+
+        Brackish Shore  --->
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: title
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8675817873126578536, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.33571425
@@ -68053,6 +68095,16 @@ PrefabInstance:
     - target: {fileID: 6632514083994592424, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 30.789
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: body
+      value: "                                         /\\\r\nStillwaters Rest _____|\r\n\r\n<---
+        Lover's Nook\r\n\r\nJourney's End Church  ____\r\n                                                  
+        |\r\n                                                  V\r\n"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: title
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -113499,6 +113551,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: body
+      value: '<--- Driftwood Docks
+
+        
+
+        The Mirewood --->
+
+'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: title
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8675817873126578536, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.3268232
@@ -118112,6 +118178,15 @@ PrefabInstance:
     - target: {fileID: 5482010034721350101, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: body
+      value: "<--- Mauseleum Maze & Stillwaters Rest\r\n\r\n***Serpent's Stoneway***\r\n           
+        (You are Here)\r\n\r\nFoggy Marsh --->\r\n(The Mirewood & Driftwood Docks)\r\n"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: title
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -135964,6 +136039,16 @@ PrefabInstance:
     - target: {fileID: 6632514083994592424, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 37.787
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: body
+      value: "/\\\r\n |______Mauseleum  Maze to Serpent's Stoneway\r\n\r\n<---  The
+        ------ Tomb\r\n\r\nJourney's End Church ______\r\n                                                  
+        |\r\n                                                  V\r\n"
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
+      propertyPath: title
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8675817873126578536, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: m_LocalPosition.x
