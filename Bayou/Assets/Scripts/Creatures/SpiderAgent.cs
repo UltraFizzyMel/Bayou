@@ -58,6 +58,7 @@ namespace Bayou.Creatures
         private float _nextWander;
         private float _stunUntil;
         private float _nextWeb;
+        private float _webPlantedUntil;
         private float _nextBite;
         private float _windupUntil;
         private bool _windingUp;
@@ -101,6 +102,20 @@ namespace Bayou.Creatures
             if (Time.time < _stunUntil)
             {
                 _windingUp = false;
+                return;
+            }
+
+            if (Time.time < _webPlantedUntil)
+            {
+                var aim = _sense.Player;
+                if (_sense.TrySensePlayer(out var sensed))
+                    aim = sensed;
+                if (aim != null)
+                {
+                    var face = aim.position - transform.position;
+                    face.y = 0f;
+                    Face(face, Time.deltaTime);
+                }
                 return;
             }
 
@@ -161,6 +176,8 @@ namespace Bayou.Creatures
             {
                 ShootWeb(player.position);
                 _nextWeb = Time.time + webCooldown;
+                Face(to, Time.deltaTime);
+                return;
             }
 
             var speed = (dist <= webMaxRange ? chaseSpeed : passiveSpeed) * SpiderWeb.SpeedBonusFor(this);
@@ -223,6 +240,8 @@ namespace Bayou.Creatures
         private void ShootWeb(Vector3 target)
         {
             PlayAnim("Web_Attack");
+            // SpiderRig|Spider_Attack_Web is frames 0–48 at 24 fps (2s). Stay planted for the clip.
+            _webPlantedUntil = Time.time + WebShotSeconds();
             var from = transform.position + Vector3.up * 0.35f;
             var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             go.name = "SpiderWeb";
@@ -230,6 +249,24 @@ namespace Bayou.Creatures
             go.transform.localScale = Vector3.one * 0.22f;
             var web = go.AddComponent<SpiderWeb>();
             web.Launch(this, from, target, webShotSpeed);
+        }
+
+        private float WebShotSeconds()
+        {
+            const float fallback = 48f / 24f;
+            if (_animator == null || _animator.runtimeAnimatorController == null)
+                return fallback;
+
+            var clips = _animator.runtimeAnimatorController.animationClips;
+            for (var i = 0; i < clips.Length; i++)
+            {
+                var clip = clips[i];
+                if (clip == null) continue;
+                if (clip.name.IndexOf("Attack_Web", System.StringComparison.Ordinal) < 0) continue;
+                return clip.length > 0.05f ? clip.length : fallback;
+            }
+
+            return fallback;
         }
 
         private void TickWander(float dt)

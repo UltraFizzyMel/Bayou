@@ -768,7 +768,9 @@ namespace Bayou.UI
             var plateSize = skin != null ? skin.slotPlateSize : new Vector2(96f, 96f);
             if (plateSize.x < 72f || plateSize.y < 72f)
                 plateSize = new Vector2(96f, 96f);
-            plateSize *= 1.28f;
+            // Always-visible bottom-left equipped plate only. ~1.55x the 96/72 defaults.
+            const float equippedHudScale = 1.55f;
+            plateSize *= equippedHudScale;
 
             _equippedRoot = CreateRect("EquippedItem", canvas);
             _equippedRoot.anchorMin = _equippedRoot.anchorMax = new Vector2(0f, 0f);
@@ -786,7 +788,7 @@ namespace Bayou.UI
 
             var iconRt = CreateRect("Icon", _equippedRoot);
             var iconSize = skin != null ? skin.iconSize : new Vector2(72f, 72f);
-            iconRt.sizeDelta = iconSize * 1.28f;
+            iconRt.sizeDelta = iconSize * equippedHudScale;
             _equippedIcon = iconRt.gameObject.AddComponent<Image>();
             _equippedIcon.preserveAspect = true;
             _equippedIcon.raycastTarget = false;

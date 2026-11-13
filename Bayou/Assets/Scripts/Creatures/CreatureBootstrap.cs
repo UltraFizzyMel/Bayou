@@ -48,18 +48,8 @@ namespace Bayou.Creatures
             var foggy = Anchor("Foggy Marsh Area", new Vector3(4.56f, 1f, 164.4f));
             var brackish = Anchor("Brackish Shore Area", new Vector3(76.2f, 1f, -59.6f));
 
-            // Church road, north of the porch — not standing on the spawn.
-            EnsureSnake(
-                root.transform,
-                "Snake_ChurchRoad",
-                new Vector3(-8f, 1.6f, -54f),
-                new[]
-                {
-                    new Vector3(-8f, 1.6f, -54f),
-                    new Vector3(-2f, 1.6f, -48f),
-                    new Vector3(-12f, 1.6f, -46f),
-                    new Vector3(-14f, 1.6f, -56f)
-                });
+            // Spawn road, well south of the church porch. The (-8, -54) loop sat on the NPC.
+            EnsureSpawnRoadSnake(root.transform);
 
             EnsureSnake(
                 root.transform,
@@ -118,8 +108,9 @@ namespace Bayou.Creatures
                 brackish + new Vector3(-10f, 1f, 12f),
                 Ring(brackish + new Vector3(-10f, 1f, 12f), 5f));
 
-            EnsureSpider(root.transform, "Spider_FoggyTrees", foggy + new Vector3(22f, 2f, -8f));
-            EnsureSpider(root.transform, "Spider_GraveyardWeb", graveyard + new Vector3(12f, 2f, -8f));
+            RemoveEarlySpiders();
+            var finalGraveyard = Anchor("Final Graveyard Area", new Vector3(-7.43f, 1f, 35.24f));
+            EnsureSpider(root.transform, "Spider_FinalGraveyard", finalGraveyard + new Vector3(8f, 2f, 6f));
             EnsureSpider(root.transform, "Spider_BrackishCypress", brackish + new Vector3(-6f, 2f, -14f));
 
             CreaturePlaceholderVisual.PatchAll();
@@ -201,12 +192,29 @@ namespace Bayou.Creatures
             if (root == null)
                 root = new GameObject(RootName);
 
-            var foggy = Anchor("Foggy Marsh Area", new Vector3(4.56f, 1f, 164.4f));
+            RemoveEarlySpiders();
             var brackish = Anchor("Brackish Shore Area", new Vector3(76.2f, 1f, -59.6f));
-            var graveyard = Anchor("Graveyard_Entrance_Net", new Vector3(66.31f, 0.2f, -26.35f));
-            EnsureSpider(root.transform, "Spider_FoggyTrees", foggy + new Vector3(22f, 2f, -8f));
-            EnsureSpider(root.transform, "Spider_GraveyardWeb", graveyard + new Vector3(12f, 2f, -8f));
+            var finalGraveyard = Anchor("Final Graveyard Area", new Vector3(-7.43f, 1f, 35.24f));
+            EnsureSpider(root.transform, "Spider_FinalGraveyard", finalGraveyard + new Vector3(8f, 2f, 6f));
             EnsureSpider(root.transform, "Spider_BrackishCypress", brackish + new Vector3(-6f, 2f, -14f));
+        }
+
+        /// <summary>No spider in the fog or at the first graveyard gate. Church spawn is a scene object, not these.</summary>
+        private static void RemoveEarlySpiders()
+        {
+            RemoveNamed("Spider_FoggyTrees");
+            RemoveNamed("Spider_GraveyardWeb");
+            RemoveNamed("Spider_Demo");
+        }
+
+        private static void RemoveNamed(string name)
+        {
+            var existing = GameObject.Find(name);
+            if (existing == null) return;
+            if (Application.isPlaying)
+                Object.Destroy(existing);
+            else
+                Object.DestroyImmediate(existing);
         }
 
         private static void EnsureSpider(Transform parent, string name, Vector3 position)
@@ -214,6 +222,57 @@ namespace Bayou.Creatures
             if (GameObject.Find(name) != null) return;
             var spider = CreateSpider(parent, name, position);
             CreatureController.SnapBodyToGround(spider.transform, 0.28f);
+        }
+
+        private static readonly Vector3[] SpawnRoadSnakeLoop =
+        {
+            new(-4f, 1.6f, -82f),
+            new(2f, 1.6f, -78f),
+            new(-1f, 1.6f, -74f),
+            new(-8f, 1.6f, -78f)
+        };
+
+        /// <summary>
+        /// One snake on the spawn road. Moves a baked church-porch snake back instead of adding another.
+        /// </summary>
+        private static void EnsureSpawnRoadSnake(Transform parent)
+        {
+            const string name = "Snake_ChurchRoad";
+            var start = SpawnRoadSnakeLoop[0];
+            var existing = GameObject.Find(name);
+            var legacy = GameObject.Find("Snake_TestNearSpawn");
+            if (existing == null && legacy != null)
+            {
+                legacy.name = name;
+                existing = legacy;
+            }
+            else if (legacy != null && legacy != existing)
+            {
+                if (Application.isPlaying)
+                    Object.Destroy(legacy);
+                else
+                    Object.DestroyImmediate(legacy);
+            }
+
+            if (existing == null)
+            {
+                CreateSnake(parent, name, start, SpawnRoadSnakeLoop);
+                return;
+            }
+
+            existing.transform.position = start;
+            var body = existing.transform.Find("Body");
+            if (body != null)
+                body.position = start;
+
+            var wpRoot = existing.transform.Find("Waypoints");
+            if (wpRoot == null) return;
+            for (var i = 0; i < SpawnRoadSnakeLoop.Length; i++)
+            {
+                var wp = wpRoot.Find($"WP_{i + 1}");
+                if (wp != null)
+                    wp.position = SpawnRoadSnakeLoop[i];
+            }
         }
 
         private static void EnsureSnake(Transform parent, string name, Vector3 start, Vector3[] worldWaypoints)

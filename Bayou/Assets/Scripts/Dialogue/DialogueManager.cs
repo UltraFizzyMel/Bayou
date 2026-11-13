@@ -291,13 +291,23 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator PresentReceivedAfterDialogueRoutine()
     {
         yield return null;
-        _receivedRoutine = null;
-        if (_pendingReceived.Count == 0) yield break;
+        while (_pendingReceived.Count > 0)
+        {
+            while (CaughtFishPresenter.IsBusy)
+                yield return null;
 
-        var item = _pendingReceived[0];
-        _pendingReceived.RemoveAt(0);
-        if (item != null)
+            var item = _pendingReceived[0];
+            _pendingReceived.RemoveAt(0);
+            if (item == null) continue;
+
             CaughtFishPresenter.Present(item, "You've received");
+            yield return null;
+        }
+
+        while (CaughtFishPresenter.IsBusy)
+            yield return null;
+
+        _receivedRoutine = null;
     }
 
     /// <summary>Hides panels/choices without unbinding Ink mid-external-call.</summary>

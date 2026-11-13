@@ -8807,6 +8807,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SignOne
       objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345001, guid: 5d8dbf87d905ba1498de3ea894e3bd49, type: 3}
+      propertyPath: title
+      value: Journey's End Church
+    - target: {fileID: 8123456789012345001, guid: 5d8dbf87d905ba1498de3ea894e3bd49, type: 3}
+      propertyPath: body
+      value: "/\\               /\\                   /\\\n |                 |                    
+        |\n\nAll Welcome!    \nProverbs 4:26 \"Give careful thought to the paths for
+        your feet and be steadfast in all your ways\""
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16556,6 +16564,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: SignTwo (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345002, guid: 8180ad18895888746aab64755057923c, type: 3}
+      propertyPath: title
+      value: Stillwaters Rest
+    - target: {fileID: 8123456789012345002, guid: 8180ad18895888746aab64755057923c, type: 3}
+      propertyPath: body
+      value: '"Like all drops of rain, each of us must one day return to the ocean."
+      
+        In
+        memory of the Beauregard family. '
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16979,6 +16996,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: SignOne (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345001, guid: 5d8dbf87d905ba1498de3ea894e3bd49, type: 3}
+      propertyPath: title
+      value: Journey's End Graveyard
+    - target: {fileID: 8123456789012345001, guid: 5d8dbf87d905ba1498de3ea894e3bd49, type: 3}
+      propertyPath: body
+      value: 'Serpent''s Stoneway.
+      
+      
+        Watch your step, for each could be your last.'
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -23496,6 +23522,10 @@ PrefabInstance:
     - target: {fileID: 2400760941283634310, guid: 17aedb4c35ac3c645be586c76872b7f4, type: 3}
       propertyPath: m_Name
       value: Accordian
+      objectReference: {fileID: 0}
+    - target: {fileID: 2400760941283634310, guid: 17aedb4c35ac3c645be586c76872b7f4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3033992349939643964, guid: 17aedb4c35ac3c645be586c76872b7f4, type: 3}
       propertyPath: m_LocalPosition.x
@@ -48994,6 +49024,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: SignOne (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345001, guid: 5d8dbf87d905ba1498de3ea894e3bd49, type: 3}
+      propertyPath: title
+      value: The Foggy Marsh --->
+    - target: {fileID: 8123456789012345001, guid: 5d8dbf87d905ba1498de3ea894e3bd49, type: 3}
+      propertyPath: body
+      value: "Enter at your own risk. \n\n\nA small note has been etched into the sign.
+        \n\"May the light guide you and keep you safe from those who wish you harm\" "
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -87146,6 +87183,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: SignOne
       objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345001, guid: 5d8dbf87d905ba1498de3ea894e3bd49, type: 3}
+      propertyPath: title
+      value: Journey's End Graveyard
+    - target: {fileID: 8123456789012345001, guid: 5d8dbf87d905ba1498de3ea894e3bd49, type: 3}
+      propertyPath: body
+      value: '
+      
+        May all seeking solace find peace amoungst the memories of those once
+        loved. '
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -111737,6 +111783,19 @@ PrefabInstance:
       propertyPath: m_Name
       value: SignTwo
       objectReference: {fileID: 0}
+    - target: {fileID: 8123456789012345002, guid: 8180ad18895888746aab64755057923c, type: 3}
+      propertyPath: title
+      value: Lover's Nook
+    - target: {fileID: 8123456789012345002, guid: 8180ad18895888746aab64755057923c, type: 3}
+      propertyPath: body
+      value: 'The writing is faded but you can still make out the following.
+      
+      
+        "In
+        ----- moment- -- grief, I hope --- --- ------ i- t-- ---- ---- surrounds you"
+      
+      
+      '
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -134823,63 +134882,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82a1a2224445a7e4690d46e804ea61e0, type: 3}
---- !u!1001 &5145237973036199596
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 8444504191051836165, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -1.1923898
-      objectReference: {fileID: 0}
-    - target: {fileID: 8444504191051836165, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.08076459
-      objectReference: {fileID: 0}
-    - target: {fileID: 8444504191051836165, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -119.09087
-      objectReference: {fileID: 0}
-    - target: {fileID: 8444504191051836165, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8444504191051836165, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8444504191051836165, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8444504191051836165, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8444504191051836165, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8444504191051836165, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8444504191051836165, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9113939288327811519, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
-      propertyPath: m_Name
-      value: Spider
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: da19d4937d1ebb94e8083a6fdf46b78d, type: 3}
 --- !u!1001 &5430171235404772496
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -135290,7 +135292,6 @@ SceneRoots:
   - {fileID: 1383702848}
   - {fileID: 416419342}
   - {fileID: 203423952}
-  - {fileID: 5145237973036199596}
   - {fileID: 2020399888}
   - {fileID: 1527000014}
   - {fileID: 1718381991}

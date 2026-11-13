@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Bayou.Inventory;
 using Bayou.Player;
 using Bayou.Rendering;
@@ -7,7 +8,7 @@ using UnityEngine.SceneManagement;
 namespace Bayou.Environment
 {
     /// <summary>
-    /// Drops a readable sign and Caliste's box near the player when a scene has neither.
+    /// Wires designer sign posts. Does not spawn a demo pickup at the player.
     /// </summary>
     public static class WorldInteractBootstrap
     {
@@ -36,9 +37,6 @@ namespace Bayou.Environment
             if (GameObject.Find("Sign_BayouMarker") == null)
                 CreateSign(origin + new Vector3(-2.6f, 0f, 2.4f));
 
-            if (GameObject.Find("Pickup_CalistesBox") == null)
-                CreateBox(origin + new Vector3(2.4f, 0f, 1.8f));
-
             if (Object.FindFirstObjectByType<SignWireRunner>() == null)
             {
                 var runner = new GameObject("SignWire");
@@ -52,8 +50,8 @@ namespace Bayou.Environment
         }
 
         /// <summary>
-        /// Scene sign posts are static meshes. Give each one a reader so E works
-        /// without editing the prefab.
+        /// Sign posts only. Graves, coffins, tombs, and sign-board submeshes are left alone,
+        /// including their colliders.
         /// </summary>
         public static void WirePlacedSigns()
         {
@@ -63,7 +61,9 @@ namespace Bayou.Environment
                 var t = transforms[i];
                 if (t == null) continue;
                 if (!TryCopyForSign(t.name, out var title, out var body)) continue;
+                if (t.GetComponent<ReadableSign>() != null) continue;
                 if (t.GetComponentInChildren<ReadableSign>(true) != null) continue;
+                if (t.GetComponentInParent<ReadableSign>(true) != null) continue;
                 if (HasSignAncestor(t)) continue;
 
                 var sign = t.gameObject.AddComponent<ReadableSign>();
@@ -71,11 +71,16 @@ namespace Bayou.Environment
             }
         }
 
+        private static readonly Regex SignPostName = new(
+            @"^(SignOne|SignTwo|SignThree|Sign 1|Sign 2|Sign 3)( \(\d+\))?$",
+            RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
         private static bool TryCopyForSign(string objectName, out string title, out string body)
         {
             title = null;
             body = null;
-            if (string.IsNullOrEmpty(objectName)) return false;
+            if (string.IsNullOrEmpty(objectName) || !SignPostName.IsMatch(objectName))
+                return false;
 
             if (objectName.StartsWith("SignOne") || objectName.StartsWith("Sign 1"))
             {
