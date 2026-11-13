@@ -34,13 +34,6 @@ namespace Bayou.Environment
                 readPrompt = prompt;
         }
 
-        private void Reset()
-        {
-            var col = GetComponent<Collider>();
-            if (col != null)
-                col.isTrigger = true;
-        }
-
         private void OnEnable()
         {
             if (!All.Contains(this))

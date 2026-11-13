@@ -187,6 +187,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f042a2ea3e2cdc84d8b63e0f76c776ef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8123456789012345003}
+    - targetCorrespondingSourceObject: {fileID: -9201490148808970837, guid: f042a2ea3e2cdc84d8b63e0f76c776ef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8123456789012345011}
+    - targetCorrespondingSourceObject: {fileID: 1135704536917420786, guid: f042a2ea3e2cdc84d8b63e0f76c776ef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8123456789012345012}
+    - targetCorrespondingSourceObject: {fileID: -8509065113233548718, guid: f042a2ea3e2cdc84d8b63e0f76c776ef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8123456789012345013}
   m_SourcePrefab: {fileID: 100100000, guid: f042a2ea3e2cdc84d8b63e0f76c776ef, type: 3}
 --- !u!1 &1151902958945393300 stripped
 GameObject:
@@ -306,6 +315,54 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8123456789012345099}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21a20dcf43003b145896dfb79c2acbe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.ReadableSign
+  title: Graveyard path
+  body: The graveyard path leaves the bank here. If the water goes still, step back.
+  readPrompt: Read
+  interactRadius: 3.5
+--- !u!114 &8123456789012345011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5463718605003697045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21a20dcf43003b145896dfb79c2acbe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.ReadableSign
+  title: Graveyard path
+  body: The graveyard path leaves the bank here. If the water goes still, step back.
+  readPrompt: Read
+  interactRadius: 3.5
+--- !u!114 &8123456789012345012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4925934326346886348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21a20dcf43003b145896dfb79c2acbe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.ReadableSign
+  title: Graveyard path
+  body: The graveyard path leaves the bank here. If the water goes still, step back.
+  readPrompt: Read
+  interactRadius: 3.5
+--- !u!114 &8123456789012345013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4789296957758086252}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21a20dcf43003b145896dfb79c2acbe8, type: 3}

@@ -78,9 +78,6 @@ public class InkExternalFunctions
             manager.FinishQuest(questId);
         else
             GameEventManager.Instance?.questEvents?.FinishQuest(questId);
-
-        if (string.Equals(questId, QuestIds.CollectLantern, System.StringComparison.Ordinal))
-            Bayou.Demo.DemoEndController.ArmAfterDialogue();
     }
 
     private static bool HasItem(string itemId, int count)
