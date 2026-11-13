@@ -121,6 +121,8 @@ VAR LostCargoQuestId = "LostCargoQuest"
 //quest states (questId + "State" for variable name)
 VAR LostCargoQuestState = "CAN_START"
 
+//Variables for Caliste text fixes
+
 
 //SABINE Variables
 VAR sabine_known = ""

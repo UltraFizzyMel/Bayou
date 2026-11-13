@@ -74,8 +74,8 @@
 
 ===CalisteStandardIntroduction
 <b>DON'T...</b> Oh it's you.
-{ASearchForAHerbalistQuestState == "FINISHED" && SpecialDeliveryQuestState == "FINISHED" && !SharedDinnerAgree: ->ASharedDinner}
-{!ASearchForAHerbalistStart && SnapperAndMollyQuestState == "FINISHED": -> ASearchForAHerbalist}
+{ASearchForAHerbalistQuestState == "FINISHED" && SpecialDeliveryQuestState == "FINISHED" && SharedDinnerQuestState == "CAN_START"}->ASharedDinner
+{!ASearchForAHerbalistStart && SnapperAndMollyQuestState == "FINISHED" }->ASearchForAHerbalist
 -> BasicWaresIntro
 
 
