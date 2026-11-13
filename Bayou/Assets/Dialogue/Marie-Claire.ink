@@ -159,11 +159,9 @@ Should you ever need passage down to the Brackish Shore Church Entrance then we 
 
 
 === MarieStandardIntro
-{MarieHappy != 1}Well, look who it is! Good Evening dear.
-{!ExpandedHorizonsInProgress && ExpandedHorizonsStart}->ExpandedHorizons
-
-{LostAccordionQuestState == "FINISHED" && hasFoundThirdBoatLoaction == true && !AccordianDisposal}->AccordianDisposal
-
+{MarieHappyVisitedAmount != 1}Well, look who it is. Good Evening dear.
+{!ExpandedHorizonsInProgress && ExpandedHorizonsStart && ExpandedHorizonsQuestState != "FINISHED"}->ExpandedHorizons
+{LostAccordionQuestState == "FINISHED" && hasFoundThirdBoatLoaction == true && !SeenAccordionDisposal}->AccordianDisposal
 ->MarieStandardBranching
 
 
@@ -374,11 +372,12 @@ I'll be seeing you dear.
 
 ===AccordianDisposal
 ~ StartQuest(AccordianDisposalQuestId)
-~ GiveItem("Item_Accordion", 1)
+~SeenAccordionDisposal = true
 Since you’re in the area, I have another request for you.
 I have not been able to to get a good nights rest ever since you returned his accordian... 
 Olivier's incesant playing sounds to me like grinding gears, that was why I got rid of it in the first place you see. 
 //player prompted to put accordian in inventory
+~ GiveItem("Item_Accordion", 1)
 All I ask is that you dispose of it, so that I never have to hear its awful noises ever again.
 Come back once you're rid of it.
 ->END
@@ -408,7 +407,7 @@ Please bring me three pufferfish. I have an enticing dinner plan that requires t
 ->UncertainPuffer
 +[Sure thing]
 ->AcceptedPuffer
-+[I have some right here]
++{ HasItem("Item_Pufferfish", 3)}[I have some right here]
 ->HandOverPuffer
 
 === UncertainPuffer
@@ -454,10 +453,11 @@ Do you have all three pufferfish?
 ->MarieStandardIntro
 
 ===MarieHappy
-{MarieHappy == 1}Well, look who it is! Good Evening dear.
-{MarieHappy == 1}You won't believe what Olivier and I had for dinner last night!
-{MarieHappy == 1}Things are finally looking up for us. We did however discuss something important...
-{MarieHappy == 1}The trips we're giving you... we're gonna need to up the cost to two fish per trip unfortunately.
-{MarieHappy == 1}That'll be all.
+~MarieHappyVisitedAmount =  MarieHappyVisitedAmount +1
+{MarieHappyVisitedAmount == 1}Well, look who it is! Good Evening dear.
+{MarieHappyVisitedAmount == 1}You won't believe what Olivier and I had for dinner last night!
+{MarieHappyVisitedAmount == 1}Things are finally looking up for us. We did however discuss something important...
+{MarieHappyVisitedAmount == 1}The trips we're giving you... we're gonna need to up the cost to two fish per trip unfortunately.
+{MarieHappyVisitedAmount == 1}That'll be all.
 ->MarieStandardIntro
  

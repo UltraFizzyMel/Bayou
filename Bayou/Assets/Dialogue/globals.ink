@@ -58,6 +58,8 @@ VAR AMealToDieForOlivierQuestId = "AMealToDieForOlivierQuest"
 //quest states (questId + "State" for variable name)
 VAR AMealToDieForOlivierQuestState = "CAN_START"
 
+//OlivierSeenBranches
+
 
 //MARIE Variables
 VAR marie_known = ""
@@ -87,6 +89,10 @@ VAR AccordianDisposalQuestState = "CAN_START"
 VAR AMealToDieForQuestId = "AMealToDieForQuest"
 //quest states (questId + "State" for variable name)
 VAR AMealToDieForQuestState = "CAN_START"
+
+//Variables for marie text fixes
+VAR MarieHappyVisitedAmount = 0
+VAR SeenAccordionDisposal = false
 
 
 //CALISTE Variables
@@ -121,7 +127,7 @@ VAR sabine_known = ""
 VAR sabineBaptisteSolution = false
 VAR deliveredFlower = false
 VAR sabinequestionsasked = 0
-VAR sabinealive = true
+VAR is_sabine_alive = true
 VAR flowerPlaced = false
 VAR ASpecialMollyDelivery = false
 

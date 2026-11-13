@@ -116,8 +116,6 @@ Hello there.
 What help are you seeking?
 ->StandardSabineBranching
 
-//if finished all quests then please i need ritiual components
-->APleadForHelp
 
 === StandardSabineBranching ===
 +[Can I ask you Something?]
@@ -170,7 +168,7 @@ What help are you seeking?
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->SabineLost
  
- *{sabinequestionsasked >=4 && TheseRitualComponentsSeemSlipperyInProgress}[What have I lost?]
+ +{sabinequestionsasked >=4 && TheseRitualComponentsSeemSlipperyInProgress}[What have I lost?]
  ->Who
  
  
@@ -178,7 +176,7 @@ What help are you seeking?
  ->goodbye
  
 === BaptistesExplanation
-An pair destined for eternity but is eternity destined for them?
+A pair destined for eternity but is eternity destined for them?
 They need to listen to the unspoken storm brewing between them before it consumes them both.
 ...
 Don't let yourself be consumed by their storm.
