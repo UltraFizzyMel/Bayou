@@ -293,7 +293,7 @@ That's all I recall dear.
 { is_in_foggy_marsh: 
 +[Near the Church]
 -> ChurchTrip
-+[Near the Sunken Grove]
++{ExpandedHorizonsQuestState == "FINISHED"}[Near the Sunken Grove]
 -> GroveTrip
 -else: 
 -> BoatLocations2
@@ -303,7 +303,7 @@ That's all I recall dear.
 {is_at_first_brackishshore:
 +[To the Foggy Marsh]
 -> MarshTrip
-+[Near the Sunken Grove]
++{ExpandedHorizonsQuestState == "FINISHED"}[Near the Sunken Grove]
 -> GroveTrip
 -else:
 +[Near the Church]
