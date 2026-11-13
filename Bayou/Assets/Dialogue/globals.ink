@@ -93,6 +93,9 @@ VAR AMealToDieForQuestState = "CAN_START"
 //Variables for marie text fixes
 VAR MarieHappyVisitedAmount = 0
 VAR SeenAccordionDisposal = false
+VAR SeenMarieLandry = false
+VAR SeenMarieSabine = false
+VAR SeenMarieCaliste = false
 
 
 //CALISTE Variables
@@ -122,6 +125,12 @@ VAR LostCargoQuestId = "LostCargoQuest"
 VAR LostCargoQuestState = "CAN_START"
 
 //Variables for Caliste text fixes
+VAR SeenMissingBoxes = false
+VAR SeenCalisteLandry = false
+VAR SeenCalisteSabine = false
+VAR SeenCalisteShadow = false
+VAR SeenCalisteBaptistes = false
+VAR ASharedDinnerStartVisited = 0
 
 
 //SABINE Variables
