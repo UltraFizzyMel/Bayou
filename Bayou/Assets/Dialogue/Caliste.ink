@@ -74,9 +74,16 @@
 
 ===CalisteStandardIntroduction
 <b>DON'T...</b> Oh it's you.
-{ASearchForAHerbalistQuestState == "FINISHED" && SpecialDeliveryQuestState == "FINISHED" && SharedDinnerQuestState == "CAN_START"}->ASharedDinner
-{!ASearchForAHerbalistStart && SnapperAndMollyQuestState == "FINISHED" }->ASearchForAHerbalist
--> BasicWaresIntro
+{ASearchForAHerbalistQuestState == "FINISHED" && SpecialDeliveryQuestState == "FINISHED" && SharedDinnerQuestState == "CAN_START": 
+->ASharedDinner
+- else: 
+ {
+ -!SeenASearchForAHerbalistStart && SnapperAndMollyQuestState == "FINISHED" && ASearchForAHerbalistQuestState != "FINISHED":
+ ->ASearchForAHerbalist 
+ -else:
+ -> BasicWaresIntro
+ }
+}
 
 
 
@@ -391,6 +398,7 @@ Sorry sonny, have you a minute to spare?
 
 
 ===ASearchForAHerbalistStart
+~SeenASearchForAHerbalistStart = true
 A memory came to me.
 Green flames amidst the trees, leading deeper into the fog.
 A Herbalist , missing a flower needed to keep it at bay.

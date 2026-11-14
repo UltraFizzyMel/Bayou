@@ -26,8 +26,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -169.22, y: 2.12, z: 13.553}
-  m_LocalScale: {x: 0.63647705, y: 0.63647705, z: 0.63647705}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 1.136477, y: 1.136477, z: 1.136477}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 675441313434284720}
   - {fileID: 7815913114287397698}
@@ -245,21 +245,37 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8823814424392643981}
     m_Modifications:
+    - target: {fileID: 2614165359686057957, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
+      propertyPath: InitialModule.rotation3D
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2614165359686057957, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2614165359686057957, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2614165359686057957, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2997641976397389432, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
       propertyPath: m_Name
       value: Sparkle System
       objectReference: {fileID: 0}
     - target: {fileID: 5624118707969247394, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.029
+      value: -0.21
       objectReference: {fileID: 0}
     - target: {fileID: 5624118707969247394, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.485
+      value: 1.71
       objectReference: {fileID: 0}
     - target: {fileID: 5624118707969247394, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.675
+      value: -0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5624118707969247394, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -288,6 +304,14 @@ PrefabInstance:
     - target: {fileID: 5624118707969247394, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 3.878
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719912790744230433, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
+      propertyPath: m_MaxParticleSize
+      value: 0.04
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719912790744230433, guid: a92f715d6f5434f4596367ced9f8b30d, type: 3}
+      propertyPath: m_MinParticleSize
+      value: 0.001
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

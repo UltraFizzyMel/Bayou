@@ -135,6 +135,7 @@ VAR LostCargoQuestState = "CAN_START"
 
 //Variables for Caliste text fixes
 VAR SeenMissingBoxes = false
+VAR SeenASearchForAHerbalistStart = false
 VAR SeenCalisteLandry = false
 VAR SeenCalisteSabine = false
 VAR SeenCalisteShadow = false

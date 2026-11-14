@@ -86,8 +86,8 @@ We meet again.
 ===Again
 ...
 The bayou waters have eroded who you once were.
-#speaker: Sabine
 You once knew me as a shape across the pond, Sabine.
+#speaker: Sabine
 ...
 ~sabine_known = "Sabine"
 You must be yearning to find her.
@@ -106,7 +106,9 @@ Dwell no further on what is past. Do you have anything you need from me?
 ->StandardSabineBranching
 
 ===StandardSabineIntro
-{SpecialDeliveryQuestState == "FINISHED" && AGraveRevelationQuestState == "FINISHED" && ACatfishAndAGrarQuestState == "FINISHED" && BreakTheSealsQuestState == "FINISHED":->APleadForHelp}
+{SpecialDeliveryQuestState == "FINISHED" && AGraveRevelationQuestState == "FINISHED" && ACatfishAndAGrarQuestState == "FINISHED" && BreakTheSealsQuestState == "FINISHED":
+->APleadForHelp 
+-else:
 Hello there.
 {shuffle:
 - The grasses are still whispering your name. 
@@ -115,6 +117,8 @@ Hello there.
 }
 What help are you seeking?
 ->StandardSabineBranching
+}
+
 
 
 === StandardSabineBranching ===

@@ -3,7 +3,282 @@ guid: bb199fe43273c7341ad71d5e402e78bf
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: AttonDecor
+    second: {fileID: 2100000, guid: 99d5518c1e345c74dbedbf02b46e380e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: AttonGourd
+    second: {fileID: 2100000, guid: c4332b3fff9a19a4fb7c8b682b341aab, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BagTie
+    second: {fileID: 2100000, guid: 57675d05956b3b841b9ef244f30e5365, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Baked Wood
+    second: {fileID: 2100000, guid: ad187b24968e02b47ac861fbd922add8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedBlueBottle2
+    second: {fileID: 2100000, guid: 40e4dc01e030cd4449fafbcc86290cb2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedBrownRosary
+    second: {fileID: 2100000, guid: cc441879f48cf0041aa1481dce176f0d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedCloth
+    second: {fileID: 2100000, guid: 5598cbddfd1a48e4ca06ba00729e406e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedCork
+    second: {fileID: 2100000, guid: b54f81d315dd8ef4ba631c6e85339843, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedCork.001
+    second: {fileID: 2100000, guid: ec884dc773f7dcc419e6f373b4aad8b4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedCross
+    second: {fileID: 2100000, guid: 0e5740c43122cfa4d98858822c548c5f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedCrossDecoration
+    second: {fileID: 2100000, guid: 95a9f58b9a0c950418189b51eb6a8f45, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedDarkTrim
+    second: {fileID: 2100000, guid: d93be12af6277f14380978e269e07b7f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedMirror
+    second: {fileID: 2100000, guid: b89a84b6a63d7dd4f82c9618eabbdc48, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedSymbol
+    second: {fileID: 2100000, guid: 731434c4492e25844b7d51d611a3b238, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedWater
+    second: {fileID: 2100000, guid: 5a17888b09ee3eb40b4624f9690b8761, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BakedWhiteRosary
+    second: {fileID: 2100000, guid: 4702ae3c619148d4eb99af6bf6606a50, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BlueBottle1
+    second: {fileID: 2100000, guid: 33084cac0260a7c49a32c65c0ca159bf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BlueLabel1
+    second: {fileID: 2100000, guid: 6e9b253218a0b144faff6eebde895f49, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BlueLabel2
+    second: {fileID: 2100000, guid: ce4957db07205ea49accad9c6b4566a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CandleHolder1
+    second: {fileID: 2100000, guid: 0703409f22bd5f443bfc874f8cfa59b0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CandleHolder2
+    second: {fileID: 2100000, guid: d92b7f55ce345bb43aff30ffd6db07d8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CandleHolder3
+    second: {fileID: 2100000, guid: 6339071d8552a7d4d81d20fe4b3f39d0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CandleHolder4
+    second: {fileID: 2100000, guid: 10add6ebee124d547bbe13387ad5ea8b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CandleWax
+    second: {fileID: 2100000, guid: f1add408d8e68b74e90d3f63ff2e545c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CorkBase
+    second: {fileID: 2100000, guid: 67142aaee16f19f458e25bc4e89e294e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DollCollar
+    second: {fileID: 2100000, guid: 6a3c49f06190dbb4199aa518e647194c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DollCross
+    second: {fileID: 2100000, guid: 45e114d738d8ac640b18f2ed85edf278, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DollFace
+    second: {fileID: 2100000, guid: 311496a2570d28d49ba3374dbc2bed44, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DollRobe
+    second: {fileID: 2100000, guid: e8777e02e6a97274dad6b551a288f226, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DollSkin
+    second: {fileID: 2100000, guid: 025bda83888a44043ad5768f7c2176ed, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DollStole
+    second: {fileID: 2100000, guid: 0b289c95d2e19ee49939f24f4d7da029, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Flame.001
+    second: {fileID: 2100000, guid: f26009c05bcd5834b891a85461147fc9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: GreenBottle1
+    second: {fileID: 2100000, guid: 38224899d1818ed469f30362a69273f7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: GreenBottle2
+    second: {fileID: 2100000, guid: 3e27ad9350704ca4c81afa03c4a0a294, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: GreenBottle3
+    second: {fileID: 2100000, guid: 30ca37a2c9899fa429d5bcd615c7267d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: GreenHerb
+    second: {fileID: 2100000, guid: 62ee348831ec1314fbded1f217df1834, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HerbStem
+    second: {fileID: 2100000, guid: ef25719fbbcf41d4daac6bb030e5bfd2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: LavHerb
+    second: {fileID: 2100000, guid: 39afb0c3f802b0e44ae8e0b83044d6fd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MagnoliaLeaves
+    second: {fileID: 2100000, guid: 96637edbd43566c4dad48641fb0d6d6e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MagnoliaPetals
+    second: {fileID: 2100000, guid: a2a645f73886563438c40f00234c3387, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MirrorCrack
+    second: {fileID: 2100000, guid: f13acee74c8765e4a9999e4c0fc0b6c2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MirrorFrame
+    second: {fileID: 2100000, guid: e93b9ce9c7b15184e825350a23db1cfd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: OrangeBottle1
+    second: {fileID: 2100000, guid: 99c85e474f7367b47a2a86c1d0b663e9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: OrangeBottle2
+    second: {fileID: 2100000, guid: 3366f74e5ab4a0f408571329dc9bcdd4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: OrangeBottle3
+    second: {fileID: 2100000, guid: 6a7f0cd622fb69f4c94b87e92ff541f5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: OrangeHerb
+    second: {fileID: 2100000, guid: eafe4da3d072891429c6d19648638fdc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RedBag
+    second: {fileID: 2100000, guid: b70364a2981c49e41b32e25efd9a1f8a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RedBottle1
+    second: {fileID: 2100000, guid: 2819b8acd2d97c8428da41faa0b7f18f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RedBottle2
+    second: {fileID: 2100000, guid: c1273f05e360f5642b52f3d13067a379, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Seed
+    second: {fileID: 2100000, guid: b3d1384c74c803b4f919bbb42dca1dec, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: TableBars
+    second: {fileID: 2100000, guid: b76bdf8a5915f484bb65efd82a4dab52, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WaterBowl
+    second: {fileID: 2100000, guid: f3057b4743b268e42a36fdd5b0c92858, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wick
+    second: {fileID: 2100000, guid: 02516018de1cfdd448f0db238f26a19a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Wood.004
+    second: {fileID: 2100000, guid: 146f7978306445946babed57993fc07b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: YellowBag
+    second: {fileID: 2100000, guid: c64f9f0de05162c4fa77f64c61fce793, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
