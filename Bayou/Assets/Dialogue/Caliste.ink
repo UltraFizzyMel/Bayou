@@ -178,8 +178,8 @@ My wares may be of interest...
 +[I have a question for you.]
 ->BranchingQuestions
 
-+{ HasItem("Item_CalisteCargoGraveyard", 1) || HasItem("Item_CalisteCargoFoggy", 1) || HasItem("Item_CalisteCargoBrackish", 1) }[{MissingBoxes:I have something for you.  else: Do you recognise this box?}]
-{MissingBoxes:->ReturnBox |->MissingBoxes}
++{ HasItem("Item_CalisteCargoGraveyard", 1) || HasItem("Item_CalisteCargoFoggy", 1) || HasItem("Item_CalisteCargoBrackish", 1) }[{SeenMissingBoxes:I have something for you.  else: Do you recognise this box?}]
+{SeenMissingBoxes:->ReturnBox |->MissingBoxes}
 
 +[Wares?]
  -> shop
@@ -193,20 +193,22 @@ My wares may be of interest...
 +{calistequestionsasked < 3}[Who are you?]
 {caliste_known == "":-> introduction("Caliste") | -> repeatName}
 
-*[Do you know Father Landry?]
+*{!SeenCalisteLandry}[Do you know Father Landry?]
 ->CalisteLandry
-*{sabine_known != ""}[Do you know Sabine?]
+*{sabine_known != "" && !SeenCalisteSabine}[Do you know Sabine?]
 ->CalisteSabine
-+{CalisteSabine}[How are things with Sabine?]
++{SeenCalisteSabine}[How are things with Sabine?]
 ->CalisteSabineOpinion
-*{SeenShadow && calistequestionsasked >=3}[Have you seen the shadow?]
+*{SeenShadow && calistequestionsasked >=3 && !SeenCalisteShadow}[Have you seen the shadow?]
 ->CalisteShadow
-*{olivier_known != ""  && marie_known != "" && calistequestionsasked >=3}[Have you met the Baptistes?]
+*{olivier_known != ""  && marie_known != "" && calistequestionsasked >=3 && !SeenCalisteBaptistes}[Have you met the Baptistes?]
 ->CalisteBaptistes
 +{calistequestionsasked >=5 }[What have you... lost?]
 ->CalisteLost
 +[Nevermind.]
 ->Thatall
+
+
 
 ===CalisteLandry
 ~ calistequestionsasked = calistequestionsasked +1
@@ -215,10 +217,12 @@ Landry, Landry, Landry...
 Oh...
 That family been part of the church here long before anyone else set up houses nearby.
 I don't think I remember nothin' else.
+~ SeenCalisteLandry = true
 ->Thatall
 
 ===CalisteSabine
 ~ calistequestionsasked = calistequestionsasked +1
+~ SeenCalisteSabine = true
 Sabine... that's the name of the sweet herbalist woman.
 I do know her?
 I do know her!
@@ -244,10 +248,9 @@ Anything else I can do for you?
 ->questions
 
 ===SomethingWrong
-Oh...
-Don't mind me sonny.
-Anything else you need?
-->questions
+Could you...
+Please come back later sonny.
+->END
 
 ===SabineMovingOn
 ...
@@ -262,10 +265,12 @@ I remember the sound of an accordion. That Mr Baptiste would spend hours practis
 Mrs. Baptiste, her ambition. It soared higher than the heavens. A pretty one she was too.
 None could traverse these waters better than her. Well... except for me of course.
 ...
+~SeenCalisteBaptistes = true
 ->Thatall
 
 ===CalisteShadow
 ~ calistequestionsasked = calistequestionsasked +1
+~ SeenCalisteShadow = true
 <b>Shadow?!</b>
 <b>Where?!</b>
 Don't play with me sonny.
@@ -301,7 +306,8 @@ Anything else...?
 ->questions
 
 ===MissingBoxes
-That ain't ideal...
+~SeenMissingBoxes = true
+Hmm...
 Yep, I recognize that box.
 Wait... 
 Did you steal that there box right under my nose?
@@ -441,16 +447,17 @@ Sorry sonny, could you spare a moment for good ol' me?
 ->refusetohelp
 
 ===ASharedDinnerStart
-{ASharedDinnerStart == 1: I need help catching three fish for a special Dinner.}
-{ASharedDinnerStart == 1:Could you do that for me?}
+~ASharedDinnerStartVisited = ASharedDinnerStartVisited +1
+{ASharedDinnerStartVisited == 1: I need help catching three fish for a special Dinner.}
+{ASharedDinnerStartVisited == 1:Could you do that for me?}
 {ASharedDinnerStart > 1: You changed your mind about helping me with the fish?}
-+{ASharedDinnerStart == 1}[I will.]
++{ASharedDinnerStartVisited == 1}[I will.]
 ->SharedDinnerAgree
-+{ASharedDinnerStart == 1}[Not right now.]
++{ASharedDinnerStartVisited == 1}[Not right now.]
 ->refusetohelp
-+{ASharedDinnerStart > 1}[I have.]
++{ASharedDinnerStartVisited > 1}[I have.]
 ->SharedDinnerAgree
-+{ASharedDinnerStart > 1}[Not yet.]
++{ASharedDinnerStartVisited > 1}[Not yet.]
 ->refusetohelp
 
 ===SharedDinnerAgree

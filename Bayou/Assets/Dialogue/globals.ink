@@ -40,6 +40,7 @@ VAR accordian_returned = false
 VAR is_olivier_alive = true
 VAR olivier_firstmeeting = true
 VAR olivierquestionsasked = 0
+VAR Sad = false
 
 
 
@@ -58,7 +59,15 @@ VAR AMealToDieForOlivierQuestId = "AMealToDieForOlivierQuest"
 //quest states (questId + "State" for variable name)
 VAR AMealToDieForOlivierQuestState = "CAN_START"
 
-//OlivierSeenBranches
+//Olivier variables for olivier text fixes.
+VAR OlivierHappyVisited = 0
+VAR SeenAccordionExplanation = false
+VAR repeatNameVisited = false
+VAR SeenOlivierCaliste = false
+VAR SeenOlivierLandry = false
+VAR SeenOlivierSabine = false
+
+
 
 
 //MARIE Variables
@@ -93,6 +102,9 @@ VAR AMealToDieForQuestState = "CAN_START"
 //Variables for marie text fixes
 VAR MarieHappyVisitedAmount = 0
 VAR SeenAccordionDisposal = false
+VAR SeenMarieLandry = false
+VAR SeenMarieSabine = false
+VAR SeenMarieCaliste = false
 
 
 //CALISTE Variables
@@ -122,6 +134,12 @@ VAR LostCargoQuestId = "LostCargoQuest"
 VAR LostCargoQuestState = "CAN_START"
 
 //Variables for Caliste text fixes
+VAR SeenMissingBoxes = false
+VAR SeenCalisteLandry = false
+VAR SeenCalisteSabine = false
+VAR SeenCalisteShadow = false
+VAR SeenCalisteBaptistes = false
+VAR ASharedDinnerStartVisited = 0
 
 
 //SABINE Variables

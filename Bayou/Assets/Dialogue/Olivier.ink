@@ -10,7 +10,7 @@
 
  EXTERNAL HandOverItem(itemId, count)
  
- VAR Sad = false
+
   
  #portrait: olivier_baptiste_neutral #layout: left #background: olivier
  {olivier_known == "":-> main |-> knownName}
@@ -134,7 +134,7 @@ Stay safe out in the fog my friend.
 ->END
 
 === OlivierStandardIntro
-{!AccordionExplanation && LostAccordionStart && inBrackishShore == true: ->LostAccordion}
+{!SeenAccordionExplanation && EmergencyDinnerQuestState == "FINISHED" && inBrackishShore == true: ->LostAccordion}
 {!Sad}Good Evening my friend!
 {!Sad}You look in need of a touch of musical delight, alright!
 {!Sad}How can I help ya?
@@ -161,38 +161,40 @@ Stay safe out in the fog my friend.
 
 
 === questions ===
-+{!repeatName >= 1 && olivierquestionsasked <=3}[Who are you?]
++{!repeatNameVisited >= 1 && olivierquestionsasked <=3}[Who are you?]
  {olivier_known == "":-> introduction("Olivier Baptiste") | -> repeatName}
 
 +{marie_known != ""}[How are things with Marie?]
 ->OlivierMarie
 
-*{olivierquestionsasked >=2}[Do you know Caliste?]
+*{olivierquestionsasked >=2 && !SeenOlivierCaliste}[Do you know Caliste?]
 ->OlivierCaliste
 
-*[Do you know Father Landry?]
+*{!SeenOlivierLandry}[Do you know Father Landry?]
 ->OlivierLandry
 
-*{sabine_known != "" && olivierquestionsasked >=3}[What do you think of Sabine?]
+*{sabine_known != "" && olivierquestionsasked >=3 && !SeenOlivierSabine}[What do you think of Sabine?]
 ->OlivierSabine
 
-*{olivierquestionsasked >=4}[Have you lost something too?]
++{olivierquestionsasked >=4}[What have you lost?]
 ->OlivierLost
 +[Chat Later.]
  -> goodbye
  
+
+ 
  ===OlivierMarie
- {!LostAccordionStart:I hope they're getting better but I have a feeling I have done something to annoy them...}
-{!LostAccordionStart:I don't even have my music to help clear the tension between us.}
-{FoundAccordion && !AMealToDieForOlivierStart: Definitely on the upswing! We've had many big dinners thanks to you! }
-{FoundAccordion && !AMealToDieForOlivierStart: I'm going to serenade them more going forward to show them my love still reigns true.}
-{AMealToDieForOlivierStart && !OlivierDeadHappyOrAlive:They're been... better but soon they won't have a lot to worry them anymore.}
-{OlivierHappy:Ever since you worked your magic they've never been better. }
-{OlivierHappy:Well... maybe on our wedding night...}
-{OlivierHappy:Other than that night, never better!}
-{OlivierAlive:They're... they've never been better...}
-{OlivierAlive:I ran a bubble bath for them that definitly shocked them!}
-{OlivierAlive:They've decided to step back from the limelight for the moment. Best leave them be. }
+ {!LostAccordionStart}I hope they're getting better but I have a feeling I have done something to annoy them...
+{!LostAccordionStart}I don't even have my music to help clear the tension between us.
+{LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart} Definitely on the upswing! We've had many big dinners thanks to you!
+{LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart} I'm going to serenade them more going forward to show them my love still reigns true.
+{AMealToDieForOlivierStart && !OlivierDeadHappyOrAlive}They're been... better but soon they won't have a lot to worry them anymore.
+{OlivierHappy}Ever since you worked your magic they've never been better. 
+{OlivierHappy}Well... maybe on our wedding night...
+{OlivierHappy}Other than that night, never better!
+{OlivierAlive}They're... they've never been better...
+{OlivierAlive}I ran a bubble bath for them that definitly shocked them.
+{OlivierAlive}They've decided to step back from the limelight for the moment. Best leave them be.
  {OlivierAlive:Wouldn't want to find yourself on their badside. Um...Anything else I could help you with?->OlivierOptions }
  ->EnoughOnMarie
  
@@ -204,12 +206,14 @@ Stay safe out in the fog my friend.
  
  ===OlivierCaliste
  ~ olivierquestionsasked = olivierquestionsasked +1
+ ~ SeenOlivierCaliste = true
  Hmmm... not well, it was a shame what happened to them. 
  They were definitly the best salesperson in these waters.
  -> AnythingElseOlivier
  
  ===OlivierLandry
  ~ olivierquestionsasked = olivierquestionsasked +1
+ ~ SeenOlivierLandry = true
  Oh that Priest felt like trouble to me. I didn't like their face.
  To be fair it could just be the whole religion thing.
  Don't tell Marie I said that.
@@ -217,12 +221,13 @@ Stay safe out in the fog my friend.
  
  ===OlivierSabine
  ~ olivierquestionsasked = olivierquestionsasked +1
- UM... next question?
+ ~ SeenOlivierSabine = true
+ Um... next question?
  ...
  Ok fine...
  I don't know them well.
  I occasionally see them through the fog. 
- Anyone or anything that can survive out there for as long as she has should be commended.
+ Anyone  that can survive out there for as long as she has should be feared.
  I can't say more.
  -> OlivierOptions
  
@@ -250,6 +255,7 @@ Stay safe out in the fog my friend.
  -> questions
  
  === repeatName ===
+ ~ repeatNameVisited = true
  Forget me already?
  ~ olivierquestionsasked = olivierquestionsasked +1
  ->questions
@@ -280,14 +286,17 @@ Where you needa go?
 }
 
 === OlivierChurchTrip
+Enjoy your dip in the waters.
 ->END
 
 //Takes player to brackish shore location closest to the Sunken Grove
 === OlivierGroveTrip
+Don't stray too far...
 ->END
 
 //Takes player to foggy Marsh Location
 ===OlivierMarshTrip
+Watch out for the Gators!
 ->END
  
 === goodbye
@@ -301,16 +310,15 @@ Sorry, I'm a little low spirits today.
 How can I help ya?
 +[What's wrong?]
 ->AccordionExplanation
-+[Well, there is something.]
-->OlivierOptions
 
 === AccordionExplanation
+~SeenAccordionExplanation = true
 Oh, well I seem to have misplaced my Accordion. 
 I last remember having it while we were in the Foggy Marsh.
 If you have spare time on your hands please it would mean the world to me if you returned it.
 +[I will do my best]
 -> ThankYouForAccepting
-+{HasItem("Item_Accordion", 1)}[I have your Accordion]
++{HasItem("Item_Accordion", 1)}[I have your Accordion.]
 ->FoundAccordion
 
 === ThankYouForAccepting
@@ -318,7 +326,7 @@ If you have spare time on your hands please it would mean the world to me if you
 Thank you my friend. 
 ...
 Could I have a moment alone?
-+[You may]
++[You may.]
 ->END
 
 ===LostAccordionInProgress
@@ -363,6 +371,7 @@ Oh my! Where? where did you find my accordion?
 Oh... Marie gave the accordion to you...
 That's...
 That's good to know.
+...
 I have a request for you. If you're up for it. 
 I can take over the workings of the boat to give you free rides if you complete it.
 +[What's the request?]
@@ -424,11 +433,12 @@ How can I help ya?
 
 ===OlivierHappy
 Good evening my friend!
-{OlivierHappy ==1:I don't know what you did but things are looking up for me and Marie!}
-{OlivierHappy ==1:If we're to spend eternity together I can spend a little less time on my music.}
-{OlivierHappy ==1: Anything I can do for ya?}
-{OlivierHappy >1: You look in need of a touch of musical delight, alright!}
-{OlivierHappy >1: How can I help ya?}
+~OlivierHappyVisited = OlivierHappyVisited +1
+{OlivierHappyVisited ==1}I don't know what you did but things are looking up for me and Marie!
+{OlivierHappyVisited ==1} If we're to spend eternity together, I can spend a little less time on my music...
+{OlivierHappyVisited ==1} Anything I can do for ya?
+{OlivierHappyVisited >1} You look in need of a touch of musical delight, alright!
+{OlivierHappyVisited >1} How can I help ya?
 ->OlivierOptions
 
 

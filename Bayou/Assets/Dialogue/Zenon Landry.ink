@@ -142,6 +142,8 @@ My graveyard key will not open her gate.
 
 Caliste sells the key to that maze once she trusts you.
 
+Buy the Foggy Marsh Key from Caliste once she trusts you.
+
 Be careful out there.
 
 -> END

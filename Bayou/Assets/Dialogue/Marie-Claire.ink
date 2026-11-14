@@ -186,7 +186,7 @@ Anything else dear?
 
 
 ===MarieBranchingQuestions
-*[Who are you?]
+*{marie_known == ""}[Who are you?]
 {mariequestionsasked + 1}
 ->Name
 + [How are things with Mr. Baptiste.]
@@ -195,15 +195,15 @@ Anything else dear?
 ~ mariequestionsasked = mariequestionsasked + 1
 ->Shadow
 
-*{mariequestionsasked >= 1}[Do you know Father Landry?]
+*{mariequestionsasked >= 1 && !SeenMarieLandry}[Do you know Father Landry?]
 ~ mariequestionsasked = mariequestionsasked + 1
 ->Landry
 
-*{mariequestionsasked >=3 && sabine_known != ""}[What do you think of Sabine?]
+*{mariequestionsasked >=3 && sabine_known != "" && !SeenMarieSabine}[What do you think of Sabine?]
 ~ mariequestionsasked = mariequestionsasked + 1
 ->Sabine
 
-*{mariequestionsasked >=2 && caliste_known != ""}[Do you know Caliste?]
+*{mariequestionsasked >=2 && caliste_known != "" && !SeenMarieCaliste}[Do you know Caliste?]
 ~ mariequestionsasked = mariequestionsasked + 1
 ->Caliste
 
@@ -248,6 +248,7 @@ If you know what's good for you you won't ask me about them again.
 === Landry
 That's the name of the priest? I last saw them a few years ago dear.
 Unfortunately, Mr Baptiste and I are bound to this boat. If not I would be dragging him to Landry to repent for how he's cursed us.
+~ SeenMarieLandry = true
 ->MoreQuestions
 
 === DONT
@@ -255,6 +256,7 @@ Don't.
 ->MoreQuestions
 
 === Sabine
+~ SeenMarieSabine = true
 Who? Never heard of them.
 +[She's someone I saw deeper in the swamp. ]
 ->SabineContinued
@@ -264,6 +266,7 @@ Never met them. I would suggest you be careful who you trust.
 ->MoreQuestions
 
 ===Caliste
+~ SeenMarieCaliste = true
 I haven't heard that name in a few years.
 They used to be very friendly. 
 ->MoreQuestions
@@ -290,7 +293,7 @@ That's all I recall dear.
 { is_in_foggy_marsh: 
 +[Near the Church]
 -> ChurchTrip
-+[Near the Sunken Grove]
++{ExpandedHorizonsQuestState == "FINISHED"}[Near the Sunken Grove]
 -> GroveTrip
 -else: 
 -> BoatLocations2
@@ -300,7 +303,7 @@ That's all I recall dear.
 {is_at_first_brackishshore:
 +[To the Foggy Marsh]
 -> MarshTrip
-+[Near the Sunken Grove]
++{ExpandedHorizonsQuestState == "FINISHED"}[Near the Sunken Grove]
 -> GroveTrip
 -else:
 +[Near the Church]
@@ -311,14 +314,17 @@ That's all I recall dear.
 
 //Takes player to brackish shore location closest to the church
 === ChurchTrip
+Don't bring any spiders back with you.
 ->END
 
 //Takes player to brackish shore location closest to the Sunken Grove
 === GroveTrip
+Don't blame me if you get lost in the Grove.
 ->END
 
 //Takes player to foggy Marsh Location
 ===MarshTrip
+Welcome back to the Foggy Marsh.
 ->END
 
 === ExpandedHorizons ===
