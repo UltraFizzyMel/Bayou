@@ -12,16 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4e429c1b295b544aa482834494c3959, type: 3}
   m_Name: Item_SpottedGar
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.ItemDefinition
-  itemId: Item_SpottedGar
-  displayName: Spotted Gar
+  itemId: Item_SpottedGrar
+  displayName: Spotted Grar
   description: A spotted gar. Olivier wants two for dinner.
   icon: {fileID: 21300000, guid: a7a35a1d2d0a1f54a9aafc7b09afbf79, type: 3}
   shape:
     width: 2
     height: 1
-    cells:
-    - 1
+    cells: 0101
   maxStack: 1
   buyPrice: 80
   sellPrice: 40
   isFish: 1
+  isEquipment: 0

@@ -3,7 +3,17 @@ guid: e31d1752896f1ca418d1f1b61f756b8a
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WebFilm
+    second: {fileID: 2100000, guid: 4d832789d1f740d409af5cdb1ad08516, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WebSilk
+    second: {fileID: 2100000, guid: c06253f47eaf3a447bb4a7807c27afd1, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
