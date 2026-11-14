@@ -140,7 +140,7 @@ The lantern waits past Caliste's maze gate — north-east through the foggy grav
 
 My graveyard key will not open her gate.
 
-Buy the Foggy Marsh Key from Caliste once she trusts you.
+Caliste sells the key to that maze once she trusts you.
 
 Be careful out there.
 
@@ -152,6 +152,8 @@ Be careful out there.
 { HasItem("Item_Lantern", 1):
 
     ~ FinishQuest(CollectLanternQuestId)
+    ~ GiveItem("Item_ChurchFoggyMarshKey", 1)
+    ~ GrantKey("hasKeyChurchToFoggyMarsh")
 
     The lantern... you found it.
 

@@ -52,6 +52,7 @@ namespace Bayou.Inventory
         private Camera _lastDragCam;
         private bool _isOpen;
         private int _relayoutFrames;
+        private Vector2 _stableGridSize;
         private Func<InventoryItemUI, PointerEventData, bool> _crossPanelDropHandler;
 
         public bool IsOpen => _isOpen;
@@ -173,12 +174,29 @@ namespace Bayou.Inventory
         private void LateUpdate()
         {
             UpdateBagStatus();
-            if (_relayoutFrames <= 0 || !_isOpen) return;
-            _relayoutFrames--;
+            if (!_isOpen || gridUI == null) return;
+
+            var gridRect = gridUI.transform as RectTransform;
+            var size = gridRect != null ? gridRect.rect.size : Vector2.zero;
+            var sized = size.x >= 16f && size.y >= 16f;
+            if (sized && (size - _stableGridSize).sqrMagnitude > 0.25f)
+            {
+                _stableGridSize = size;
+                _relayoutFrames = Mathf.Max(_relayoutFrames, 2);
+            }
+
+            if (_relayoutFrames <= 0) return;
+
             Canvas.ForceUpdateCanvases();
             if (panelRoot != null)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
-            gridUI?.ApplyFillLayout();
+            gridUI.ApplyFillLayout();
+
+            size = gridRect != null ? gridRect.rect.size : Vector2.zero;
+            if (size.x < 16f || size.y < 16f)
+                return;
+
+            _relayoutFrames--;
             Refresh();
         }
 
@@ -205,7 +223,8 @@ namespace Bayou.Inventory
                 LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
             SyncGridToModel();
             Refresh();
-            _relayoutFrames = 2;
+            _stableGridSize = Vector2.zero;
+            _relayoutFrames = 8;
             GameplayPause.SyncFromUiState();
         }
 
@@ -222,6 +241,7 @@ namespace Bayou.Inventory
             _isOpen = false;
             _relayoutFrames = 0;
             SetPanelVisible(false);
+            Bayou.UI.TutorialTips.NotifyInventoryClosed();
             gridUI?.ClearHighlights();
             GameplayPause.SyncFromUiState();
         }
@@ -269,6 +289,12 @@ namespace Bayou.Inventory
 
             // While closed, only keep the data model — don't layout zero-size rects.
             if (!_isOpen)
+                return;
+
+            gridUI.ApplyFillLayout();
+            Canvas.ForceUpdateCanvases();
+            var gridRect = gridUI.transform as RectTransform;
+            if (gridRect == null || gridRect.rect.width < 16f || gridRect.rect.height < 16f)
                 return;
 
             SyncGridToModel();
@@ -666,6 +692,10 @@ namespace Bayou.Inventory
             itemLayer.localRotation = Quaternion.identity;
             itemLayer.localScale = Vector3.one;
             itemLayer.SetAsLastSibling();
+            var layerLayout = itemLayer.GetComponent<LayoutElement>();
+            if (layerLayout == null)
+                layerLayout = itemLayer.gameObject.AddComponent<LayoutElement>();
+            layerLayout.ignoreLayout = true;
 
             // ItemLayer must never run a layout group — that would crush multi-cell items to 1×1.
             var layoutGroup = itemLayer.GetComponent<LayoutGroup>();

@@ -93,7 +93,7 @@ namespace Bayou.Creatures
         private void Update()
         {
             if (_dead) return;
-            if (Bayou.GameplayPause.BlocksWorldInteract && Time.timeScale <= 0f)
+            if (CreatureAi.IsFrozen)
                 return;
 
             if (_snapToGround)
@@ -106,18 +106,7 @@ namespace Bayou.Creatures
             }
 
             if (Time.time < _webPlantedUntil)
-            {
-                var aim = _sense.Player;
-                if (_sense.TrySensePlayer(out var sensed))
-                    aim = sensed;
-                if (aim != null)
-                {
-                    var face = aim.position - transform.position;
-                    face.y = 0f;
-                    Face(face, Time.deltaTime);
-                }
                 return;
-            }
 
             if (!_sense.TrySensePlayer(out var player))
             {
@@ -308,8 +297,13 @@ namespace Bayou.Creatures
             FitCollider();
         }
 
+        public bool IsHostile { get; private set; }
+
         private void SetAgro(bool value)
         {
+            if (value && !IsHostile)
+                CreatureAggro.Notify();
+            IsHostile = value;
             if (_animator == null || _animator.runtimeAnimatorController == null) return;
             _animator.SetBool("IsAgro", value);
         }

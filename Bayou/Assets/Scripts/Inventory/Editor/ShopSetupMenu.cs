@@ -26,11 +26,11 @@ namespace Bayou.Inventory.Editor
 
             var layout = AssetDatabase.LoadAssetAtPath<BackpackLayoutDefinition>("Assets/Inventory/BackpackLayout_Case.asset");
             var rod = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/Inventory/Items/Item_FishingRod.asset");
-            var foggyKey = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/Inventory/Items/Item_ChurchFoggyMarshKey.asset");
+            var mazeKey = AssetDatabase.LoadAssetAtPath<ItemDefinition>("Assets/Resources/Bayou/Items/Item_MazeGateKey.asset");
             var shopDef = AssetDatabase.LoadAssetAtPath<ShopDefinition>("Assets/Inventory/Shop/Shop_BayouMerchant.asset");
 
             SetItemPrices(rod, buyPrice: 120, sellPrice: 40);
-            SetItemPrices(foggyKey, buyPrice: 90, sellPrice: 20);
+            SetItemPrices(mazeKey, buyPrice: 90, sellPrice: 20);
 
             if (shopDef != null)
             {
@@ -40,7 +40,7 @@ namespace Bayou.Inventory.Editor
                 var stock = shopSo.FindProperty("stock");
                 stock.arraySize = 0;
                 AddStock(stock, rod, 0);
-                AddStock(stock, foggyKey, 0);
+                AddStock(stock, mazeKey, 0);
                 shopSo.ApplyModifiedPropertiesWithoutUndo();
                 EditorUtility.SetDirty(shopDef);
             }

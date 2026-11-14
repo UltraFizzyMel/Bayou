@@ -362,6 +362,7 @@ namespace Bayou.Inventory.Shop
 
             RefreshBalance();
             RefreshDealSummary();
+            Bayou.UI.TutorialTips.NotifyShopOpened();
         }
 
         public void CloseShop()
@@ -385,6 +386,7 @@ namespace Bayou.Inventory.Shop
 
             ApplySplitLayout(false);
             GameplayPause.SyncFromUiState();
+            Bayou.UI.TutorialTips.NotifyShopClosed();
 
             handmadePlayerInventoryUi?.ForceClose();
             playerInventoryUi?.Close();
@@ -411,6 +413,9 @@ namespace Bayou.Inventory.Shop
             if (!_transaction.TryCloseDeal(_wallet))
                 return;
 
+            if (_playerInventory != null && _transaction.DidBuy("Item_FishingRod", _playerInventory.Bag))
+                Bayou.UI.TutorialTips.NotifyRodPurchased();
+
             playerPanel?.CancelDrag();
             merchantPanel?.CancelDrag();
             handmadePlayerInventoryUi?.CancelDrag();
@@ -425,6 +430,7 @@ namespace Bayou.Inventory.Shop
 
             ApplySplitLayout(false);
             GameplayPause.SyncFromUiState();
+            Bayou.UI.TutorialTips.NotifyShopClosed();
 
             _merchantBag = null;
             handmadePlayerInventoryUi?.ForceClose();

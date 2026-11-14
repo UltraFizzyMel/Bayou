@@ -16,6 +16,8 @@ namespace Bayou.Save
 
         private bool _playerInRange;
 
+        public string BonfireId => bonfireId ?? "";
+
         public void Configure(string id, string name, BonfireUIController ui)
         {
             if (!string.IsNullOrWhiteSpace(id))

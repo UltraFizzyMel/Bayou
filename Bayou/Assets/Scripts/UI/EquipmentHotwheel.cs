@@ -411,12 +411,15 @@ namespace Bayou.UI
 
         private void Close(bool selectHover)
         {
+            var wasOpen = _open;
             var hover = _hover;
             _open = false;
             _hover = -1;
             SetWheelVisible(false);
             if (selectHover && hover >= 0)
                 TrySelectSlot(hover);
+            if (wasOpen && selectHover)
+                TutorialTips.NotifyWheelReleased();
         }
 
         private int ResolveHoverSlot()

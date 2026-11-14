@@ -19,7 +19,11 @@ MonoBehaviour:
   shape:
     width: 2
     height: 2
-    cells: 01010101
+    cells:
+    - 1
+    - 1
+    - 1
+    - 1
   maxStack: 1
   buyPrice: 0
   sellPrice: 0

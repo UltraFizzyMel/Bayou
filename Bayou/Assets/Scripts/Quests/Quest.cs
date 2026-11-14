@@ -28,16 +28,92 @@ public class Quest
         this.info = questInfo;
         this.state = questState;
         this.currentQuestStepIndex = currentQuestStepIndex;
-        this.questStepStates = questStepStates;
+        this.questStepStates = questStepStates ?? new QuestStepState[0];
 
-        //if the quest step states and prefabs are different lengths
-        //something has changed during development and the svaed data is out of sync
-        if(this.questStepStates.Length != this.info.questStepPrefabs.Length )
+        var prefabCount = this.info != null && this.info.questStepPrefabs != null
+            ? this.info.questStepPrefabs.Length
+            : 0;
+        if (this.questStepStates.Length != prefabCount)
         {
             Debug.LogWarning("Quest Step Prefabs and Quest Step States are of different lengths. "
-                + "This indicates something changed with the QuestInfo and the saved data is now out of sync."
-                + "Reset your data - as this might cause issues. QuestId" + this.info.id);
+                + "Saved progress will be rebuilt so the current step still advances. QuestId: "
+                + (this.info != null ? this.info.id : "?"));
         }
+
+        RepairLoadedProgress();
+    }
+
+    /// <summary>
+    /// Old saves can have fewer steps than the current quest, or a missing step prefab.
+    /// Resize the state array and point an in-progress quest at a step that still exists.
+    /// </summary>
+    public void RepairLoadedProgress()
+    {
+        var prefabs = info != null ? info.questStepPrefabs : null;
+        var count = prefabs != null ? prefabs.Length : 0;
+
+        if (questStepStates == null)
+            questStepStates = new QuestStepState[0];
+
+        if (questStepStates.Length != count)
+        {
+            var next = new QuestStepState[count];
+            var keep = Mathf.Min(count, questStepStates.Length);
+            for (var i = 0; i < count; i++)
+            {
+                next[i] = i < keep && questStepStates[i] != null
+                    ? questStepStates[i]
+                    : new QuestStepState();
+            }
+
+            questStepStates = next;
+        }
+        else
+        {
+            for (var i = 0; i < count; i++)
+            {
+                if (questStepStates[i] == null)
+                    questStepStates[i] = new QuestStepState();
+            }
+        }
+
+        if (state != QuestState.IN_PROGRESS)
+            return;
+
+        if (count == 0)
+        {
+            state = QuestState.CAN_FINISH;
+            return;
+        }
+
+        if (currentQuestStepIndex < 0 || currentQuestStepIndex >= count)
+            currentQuestStepIndex = count - 1;
+
+        if (prefabs[currentQuestStepIndex] != null)
+            return;
+
+        for (var i = currentQuestStepIndex; i < count; i++)
+        {
+            if (prefabs[i] == null) continue;
+            currentQuestStepIndex = i;
+            return;
+        }
+
+        for (var i = 0; i < currentQuestStepIndex; i++)
+        {
+            if (prefabs[i] == null) continue;
+            currentQuestStepIndex = i;
+            return;
+        }
+
+        state = QuestState.CAN_FINISH;
+    }
+
+    public void PrepareForTurnIn()
+    {
+        var count = info != null && info.questStepPrefabs != null ? info.questStepPrefabs.Length : 0;
+        currentQuestStepIndex = count;
+        state = QuestState.CAN_FINISH;
     }
 
     public int CurrentQuestStepIndex => currentQuestStepIndex;
@@ -101,8 +177,15 @@ public class Quest
         var go = Object.Instantiate(questStepPrefab);
         go.transform.SetParent(parentTransform, worldPositionStays: true);
         var questStep = go.GetComponent<QuestStep>();
-        if (questStep != null)
-            questStep.InitializeQuestStep(info.id, currentQuestStepIndex, questStepStates[currentQuestStepIndex].state);
+        if (questStep == null)
+            return;
+
+        if (questStepStates == null || currentQuestStepIndex < 0 || currentQuestStepIndex >= questStepStates.Length)
+            return;
+
+        var stepState = questStepStates[currentQuestStepIndex] ?? new QuestStepState();
+        questStepStates[currentQuestStepIndex] = stepState;
+        questStep.InitializeQuestStep(info.id, currentQuestStepIndex, stepState.state);
     }
 
     private GameObject GetCurrentQuestStepPrefab()

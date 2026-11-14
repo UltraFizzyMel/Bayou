@@ -144,6 +144,7 @@ namespace Bayou.Save
                 overlayRoot.gameObject.SetActive(false);
 
             GameplayPause.SyncFromUiState();
+            Bayou.UI.TutorialTips.NotifyCampfireUiClosed();
 
             ClearFishButtons();
         }

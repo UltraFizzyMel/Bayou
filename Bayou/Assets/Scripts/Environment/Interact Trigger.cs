@@ -42,15 +42,148 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
         if (requiredKeyItem != null && string.IsNullOrWhiteSpace(requiredItemId))
             requiredItemId = requiredKeyItem.Id;
 
-        // The church entrance gate is already open. Its trigger has no key and
-        // would only show "Locked — need key".
-        if (IsOpenChurchEntrance())
+        BindChurchFoggyMarshGate();
+
+        // Keyless church entrances are built open. Do not mark a keyed gate used.
+        if (string.IsNullOrWhiteSpace(keyName) &&
+            requiredKeyItem == null &&
+            string.IsNullOrWhiteSpace(requiredItemId) &&
+            PassageIsClear())
         {
             _isOpen = true;
             var volume = GetComponent<Collider>();
             if (volume != null)
                 volume.enabled = false;
+            if (IsOpenChurchEntrance())
+                ReleaseOpenChurchEntrance();
         }
+    }
+
+    /// <summary>
+    /// The church gate facing the foggy marsh was left keyless. Landry's foggy key opens that gate.
+    /// Caliste's maze stays on the maze key.
+    /// </summary>
+    private void BindChurchFoggyMarshGate()
+    {
+        if (!string.IsNullOrWhiteSpace(keyName) || requiredKeyItem != null || !string.IsNullOrWhiteSpace(requiredItemId))
+            return;
+        if (!HierarchyContains("Church")) return;
+        if (!HierarchyContains("Foggy Marsh") && !HierarchyContains("East Gate")) return;
+        if (HierarchyContains("Graveyard") || HierarchyContains("Maze") || HierarchyContains("Brackish"))
+            return;
+
+        keyName = KeyGateManager.FoggyMarshKeyFlag;
+        requiredItemId = KeyGateManager.FoggyMarshKeyItemId;
+        if (!enabled)
+            enabled = true;
+    }
+
+    private void ReleaseOpenChurchEntrance()
+    {
+        var root = transform.parent != null ? transform.parent : transform;
+        var cols = root.GetComponentsInChildren<Collider>(true);
+        for (var i = 0; i < cols.Length; i++)
+        {
+            var col = cols[i];
+            if (col == null || col.isTrigger) continue;
+            col.enabled = false;
+        }
+
+        if (animator == null) return;
+        if (animator.transform != root && !animator.transform.IsChildOf(root)) return;
+        var parms = animator.parameters;
+        for (var i = 0; i < parms.Length; i++)
+        {
+            if (parms[i].type != AnimatorControllerParameterType.Bool || parms[i].name != "isOpen")
+                continue;
+            animator.SetBool("isOpen", true);
+            break;
+        }
+    }
+
+    private static InteractTrigger[] _cachedGates;
+    private static float _gateCacheUntil;
+
+    public static InteractTrigger[] AllGates()
+    {
+        if (_cachedGates == null || Time.unscaledTime >= _gateCacheUntil)
+        {
+            _cachedGates = FindObjectsByType<InteractTrigger>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            _gateCacheUntil = Time.unscaledTime + 0.75f;
+        }
+
+        return _cachedGates;
+    }
+
+    public string KeyFlagName => keyName ?? "";
+    public bool HasBeenOpened => _isOpen;
+
+    public bool HierarchyContains(string fragment)
+    {
+        if (string.IsNullOrWhiteSpace(fragment)) return false;
+        for (var p = transform; p != null; p = p.parent)
+        {
+            if (p.name.IndexOf(fragment, System.StringComparison.OrdinalIgnoreCase) >= 0)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>True when the player can already walk through. Those gates stay quiet.</summary>
+    public bool PassageIsClear()
+    {
+        if (_isOpen || IsOpenChurchEntrance() || IsChurchEntranceLeftOpen() || AnimatorSaysOpen())
+            return true;
+        return !HasSolidBlocker();
+    }
+
+    private bool IsChurchEntranceLeftOpen()
+    {
+        if (!string.IsNullOrWhiteSpace(keyName) || requiredKeyItem != null)
+            return false;
+        if (!string.IsNullOrWhiteSpace(requiredItemId))
+            return false;
+        return HierarchyContains("Church Area");
+    }
+
+    private bool AnimatorSaysOpen()
+    {
+        if (animator == null || !animator.isActiveAndEnabled) return false;
+        var parms = animator.parameters;
+        for (var i = 0; i < parms.Length; i++)
+        {
+            if (parms[i].type == AnimatorControllerParameterType.Bool && parms[i].name == "isOpen")
+                return animator.GetBool("isOpen");
+        }
+
+        return false;
+    }
+
+    private bool HasSolidBlocker()
+    {
+        var listed = false;
+        if (disableCollidersOnOpen != null)
+        {
+            foreach (var col in disableCollidersOnOpen)
+            {
+                if (col == null || col.isTrigger) continue;
+                listed = true;
+                if (col.enabled) return true;
+            }
+        }
+
+        if (listed) return false;
+
+        var root = transform.parent != null ? transform.parent : transform;
+        var own = GetComponent<Collider>();
+        foreach (var col in root.GetComponentsInChildren<Collider>(true))
+        {
+            if (col == null || col == own || col.isTrigger) continue;
+            if (col.enabled) return true;
+        }
+
+        return false;
     }
 
     private bool IsOpenChurchEntrance()
@@ -157,7 +290,7 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
     public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
     {
         prompt = default;
-        if (_isOpen || IsOpenChurchEntrance() || !playerInRange) return false;
+        if (!playerInRange || _isOpen || PassageIsClear()) return false;
 
         var dist = DistToPlayerSq();
         if (CanUnlock())

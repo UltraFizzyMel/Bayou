@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Bayou.Inventory;
 using UnityEngine;
 
 public class QuestManager : MonoBehaviour
@@ -8,6 +9,7 @@ public class QuestManager : MonoBehaviour
 
     private Dictionary<string, Quest> questMap;
     private bool _subscribed;
+    private bool _lanternSaveChecked;
 
     //quest start requirements
     public int netLevel = 0;
@@ -44,8 +46,14 @@ public class QuestManager : MonoBehaviour
         {
             if (quest == null) continue;
 
+            quest.RepairLoadedProgress();
             if (quest.state == QuestState.IN_PROGRESS)
-                quest.InstantiateCurrentQuestStep(this.transform);
+            {
+                if (quest.CurrentStepExists())
+                    quest.InstantiateCurrentQuestStep(this.transform);
+                else
+                    quest.state = QuestState.CAN_FINISH;
+            }
 
             GameEventManager.Instance?.questEvents?.QuestStateChange(quest);
         }
@@ -65,6 +73,8 @@ public class QuestManager : MonoBehaviour
 
     private void Update()
     {
+        EnsureSavedLanternCanTurnIn();
+
         if (!_subscribed)
             TrySubscribe();
 
@@ -104,6 +114,65 @@ public class QuestManager : MonoBehaviour
         events.onAdvanceQuest -= AdvanceQuest;
         events.onFinishQuest -= FinishQuest;
         events.onQuestStepStateChange -= QuestStepStateChange;
+    }
+
+    private void EnsureSavedLanternCanTurnIn()
+    {
+        if (_lanternSaveChecked) return;
+        var inv = InventoryController.Instance;
+        if (inv == null) return;
+        _lanternSaveChecked = true;
+
+        if (!TryGetQuest(QuestIds.CollectLantern, out var quest) || quest == null)
+            return;
+
+        if (quest.state == QuestState.IN_PROGRESS && inv.HasItemsById("Item_Lantern", 1))
+        {
+            ClearQuestSteps(QuestIds.CollectLantern);
+            quest.PrepareForTurnIn();
+            GameEventManager.Instance?.questEvents?.QuestStateChange(quest);
+            return;
+        }
+
+        if (quest.state != QuestState.IN_PROGRESS)
+            return;
+
+        quest.RepairLoadedProgress();
+        if (!quest.CurrentStepExists())
+        {
+            ClearQuestSteps(QuestIds.CollectLantern);
+            ChangeQuestState(QuestIds.CollectLantern, QuestState.CAN_FINISH);
+            return;
+        }
+
+        if (HasLiveQuestStep(QuestIds.CollectLantern))
+            return;
+
+        quest.InstantiateCurrentQuestStep(transform);
+    }
+
+    private bool HasLiveQuestStep(string id)
+    {
+        var steps = GetComponentsInChildren<QuestStep>(true);
+        for (var i = 0; i < steps.Length; i++)
+        {
+            var step = steps[i];
+            if (step != null && !step.IsFinished && step.QuestId == id)
+                return true;
+        }
+
+        return false;
+    }
+
+    private void ClearQuestSteps(string id)
+    {
+        var steps = GetComponentsInChildren<QuestStep>(true);
+        for (var i = 0; i < steps.Length; i++)
+        {
+            var step = steps[i];
+            if (step != null && step.QuestId == id)
+                Destroy(step.gameObject);
+        }
     }
 
     private void HandleStartQuestEvent(string id) => StartQuest(id);

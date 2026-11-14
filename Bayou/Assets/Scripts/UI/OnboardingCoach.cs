@@ -94,7 +94,7 @@ namespace Bayou.UI
                 return false;
             if (_shownAt < 0f || Time.unscaledTime - _shownAt < 0.35f)
                 return false;
-            prompt = new InteractionPrompt("", "WASD = Move", 180);
+            prompt = new InteractionPrompt("", "WASD = Move  ·  Shift = Sprint", 180);
             return true;
         }
 
@@ -147,13 +147,13 @@ namespace Bayou.UI
             _card.anchorMin = _card.anchorMax = new Vector2(0.5f, 0f);
             _card.pivot = new Vector2(0.5f, 0f);
             _card.anchoredPosition = new Vector2(0f, 168f);
-            _card.sizeDelta = new Vector2(460f, 78f);
+            _card.sizeDelta = new Vector2(640f, 78f);
 
             var bg = _card.gameObject.AddComponent<Image>();
             bg.color = new Color(0.04f, 0.05f, 0.04f, 0.78f);
             bg.raycastTarget = false;
 
-            var line = CreateTmp("Action", _card, "WASD = Move", 28f, FontStyles.Bold);
+            var line = CreateTmp("Action", _card, "WASD = Move  ·  Shift = Sprint", 24f, FontStyles.Bold);
             line.rectTransform.anchorMin = Vector2.zero;
             line.rectTransform.anchorMax = Vector2.one;
             line.rectTransform.offsetMin = new Vector2(18f, 8f);

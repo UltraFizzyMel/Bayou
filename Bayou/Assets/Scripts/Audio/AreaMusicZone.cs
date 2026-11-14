@@ -89,33 +89,12 @@ namespace Bayou.Audio
 
         public void PlayZone()
         {
-            if (music != null)
-            {
-                musicSource.clip = music;
-                musicSource.volume = musicVolume;
-                if (musicGroup != null)
-                    musicSource.outputAudioMixerGroup = musicGroup;
-                if (!musicSource.isPlaying)
-                    musicSource.Play();
-            }
-
-            if (ambient != null)
-            {
-                ambientSource.clip = ambient;
-                ambientSource.volume = ambientVolume;
-                if (musicGroup != null)
-                    ambientSource.outputAudioMixerGroup = musicGroup;
-                if (!ambientSource.isPlaying)
-                    ambientSource.Play();
-            }
+            AreaMusicPlayback.Play(music, ambient, musicVolume, ambientVolume, musicGroup);
         }
 
         public void StopZone()
         {
-            if (musicSource != null)
-                musicSource.Stop();
-            if (ambientSource != null)
-                ambientSource.Stop();
+            AreaMusicPlayback.Stop(music, ambient);
         }
 
         public void Configure(

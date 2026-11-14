@@ -13,7 +13,15 @@ namespace Bayou
     {
         private static float _savedTimeScale = 1f;
 
+        public static bool TutorialHold { get; private set; }
+
         public static bool IsPaused => Time.timeScale <= 0f;
+
+        public static void SetTutorialHold(bool hold)
+        {
+            TutorialHold = hold;
+            SyncFromUiState();
+        }
 
         /// <summary>Inventory, shop, catch reveal, and other menus own the interact key.</summary>
         public static bool BlocksWorldInteract =>
@@ -43,6 +51,7 @@ namespace Bayou
         public static void SyncFromUiState()
         {
             var shouldPause =
+                TutorialHold ||
                 IsInventoryOpen() ||
                 CaughtFishPresenter.IsBusy ||
                 AudioSettings.IsOpen ||

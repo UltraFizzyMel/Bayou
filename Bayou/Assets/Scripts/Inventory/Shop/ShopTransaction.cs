@@ -76,6 +76,19 @@ namespace Bayou.Inventory.Shop
             return wallet.CanAfford(NetCost);
         }
 
+        public bool DidBuy(string itemId, InventoryBagModel playerBag)
+        {
+            if (playerBag == null || string.IsNullOrWhiteSpace(itemId)) return false;
+            foreach (var item in playerBag.AllItems)
+            {
+                if (item?.definition == null || !item.definition.MatchesId(itemId)) continue;
+                if (GetOriginalOwner(item.instanceId) == ShopBagRole.Merchant)
+                    return true;
+            }
+
+            return false;
+        }
+
         public bool TryCloseDeal(PlayerWallet wallet)
         {
             if (!CanCloseDeal(wallet)) return false;

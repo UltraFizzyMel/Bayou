@@ -34,7 +34,7 @@ namespace Bayou.Creatures
 
         private void TryHit(Collider other)
         {
-            if (other == null) return;
+            if (other == null || CreatureAi.IsFrozen) return;
             if (_owner != null && (!_owner.IsAlive || _owner.IsStunned || !_owner.IsActive))
                 return;
             if (Time.time < _nextHitTime) return;

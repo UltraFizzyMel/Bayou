@@ -1,6 +1,5 @@
 using System.Text.RegularExpressions;
 using Bayou.Inventory;
-using Bayou.Player;
 using Bayou.Rendering;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -29,19 +28,26 @@ namespace Bayou.Environment
             if (string.Equals(scene.name, "MainMenu", System.StringComparison.OrdinalIgnoreCase))
                 return;
 
-            var player = Object.FindFirstObjectByType<BayouCharacterMotor>();
-            var origin = player != null ? player.transform.position : Vector3.zero;
-
             WirePlacedSigns();
-
-            if (GameObject.Find("Sign_BayouMarker") == null)
-                CreateSign(origin + new Vector3(-2.6f, 0f, 2.4f));
+            RemoveSpawnTestReadables();
 
             if (Object.FindFirstObjectByType<SignWireRunner>() == null)
             {
                 var runner = new GameObject("SignWire");
                 runner.AddComponent<SignWireRunner>();
             }
+        }
+
+        /// <summary>Removes the runtime mile-marker demo. Placed SignOne/Two/Three stay.</summary>
+        private static void RemoveSpawnTestReadables()
+        {
+            var marker = GameObject.Find("Sign_BayouMarker");
+            if (marker != null)
+                Object.Destroy(marker);
+
+            var calisteBox = GameObject.Find("Pickup_CalistesBox");
+            if (calisteBox != null)
+                Object.Destroy(calisteBox);
         }
 
         private sealed class SignWireRunner : MonoBehaviour

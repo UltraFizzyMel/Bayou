@@ -110,18 +110,18 @@ namespace Bayou.Fishing
             if (requiredTool == FishCatchTool.Rod)
             {
                 if (held == BayouHeldItem.Rod)
-                    prompt = new InteractionPrompt("Hold LMB", $"Cast into {spotName}", 42, distSq);
+                    prompt = new InteractionPrompt("Left mouse", "Fish in the pond", 42, distSq);
                 else if (equipment != null && equipment.CanHold(BayouHeldItem.Rod))
-                    prompt = new InteractionPrompt("1", $"{spotName} needs a rod", 41, distSq);
+                    prompt = new InteractionPrompt("1", "Pond needs a rod", 41, distSq);
                 else
                     return false;
                 return true;
             }
 
             if (held == BayouHeldItem.Net)
-                prompt = new InteractionPrompt("Hold LMB", $"Throw net into {spotName}", 42, distSq);
+                prompt = new InteractionPrompt("Left mouse", "Fish in the pond", 42, distSq);
             else if (equipment != null && equipment.CanHold(BayouHeldItem.Net))
-                prompt = new InteractionPrompt("2", $"{spotName} needs a hand net", 41, distSq);
+                prompt = new InteractionPrompt("2", "Pond needs a hand net", 41, distSq);
             else
                 return false;
             return true;

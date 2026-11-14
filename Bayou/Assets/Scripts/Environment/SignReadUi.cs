@@ -71,7 +71,10 @@ namespace Bayou.Environment
 
         private void OnGUI()
         {
-            if (!IsOpen) return;
+            var canvasOk = CanvasPanelVisible();
+            if (_title != null) _title.enabled = canvasOk;
+            if (_body != null) _body.enabled = canvasOk;
+            if (_owner == null || canvasOk) return;
 
             const float width = 680f;
             const float height = 300f;
@@ -89,6 +92,14 @@ namespace Bayou.Environment
             GUI.Label(new Rect(rect.x + 28f, rect.y + 24f, width - 56f, height - 48f),
                 _guiTitle + "\n\n" + _guiBody + "\n\nPress E to close", style);
             GUI.color = previous;
+        }
+
+        private bool CanvasPanelVisible()
+        {
+            if (_panel == null || !_panel.activeInHierarchy || _canvas == null || _title == null || _body == null)
+                return false;
+            var img = _panel.GetComponent<Image>();
+            return img != null && img.enabled && img.sprite != null && img.color.a > 0.2f;
         }
 
         private void Close()

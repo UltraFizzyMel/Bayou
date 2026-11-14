@@ -65,6 +65,8 @@ namespace Bayou.Player
         private bool _hasHurtTrigger;
         private float _stunUntil;
         private bool _swimSnapArmed = true;
+        private Bayou.Fishing.FishingNetCaster _cast;
+        private Bayou.Fishing.HandNetAreaController _handNet;
 
         public Animator animator;
 
@@ -84,6 +86,32 @@ namespace Bayou.Player
 
         /// <summary>True during a hit stagger — locomotion and fishing should idle.</summary>
         public bool IsStunned => Time.time < _stunUntil;
+
+        private bool IsSprinting()
+        {
+            if (IsStunned) return false;
+            if (Bayou.GameplayPause.IsPaused || Bayou.GameplayPause.BlocksWorldInteract) return false;
+            var dialogue = DialogueManager.GetInstance();
+            if (dialogue != null && dialogue.dialogueIsPlaying) return false;
+            if (IsFishingCast()) return false;
+#if ENABLE_INPUT_SYSTEM
+            var kb = UnityEngine.InputSystem.Keyboard.current;
+            return kb != null && kb.leftShiftKey.isPressed;
+#else
+            return false;
+#endif
+        }
+
+        private bool IsFishingCast()
+        {
+            if (_cast == null)
+                _cast = GetComponent<Bayou.Fishing.FishingNetCaster>();
+            if (_cast != null && _cast.isActiveAndEnabled && _cast.Phase != Bayou.Fishing.FishingCastPhase.Idle)
+                return true;
+            if (_handNet == null)
+                _handNet = GetComponent<Bayou.Fishing.HandNetAreaController>();
+            return _handNet != null && _handNet.isActiveAndEnabled && _handNet.IsCharging;
+        }
 
         private void Awake()
         {
@@ -230,7 +258,8 @@ namespace Bayou.Player
             }
 
             var webMul = Bayou.Creatures.SpiderWeb.PlayerSpeedMultiplier;
-            var speedMul = (swimming ? swimSpeedMultiplier : (wading ? waterSpeedMultiplier : 1f)) * webMul;
+            var sprintMul = IsSprinting() ? 1.45f : 1f;
+            var speedMul = (swimming ? swimSpeedMultiplier : (wading ? waterSpeedMultiplier : 1f)) * webMul * sprintMul;
             var accelMul = (swimming ? swimAccelerationMultiplier : (wading ? waterAccelerationMultiplier : 1f)) * webMul;
             var speed = maxSpeed * speedMul;
             var accel = acceleration * accelMul;

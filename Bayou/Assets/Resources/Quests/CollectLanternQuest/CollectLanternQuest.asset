@@ -20,6 +20,8 @@ MonoBehaviour:
   questPrerequistes:
   - {fileID: 11400000, guid: 497a731e2fcc72a418cffd12b3cbd33c, type: 2}
   questStepPrefabs:
+  - {fileID: 100000, guid: b2d4e6f8091a3b4c5d6e7f8091a2b3c4, type: 3}
+  - {fileID: 100000, guid: c3e5f708192a3b4c5d6e7f8091a2b3c4, type: 3}
   - {fileID: 7699019382557362582, guid: 7f6799083cbce704fb7743821e0c7558, type: 3}
   autoStart: 0
   autoComplete: 0

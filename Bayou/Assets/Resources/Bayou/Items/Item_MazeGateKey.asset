@@ -22,6 +22,6 @@ MonoBehaviour:
     cells:
     - 1
   maxStack: 1
-  buyPrice: 0
-  sellPrice: 0
+  buyPrice: 90
+  sellPrice: 20
   isFish: 0

@@ -242,6 +242,9 @@ namespace Bayou.Creatures
                 return;
             }
 
+            if (CreatureAi.IsFrozen)
+                return;
+
             ApplyKnockback(Time.deltaTime);
             _visual?.SetStunned(IsStunned);
 
@@ -254,11 +257,14 @@ namespace Bayou.Creatures
                 return;
             }
 
-            var sensed = _sense.TrySensePlayer(out var player);
+            var sensed = _sense.TrySensePlayer(out _);
+            var wasActive = _mode == CreatureMode.Active;
             if (sensed || _sense.HasRecentSense)
                 _mode = CreatureMode.Active;
             else
                 _mode = CreatureMode.Passive;
+            if (!wasActive && _mode == CreatureMode.Active)
+                CreatureAggro.Notify();
 
             var dt = Time.deltaTime;
             _triedMove = false;

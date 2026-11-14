@@ -375,7 +375,7 @@ namespace Bayou.UI
                 questTitleLabel.text = OnboardingCoach.IsTeachingMove ? "Welcome to the bayou" : "No active quest";
             if (questObjectiveLabel != null)
                 questObjectiveLabel.text = OnboardingCoach.IsTeachingMove
-                    ? "WASD = Move. Then talk to townsfolk."
+                    ? "WASD = Move, Shift = Sprint. Then talk to townsfolk."
                     : "Talk to townsfolk to begin.";
             ShowQuestPanel(true);
         }

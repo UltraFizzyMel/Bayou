@@ -19,7 +19,6 @@ namespace Bayou.UI
     {
         private const string HiddenQuestId = "CollectFishExampleQuest";
         private const string OpenedPrefKey = "Bayou.HasOpenedQuestJournal";
-        private const float HintDelay = 0.6f;
 
         public static QuestJournalHud Instance { get; private set; }
         public static bool IsOpen => Instance != null && Instance._isOpen;
@@ -40,7 +39,6 @@ namespace Bayou.UI
         private RectTransform _hintCard;
         private bool _hintArmed;
         private bool _hintDone;
-        private float _hintReadyAt = -1f;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Bootstrap()
@@ -135,6 +133,11 @@ namespace Bayou.UI
                 EnsureEventSystem();
                 Refresh();
                 DismissFirstQuestHint();
+                Bayou.UI.TutorialTips.NotifyJournalOpened();
+            }
+            else
+            {
+                Bayou.UI.TutorialTips.NotifyJournalClosed();
             }
 
             if (syncPause)
@@ -212,7 +215,6 @@ namespace Bayou.UI
             }
 
             _hintArmed = true;
-            _hintReadyAt = -1f;
         }
 
         private void DismissFirstQuestHint()
@@ -246,24 +248,8 @@ namespace Bayou.UI
 
         private bool IsHintVisible()
         {
-            if (_hintDone || !_hintArmed || _isOpen) return false;
-            if (OnboardingCoach.IsTeachingMove) return false;
-            if (ShouldHideHint()) return false;
-
-            if (_hintReadyAt < 0f)
-                _hintReadyAt = Time.unscaledTime + HintDelay;
-            return Time.unscaledTime >= _hintReadyAt;
-        }
-
-        private static bool ShouldHideHint()
-        {
-            if (AudioSettings.IsOpen) return true;
-            if (Bayou.Inventory.Shop.ShopUIController.ActiveShop != null &&
-                Bayou.Inventory.Shop.ShopUIController.ActiveShop.IsOpen) return true;
-            if (Bayou.Save.BonfireUIController.Active != null &&
-                Bayou.Save.BonfireUIController.Active.IsOpen) return true;
-            var dialogue = DialogueManager.GetInstance();
-            return dialogue != null && dialogue.dialogueIsPlaying;
+            // TutorialTips owns the journal lesson, including open-then-close dismiss.
+            return false;
         }
 
         private static bool HasActiveQuest()

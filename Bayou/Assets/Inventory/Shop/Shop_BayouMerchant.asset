@@ -20,7 +20,7 @@ MonoBehaviour:
     compartmentId: case
     gridX: -1
     gridY: -1
-  - item: {fileID: 11400000, guid: d2a2b3c4d5e6789012345678abcdef02, type: 2}
+  - item: {fileID: 11400000, guid: a11e5701b5ea1500030000000000000a, type: 2}
     rotation: 0
     compartmentId: case
     gridX: -1

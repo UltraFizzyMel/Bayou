@@ -95,18 +95,18 @@ namespace Bayou.Fishing
             else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Net)
             {
                 if (_equipment.NetMode == HandNetMode.Combat)
-                    GUILayout.Label("COMBAT — LMB swing net (catch snake / stun croc)", _labelStyle);
+                    GUILayout.Label("COMBAT — Left mouse swings the net (catch snake / stun croc)", _labelStyle);
                 else
                 {
                     if (_handNet != null && _handNet.IsCharging)
                     {
                         GUILayout.Label("THROW — release at the BIG circle", _labelStyle);
                         DrawBar(_handNet.Pulse01);
-                        GUILayout.Label("RMB / Esc cancel  ·  small circle = miss", _labelStyle);
+                        GUILayout.Label("Right mouse / Esc cancel  ·  small circle = miss", _labelStyle);
                     }
                     else
                     {
-                        GUILayout.Label("NET — hold LMB, release at the big pulse to throw", _labelStyle);
+                        GUILayout.Label("NET — hold Left mouse, release at the big pulse to throw", _labelStyle);
                     }
                 }
             }

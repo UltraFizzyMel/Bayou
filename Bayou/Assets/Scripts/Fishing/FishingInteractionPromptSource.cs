@@ -103,7 +103,7 @@ namespace Bayou.Fishing
             {
                 if (handNet.IsCombatMode)
                 {
-                    prompt = new InteractionPrompt("LMB", "Swing net", 40);
+                    prompt = new InteractionPrompt("Left mouse", "Swing net", 40);
                     return true;
                 }
 
@@ -116,7 +116,7 @@ namespace Bayou.Fishing
                 if (FishingSpot.FindNearby(transform.position) == null)
                     return false;
 
-                prompt = new InteractionPrompt("Hold LMB", "Wind up throw", 40);
+                prompt = new InteractionPrompt("Left mouse", "Scoop the pond", 40);
                 return true;
             }
 

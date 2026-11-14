@@ -205,6 +205,44 @@ namespace Bayou.Creatures
             RemoveNamed("Spider_FoggyTrees");
             RemoveNamed("Spider_GraveyardWeb");
             RemoveNamed("Spider_Demo");
+
+            var animators = Object.FindObjectsByType<Animator>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < animators.Length; i++)
+            {
+                var anim = animators[i];
+                if (anim == null || anim.runtimeAnimatorController == null) continue;
+                if (anim.runtimeAnimatorController.name != "Spider") continue;
+                if (!IsEarlyChurchSpider(anim.transform)) continue;
+                DestroyObject(anim.gameObject);
+            }
+        }
+
+        private static bool IsEarlyChurchSpider(Transform spider)
+        {
+            var kept = false;
+            var earlyName = false;
+            var inChurch = false;
+            for (var p = spider; p != null; p = p.parent)
+            {
+                if (p.name == "Spider_FinalGraveyard" || p.name == "Spider_BrackishCypress")
+                    kept = true;
+                if (p.name == "Spider_FoggyTrees" || p.name == "Spider_GraveyardWeb" || p.name == "Spider_Demo")
+                    earlyName = true;
+                if (p.name == "Church Area" || p.name == "Church Gates")
+                    inChurch = true;
+            }
+
+            if (kept) return false;
+            return earlyName || inChurch;
+        }
+
+        private static void DestroyObject(GameObject go)
+        {
+            if (go == null) return;
+            if (Application.isPlaying)
+                Object.Destroy(go);
+            else
+                Object.DestroyImmediate(go);
         }
 
         private static void RemoveNamed(string name)
@@ -465,6 +503,12 @@ namespace Bayou.Creatures
                 var anim = animators[i];
                 if (anim == null || anim.runtimeAnimatorController == null) continue;
                 if (anim.runtimeAnimatorController.name != "Spider") continue;
+                if (IsEarlyChurchSpider(anim.transform))
+                {
+                    DestroyObject(anim.gameObject);
+                    continue;
+                }
+
                 if (anim.GetComponent<SpiderAgent>() != null) continue;
 
                 anim.applyRootMotion = false;

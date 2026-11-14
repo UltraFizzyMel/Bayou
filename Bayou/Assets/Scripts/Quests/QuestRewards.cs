@@ -70,7 +70,8 @@ public static class QuestRewards
         switch (questId)
         {
             case QuestIds.CollectLantern:
-                // Landry's dialogue turns this in. The foggy marsh key is bought from Caliste.
+                // Landry's lantern turn-in already GiveItem/GrantKey the foggy marsh key.
+                // Skip here so the key is not granted twice. GrantItem also skips if owned.
                 return false;
             case QuestIds.SnapperAndMolly:
                 // Caliste's shop sells the maze key after she trusts you.
