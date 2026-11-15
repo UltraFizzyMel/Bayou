@@ -39,6 +39,16 @@ namespace Bayou.Audio
             Instance.StopIfCurrent(music, ambient);
         }
 
+        /// <summary>True while this clip is the one being loaded or already looping.</summary>
+        public static bool IsCurrent(AudioClip music)
+        {
+            if (Instance == null || music == null || Instance._wantMusic != music)
+                return false;
+            if (Instance._swap != null)
+                return true;
+            return Instance._music != null && Instance._music.isPlaying && Instance._music.clip == music;
+        }
+
         private static AreaMusicPlayback Ensure()
         {
             if (Instance != null) return Instance;

@@ -40350,6 +40350,7 @@ Transform:
   - {fileID: 539778248}
   - {fileID: 449757964}
   - {fileID: 943885566}
+  - {fileID: 8800100002}
   m_Father: {fileID: 762243719}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &516419670
@@ -83589,6 +83590,7 @@ GameObject:
   - component: {fileID: 1009862146}
   - component: {fileID: 1009862148}
   - component: {fileID: 1009862147}
+  - component: {fileID: 9100000101}
   m_Layer: 0
   m_Name: Altar Foggy Marsh
   m_TagString: Untagged
@@ -83614,6 +83616,7 @@ Transform:
   - {fileID: 1415132163}
   - {fileID: 705677343}
   - {fileID: 1082627731}
+  - {fileID: 9100000202}
   m_Father: {fileID: 203423952}
   m_LocalEulerAnglesHint: {x: 0, y: -27.787, z: 0}
 --- !u!65 &1009862147
@@ -164022,6 +164025,7 @@ GameObject:
   - component: {fileID: 1956195059}
   - component: {fileID: 1956195061}
   - component: {fileID: 1956195060}
+  - component: {fileID: 9100000121}
   m_Layer: 0
   m_Name: Altar Brackish Shore
   m_TagString: Untagged
@@ -164048,6 +164052,7 @@ Transform:
   - {fileID: 969937824}
   - {fileID: 731908285}
   - {fileID: 681439020}
+  - {fileID: 9100000222}
   m_Father: {fileID: 203423952}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1956195060
@@ -165556,6 +165561,7 @@ GameObject:
   - component: {fileID: 1980684192}
   - component: {fileID: 1980684194}
   - component: {fileID: 1980684193}
+  - component: {fileID: 9100000111}
   m_Layer: 0
   m_Name: Altar Graveyard
   m_TagString: Untagged
@@ -165578,6 +165584,7 @@ Transform:
   m_Children:
   - {fileID: 1649987708}
   - {fileID: 262252185}
+  - {fileID: 9100000212}
   m_Father: {fileID: 203423952}
   m_LocalEulerAnglesHint: {x: 0, y: -35.667, z: 0}
 --- !u!65 &1980684193
@@ -181621,6 +181628,1770 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6769560163115967866, guid: 44cca54beac587b4bab5f542cec3fad4, type: 3}
   m_PrefabInstance: {fileID: 3813755916561672113}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &9100000201
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9100000202}
+  m_Layer: 0
+  m_Name: FireEffect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &9100000202
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9100000201}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1009862146}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9100000101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1009862145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e8a1b27d6f4e0a9b3c5d7e1f2a4b6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.World.BurnableInteract
+  kind: 0
+  inkFlag: Is_foggyalter_burned
+  brambleFlag: 
+  fireParticles: {fileID: 0}
+  fireEffect: {fileID: 9100000201}
+  interactRadius: 3.4
+--- !u!1 &9100000211
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9100000212}
+  m_Layer: 0
+  m_Name: FireEffect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &9100000212
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9100000211}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1980684192}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9100000111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980684191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e8a1b27d6f4e0a9b3c5d7e1f2a4b6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.World.BurnableInteract
+  kind: 0
+  inkFlag: Is_gravealtar_burned
+  brambleFlag: 
+  fireParticles: {fileID: 0}
+  fireEffect: {fileID: 9100000211}
+  interactRadius: 3.4
+--- !u!1 &9100000221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9100000222}
+  m_Layer: 0
+  m_Name: FireEffect
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &9100000222
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9100000221}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1956195059}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9100000121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1956195058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e8a1b27d6f4e0a9b3c5d7e1f2a4b6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.World.BurnableInteract
+  kind: 0
+  inkFlag: Is_brackishaltar_burned
+  brambleFlag: 
+  fireParticles: {fileID: 0}
+  fireEffect: {fileID: 9100000221}
+  interactRadius: 3.4
+--- !u!1 &8800100001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800100002}
+  m_Layer: 0
+  m_Name: FoggyMarshSpots
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800100002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800100001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8800101001}
+  - {fileID: 8800101004}
+  - {fileID: 8800101007}
+  - {fileID: 8800101010}
+  - {fileID: 8800101013}
+  - {fileID: 8800101016}
+  - {fileID: 8800101019}
+  - {fileID: 8800101022}
+  - {fileID: 8800101025}
+  - {fileID: 8800101028}
+  - {fileID: 8800101031}
+  - {fileID: 8800101034}
+  - {fileID: 8800101037}
+  - {fileID: 8800101040}
+  - {fileID: 8800101043}
+  - {fileID: 8800101046}
+  - {fileID: 8800101049}
+  - {fileID: 8800101052}
+  - {fileID: 8800101055}
+  - {fileID: 8800101058}
+  - {fileID: 8800101061}
+  - {fileID: 8800101064}
+  - {fileID: 8800101067}
+  - {fileID: 8800101070}
+  - {fileID: 8800101073}
+  - {fileID: 8800101076}
+  m_Father: {fileID: 516246035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8800101000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101001}
+  - component: {fileID: 8800101002}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Catfish_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 95, y: -2.09, z: 142}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Catfish_01
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c3a2b3c4d5e6789012345678abcdef03, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.85, g: 0.18, b: 0.16, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101004}
+  - component: {fileID: 8800101005}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Eel_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101004
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101003}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 95, y: -2.09, z: 144}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Eel_01
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: 784ec8144269c7346a1a9b8946aa39f8, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.58, g: 0.22, b: 0.82, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101006
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101007}
+  - component: {fileID: 8800101008}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Crawfish_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101007
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101006}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 63, y: -2.09, z: 54}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Crawfish_01
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000004, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.2, g: 0.75, b: 0.28, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101009
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101010}
+  - component: {fileID: 8800101011}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Molly_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101010
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101009}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 85, y: -2.09, z: 52}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Molly_01
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.45, g: 0.78, b: 0.95, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101012
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101013}
+  - component: {fileID: 8800101014}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Gar_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101013
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101012}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 73.4, y: -2.09, z: 96}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Gar_01
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000001, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.25, g: 0.45, b: 1, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101015
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101016}
+  - component: {fileID: 8800101017}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Catfish_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101016
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101015}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 107, y: -2.09, z: 94}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101015}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Catfish_02
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c3a2b3c4d5e6789012345678abcdef03, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.85, g: 0.18, b: 0.16, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101018
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101019}
+  - component: {fileID: 8800101020}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Molly_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101019
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101018}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 107, y: -2.09, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Molly_02
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.45, g: 0.78, b: 0.95, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101021
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101022}
+  - component: {fileID: 8800101023}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Gar_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101022
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101021}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 67.8, y: -2.09, z: 146.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Gar_02
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000001, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.25, g: 0.45, b: 1, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101024
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101025}
+  - component: {fileID: 8800101026}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Flounder_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101025
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101024}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 99, y: -2.09, z: 46}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101024}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Flounder_01
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000002, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.95, g: 0.82, b: 0.15, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101027
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101028}
+  - component: {fileID: 8800101029}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Catfish_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101028
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101027}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 108.7, y: -2.09, z: 112.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Catfish_03
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c3a2b3c4d5e6789012345678abcdef03, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.85, g: 0.18, b: 0.16, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101030
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101031}
+  - component: {fileID: 8800101032}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Crawfish_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101031
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101030}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 157, y: -2.09, z: -8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Crawfish_02
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000004, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.2, g: 0.75, b: 0.28, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101033
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101034}
+  - component: {fileID: 8800101035}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Eel_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101033}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 175, y: -2.09, z: -20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Eel_02
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: 784ec8144269c7346a1a9b8946aa39f8, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.58, g: 0.22, b: 0.82, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101036
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101037}
+  - component: {fileID: 8800101038}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Flounder_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101037
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101036}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 177, y: -2.09, z: -16}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101038
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Flounder_02
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000002, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.95, g: 0.82, b: 0.15, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101039
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101040}
+  - component: {fileID: 8800101041}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Flounder_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101040
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101039}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -7, y: -2.09, z: 24}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101039}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Flounder_03
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000002, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.95, g: 0.82, b: 0.15, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101042
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101043}
+  - component: {fileID: 8800101044}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Molly_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101043
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101042}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -3, y: -2.09, z: 24}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Molly_03
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.45, g: 0.78, b: 0.95, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101045
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101046}
+  - component: {fileID: 8800101047}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Eel_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101046
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101045}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: -2.09, z: 24}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Eel_03
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: 784ec8144269c7346a1a9b8946aa39f8, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.58, g: 0.22, b: 0.82, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101048
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101049}
+  - component: {fileID: 8800101050}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Gar_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101049
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101048}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 137, y: -2.09, z: 204}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Gar_03
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000001, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.25, g: 0.45, b: 1, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101051
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101052}
+  - component: {fileID: 8800101053}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Gar_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101052
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101051}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 137, y: -2.09, z: 208}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Gar_04
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000001, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.25, g: 0.45, b: 1, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101054
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101055}
+  - component: {fileID: 8800101056}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Catfish_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101055
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101054}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 137, y: -2.09, z: 210}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101054}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Catfish_04
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c3a2b3c4d5e6789012345678abcdef03, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.85, g: 0.18, b: 0.16, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101057
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101058}
+  - component: {fileID: 8800101059}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Crawfish_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101058
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101057}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 81, y: -2.09, z: 118}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101057}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Crawfish_03
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000004, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.2, g: 0.75, b: 0.28, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101060
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101061}
+  - component: {fileID: 8800101062}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Molly_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101061
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101060}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 83, y: -2.09, z: 126}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Molly_04
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.45, g: 0.78, b: 0.95, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101063
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101064}
+  - component: {fileID: 8800101065}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Crawfish_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101064
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101063}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 93, y: -2.09, z: 110}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Crawfish_04
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000004, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.2, g: 0.75, b: 0.28, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101066
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101067}
+  - component: {fileID: 8800101068}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Eel_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101067
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101066}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 97, y: -2.09, z: 110}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Eel_04
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: 784ec8144269c7346a1a9b8946aa39f8, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.58, g: 0.22, b: 0.82, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101069
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101070}
+  - component: {fileID: 8800101071}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Flounder_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101070
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101069}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 99, y: -2.09, z: 110}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Flounder_04
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000002, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.95, g: 0.82, b: 0.15, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101072
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101073}
+  - component: {fileID: 8800101074}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Catfish_05
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101073
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101072}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 74.7, y: -2.09, z: 106.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Catfish_05
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c3a2b3c4d5e6789012345678abcdef03, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.85, g: 0.18, b: 0.16, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
+--- !u!1 &8800101075
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8800101076}
+  - component: {fileID: 8800101077}
+  m_Layer: 0
+  m_Name: Fish_Foggy_Molly_05
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8800101076
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101075}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 67.8, y: -2.09, z: 146.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8800100002}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8800101077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8800101075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Foggy_Molly_05
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: c2a2b3c4d5e6789012345678abcdef02, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0.45, g: 0.78, b: 0.95, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

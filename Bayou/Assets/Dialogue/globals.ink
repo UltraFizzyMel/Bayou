@@ -32,12 +32,21 @@ VAR BreakTheSealsQuestState = "CAN_START"
 
 
 
-VAR SeenShadow = true
+VAR SeenShadow = false
+VAR Seen_Zenon_Grave = false
+VAR Is_foggyalter_burned = false
+VAR Is_gravealtar_burned = false
+VAR Is_brackishaltar_burned = false
+
+VAR DestroyTheWitchQuestId = "DestroyTheWitchQuest"
+VAR DestroyTheWitchQuestState = "CAN_START"
 
 //OLIVIER Variables
 VAR olivier_known = ""
 VAR accordian_returned = false
+VAR accordion_returned = false
 VAR is_olivier_alive = true
+VAR is_Olivier_alive = true
 VAR olivier_firstmeeting = true
 VAR olivierquestionsasked = 0
 VAR Sad = false
@@ -73,9 +82,10 @@ VAR SeenOlivierSabine = false
 //MARIE Variables
 VAR marie_known = ""
 VAR marie_firstmeeting = true
-VAR is_in_foggy_marsh = true
+VAR is_in_foggy_marsh = false
 VAR is_at_first_brackishshore = false
 VAR accordian_disposed = false
+VAR accordion_disposed = false
 VAR is_marie_alive = true
 VAR mariequestionsasked = 0
 

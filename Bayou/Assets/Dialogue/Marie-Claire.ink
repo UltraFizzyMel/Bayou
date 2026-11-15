@@ -11,6 +11,10 @@ EXTERNAL HasItem(itemId, count)
 
 EXTERNAL HandOverItem(itemId, count)
 
+EXTERNAL CanTakeBoat(destination)
+
+EXTERNAL TakeBoat(destination)
+
 EXTERNAL GiveItem(itemId, count)
 
   
@@ -314,17 +318,32 @@ That's all I recall dear.
 
 //Takes player to brackish shore location closest to the church
 === ChurchTrip
+{CanTakeBoat("church"):
+~ TakeBoat("church")
 Don't bring any spiders back with you.
+- else:
+That passage is not open, or you are short the fish it costs.
+}
 ->END
 
 //Takes player to brackish shore location closest to the Sunken Grove
 === GroveTrip
+{CanTakeBoat("grove"):
+~ TakeBoat("grove")
 Don't blame me if you get lost in the Grove.
+- else:
+That passage is not open, or you are short the fish it costs.
+}
 ->END
 
 //Takes player to foggy Marsh Location
 ===MarshTrip
+{CanTakeBoat("foggy"):
+~ TakeBoat("foggy")
 Welcome back to the Foggy Marsh.
+- else:
+That passage is not open, or you are short the fish it costs.
+}
 ->END
 
 === ExpandedHorizons ===

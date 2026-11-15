@@ -20,6 +20,8 @@ public class InkExternalFunctions
         story.BindExternalFunction("OpenShop", () => OpenShop());
         story.BindExternalFunction("SetWorldFlag", (string flagName) => WorldFlags.Set(flagName, true));
         story.BindExternalFunction("HasWorldFlag", (string flagName) => WorldFlags.Has(flagName), lookaheadSafe: true);
+        story.BindExternalFunction("CanTakeBoat", (string destination) => Bayou.World.BoatTravel.CanTravel(destination), lookaheadSafe: true);
+        story.BindExternalFunction("TakeBoat", (string destination) => Bayou.World.BoatTravel.Queue(destination));
     }
 
     public void Unbind(Story story)
@@ -35,6 +37,8 @@ public class InkExternalFunctions
         story.UnbindExternalFunction("OpenShop");
         story.UnbindExternalFunction("SetWorldFlag");
         story.UnbindExternalFunction("HasWorldFlag");
+        story.UnbindExternalFunction("CanTakeBoat");
+        story.UnbindExternalFunction("TakeBoat");
     }
 
     private void StartQuest(string questId)

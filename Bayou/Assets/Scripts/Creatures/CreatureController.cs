@@ -276,6 +276,8 @@ namespace Bayou.Creatures
                 TickPassive(dt);
 
             FollowGround();
+            if (netBehavior == CreatureNetBehavior.StunOnNet && !IsStunned)
+                CrocodileWater.PullBack(transform);
             NoteStuck(_triedMove, dt);
             _visual?.DriveSnakeAnim(_triedMove, _strike != StrikePhase.None);
         }
@@ -322,10 +324,14 @@ namespace Bayou.Creatures
                 var maxLeash = EstimateAreaRadius() * 1.35f;
                 if (fromCenter.magnitude > maxLeash)
                 {
-                    transform.position = Vector3.MoveTowards(
-                        transform.position,
-                        new Vector3(clamped.x, transform.position.y, clamped.z),
-                        activeSpeed * dt);
+                    var dest = new Vector3(clamped.x, transform.position.y, clamped.z);
+                    if (!CrocodileWater.RejectStep(transform.position, dest))
+                    {
+                        transform.position = Vector3.MoveTowards(
+                            transform.position,
+                            dest,
+                            activeSpeed * dt);
+                    }
                 }
             }
         }
@@ -447,6 +453,8 @@ namespace Bayou.Creatures
                      Flat(_wanderTarget - transform.position).magnitude <= arriveDistance)
             {
                 _wanderTarget = wanderArea.RandomPointInside();
+                if (netBehavior == CreatureNetBehavior.StunOnNet)
+                    _wanderTarget = CrocodileWater.PickSwimPoint(_wanderTarget);
                 _nextWanderPick = Time.time + Random.Range(
                     wanderRetargetSeconds * 0.7f, wanderRetargetSeconds * 1.3f);
             }
@@ -455,7 +463,7 @@ namespace Bayou.Creatures
             if (to.sqrMagnitude > 0.0001f)
                 MoveToward(to.normalized, passiveSpeed, dt);
 
-            if (wanderArea != null)
+            if (wanderArea != null && netBehavior != CreatureNetBehavior.StunOnNet)
             {
                 var p = transform.position;
                 var c = wanderArea.ClampInside(p);
@@ -470,7 +478,11 @@ namespace Bayou.Creatures
             _triedMove = true;
             dir = SteerAroundObstacles(dir);
             Face(dir, dt);
-            transform.position += _moveDir * speed * dt;
+            var step = _moveDir * speed * dt;
+            var next = transform.position + step;
+            if (netBehavior == CreatureNetBehavior.StunOnNet && CrocodileWater.RejectStep(transform.position, next))
+                return;
+            transform.position = next;
             FollowGround();
         }
 

@@ -493,6 +493,21 @@ namespace Bayou.Inventory
                 return;
             }
 
+            // Dropping the accordion off the bag discards it, unless Olivier still needs it.
+            if (item != null && Bayou.World.AccordionCustody.IsAccordion(item) &&
+                !Bayou.World.AccordionCustody.WasBlockedThisFrame)
+            {
+                if (Bayou.World.AccordionCustody.LostQuestInProgress())
+                    Bayou.World.AccordionCustody.ShowBlocked();
+                else
+                {
+                    inventory.RemoveItem(item);
+                    _dragging = null;
+                    Refresh();
+                    return;
+                }
+            }
+
             // Revert.
             if (!string.IsNullOrEmpty(_dragStartCompartmentId))
                 inventory.TryPlace(item, _dragStartCompartmentId, _dragStartX, _dragStartY, _dragStartRotation);

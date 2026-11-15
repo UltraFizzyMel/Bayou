@@ -217,8 +217,10 @@ public class DialogueManager : MonoBehaviour
         inkExternalFunctions = new InkExternalFunctions();
         inkExternalFunctions.Bind(currentStory);
 
-        // Quest states must be in the story before the opening knot is evaluated.
+        // Quest states and where the player is standing must be in the story
+        // before the opening knot is evaluated.
         SyncQuestStatesIntoDialogueVariables();
+        Bayou.World.PlayerRegionFlags.PushToDialogue();
         dialogueVariables.StartListening(currentStory);
 
         if (!string.IsNullOrEmpty(knotName))
@@ -270,6 +272,7 @@ public class DialogueManager : MonoBehaviour
         }
 
         FlushReceivedItems();
+        Bayou.World.BoatTravel.CommitPending();
         Bayou.Demo.DemoEndController.TryShowIfArmed();
     }
 
@@ -585,6 +588,17 @@ public class DialogueManager : MonoBehaviour
         dialogueVariables?.VariableChanged(name, inkValue);
         if (currentStory != null && currentStory.variablesState.GlobalVariableExistsWithName(name))
             currentStory.variablesState.SetGlobal(name, inkValue);
+    }
+
+    public bool TryGetBoolVariable(string name, out bool value)
+    {
+        value = false;
+        if (string.IsNullOrWhiteSpace(name) || dialogueVariables?.variables == null)
+            return false;
+        if (!dialogueVariables.variables.TryGetValue(name, out var stored) || stored is not BoolValue boolean)
+            return false;
+        value = boolean.value;
+        return true;
     }
 
     public Ink.Runtime.Object GetVariableState(string variableName)

@@ -102,11 +102,36 @@ namespace Bayou.Creatures
                 brackish + new Vector3(8f, 1f, -2f),
                 radius: 8f);
 
+            // First brackish shore: crocs in the water by the church-side piers.
+            // Spider_BrackishCypress stays at the cypress. No foggy-marsh spiders.
+            var brackishPiers = Anchor("Piers for Brackish Shore", brackish + new Vector3(46.8f, 1f, 11f));
+            EnsureCrocodile(
+                root.transform,
+                "Crocodile_BrackishWater_01",
+                brackishPiers + new Vector3(-6.5f, 0.2f, -7.4f),
+                radius: 7f);
+            EnsureCrocodile(
+                root.transform,
+                "Crocodile_BrackishWater_02",
+                brackishPiers + new Vector3(7f, 0.2f, -15.9f),
+                radius: 7f);
+
+            // Second shore. River Water (2) sits near y=-3.67; the pier marker is the area anchor's y.
+            var brackishPier2 = Anchor("Brackish Shore Pier 2", new Vector3(256.01f, -6.83f, 46.69f));
+            EnsureCrocodile(
+                root.transform,
+                "Crocodile_BrackishPier2",
+                brackishPier2 + new Vector3(6f, 2.81f, -10f),
+                radius: 7f);
+
+            // Bank inland of the first piers, clear of Caliste at the salesperson stall.
+            var brackishBank = Anchor("Brackish Shore SawPalmettos", brackish + new Vector3(56.92f, 5.21f, 49.1f));
+            var brackishSnake = brackishBank + new Vector3(-28f, 0.12f, -12f);
             EnsureSnake(
                 root.transform,
                 "Snake_BrackishPath",
-                brackish + new Vector3(-10f, 1f, 12f),
-                Ring(brackish + new Vector3(-10f, 1f, 12f), 5f));
+                brackishSnake,
+                Ring(brackishSnake, 4.5f));
 
             RemoveEarlySpiders();
             var finalGraveyard = Anchor("Final Graveyard Area", new Vector3(-7.43f, 1f, 35.24f));

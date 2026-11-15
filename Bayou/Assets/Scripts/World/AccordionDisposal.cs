@@ -62,8 +62,7 @@ namespace Bayou.World
             if (inv == null || !inv.TryRemoveItemsById(AccordionId, 1))
                 return;
 
-            WorldFlags.Set(WorldFlags.DisposedAccordion, true);
-            DialogueManager.GetInstance()?.SetBoolVariable("accordian_disposed", true);
+            AccordionCustody.MarkDisposed();
             Debug.Log("[Accordion] Disposed in the bayou.");
         }
     }

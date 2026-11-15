@@ -81,6 +81,8 @@ namespace Bayou.Environment
                 return;
 
             SignReadUi.Show(this, title, body);
+            if (string.Equals(title, "Zenon Landry", System.StringComparison.OrdinalIgnoreCase))
+                WorldFlags.MarkSeenZenonGrave();
         }
 
         private void RefreshRange()

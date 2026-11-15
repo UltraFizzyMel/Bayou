@@ -219,8 +219,45 @@ namespace Bayou.Inventory
         public void RemoveItem(InventoryItemInstance item)
         {
             if (Bag == null || item == null) return;
+            if (Bayou.World.AccordionCustody.BlockIfQuestNeedsIt(item))
+                return;
+
+            var disposingAccordion = Bayou.World.AccordionCustody.IsAccordion(item);
             Bag.Remove(item);
             NotifyChanged();
+            if (disposingAccordion)
+                Bayou.World.AccordionCustody.MarkDisposed();
+        }
+
+        public int CountFish()
+        {
+            if (Bag == null) return 0;
+            var count = 0;
+            foreach (var item in Bag.AllItems)
+            {
+                if (item?.definition != null && item.definition.isFish)
+                    count++;
+            }
+
+            return count;
+        }
+
+        public int RemoveFish(int count)
+        {
+            if (Bag == null || count <= 0) return 0;
+            var removed = 0;
+            var snapshot = new List<InventoryItemInstance>(Bag.AllItems);
+            foreach (var item in snapshot)
+            {
+                if (item?.definition == null || !item.definition.isFish) continue;
+                Bag.Remove(item);
+                removed++;
+                if (removed >= count) break;
+            }
+
+            if (removed > 0)
+                NotifyChanged();
+            return removed;
         }
 
         public void DetachForDrag(InventoryItemInstance item)

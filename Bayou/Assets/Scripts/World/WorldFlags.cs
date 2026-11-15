@@ -27,6 +27,11 @@ public static class WorldFlags
     public const string ShopStraps = "shop_straps";
     public const string ShopSatchel = "shop_satchel";
     public const string LanternRadiusUpgrade = "lantern_radius_upgrade";
+    public const string SeenShadow = "SeenShadow";
+    public const string SeenZenonGrave = "Seen_Zenon_Grave";
+    public const string FoggyAltarBurned = "Is_foggyalter_burned";
+    public const string GraveAltarBurned = "Is_gravealtar_burned";
+    public const string BrackishAltarBurned = "Is_brackishaltar_burned";
 
     private static readonly HashSet<string> Flags = new(StringComparer.OrdinalIgnoreCase);
 
@@ -44,6 +49,24 @@ public static class WorldFlags
             if (string.IsNullOrWhiteSpace(flagName)) return false;
             return Flags.Contains(flagName.Trim());
         }
+
+    /// <summary>
+    /// Future swamp-witch encounter should call WorldFlags.MarkSeenShadow().
+    /// Do not set SeenShadow from other conversations or creatures.
+    /// </summary>
+    public static void MarkSeenShadow()
+    {
+        Set(SeenShadow, true);
+        var dialogue = DialogueManager.GetInstance();
+        dialogue?.SetBoolVariable("SeenShadow", true);
+    }
+
+    /// <summary>Set when the player reads Zenon Landry's grave (Big Bed Stone).</summary>
+    public static void MarkSeenZenonGrave()
+    {
+        Set(SeenZenonGrave, true);
+        DialogueManager.GetInstance()?.SetBoolVariable("Seen_Zenon_Grave", true);
+    }
 
     public static void ClearAll()
     {

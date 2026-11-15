@@ -413,6 +413,8 @@ namespace Bayou.Inventory.Shop
             if (!_transaction.TryCloseDeal(_wallet))
                 return;
 
+            Bayou.World.AccordionCustody.NoteMerchantBag(_merchantBag);
+
             if (_playerInventory != null && _transaction.DidBuy("Item_FishingRod", _playerInventory.Bag))
                 Bayou.UI.TutorialTips.NotifyRodPurchased();
 
@@ -468,6 +470,9 @@ namespace Bayou.Inventory.Shop
                 return false;
 
             var item = ui.Item;
+            if (Bayou.World.AccordionCustody.BlockIfQuestNeedsIt(item))
+                return false;
+
             var grabOffset = handmadePlayerInventoryUi?.CurrentDragGrabOffset ?? Vector2Int.zero;
             ResolveAnchor(_merchantBag, item, compartmentId, hoverX, hoverY, grabOffset, out var gx, out var gy);
             if (!_merchantBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&
@@ -494,6 +499,9 @@ namespace Bayou.Inventory.Shop
                 return false;
 
             var item = view.Item;
+            if (Bayou.World.AccordionCustody.BlockIfQuestNeedsIt(item))
+                return false;
+
             var grabOffset = playerInventoryUi?.CurrentDragGrabOffset ?? Vector2Int.zero;
             ResolveAnchor(_merchantBag, item, compartmentId, hoverX, hoverY, grabOffset, out var gx, out var gy);
             if (!_merchantBag.CanPlace(item, compartmentId, gx, gy, item.rotation) &&

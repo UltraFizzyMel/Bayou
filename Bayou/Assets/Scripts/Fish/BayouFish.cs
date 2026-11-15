@@ -36,6 +36,7 @@ namespace Bayou.Fish
         private static readonly List<BayouFish> All = new();
 
         public bool IsCaught { get; private set; }
+        public Vector3 SpawnPosition => _spawnPosition;
         public FishCatchTool RequiredTool => requiredTool;
         public bool IsStatic => isStatic;
         public FishingSpot HomeSpot { get; private set; }
@@ -362,6 +363,21 @@ namespace Bayou.Fish
             }
 
             CaughtFishPresenter.Present(inventoryItemWhenCaught);
+        }
+
+        /// <summary>Puts a caught fish back. Does nothing if this fish is still swimming.</summary>
+        public void Revive()
+        {
+            if (!IsCaught && gameObject.activeSelf)
+                return;
+
+            IsCaught = false;
+            if (_spawnPosition.sqrMagnitude < 0.0001f)
+                _spawnPosition = transform.position;
+            transform.position = _spawnPosition;
+            _hasSwimTarget = false;
+            _hasAttractTarget = false;
+            gameObject.SetActive(true);
         }
 
         private static Vector3 Flat(Vector3 v)

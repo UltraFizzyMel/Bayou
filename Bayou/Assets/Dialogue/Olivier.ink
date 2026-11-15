@@ -9,6 +9,10 @@
  EXTERNAL HasItem(itemId, count)
 
  EXTERNAL HandOverItem(itemId, count)
+
+ EXTERNAL CanTakeBoat(destination)
+
+ EXTERNAL TakeBoat(destination)
  
 
   
@@ -266,7 +270,7 @@ Where you needa go?
 { is_in_foggy_marsh: 
 +[Near the Church]
 -> OlivierChurchTrip
-+[Near the Sunken Grove]
++{ExpandedHorizonsQuestState == "FINISHED"}[Near the Sunken Grove]
 -> OlivierGroveTrip
 -else: 
 -> OlivierBoatLocations2
@@ -276,7 +280,7 @@ Where you needa go?
 {is_at_first_brackishshore:
 +[To the Foggy Marsh]
 -> OlivierMarshTrip
-+[Near the Sunken Grove]
++{ExpandedHorizonsQuestState == "FINISHED"}[Near the Sunken Grove]
 -> OlivierGroveTrip
 -else:
 +[Near the Church]
@@ -286,17 +290,32 @@ Where you needa go?
 }
 
 === OlivierChurchTrip
+{CanTakeBoat("church"):
+~ TakeBoat("church")
 Enjoy your dip in the waters.
+- else:
+That passage is not open, or you are short the fish it costs.
+}
 ->END
 
 //Takes player to brackish shore location closest to the Sunken Grove
 === OlivierGroveTrip
+{CanTakeBoat("grove"):
+~ TakeBoat("grove")
 Don't stray too far...
+- else:
+That passage is not open, or you are short the fish it costs.
+}
 ->END
 
 //Takes player to foggy Marsh Location
 ===OlivierMarshTrip
+{CanTakeBoat("foggy"):
+~ TakeBoat("foggy")
 Watch out for the Gators!
+- else:
+That passage is not open, or you are short the fish it costs.
+}
 ->END
  
 === goodbye

@@ -45,15 +45,21 @@ public class DialogueVariables
         }
     }
 
+    private Story _listening;
+    private bool _mirroring;
+
     public void StartListening(Story story )
     { 
         // Important that VariablesToStory is before assigning the listener!!!
+        _listening = story;
         VariablesToStory(story);
         story.variablesState.variableChangedEvent += VariableChanged;
     }
 
     public void StopListening(Story story)
     {
+        if (_listening == story)
+            _listening = null;
         story.variablesState.variableChangedEvent -= VariableChanged;
     }
 
@@ -66,6 +72,37 @@ public class DialogueVariables
             variables.Add(name, value );
             Debug.Log("Updated dialogue variable: "+ name + "  " + value);
         }
+
+        MirrorAlias(name, value);
+    }
+
+    private static string AliasOf(string name)
+    {
+        switch (name)
+        {
+            case "accordian_returned": return "accordion_returned";
+            case "accordion_returned": return "accordian_returned";
+            case "accordian_disposed": return "accordion_disposed";
+            case "accordion_disposed": return "accordian_disposed";
+            case "is_olivier_alive": return "is_Olivier_alive";
+            case "is_Olivier_alive": return "is_olivier_alive";
+            default: return null;
+        }
+    }
+
+    private void MirrorAlias(string name, Ink.Runtime.Object value)
+    {
+        if (_mirroring) return;
+        var other = AliasOf(name);
+        if (string.IsNullOrEmpty(other) || !variables.ContainsKey(other))
+            return;
+
+        _mirroring = true;
+        variables.Remove(other);
+        variables.Add(other, value);
+        if (_listening != null && _listening.variablesState.GlobalVariableExistsWithName(other))
+            _listening.variablesState.SetGlobal(other, value);
+        _mirroring = false;
     }
 
     private  void VariablesToStory(Story story)

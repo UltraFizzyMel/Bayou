@@ -285,6 +285,16 @@ public class QuestManager : MonoBehaviour
         ChangeQuestState(quest.info.id, QuestState.FINISHED);
         if (string.Equals(quest.info.id, QuestIds.VisitGraves, System.StringComparison.Ordinal))
             DialogueManager.GetInstance()?.SetBoolVariable("flowerPlaced", true);
+        if (string.Equals(quest.info.id, QuestIds.LostAccordion, System.StringComparison.Ordinal))
+            Bayou.World.AccordionCustody.MarkReturned();
+    }
+
+    /// <summary>Break the Seals can be turned in once all three altars are burned.</summary>
+    public void MarkReadyToFinish(string id)
+    {
+        if (!TryGetQuest(id, out var quest) || quest == null) return;
+        if (quest.state != QuestState.IN_PROGRESS) return;
+        ChangeQuestState(quest.info.id, QuestState.CAN_FINISH);
     }
 
     private void ClaimRewards(Quest quest)

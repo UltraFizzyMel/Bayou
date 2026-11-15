@@ -799,7 +799,23 @@ namespace Bayou.Inventory.UI
             if (!placed && _crossPanelDropHandler != null)
                 placed = _crossPanelDropHandler(view, eventData);
 
-            if (!placed && _dragHadPlacement)
+            if (!placed && _dragHadPlacement &&
+                Bayou.World.AccordionCustody.IsAccordion(view.Item) &&
+                !Bayou.World.AccordionCustody.WasBlockedThisFrame &&
+                !Bayou.World.AccordionCustody.LostQuestInProgress())
+            {
+                inventory.RemoveItem(view.Item);
+            }
+            else if (!placed && _dragHadPlacement &&
+                     Bayou.World.AccordionCustody.IsAccordion(view.Item) &&
+                     Bayou.World.AccordionCustody.LostQuestInProgress() &&
+                     !Bayou.World.AccordionCustody.WasBlockedThisFrame)
+            {
+                Bayou.World.AccordionCustody.ShowBlocked();
+                view.Item.rotation = _dragStartRotation;
+                inventory.TryPlace(view.Item, _dragStartCompartmentId, _dragStartX, _dragStartY, _dragStartRotation);
+            }
+            else if (!placed && _dragHadPlacement)
             {
                 view.Item.rotation = _dragStartRotation;
                 inventory.TryPlace(view.Item, _dragStartCompartmentId, _dragStartX, _dragStartY, _dragStartRotation);

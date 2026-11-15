@@ -120,7 +120,7 @@ Find the rosary in the church pond. You'll know it when you see it.
  
   === PurgeTheWitchStart ===
 
-{ BreakTheSealsQuestState :
+{ DestroyTheWitchQuestState :
 
     - "IN_PROGRESS": -> PurgeTheWitchInProgress
 
@@ -128,9 +128,20 @@ Find the rosary in the church pond. You'll know it when you see it.
 
     - "FINISHED": -> AfterTheWitch
 
-    - else: -> AfterTheSeals
+    - else: -> OfferPurge
 
  }
+
+=== OfferPurge ===
+The seals are open. What hunted this bayou is not gone.
+The last of it waits at the altar in the Sunken Grove.
++[I will purge the witch.]
+~ StartQuest(DestroyTheWitchQuestId)
+Go to that altar. When the hunt is done, come back to me.
+-> END
++[Not yet.]
+Come back when you are ready.
+-> END
 
 
 
@@ -338,10 +349,19 @@ How might I be of service?
  }
  
  === PurgeTheWitchInProgress
- ->END
+ { DestroyTheWitchQuestState == "CAN_FINISH":
+    You faced what waited at the final altar.
+    ~ FinishQuest(DestroyTheWitchQuestId)
+    The witch's hold on this bayou is broken.
+    -> END
+ - else:
+    The final altar is in the Sunken Grove. Return to me after you have been there.
+    -> END
+ }
  
  ===AfterTheWitch 
- ->END
+ The shadow will not rule this bayou the way it did.
+ -> service
  
  ===AfterTheSeals
- ->END
+ -> OfferPurge
