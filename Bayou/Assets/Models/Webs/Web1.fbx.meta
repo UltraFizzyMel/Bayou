@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: WebFilm
-    second: {fileID: -8836706848244071913, guid: 133d213d559494142a750c5cfc856422, type: 3}
+    second: {fileID: 2100000, guid: 4d832789d1f740d409af5cdb1ad08516, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

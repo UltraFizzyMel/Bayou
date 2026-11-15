@@ -15,11 +15,11 @@ MonoBehaviour:
   itemId: Item_SpottedGrar
   displayName: Spotted Grar
   description: A spotted gar. Olivier wants two for dinner.
-  icon: {fileID: 21300000, guid: a7a35a1d2d0a1f54a9aafc7b09afbf79, type: 3}
+  icon: {fileID: 21300000, guid: f4ebaf229513722449b2b2a572c3da2c, type: 3}
   shape:
-    width: 2
-    height: 1
-    cells: 0101
+    width: 3
+    height: 2
+    cells: 010100000101
   maxStack: 1
   buyPrice: 80
   sellPrice: 40
