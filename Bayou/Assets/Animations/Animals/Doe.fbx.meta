@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Material.001
-    second: {fileID: 2100000, guid: b8655efb8686c004bb4bd0f716b27293, type: 2}
+    second: {fileID: 2100000, guid: 60c134fb0b7351a44b3cb0595bfd1499, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -108,7 +108,7 @@ ModelImporter:
     importLights: 1
     nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
-    swapUVChannels: 0
+    swapUVChannels: 1
     generateSecondaryUV: 0
     useFileUnits: 1
     keepQuads: 0
