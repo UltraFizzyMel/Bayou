@@ -96,42 +96,41 @@ namespace Bayou.Creatures
                 foggy + new Vector3(14f, 1f, 6f),
                 Ring(foggy + new Vector3(14f, 1f, 6f), 5f));
 
-            EnsureCrocodile(
-                root.transform,
-                "Crocodile_BrackishShore",
-                brackish + new Vector3(8f, 1f, -2f),
-                radius: 8f);
-
-            // First brackish shore: crocs in the water by the church-side piers.
-            // Spider_BrackishCypress stays at the cypress. No foggy-marsh spiders.
+            // First brackish shore: two crocs on the river bed beside the docks.
+            // (116.5, -56) is dry ground above the y=-5.9 water. Spider_BrackishCypress stays.
             var brackishPiers = Anchor("Piers for Brackish Shore", brackish + new Vector3(46.8f, 1f, 11f));
             EnsureCrocodile(
                 root.transform,
                 "Crocodile_BrackishWater_01",
-                brackishPiers + new Vector3(-6.5f, 0.2f, -7.4f),
-                radius: 7f);
+                brackishPiers + new Vector3(-11.03f, -2.27f, -9.40f),
+                radius: 7f,
+                relocate: true);
             EnsureCrocodile(
                 root.transform,
                 "Crocodile_BrackishWater_02",
-                brackishPiers + new Vector3(7f, 0.2f, -15.9f),
-                radius: 7f);
+                brackishPiers + new Vector3(0.97f, -2.04f, -13.40f),
+                radius: 7f,
+                relocate: true);
 
-            // Second shore. River Water (2) sits near y=-3.67; the pier marker is the area anchor's y.
+            // Second shore, in River Water (2), off the pier-2 docks.
+            RemoveNamed("Crocodile_BrackishPier2");
             var brackishPier2 = Anchor("Brackish Shore Pier 2", new Vector3(256.01f, -6.83f, 46.69f));
             EnsureCrocodile(
                 root.transform,
-                "Crocodile_BrackishPier2",
-                brackishPier2 + new Vector3(6f, 2.81f, -10f),
-                radius: 7f);
+                "Crocodile_BrackishShore",
+                brackishPier2 + new Vector3(-4.01f, -1.64f, -12.69f),
+                radius: 7f,
+                relocate: true);
 
-            // Bank inland of the first piers, clear of Caliste at the salesperson stall.
+            // Bank inland of the first piers, on the ground, clear of Caliste.
             var brackishBank = Anchor("Brackish Shore SawPalmettos", brackish + new Vector3(56.92f, 5.21f, 49.1f));
-            var brackishSnake = brackishBank + new Vector3(-28f, 0.12f, -12f);
+            var brackishSnake = brackishBank + new Vector3(-28f, 0.69f, -12f);
             EnsureSnake(
                 root.transform,
                 "Snake_BrackishPath",
                 brackishSnake,
-                Ring(brackishSnake, 4.5f));
+                Ring(brackishSnake, 4.5f),
+                relocate: true);
 
             RemoveEarlySpiders();
             var finalGraveyard = Anchor("Final Graveyard Area", new Vector3(-7.43f, 1f, 35.24f));
@@ -338,16 +337,58 @@ namespace Bayou.Creatures
             }
         }
 
-        private static void EnsureSnake(Transform parent, string name, Vector3 start, Vector3[] worldWaypoints)
+        private static void EnsureSnake(Transform parent, string name, Vector3 start, Vector3[] worldWaypoints, bool relocate = false)
         {
-            if (GameObject.Find(name) != null) return;
+            var existing = GameObject.Find(name);
+            if (existing != null)
+            {
+                if (relocate)
+                    PlaceSnake(existing, start, worldWaypoints);
+                return;
+            }
+
             CreateSnake(parent, name, start, worldWaypoints);
         }
 
-        private static void EnsureCrocodile(Transform parent, string name, Vector3 center, float radius)
+        private static void PlaceSnake(GameObject group, Vector3 start, Vector3[] worldWaypoints)
         {
-            if (GameObject.Find(name) != null) return;
+            group.transform.position = start;
+            var body = group.transform.Find("Body");
+            if (body != null)
+                body.position = start;
+
+            var wpRoot = group.transform.Find("Waypoints");
+            if (wpRoot == null || worldWaypoints == null) return;
+            for (var i = 0; i < worldWaypoints.Length; i++)
+            {
+                var wp = wpRoot.Find($"WP_{i + 1}");
+                if (wp != null)
+                    wp.position = worldWaypoints[i];
+            }
+        }
+
+        private static void EnsureCrocodile(Transform parent, string name, Vector3 center, float radius, bool relocate = false)
+        {
+            var existing = GameObject.Find(name);
+            if (existing != null)
+            {
+                if (relocate)
+                    PlaceCrocodile(existing, center);
+                return;
+            }
+
             CreateCrocodile(parent, name, center, radius);
+        }
+
+        private static void PlaceCrocodile(GameObject group, Vector3 center)
+        {
+            group.transform.position = center;
+            var body = group.transform.Find("Body");
+            if (body != null)
+                body.position = center;
+            var area = group.transform.Find("WanderArea");
+            if (area != null)
+                area.position = center;
         }
 
         private static GameObject CreateBody(

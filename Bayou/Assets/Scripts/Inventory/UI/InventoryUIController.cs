@@ -799,6 +799,13 @@ namespace Bayou.Inventory.UI
             if (!placed && _crossPanelDropHandler != null)
                 placed = _crossPanelDropHandler(view, eventData);
 
+            if (!placed)
+            {
+                var openShop = ShopUIController.ActiveShop;
+                if (openShop != null && openShop.IsOpen)
+                    placed = openShop.TryPlaceIntoOpenPlayerBag(view.Item, eventData.position);
+            }
+
             if (!placed && _dragHadPlacement &&
                 Bayou.World.AccordionCustody.IsAccordion(view.Item) &&
                 !Bayou.World.AccordionCustody.WasBlockedThisFrame &&

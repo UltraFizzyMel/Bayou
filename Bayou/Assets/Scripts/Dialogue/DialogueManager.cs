@@ -303,7 +303,7 @@ public class DialogueManager : MonoBehaviour
             _pendingReceived.RemoveAt(0);
             if (item == null) continue;
 
-            CaughtFishPresenter.Present(item, "You've received");
+            CaughtFishPresenter.PresentGranted(item, "You've received");
             yield return null;
         }
 

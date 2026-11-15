@@ -493,6 +493,15 @@ namespace Bayou.Inventory
                 return;
             }
 
+            var openShop = ShopUIController.ActiveShop;
+            if (openShop != null && openShop.IsOpen &&
+                openShop.TryPlaceIntoOpenPlayerBag(item, eventData.position))
+            {
+                _dragging = null;
+                Refresh();
+                return;
+            }
+
             // Dropping the accordion off the bag discards it, unless Olivier still needs it.
             if (item != null && Bayou.World.AccordionCustody.IsAccordion(item) &&
                 !Bayou.World.AccordionCustody.WasBlockedThisFrame)

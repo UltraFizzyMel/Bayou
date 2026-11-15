@@ -428,6 +428,9 @@ Ah... that's alright.
 ->BasicWaresIntro
 
 ===ASearchForAHerbalistInProgress
+{ not HasItem("Item_HerbalistFlower", 1) && not flowerPlaced:
+->ReplaceHerbalistFlower
+}
 <b>DON'T...</b> Oh it's you.
 Did you find em and show em the flower ?
 +{flowerPlaced}[I did.]
@@ -442,6 +445,11 @@ Hand over that patchy rucksack of yours. We gonna fix it up some extra space.
 There you go sonny boy!
 Since you're here...
 ->BasicWaresIntro
+
+===ReplaceHerbalistFlower
+You lost the magnolia. Take another. It still has to be placed on the grave.
+~ GiveItem("Item_HerbalistFlower", 1)
+->StillSearching
 
 ===StillSearching
 I have a feeling you'll find them sooner than you know.

@@ -53,8 +53,6 @@ namespace Bayou.UI
         private bool _campfireUiWasOpen;
         private float _nextCampfireScan;
         private BonfireInteractable[] _fires = System.Array.Empty<BonfireInteractable>();
-        private Vector3 _tutorialPond;
-        private bool _tutorialPondKnown;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Boot()
@@ -302,37 +300,23 @@ namespace Bayou.UI
             return dialogue != null && dialogue.dialogueIsPlaying;
         }
 
-        private bool IsTutorialCampfire(BonfireInteractable fire)
+        private static bool IsTutorialCampfire(BonfireInteractable fire)
         {
             if (fire == null) return false;
-            var id = fire.BonfireId;
-            if (!string.IsNullOrEmpty(id) &&
-                id.IndexOf("tutorial", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            // The old bootstrap spawned a primitive named Campfire. That is not the placed fire.
+            if (fire.gameObject.name == "Campfire")
+                return false;
+
+            if (string.Equals(fire.BonfireId, "campfire_tutorial", System.StringComparison.Ordinal))
                 return true;
 
-            if (!_tutorialPondKnown)
+            for (var t = fire.transform; t != null; t = t.parent)
             {
-                _tutorialPond = new Vector3(16.6f, 0f, -57.8f);
-                var spots = Object.FindObjectsByType<Bayou.Fishing.FishingSpot>(
-                    FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-                for (var i = 0; i < spots.Length; i++)
-                {
-                    var spot = spots[i];
-                    if (spot == null) continue;
-                    var spotName = spot.SpotName ?? "";
-                    if (spot.name.IndexOf("Tutorial", System.StringComparison.OrdinalIgnoreCase) < 0 &&
-                        spotName.IndexOf("Tutorial", System.StringComparison.OrdinalIgnoreCase) < 0)
-                        continue;
-                    _tutorialPond = spot.transform.position;
-                    break;
-                }
-
-                _tutorialPondKnown = true;
+                if (t.name == "Tutorial Area")
+                    return true;
             }
 
-            var delta = fire.transform.position - _tutorialPond;
-            delta.y = 0f;
-            return delta.sqrMagnitude <= 22f * 22f;
+            return false;
         }
 
         private void Dismiss()

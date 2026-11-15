@@ -46,6 +46,25 @@ namespace Bayou.Inventory.Shop
             Recalculate(playerBag, merchantBag);
         }
 
+        /// <summary>
+        /// A reward granted while the shop is open stays on the player through Cancel.
+        /// </summary>
+        public void AdoptPlayerItem(InventoryItemInstance item)
+        {
+            if (item == null || string.IsNullOrEmpty(item.instanceId)) return;
+            if (_originalOwners.ContainsKey(item.instanceId)) return;
+            _originalOwners[item.instanceId] = ShopBagRole.Player;
+            _originalPlacements.Add(new ItemPlacementSnapshot
+            {
+                instanceId = item.instanceId,
+                owner = ShopBagRole.Player,
+                compartmentId = item.compartmentId,
+                gridX = item.gridX,
+                gridY = item.gridY,
+                rotation = item.rotation
+            });
+        }
+
         public void Recalculate(InventoryBagModel playerBag, InventoryBagModel merchantBag)
         {
             TotalBuyCost = 0;

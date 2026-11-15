@@ -192,6 +192,108 @@ namespace Bayou.Inventory
             return true;
         }
 
+        /// <summary>Exact item id. Does not treat every lantern as the same item.</summary>
+        public int CountExact(string itemId)
+        {
+            if (string.IsNullOrWhiteSpace(itemId) || Bag == null) return 0;
+            var count = 0;
+            foreach (var item in Bag.AllItems)
+            {
+                if (IsExact(item, itemId))
+                    count++;
+            }
+
+            return count;
+        }
+
+        public InventoryItemInstance FindExact(string itemId)
+        {
+            if (string.IsNullOrWhiteSpace(itemId) || Bag == null) return null;
+            foreach (var item in Bag.AllItems)
+            {
+                if (IsExact(item, itemId))
+                    return item;
+            }
+
+            return null;
+        }
+
+        public void RemoveExact(string itemId)
+        {
+            if (string.IsNullOrWhiteSpace(itemId) || Bag == null) return;
+            var snapshot = new System.Collections.Generic.List<InventoryItemInstance>(Bag.AllItems);
+            var removed = false;
+            foreach (var item in snapshot)
+            {
+                if (!IsExact(item, itemId)) continue;
+                Bag.Remove(item);
+                removed = true;
+            }
+
+            if (removed)
+                NotifyChanged();
+        }
+
+        /// <summary>
+        /// Puts a quest reward in the bag. A second grant of the same id does not add another copy.
+        /// An unplaced copy is seated in the first open cells instead of being held as a phantom.
+        /// </summary>
+        public InventoryItemInstance GrantReward(ItemDefinition definition, int count = 1)
+        {
+            if (definition == null || Bag == null) return null;
+            count = Mathf.Max(1, count);
+            EnsurePlacedExact(definition.Id);
+
+            var have = CountExact(definition.Id);
+            InventoryItemInstance last = FindExact(definition.Id);
+            var added = false;
+            for (var i = have; i < count; i++)
+            {
+                if (Bag.TryAddItem(definition, 0, out var created, IsCompartmentUnlocked))
+                {
+                    last = created;
+                    added = true;
+                    continue;
+                }
+
+                if (!TryHoldNewItem(definition, out var held))
+                    break;
+                last = held;
+                added = true;
+            }
+
+            if (added)
+                NotifyChanged();
+
+            if (last != null)
+                Bayou.Inventory.Shop.ShopUIController.ActiveShop?.NotePlayerGrant(last);
+            return last;
+        }
+
+        public bool TryPlaceAnywhere(InventoryItemInstance item)
+        {
+            if (item == null || Bag == null) return false;
+            if (item.IsPlaced) return true;
+            if (!Bag.TryFindFirstFitAnywhere(item, out var compartmentId, out var x, out var y, IsCompartmentUnlocked))
+                return false;
+            return TryPlace(item, compartmentId, x, y, item.rotation);
+        }
+
+        private void EnsurePlacedExact(string itemId)
+        {
+            if (Bag == null) return;
+            var snapshot = new System.Collections.Generic.List<InventoryItemInstance>(Bag.AllItems);
+            foreach (var item in snapshot)
+            {
+                if (!IsExact(item, itemId) || item.IsPlaced) continue;
+                TryPlaceAnywhere(item);
+            }
+        }
+
+        private static bool IsExact(InventoryItemInstance item, string itemId) =>
+            item?.definition != null &&
+            string.Equals(item.definition.Id, itemId, System.StringComparison.OrdinalIgnoreCase);
+
         public bool TryPlace(InventoryItemInstance item, string compartmentId, int x, int y, int rotation)
         {
             if (Bag == null || item == null) return false;
@@ -220,6 +322,8 @@ namespace Bayou.Inventory
         {
             if (Bag == null || item == null) return;
             if (Bayou.World.AccordionCustody.BlockIfQuestNeedsIt(item))
+                return;
+            if (Bayou.World.FlowerCustody.BlockIfQuestNeedsIt(item))
                 return;
 
             var disposingAccordion = Bayou.World.AccordionCustody.IsAccordion(item);

@@ -768,17 +768,14 @@ namespace Bayou.UI
 
         private void BuildEquippedHud(Transform canvas)
         {
-            var plateSize = skin != null ? skin.slotPlateSize : new Vector2(96f, 96f);
-            if (plateSize.x < 72f || plateSize.y < 72f)
-                plateSize = new Vector2(96f, 96f);
-            // Always-visible bottom-left equipped plate only. ~1.55x the 96/72 defaults.
-            const float equippedHudScale = 1.55f;
-            plateSize *= equippedHudScale;
+            // Bottom-left equipped plate only. ~1.25x the previous 148.8 / 111.6 plate.
+            // The radial wheel above is not scaled.
+            var plateSize = new Vector2(186f, 186f);
 
             _equippedRoot = CreateRect("EquippedItem", canvas);
             _equippedRoot.anchorMin = _equippedRoot.anchorMax = new Vector2(0f, 0f);
             _equippedRoot.pivot = new Vector2(0f, 0f);
-            _equippedRoot.anchoredPosition = new Vector2(32f, 32f);
+            _equippedRoot.anchoredPosition = new Vector2(24f, 24f);
             _equippedRoot.sizeDelta = plateSize;
 
             var plate = _equippedRoot.gameObject.AddComponent<Image>();
@@ -790,8 +787,7 @@ namespace Bayou.UI
             plate.raycastTarget = false;
 
             var iconRt = CreateRect("Icon", _equippedRoot);
-            var iconSize = skin != null ? skin.iconSize : new Vector2(72f, 72f);
-            iconRt.sizeDelta = iconSize * equippedHudScale;
+            iconRt.sizeDelta = new Vector2(140f, 140f);
             _equippedIcon = iconRt.gameObject.AddComponent<Image>();
             _equippedIcon.preserveAspect = true;
             _equippedIcon.raycastTarget = false;

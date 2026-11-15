@@ -128,20 +128,44 @@ public class InkExternalFunctions
             return false;
         }
 
-        if (inv.HasItemsById(itemId, count))
+        if (string.Equals(itemId, "Item_SpiritLantern", System.StringComparison.OrdinalIgnoreCase))
+            return GrantSpiritLantern(inv, def);
+
+        if (inv.CountExact(itemId) >= count)
             return true;
 
+        // Seat the reward in the bag now. The receive card binds this same stack,
+        // including when Caliste's shop is already open.
+        if (inv.GrantReward(def, count) == null && inv.CountExact(itemId) < 1)
+            return false;
+
+        ShowReward(def);
+        return true;
+    }
+
+    private static bool GrantSpiritLantern(InventoryController inv, ItemDefinition def)
+    {
+        if (inv.CountExact("Item_SpiritLantern") >= 1)
+            return true;
+
+        inv.RemoveExact("Item_Lantern");
+        if (inv.GrantReward(def, 1) == null && inv.CountExact("Item_SpiritLantern") < 1)
+            return false;
+
+        ShowReward(def);
+        return true;
+    }
+
+    private static void ShowReward(ItemDefinition def)
+    {
         var dialogue = DialogueManager.GetInstance();
         if (dialogue != null && dialogue.dialogueIsPlaying)
         {
-            for (var i = 0; i < count; i++)
-                dialogue.QueueReceivedItem(def);
-            return true;
+            dialogue.QueueReceivedItem(def);
+            return;
         }
 
-        for (var i = 0; i < count; i++)
-            CaughtFishPresenter.Present(def, "You've received");
-        return true;
+        CaughtFishPresenter.PresentGranted(def, "You've received");
     }
 
     private static void GrantKey(string flagName)

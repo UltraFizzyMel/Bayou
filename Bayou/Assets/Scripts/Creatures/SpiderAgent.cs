@@ -163,10 +163,12 @@ namespace Bayou.Creatures
             if (dist >= webMinRange && dist <= webMaxRange && Time.time >= _nextWeb &&
                 SpiderWeb.CountFor(this) < Mathf.Max(1, maxWebs))
             {
-                ShootWeb(player.position);
-                _nextWeb = Time.time + webCooldown;
-                Face(to, Time.deltaTime);
-                return;
+                if (ShootWeb(player.position))
+                {
+                    _nextWeb = Time.time + webCooldown;
+                    Face(to, Time.deltaTime);
+                    return;
+                }
             }
 
             var speed = (dist <= webMaxRange ? chaseSpeed : passiveSpeed) * SpiderWeb.SpeedBonusFor(this);
@@ -226,18 +228,20 @@ namespace Bayou.Creatures
             }
         }
 
-        private void ShootWeb(Vector3 target)
+        private bool ShootWeb(Vector3 target)
         {
+            var from = transform.position + Vector3.up * 0.35f;
+            if (SpiderWeb.IsUnderwater(target) || SpiderWeb.IsUnderwater(from))
+                return false;
+
             PlayAnim("Web_Attack");
             // SpiderRig|Spider_Attack_Web is frames 0–48 at 24 fps (2s). Stay planted for the clip.
             _webPlantedUntil = Time.time + WebShotSeconds();
-            var from = transform.position + Vector3.up * 0.35f;
-            var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            go.name = "SpiderWeb";
+            var go = new GameObject("SpiderWeb");
             go.transform.position = from;
-            go.transform.localScale = Vector3.one * 0.22f;
             var web = go.AddComponent<SpiderWeb>();
             web.Launch(this, from, target, webShotSpeed);
+            return true;
         }
 
         private float WebShotSeconds()

@@ -458,6 +458,56 @@ namespace Bayou.Inventory.Shop
             }
         }
 
+        /// <summary>Keeps a reward added during an open shop on the player when the deal is cancelled.</summary>
+        public void NotePlayerGrant(InventoryItemInstance item)
+        {
+            if (!_isOpen || item == null) return;
+            _transaction.AdoptPlayerItem(item);
+            playerPanel?.Refresh();
+        }
+
+        /// <summary>
+        /// Drop of the receive-card stack onto the open shop's player bag.
+        /// Places that same instance. Does not create another copy.
+        /// </summary>
+        public bool TryPlaceIntoOpenPlayerBag(InventoryItemInstance item, Vector2 screen)
+        {
+            if (!_isOpen || item == null || _playerInventory?.Bag == null) return false;
+            if (playerPanel == null || !ContainsScreen(playerPanel.PanelRoot, screen))
+                return false;
+
+            var bag = _playerInventory.Bag;
+            string compartmentId;
+            int x, y;
+            var placed = false;
+            if (playerPanel.TryPickGrid(screen, out compartmentId, out var hx, out var hy) &&
+                bag.CanPlace(item, compartmentId, hx, hy, item.rotation))
+            {
+                placed = _playerInventory.TryPlace(item, compartmentId, hx, hy, item.rotation);
+            }
+
+            if (!placed &&
+                bag.TryFindFirstFitAnywhere(item, out compartmentId, out x, out y, _playerInventory.IsCompartmentUnlocked))
+            {
+                placed = _playerInventory.TryPlace(item, compartmentId, x, y, item.rotation);
+            }
+
+            if (!placed) return false;
+            NotePlayerGrant(item);
+            playerPanel.Refresh();
+            return true;
+        }
+
+        private static bool ContainsScreen(RectTransform rt, Vector2 screen)
+        {
+            if (rt == null) return false;
+            var canvas = rt.GetComponentInParent<Canvas>();
+            var cam = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+                ? canvas.worldCamera
+                : null;
+            return RectTransformUtility.RectangleContainsScreenPoint(rt, screen, cam);
+        }
+
         // Handmade personal bag -> merchant stock (sell).
         private bool TryDropHandmadePersonalToMerchant(InventoryItemUI ui, PointerEventData eventData)
         {
@@ -471,6 +521,8 @@ namespace Bayou.Inventory.Shop
 
             var item = ui.Item;
             if (Bayou.World.AccordionCustody.BlockIfQuestNeedsIt(item))
+                return false;
+            if (Bayou.World.FlowerCustody.BlockIfQuestNeedsIt(item))
                 return false;
 
             var grabOffset = handmadePlayerInventoryUi?.CurrentDragGrabOffset ?? Vector2Int.zero;
@@ -500,6 +552,8 @@ namespace Bayou.Inventory.Shop
 
             var item = view.Item;
             if (Bayou.World.AccordionCustody.BlockIfQuestNeedsIt(item))
+                return false;
+            if (Bayou.World.FlowerCustody.BlockIfQuestNeedsIt(item))
                 return false;
 
             var grabOffset = playerInventoryUi?.CurrentDragGrabOffset ?? Vector2Int.zero;

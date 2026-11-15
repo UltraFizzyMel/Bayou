@@ -190,6 +190,17 @@ namespace Bayou.Player
                     : _poisonDeathTip);
         }
 
+        /// <summary>River wash and other hazards. Uses the same death screen as combat.</summary>
+        public void KillByHazard(string causeTip)
+        {
+            if (_dying) return;
+            _poisonPerSecond = 0f;
+            _poisonUntil = 0f;
+            _poisonDebt = 0f;
+            _current = 0;
+            Kill(string.IsNullOrWhiteSpace(causeTip) ? "The river washed you away." : causeTip);
+        }
+
         private void Kill(string causeTip)
         {
             if (_dying || _current > 0) return;

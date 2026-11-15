@@ -33,6 +33,7 @@ namespace Bayou.Inventory
         private InventoryItemInstance _pending;
         private bool _allocating;
         private bool _revealing;
+        private bool _grantedReward;
         private Coroutine _routine;
         private string _revealTitleOverride;
 
@@ -82,10 +83,31 @@ namespace Bayou.Inventory
                 host = go.AddComponent<CaughtFishPresenter>();
             }
 
-            host.Begin(fishItem, title);
+            host.Begin(fishItem, title, granted: false);
+        }
+
+        /// <summary>
+        /// The item is already in the bag. The card shows that same stack.
+        /// Dragging it only moves it. It does not create a second copy.
+        /// </summary>
+        public static void PresentGranted(ItemDefinition item, string title = null)
+        {
+            var host = Instance;
+            if (host == null)
+            {
+                var go = new GameObject("CaughtFishPresenter");
+                host = go.AddComponent<CaughtFishPresenter>();
+            }
+
+            host.Begin(item, title, granted: true);
         }
 
         public void Begin(ItemDefinition fishItem, string title = null)
+        {
+            Begin(fishItem, title, granted: false);
+        }
+
+        private void Begin(ItemDefinition fishItem, string title, bool granted)
         {
             if (fishItem == null)
             {
@@ -94,6 +116,7 @@ namespace Bayou.Inventory
             }
 
             _revealTitleOverride = title;
+            _grantedReward = granted;
 
             EnsureUi();
             EnsureInventorySubscription();
@@ -104,8 +127,11 @@ namespace Bayou.Inventory
             // Drop a previous unfinished catch (rare). Keep unique gear in the bag.
             if (_pending != null && InventoryController.Instance != null)
             {
+                var sameGrant = granted &&
+                                _pending.definition != null &&
+                                _pending.definition.MatchesId(fishItem.Id);
                 var pendingUnique = _pending.definition != null && _pending.definition.IsUniqueEquipment;
-                if (!pendingUnique)
+                if (!pendingUnique && !sameGrant)
                     InventoryController.Instance.RemoveItem(_pending);
             }
 
@@ -114,7 +140,26 @@ namespace Bayou.Inventory
             _revealing = false;
 
             var inventory = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
-            if (inventory == null || !inventory.TryHoldNewItem(fishItem, out _pending))
+            if (inventory == null)
+            {
+                Debug.LogWarning("[Catch] Could not hold item for inventory allocation.");
+                return;
+            }
+
+            if (granted)
+            {
+                _pending = inventory.FindExact(fishItem.Id);
+                if (_pending == null)
+                    _pending = inventory.GrantReward(fishItem);
+                else if (!_pending.IsPlaced)
+                    inventory.TryPlaceAnywhere(_pending);
+            }
+            else if (!inventory.TryHoldNewItem(fishItem, out _pending))
+            {
+                _pending = null;
+            }
+
+            if (_pending == null)
             {
                 Debug.LogWarning("[Catch] Could not hold item for inventory allocation.");
                 return;
@@ -147,10 +192,23 @@ namespace Bayou.Inventory
 
             HideReveal();
             _revealing = false;
+
+            if (_grantedReward && _pending != null && _pending.IsPlaced)
+            {
+                var placedDef = _pending.definition;
+                if (placedDef != null && placedDef.IsUniqueEquipment)
+                    TryEquipUnique(placedDef);
+                EndSession(closeInventory: false);
+                _routine = null;
+                yield break;
+            }
+
             _allocating = true;
 
+            var shopOpen = ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen;
             var bag = InventoryDisplayUI.Active ?? FindFirstObjectByType<InventoryDisplayUI>();
-            bag?.Open();
+            if (!shopOpen)
+                bag?.Open();
             bag?.Refresh();
 
             ShowAllocateBar(fishItem);
@@ -187,6 +245,17 @@ namespace Bayou.Inventory
         public void DiscardPending()
         {
             if (!_allocating || _pending == null) return;
+
+            if (Bayou.World.FlowerCustody.IsFlower(_pending) && Bayou.World.FlowerCustody.QuestStillNeedsIt())
+            {
+                var keep = InventoryController.Instance;
+                if (keep != null && !_pending.IsPlaced)
+                    keep.TryPlaceAnywhere(_pending);
+                Bayou.World.FlowerCustody.ShowBlocked();
+                if (_pending != null && _pending.IsPlaced)
+                    EndSession(closeInventory: false);
+                return;
+            }
 
             var inv = InventoryController.Instance;
             inv?.RemoveItem(_pending);

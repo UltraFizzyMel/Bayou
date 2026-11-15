@@ -181,7 +181,18 @@ public static class QuestRewards
         if (string.IsNullOrWhiteSpace(itemId)) return;
         var inv = InventoryController.Instance ?? Object.FindFirstObjectByType<InventoryController>();
         if (inv == null) return;
-        if (inv.HasItemsById(itemId, 1)) return;
+
+        var spirit = string.Equals(itemId, "Item_SpiritLantern", System.StringComparison.OrdinalIgnoreCase);
+        if (spirit)
+        {
+            if (inv.CountExact("Item_SpiritLantern") >= 1)
+                return;
+            inv.RemoveExact("Item_Lantern");
+        }
+        else if (inv.CountExact(itemId) >= 1)
+        {
+            return;
+        }
 
         var def = ResolveItem(itemId);
         if (def == null)
@@ -190,6 +201,9 @@ public static class QuestRewards
             return;
         }
 
+        if (inv.GrantReward(def, 1) == null && inv.CountExact(itemId) < 1)
+            return;
+
         var dialogue = DialogueManager.GetInstance();
         if (dialogue != null && dialogue.dialogueIsPlaying)
         {
@@ -197,7 +211,7 @@ public static class QuestRewards
             return;
         }
 
-        CaughtFishPresenter.Present(def, "You've received");
+        CaughtFishPresenter.PresentGranted(def, "You've received");
     }
 
     private static ItemDefinition ResolveItem(string itemId)

@@ -35,59 +35,6 @@ namespace Bayou.Save
                     continue;
                 Wire(t.gameObject, ui, index++);
             }
-
-            EnsureTutorialPondCampfire(ui);
-        }
-
-        private static void EnsureTutorialPondCampfire(BonfireUIController ui)
-        {
-            if (!Application.isPlaying) return;
-
-            var pond = new Vector3(16.6f, 0f, -57.8f);
-            var spots = Object.FindObjectsByType<Bayou.Fishing.FishingSpot>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            for (var i = 0; i < spots.Length; i++)
-            {
-                var spot = spots[i];
-                if (spot == null) continue;
-                if (spot.name.IndexOf("Tutorial", System.StringComparison.OrdinalIgnoreCase) < 0 &&
-                    (spot.SpotName == null || spot.SpotName.IndexOf("Tutorial", System.StringComparison.OrdinalIgnoreCase) < 0))
-                    continue;
-                pond = spot.transform.position;
-                break;
-            }
-
-            var fires = Object.FindObjectsByType<BonfireInteractable>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-            for (var i = 0; i < fires.Length; i++)
-            {
-                var fire = fires[i];
-                if (fire == null) continue;
-                var d = fire.transform.position - pond;
-                d.y = 0f;
-                if (d.sqrMagnitude <= 22f * 22f)
-                    return;
-            }
-
-            var host = new GameObject("Campfire");
-            host.transform.position = pond + new Vector3(6f, 0f, 6f);
-            Bayou.Creatures.CreatureController.SnapBodyToGround(host.transform, 0.05f);
-
-            var logs = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            logs.name = "Logs";
-            logs.transform.SetParent(host.transform, false);
-            logs.transform.localPosition = new Vector3(0f, 0.18f, 0f);
-            logs.transform.localScale = new Vector3(0.7f, 0.12f, 0.7f);
-            var logCol = logs.GetComponent<Collider>();
-            if (logCol != null)
-                logCol.enabled = false;
-
-            var triggerGo = new GameObject("CampfireTrigger");
-            triggerGo.transform.SetParent(host.transform, false);
-            var sphere = triggerGo.AddComponent<SphereCollider>();
-            sphere.isTrigger = true;
-            sphere.radius = 2.4f;
-
-            var interact = host.AddComponent<BonfireInteractable>();
-            interact.Configure("campfire_tutorial_pond", "Campfire", ui);
         }
 
         private static bool IsCampfireRoot(Transform t)
@@ -98,9 +45,24 @@ namespace Bayou.Save
             var n = t.name;
             if (n.Equals("Fireplace", System.StringComparison.OrdinalIgnoreCase))
                 return true;
+            // Unity's duplicate name for the campfire placed under Tutorial Area.
+            if (n.StartsWith("Fireplace (", System.StringComparison.OrdinalIgnoreCase) &&
+                n.EndsWith(")", System.StringComparison.Ordinal))
+                return true;
             if (n.Equals("Campfire", System.StringComparison.OrdinalIgnoreCase) &&
                 (t.parent == null || !t.parent.name.Equals("Fireplace", System.StringComparison.OrdinalIgnoreCase)))
                 return true;
+            return false;
+        }
+
+        private static bool UnderTutorialArea(Transform t)
+        {
+            for (var p = t; p != null; p = p.parent)
+            {
+                if (p.name == "Tutorial Area")
+                    return true;
+            }
+
             return false;
         }
 
@@ -132,7 +94,7 @@ namespace Bayou.Save
             }
 
             var interact = host.AddComponent<BonfireInteractable>();
-            var soName = $"campfire_{index:00}";
+            var soName = UnderTutorialArea(host.transform) ? "campfire_tutorial" : $"campfire_{index:00}";
 #if UNITY_EDITOR
             if (!Application.isPlaying)
             {
