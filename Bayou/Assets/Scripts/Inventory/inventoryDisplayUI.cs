@@ -202,6 +202,7 @@ namespace Bayou.Inventory
 
         public void Toggle()
         {
+            if (Bayou.Environment.SignReadUi.IsOpen) return;
             if (IsLockedByShop || IsLockedByCatch || IsLockedByBonfire) return;
             if (GameplayPause.IsDialoguePlaying) return;
             if (_isOpen) Close();

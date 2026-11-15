@@ -44,9 +44,7 @@ namespace Bayou.UI
         private Canvas _canvas;
         private GameObject _panel;
         private TextMeshProUGUI _body;
-        private bool _fishBaseline;
-        private int _fishCount;
-        private bool _fishWaiting;
+        private bool _netTipQueued;
         private bool _journalRequested;
         private bool _campfireRequested;
         private bool _inventoryWasOpen;
@@ -101,7 +99,7 @@ namespace Bayou.UI
         private void Update()
         {
             if (IsMainMenu()) return;
-            PollFish();
+            PollHandNet();
             PollQuest();
             PollCampfire();
             if (DialogueIsPlaying() && _shown != null)
@@ -117,26 +115,14 @@ namespace Bayou.UI
                    string.Equals(scene.name, "MainMenu", System.StringComparison.OrdinalIgnoreCase);
         }
 
-        private void PollFish()
+        private void PollHandNet()
         {
+            if (_netTipQueued || Seen("inventory")) return;
             var inv = InventoryController.Instance;
-            var count = 0;
-            if (inv != null)
-                count = inv.GetFishItems().Count;
-
-            if (!_fishBaseline)
-            {
-                _fishBaseline = true;
-                _fishCount = count;
-                return;
-            }
-
-            if (count > _fishCount)
-                _fishWaiting = true;
-            _fishCount = count;
-
-            if (!_fishWaiting || CaughtFishPresenter.IsBusy) return;
-            _fishWaiting = false;
+            if (inv == null || !inv.HasItemsById("Item_HandNet", 1)) return;
+            // Already owned at startup, or just picked up: wait until dialogue and the receive card are gone.
+            if (DialogueIsPlaying() || CaughtFishPresenter.IsBusy) return;
+            _netTipQueued = true;
             Request("inventory",
                 "Click an item, then hold and drag it over an inventory slot to place it.\nPress I to open or close the inventory.\nWhile holding an object, press R to rotate it.",
                 TipDismiss.InventoryClose,

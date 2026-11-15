@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Bayou.Creatures;
 using Bayou.Fishing;
 using Bayou.Player;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace Bayou.Environment
         [SerializeField] private float cooldownAfterPush = 1.1f;
         [SerializeField] private string playerTag = "Player";
 
+        private const float GroundClearance = 0.08f;
+        private static readonly Collider[] OverlapHits = new Collider[8];
         private static readonly HashSet<FogBarrier> Inside = new();
         private static int _tickFrame = -1;
         private static float _unsafeSeconds;
@@ -194,21 +197,75 @@ namespace Bayou.Environment
                     new Vector3(dest.x, 0f, dest.z)) < 0.75f)
                 dest += away * push;
 
+            SnapDestOntoGround(player, ref dest, away, push);
+
             var rb = player.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 rb.linearVelocity = Vector3.zero;
                 rb.position = dest;
             }
-            else
-            {
-                player.position = dest;
-            }
+
+            player.position = dest;
 
             _unsafeSeconds = 0f;
             Warning01 = 0f;
             _nextPushTime = Time.time + (barrier != null ? barrier.cooldownAfterPush : 1.1f);
             Debug.Log("[Fog] Sent player back — lantern required to stay in the fog.");
+        }
+
+        /// <summary>
+        /// Keep the chosen XZ and stand the player on the walkable surface there.
+        /// If that XZ is inside solid geometry, step out along the push direction and snap again.
+        /// </summary>
+        private static void SnapDestOntoGround(Transform player, ref Vector3 dest, Vector3 away, float push)
+        {
+            if (!TryPlaceOnWalkableGround(player, ref dest))
+            {
+                dest.y += 1f;
+                return;
+            }
+
+            if (!StandsInsideGeometry(player, dest))
+                return;
+
+            var step = away.sqrMagnitude > 0.01f ? away.normalized : Vector3.back;
+            dest += step * Mathf.Max(push, 1.5f);
+            if (!TryPlaceOnWalkableGround(player, ref dest))
+                dest.y += 1f;
+        }
+
+        private static bool TryPlaceOnWalkableGround(Transform player, ref Vector3 dest)
+        {
+            if (!CreatureController.TryGetWalkableHeight(dest, player, out var ground))
+                return false;
+
+            var footDrop = 1f;
+            var capsule = player.GetComponent<CapsuleCollider>();
+            if (capsule != null)
+                footDrop = Mathf.Max(0f, capsule.height * 0.5f - capsule.center.y);
+            dest.y = ground + footDrop + GroundClearance;
+            return true;
+        }
+
+        private static bool StandsInsideGeometry(Transform player, Vector3 dest)
+        {
+            var capsule = player.GetComponent<CapsuleCollider>();
+            var center = dest + (capsule != null ? capsule.center : Vector3.zero);
+            var radius = capsule != null ? Mathf.Clamp(capsule.radius * 0.5f, 0.05f, 0.2f) : 0.15f;
+            var count = Physics.OverlapSphereNonAlloc(
+                center, radius, OverlapHits, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+            var blocked = false;
+            for (var i = 0; i < count; i++)
+            {
+                var col = OverlapHits[i];
+                OverlapHits[i] = null;
+                if (blocked || col == null) continue;
+                if (col.transform == player || col.transform.IsChildOf(player)) continue;
+                blocked = true;
+            }
+
+            return blocked;
         }
 
         private bool IsPlayer(Collider other) =>

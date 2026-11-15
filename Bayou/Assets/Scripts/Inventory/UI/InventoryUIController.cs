@@ -182,6 +182,8 @@ namespace Bayou.Inventory.UI
 
         public void Toggle()
         {
+            if (Bayou.Environment.SignReadUi.IsOpen)
+                return;
             if (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen)
                 return;
             if (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen)

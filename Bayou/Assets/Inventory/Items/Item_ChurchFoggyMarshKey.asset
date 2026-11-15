@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Foggy Marsh Key
   description: 'Father Landry''s key: opens the church gate into the foggy marsh.
     Does not open Caliste''s maze.'
-  icon: {fileID: 21300000, guid: d916d7088c33be043a1c0111136df67e, type: 3}
+  icon: {fileID: 21300000, guid: 486a43c667e76df4a9220f8717ede764, type: 3}
   shape:
     width: 1
     height: 1

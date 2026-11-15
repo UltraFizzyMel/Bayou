@@ -817,7 +817,7 @@ namespace Bayou.Creatures
                 _nextWanderPick = 0f;
         }
 
-        private static bool TryGetWalkableHeight(Vector3 worldPos, Transform ignoreRoot, out float y)
+        public static bool TryGetWalkableHeight(Vector3 worldPos, Transform ignoreRoot, out float y)
         {
             if (FishingSpot.TryGetGroundHeight(worldPos, out y))
             {
