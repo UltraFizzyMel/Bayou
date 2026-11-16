@@ -197,7 +197,7 @@ How can I help ya?
 
  
  ===OlivierMarie
- {not LostAccordionStart:I hope they're getting better but I have a feeling I have done something to annoy them...}
+{not LostAccordionStart:I hope they're getting better but I have a feeling I have done something to annoy them...}
 {not LostAccordionStart:I don't even have my music to help clear the tension between us.}
 {LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart: Definitely on the upswing! We've had many big dinners thanks to you!}
 {LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart: I'm going to serenade them more going forward to show them my love still reigns true.}

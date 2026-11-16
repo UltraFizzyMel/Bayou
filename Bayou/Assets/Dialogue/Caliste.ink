@@ -210,7 +210,7 @@ My wares may be of interest...
 ->CalisteShadow
 *{olivier_known != ""  && marie_known != "" && calistequestionsasked >=3 && !SeenCalisteBaptistes}[Have you met the Baptistes?]
 ->CalisteBaptistes
-+{calistequestionsasked >=5 }[What have you... lost?]
++{calistequestionsasked >=5 && ASearchForAHerbalistQuestState == "FINISHED"}[What have you... lost?]
 ->CalisteLost
 +[Nevermind.]
 ->Thatall
