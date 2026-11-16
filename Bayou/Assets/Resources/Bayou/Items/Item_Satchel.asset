@@ -15,14 +15,13 @@ MonoBehaviour:
   itemId: Item_Satchel
   displayName: Satchel
   description: Increases how much you can carry.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 31e20d7579625554497f976d97685be9, type: 3}
   shape:
-    width: 2
+    width: 3
     height: 2
-    cells:
-    - 1
-    - 1
+    cells: 010101010101
   maxStack: 1
   buyPrice: 200
   sellPrice: 50
   isFish: 0
+  isEquipment: 0

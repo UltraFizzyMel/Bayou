@@ -15,11 +15,11 @@ MonoBehaviour:
   itemId: Item_Accordion
   displayName: Olivier's Accordion
   description: Olivier thinks he left this somewhere in the foggy marsh.
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 50e2f0747d9bad344abe190a581249c7, type: 3}
   shape:
     width: 3
     height: 3
-    cells: 010001010101010101
+    cells: 000101010101000101
   maxStack: 1
   buyPrice: 0
   sellPrice: 40

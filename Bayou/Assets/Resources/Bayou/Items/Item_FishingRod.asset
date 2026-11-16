@@ -12,21 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4e429c1b295b544aa482834494c3959, type: 3}
   m_Name: Item_FishingRod
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Inventory.ItemDefinition
+  itemId: Item_FishingRod
   displayName: Fishing Rod
   description: A proper bayou rod. Buy from Caliste. Press 1 to hold.
   icon: {fileID: 21300000, guid: e9665dd31918b034fa842032d5779123, type: 3}
   shape:
-    width: 4
+    width: 3
     height: 2
-    cells:
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
-    - 1
+    cells: 010101010101
   maxStack: 1
   buyPrice: 120
   sellPrice: 40

@@ -17,9 +17,9 @@ MonoBehaviour:
   description: A crawfish. Marie takes them as boat fare.
   icon: {fileID: 21300000, guid: 4aad884f6d9a1fe44994034497a42a7e, type: 3}
   shape:
-    width: 2
+    width: 1
     height: 2
-    cells: 01010100
+    cells: 0101
   maxStack: 1
   buyPrice: 40
   sellPrice: 20

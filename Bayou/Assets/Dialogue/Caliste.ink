@@ -382,7 +382,7 @@ Thank you sonny!
 
  Take a look, but don't touch what you can't pay for.
 //Maybe have a variable that checks what items Calsite can still sell?
- I've got a proper rod... and a key for the maze gate beside me.
+ I stock fishing supplies and I'll buy any fish you catch.
 
  ~ OpenShop()
 
