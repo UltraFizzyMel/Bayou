@@ -1,5 +1,6 @@
 using Bayou.Environment;
 using Bayou.Inventory.Shop;
+using Bayou.Inventory.UI;
 using Bayou.Player;
 using Bayou.Save;
 using TMPro;
@@ -47,7 +48,6 @@ namespace Bayou.UI
 
         private RectTransform _healthFillRect;
         private PlayerHealth _boundHealth;
-        private static Sprite _uiWhiteSprite;
         private string _trackedQuestId;
         private string _objectiveCache = "";
         private bool _subscribed;
@@ -475,7 +475,7 @@ namespace Bayou.UI
             if (healthFill != null)
             {
                 healthFill.type = Image.Type.Simple;
-                healthFill.sprite = UiWhiteSprite();
+                healthFill.sprite = UiWhiteSprite.Get();
                 healthFill.color = amount <= 0.35f
                     ? new Color(0.82f, 0.18f, 0.16f, 0.95f)
                     : new Color(0.72f, 0.22f, 0.2f, 0.92f);
@@ -502,19 +502,6 @@ namespace Bayou.UI
                 _boundHealth.Changed += RefreshHealthHud;
         }
 
-        private static Sprite UiWhiteSprite()
-        {
-            if (_uiWhiteSprite != null) return _uiWhiteSprite;
-            var tex = Texture2D.whiteTexture;
-            _uiWhiteSprite = Sprite.Create(
-                tex,
-                new Rect(0f, 0f, tex.width, tex.height),
-                new Vector2(0.5f, 0.5f),
-                4f);
-            _uiWhiteSprite.name = "BayouUiWhite";
-            return _uiWhiteSprite;
-        }
-
         private void EnsureHealthUi()
         {
             if (rootCanvas == null) return;
@@ -537,7 +524,7 @@ namespace Bayou.UI
                 var trackRt = track.GetComponent<RectTransform>();
                 StretchTmp(trackRt, 14f, 34f, 14f, 12f);
                 var trackImg = track.AddComponent<Image>();
-                trackImg.sprite = UiWhiteSprite();
+                trackImg.sprite = UiWhiteSprite.Get();
                 trackImg.color = new Color(0.12f, 0.08f, 0.08f, 0.85f);
                 trackImg.raycastTarget = false;
 
@@ -549,7 +536,7 @@ namespace Bayou.UI
                 _healthFillRect.offsetMin = Vector2.zero;
                 _healthFillRect.offsetMax = Vector2.zero;
                 healthFill = fillGo.AddComponent<Image>();
-                healthFill.sprite = UiWhiteSprite();
+                healthFill.sprite = UiWhiteSprite.Get();
                 healthFill.color = new Color(0.72f, 0.22f, 0.2f, 0.92f);
                 healthFill.raycastTarget = false;
                 healthFill.type = Image.Type.Simple;

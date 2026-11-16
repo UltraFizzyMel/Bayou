@@ -172,8 +172,6 @@ namespace Bayou.Inventory
                 _rect.localRotation = Quaternion.identity;
             }
 
-            Canvas.ForceUpdateCanvases();
-
             // Parent span, not _rect.rect. Reading the rect in the same frame the
             // anchors change still returns the old full-panel size, and those huge
             // cells then paint across the straps.

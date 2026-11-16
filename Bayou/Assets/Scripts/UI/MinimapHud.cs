@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Bayou;
+using Bayou.Inventory;
 using Bayou.Player;
 using UnityEngine;
 using UnityEngine.UI;
@@ -100,6 +102,14 @@ namespace Bayou.UI
             var player = PlayerLocator.Transform;
             if (player == null || _camera == null) return;
 
+            if (_arrow != null)
+                _arrow.localEulerAngles = new Vector3(0f, 0f, -player.eulerAngles.y);
+
+            // Second full-scene camera.Render() while timeScale is 0 (catch / bag flow)
+            // spiked GPU time and showed as tearing in player builds. Keep the arrow only.
+            if (GameplayPause.IsPaused || CaughtFishPresenter.IsBusy)
+                return;
+
             var pos = player.position;
             _camera.transform.position = new Vector3(pos.x, pos.y + 40f, pos.z);
             if (Time.unscaledTime >= _nextMapRender)
@@ -108,8 +118,7 @@ namespace Bayou.UI
                 _camera.Render();
                 CollectTargets();
             }
-            if (_arrow != null)
-                _arrow.localEulerAngles = new Vector3(0f, 0f, -player.eulerAngles.y);
+
             DrawQuestMarkers(pos);
         }
 

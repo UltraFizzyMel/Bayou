@@ -84,6 +84,13 @@ namespace Bayou.UI
             {
                 _teachingMove = false;
                 SetCardVisible(false);
+                return;
+            }
+
+            if (_shownAt > 0f && Time.unscaledTime - _shownAt > 28f)
+            {
+                _teachingMove = false;
+                SetCardVisible(false);
             }
         }
 

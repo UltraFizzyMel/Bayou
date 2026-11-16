@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Bayou.Creatures;
 using Bayou.Inventory;
 using Bayou.Inventory.Shop;
+using Bayou.Inventory.UI;
 using Bayou.Save;
 using TMPro;
 using UnityEngine;
@@ -20,6 +21,9 @@ namespace Bayou.UI
         private const string Prefix = "Bayou.Tip.";
         private const string ShownRevision = "Bayou.Tip.VisibleRevision";
         private const float MinVisibleSeconds = 0.3f;
+        private const float AutoDismissSeconds = 12f;
+        private const float CombatAutoDismissSeconds = 22f;
+        private const float WheelAutoDismissSeconds = 16f;
 
         private enum TipDismiss
         {
@@ -57,6 +61,7 @@ namespace Bayou.UI
         private bool _inventoryWasOpen;
         private bool _shopWasOpen;
         private bool _journalWasOpen;
+        private bool _wheelWasOpen;
         private bool _campfireUiWasOpen;
         private float _nextCampfireScan;
         private BonfireInteractable[] _fires = System.Array.Empty<BonfireInteractable>();
@@ -120,6 +125,7 @@ namespace Bayou.UI
             if (DialogueIsPlaying() && _shown != null && _shown.Id != "inventory")
                 ShelveShown();
             PollDismissEdges();
+            PollAutoDismiss();
             TryShow();
         }
 
@@ -190,7 +196,8 @@ namespace Bayou.UI
             };
             _inventoryWasOpen = true;
             _shopWasOpen = ShopOpen();
-            _journalWasOpen = false;
+            _journalWasOpen = QuestJournalHud.IsOpen;
+            _wheelWasOpen = EquipmentHotwheel.IsOpen;
             _campfireUiWasOpen = CampfireUiOpen();
             _visibleSince = Time.unscaledTime;
             if (_body != null)
@@ -236,8 +243,8 @@ namespace Bayou.UI
                 _campfireRequested = true;
                 Request("campfire",
                     "Use the campfire to save your game and set your respawn point.\nIf you choose a fish to cook you will additionally restore health.",
-                    TipDismiss.CampfireUi,
-                    pause: false);
+                    TipDismiss.Button,
+                    pause: true);
                 return;
             }
         }
@@ -290,7 +297,8 @@ namespace Bayou.UI
             _queue.RemoveAt(0);
             _inventoryWasOpen = InventoryOpen();
             _shopWasOpen = ShopOpen();
-            _journalWasOpen = false;
+            _journalWasOpen = QuestJournalHud.IsOpen;
+            _wheelWasOpen = EquipmentHotwheel.IsOpen;
             _campfireUiWasOpen = CampfireUiOpen();
             _visibleSince = Time.unscaledTime;
             if (_body != null)
@@ -300,6 +308,26 @@ namespace Bayou.UI
             SyncGotIt();
             if (_shown.Pause)
                 GameplayPause.SetTutorialHold(true);
+        }
+
+        private void PollAutoDismiss()
+        {
+            if (_shown == null || _visibleSince < 0f || !WasActuallyShown())
+                return;
+
+            var elapsed = Time.unscaledTime - _visibleSince;
+            var limit = _shown.Dismiss switch
+            {
+                TipDismiss.Button => CombatAutoDismissSeconds,
+                TipDismiss.WheelRelease => WheelAutoDismissSeconds,
+                _ => AutoDismissSeconds
+            };
+
+            if (elapsed < limit)
+                return;
+
+            _dismissFromButton = true;
+            Dismiss();
         }
 
         private void PollDismissEdges()
@@ -318,6 +346,14 @@ namespace Bayou.UI
                 case TipDismiss.CampfireUi:
                     if (CampfireUiOpen()) _campfireUiWasOpen = true;
                     else if (_campfireUiWasOpen) Dismiss();
+                    break;
+                case TipDismiss.JournalCycle:
+                    if (QuestJournalHud.IsOpen) _journalWasOpen = true;
+                    else if (_journalWasOpen) Dismiss();
+                    break;
+                case TipDismiss.WheelRelease:
+                    if (EquipmentHotwheel.IsOpen) _wheelWasOpen = true;
+                    else if (_wheelWasOpen) Dismiss();
                     break;
             }
         }
@@ -354,8 +390,9 @@ namespace Bayou.UI
 
         private void OnCampfireUiClosed()
         {
-            if (_shown == null || _shown.Dismiss != TipDismiss.CampfireUi) return;
-            Dismiss();
+            if (_shown == null) return;
+            if (_shown.Id == "campfire" || _shown.Dismiss == TipDismiss.CampfireUi)
+                Dismiss();
         }
 
         private void ShelveShown()
@@ -467,7 +504,7 @@ namespace Bayou.UI
             rt.anchoredPosition = new Vector2(0f, -108f);
             rt.sizeDelta = new Vector2(680f, 300f);
             var img = _panel.GetComponent<Image>();
-            img.sprite = WhiteSprite();
+            img.sprite = UiWhiteSprite.Get();
             img.color = new Color(0.08f, 0.07f, 0.05f, 0.94f);
             img.raycastTarget = false;
 
@@ -487,7 +524,7 @@ namespace Bayou.UI
             buttonRt.anchoredPosition = new Vector2(0f, 18f);
             buttonRt.sizeDelta = new Vector2(180f, 44f);
             var buttonImage = buttonGo.GetComponent<Image>();
-            buttonImage.sprite = WhiteSprite();
+            buttonImage.sprite = UiWhiteSprite.Get();
             buttonImage.color = new Color(0.45f, 0.32f, 0.14f, 1f);
             buttonImage.raycastTarget = true;
             var button = buttonGo.GetComponent<Button>();
@@ -531,10 +568,5 @@ namespace Bayou.UI
                 _gotIt.SetActive(_shown != null && _shown.Dismiss == TipDismiss.Button);
         }
 
-        private static Sprite WhiteSprite()
-        {
-            var tex = Texture2D.whiteTexture;
-            return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 4f);
-        }
     }
 }
