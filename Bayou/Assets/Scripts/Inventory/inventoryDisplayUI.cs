@@ -234,6 +234,7 @@ namespace Bayou.Inventory
             _stableGridSize = Vector2.zero;
             _relayoutFrames = 8;
             GameplayPause.SyncFromUiState();
+            TutorialTips.NotifyInventoryOpened();
         }
 
         public void Close()

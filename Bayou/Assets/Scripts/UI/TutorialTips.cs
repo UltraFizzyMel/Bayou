@@ -21,6 +21,9 @@ namespace Bayou.UI
         private const string Prefix = "Bayou.Tip.";
         private const string ShownRevision = "Bayou.Tip.VisibleRevision";
         private const float MinVisibleSeconds = 0.3f;
+        private const float AutoDismissSeconds = 12f;
+        private const float CombatAutoDismissSeconds = 22f;
+        private const float WheelAutoDismissSeconds = 16f;
 
         private enum TipDismiss
         {
@@ -58,6 +61,7 @@ namespace Bayou.UI
         private bool _inventoryWasOpen;
         private bool _shopWasOpen;
         private bool _journalWasOpen;
+        private bool _wheelWasOpen;
         private bool _campfireUiWasOpen;
         private float _nextCampfireScan;
         private BonfireInteractable[] _fires = System.Array.Empty<BonfireInteractable>();
@@ -121,6 +125,7 @@ namespace Bayou.UI
             if (DialogueIsPlaying() && _shown != null && _shown.Id != "inventory")
                 ShelveShown();
             PollDismissEdges();
+            PollAutoDismiss();
             TryShow();
         }
 
@@ -191,7 +196,8 @@ namespace Bayou.UI
             };
             _inventoryWasOpen = true;
             _shopWasOpen = ShopOpen();
-            _journalWasOpen = false;
+            _journalWasOpen = QuestJournalHud.IsOpen;
+            _wheelWasOpen = EquipmentHotwheel.IsOpen;
             _campfireUiWasOpen = CampfireUiOpen();
             _visibleSince = Time.unscaledTime;
             if (_body != null)
@@ -291,7 +297,8 @@ namespace Bayou.UI
             _queue.RemoveAt(0);
             _inventoryWasOpen = InventoryOpen();
             _shopWasOpen = ShopOpen();
-            _journalWasOpen = false;
+            _journalWasOpen = QuestJournalHud.IsOpen;
+            _wheelWasOpen = EquipmentHotwheel.IsOpen;
             _campfireUiWasOpen = CampfireUiOpen();
             _visibleSince = Time.unscaledTime;
             if (_body != null)
@@ -301,6 +308,26 @@ namespace Bayou.UI
             SyncGotIt();
             if (_shown.Pause)
                 GameplayPause.SetTutorialHold(true);
+        }
+
+        private void PollAutoDismiss()
+        {
+            if (_shown == null || _visibleSince < 0f || !WasActuallyShown())
+                return;
+
+            var elapsed = Time.unscaledTime - _visibleSince;
+            var limit = _shown.Dismiss switch
+            {
+                TipDismiss.Button => CombatAutoDismissSeconds,
+                TipDismiss.WheelRelease => WheelAutoDismissSeconds,
+                _ => AutoDismissSeconds
+            };
+
+            if (elapsed < limit)
+                return;
+
+            _dismissFromButton = true;
+            Dismiss();
         }
 
         private void PollDismissEdges()
@@ -319,6 +346,14 @@ namespace Bayou.UI
                 case TipDismiss.CampfireUi:
                     if (CampfireUiOpen()) _campfireUiWasOpen = true;
                     else if (_campfireUiWasOpen) Dismiss();
+                    break;
+                case TipDismiss.JournalCycle:
+                    if (QuestJournalHud.IsOpen) _journalWasOpen = true;
+                    else if (_journalWasOpen) Dismiss();
+                    break;
+                case TipDismiss.WheelRelease:
+                    if (EquipmentHotwheel.IsOpen) _wheelWasOpen = true;
+                    else if (_wheelWasOpen) Dismiss();
                     break;
             }
         }
