@@ -127,7 +127,9 @@ What help are you seeking?
 
  *{flowerPlaced == true}[I placed the flower.]
  ->PlacedFlower
- *{ HasItem("Item_ChannelCatfish", 1) && HasItem("Item_AlligatorGar", 1) && BaptistesFued && !ACatfishAndAGrar && (not is_olivier_alive or is_marie_alive)}[I have the Catfish and the Grar.]->ACatfishAndAGrar
+ *{ HasItem("Item_SpottedGar", 1) && HasItem("Item_Item_Crawfish", 1) && BaptistesFued && not SeenACrawfishAndAGrar && is_olivier_alive && is_marie_alive}[I have the Crawfish and the Grar.]->ACatfishAndAGrar
+ *{not is_olivier_alive or not is_marie_alive && not SeenFailedBaptistes}[I don't think ]
+ ->FailedBaptitses
  
  *{HasHerbalistFlower == true && !DeliverFlower}[I have a flower for you.]
  -> DeliverFlower 
@@ -135,7 +137,12 @@ What help are you seeking?
 +[Stay safe Sabine.]
  -> goodbye
  
+ ===FailedBaptitses
+ ~SeenFailedBaptistes = true
+ ->END
+ 
  ===ACatfishAndAGrar
+ ~SeenACrawfishAndAGrar = true
  Hopefully this offering will lead to a new spark.
  Doesn't it feel good to share your flame with another?
  +[I don't remember.]
@@ -195,8 +202,9 @@ What do you mean?
 
 ===SimpleBaptisteSolution
 Nothing a heartfelt meal can't fix. The way to someone's heart can often be through their stomach afterall.
-Bring me a catfish and a grar and don't tell them anything. 
  ~StartQuest(ACatfishAndAGrarQuestId)
+Bring me a crawfish and a spotted grar and don't tell them anything.
+
 ->END
 
 ===SabineCaliste

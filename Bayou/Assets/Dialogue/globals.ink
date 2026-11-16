@@ -191,3 +191,6 @@ VAR SeenBaptistesExplanation = false
 VAR SeenDisappointment = false
 VAR SeenMarieYouSay = false
 VAR SeenMrLafleur = false
+VAR ShownFlower = false
+VAR SeenFailedBaptistes = false
+VAR SeenACrawfishAndAGrar = false

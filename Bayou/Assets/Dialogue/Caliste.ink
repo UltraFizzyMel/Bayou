@@ -433,7 +433,7 @@ Ah... that's alright.
 }
 <b>DON'T...</b> Oh it's you.
 Did you find em and show em the flower ?
-+{flowerPlaced}[I did.]
++{deliveredFlower}[I did.]
 ->SatchelReward
 +[I have not.]
 ->StillSearching
