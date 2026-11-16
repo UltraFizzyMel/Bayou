@@ -41,11 +41,15 @@ namespace Bayou.World
             if (!string.IsNullOrEmpty(alias))
                 EnsureAlias(objectName, alias);
 
-            var burn = altar.GetComponent<BurnableInteract>();
+            var legacy = altar.GetComponent<BurnableInteract>();
+            if (legacy != null)
+                Object.Destroy(legacy);
+
+            var burn = altar.GetComponent<AltarBurn>();
             if (burn == null)
-                burn = altar.AddComponent<BurnableInteract>();
+                burn = altar.AddComponent<AltarBurn>();
             if (string.IsNullOrEmpty(burn.InkFlag))
-                burn.Configure(BurnKind.Altar, flag);
+                burn.Configure(flag);
         }
 
         private static void EnsureAlias(string hostName, string alias)
@@ -66,11 +70,58 @@ namespace Bayou.World
             for (var i = 0; i < transforms.Length; i++)
             {
                 var t = transforms[i];
-                if (t == null || !IsBrambleName(t.name)) continue;
-                if (t.GetComponent<BurnableInteract>() != null) continue;
-                var burn = t.gameObject.AddComponent<BurnableInteract>();
-                burn.Configure(BurnKind.Bramble, "");
+                if (t == null || !ShouldWireBramble(t)) continue;
+
+                // Legacy bootstrap used BurnableInteract (particles only, no mesh swap). Prefer BrambleBurn.
+                var legacy = t.GetComponent<BurnableInteract>();
+                if (legacy != null && string.IsNullOrEmpty(legacy.InkFlag))
+                {
+                    if (t.GetComponent<BrambleBurn>() == null)
+                        t.gameObject.AddComponent<BrambleBurn>();
+                    Object.Destroy(legacy);
+                    continue;
+                }
+
+                if (t.GetComponent<BrambleBurn>() != null) continue;
+                t.gameObject.AddComponent<BrambleBurn>();
             }
+        }
+
+        private static bool ShouldWireBramble(Transform t)
+        {
+            if (t == null) return false;
+            if (t.GetComponent<BrambleBurn>() != null) return true;
+            if (HasBrambleVisuals(t)) return true;
+
+            var name = t.name;
+            if (!IsBrambleName(name)) return false;
+            return !IsBrambleAuxiliaryName(name);
+        }
+
+        private static bool HasBrambleVisuals(Transform t)
+        {
+            for (var i = 0; i < t.childCount; i++)
+            {
+                var child = t.GetChild(i);
+                if (child == null) continue;
+                var n = child.name;
+                if (n.IndexOf("Normal", System.StringComparison.OrdinalIgnoreCase) >= 0) return true;
+                if (n.IndexOf("Burning", System.StringComparison.OrdinalIgnoreCase) >= 0) return true;
+                if (n.IndexOf("Burnt", System.StringComparison.OrdinalIgnoreCase) >= 0) return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsBrambleAuxiliaryName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            if (name.IndexOf("group", System.StringComparison.OrdinalIgnoreCase) >= 0) return true;
+            if (name.IndexOf("location", System.StringComparison.OrdinalIgnoreCase) >= 0) return true;
+            // Particle-only children (Bramble Fire Top, etc.), not the plant root.
+            if (name.IndexOf(" fire", System.StringComparison.OrdinalIgnoreCase) >= 0) return true;
+            if (name.StartsWith("Fire", System.StringComparison.OrdinalIgnoreCase)) return true;
+            return false;
         }
 
         private static bool IsBrambleName(string name)

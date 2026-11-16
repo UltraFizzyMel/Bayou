@@ -16,7 +16,7 @@ namespace Bayou.World
     [DefaultExecutionOrder(-40)]
     public sealed class BrambleBurn : MonoBehaviour, IInteractionPromptSource
     {
-        private const float Reach = 3.5f;
+        private const float Reach = 4.25f;
         private const float ChainReach = 6.5f;
         private const float ChainDelay = 0.8f;
         private const float BurnSeconds = 4.2f;
@@ -39,6 +39,8 @@ namespace Bayou.World
         [SerializeField] private GameObject fireEffect;
         [SerializeField] private ParticleSystem fireParticles;
 
+        private GameObject _fireEffectsRoot;
+        private readonly List<ParticleSystem> _fireSystems = new();
         private Phase _phase = Phase.Intact;
         private float _chainAt;
         private float _burnUntil;
@@ -123,7 +125,7 @@ namespace Bayou.World
         private void LightNeighbors()
         {
             var reachSq = ChainReach * ChainReach;
-            var origin = transform.position;
+            var origin = InteractionPoint();
             for (var i = 0; i < All.Count; i++)
             {
                 var other = All[i];
@@ -160,7 +162,7 @@ namespace Bayou.World
             var sq = DistanceSq();
             if (ReadableSign.HasWorldInteractAtMost(sq)) return true;
             if (InteractTrigger.HasPendingGateAtMost(sq)) return true;
-            if (BurnableInteract.HasAltarAtMost(sq)) return true;
+            if (AltarBurn.HasAltarAtMost(sq)) return true;
             if (BonfireInteractable.HasRestAtMost(sq)) return true;
             // An NPC already in talk range takes E even when this bush is closer.
             if (DialogueTrigger.HasTalkInRange()) return true;
@@ -168,11 +170,26 @@ namespace Bayou.World
             return false;
         }
 
+        private Vector3 InteractionPoint()
+        {
+            if (_boxes != null)
+            {
+                for (var i = 0; i < _boxes.Length; i++)
+                {
+                    var box = _boxes[i];
+                    if (box != null && box.enabled)
+                        return box.bounds.center;
+                }
+            }
+
+            return transform.position;
+        }
+
         private float DistanceSq()
         {
             var player = PlayerLocator.Transform;
             if (player == null) return float.MaxValue;
-            var delta = transform.position - player.position;
+            var delta = InteractionPoint() - player.position;
             delta.y = 0f;
             return delta.sqrMagnitude;
         }
@@ -184,23 +201,7 @@ namespace Bayou.World
             SetActive(burning, phase == Phase.Burning);
             SetActive(burnt, phase == Phase.Burnt);
 
-            var showFire = phase == Phase.Burning;
-            if (fireEffect != null && fireEffect != burning && fireEffect != intact && fireEffect != burnt)
-                fireEffect.SetActive(showFire);
-
-            if (fireParticles != null)
-            {
-                if (showFire)
-                {
-                    if (!fireParticles.gameObject.activeSelf)
-                        fireParticles.gameObject.SetActive(true);
-                    fireParticles.Play(true);
-                }
-                else
-                {
-                    fireParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-                }
-            }
+            SetFireEffectsActive(phase == Phase.Burning);
 
             if (phase != Phase.Burnt) return;
             for (var i = 0; i < _boxes.Length; i++)
@@ -223,16 +224,95 @@ namespace Bayou.World
                     burning = child.gameObject;
                 else if (burnt == null && IsState(name, "Burnt", "Burned"))
                     burnt = child.gameObject;
+                else if (_fireEffectsRoot == null && IsFireEffectsName(name))
+                    _fireEffectsRoot = child.gameObject;
                 else if (fireEffect == null && name == "FireEffect")
                     fireEffect = child.gameObject;
             }
 
-            if (fireParticles == null && fireEffect != null)
-                fireParticles = fireEffect.GetComponent<ParticleSystem>() ??
-                                fireEffect.GetComponentInChildren<ParticleSystem>(true);
+            if (fireEffect == null)
+                fireEffect = _fireEffectsRoot;
 
-            if (fireEffect != null)
-                fireEffect.SetActive(false);
+            CollectFireSystems();
+            SetFireEffectsActive(false);
+        }
+
+        private static bool IsFireEffectsName(string name)
+        {
+            if (string.IsNullOrEmpty(name)) return false;
+            if (string.Equals(name, "FireEffect", System.StringComparison.OrdinalIgnoreCase))
+                return true;
+            return name.IndexOf("fire effect", System.StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private void CollectFireSystems()
+        {
+            _fireSystems.Clear();
+
+            if (fireParticles != null && !_fireSystems.Contains(fireParticles))
+                _fireSystems.Add(fireParticles);
+
+            if (_fireEffectsRoot != null)
+            {
+                var systems = _fireEffectsRoot.GetComponentsInChildren<ParticleSystem>(true);
+                for (var i = 0; i < systems.Length; i++)
+                {
+                    if (systems[i] != null && !_fireSystems.Contains(systems[i]))
+                        _fireSystems.Add(systems[i]);
+                }
+            }
+
+            if (fireEffect != null && fireEffect != _fireEffectsRoot)
+            {
+                var extra = fireEffect.GetComponentsInChildren<ParticleSystem>(true);
+                for (var i = 0; i < extra.Length; i++)
+                {
+                    if (extra[i] != null && !_fireSystems.Contains(extra[i]))
+                        _fireSystems.Add(extra[i]);
+                }
+            }
+
+            if (fireParticles == null && _fireSystems.Count > 0)
+                fireParticles = _fireSystems[0];
+        }
+
+        private void SetFireEffectsActive(bool show)
+        {
+            if (_fireEffectsRoot != null &&
+                _fireEffectsRoot != intact &&
+                _fireEffectsRoot != burning &&
+                _fireEffectsRoot != burnt)
+            {
+                if (_fireEffectsRoot.activeSelf != show)
+                    _fireEffectsRoot.SetActive(show);
+            }
+            else if (fireEffect != null &&
+                     fireEffect != intact &&
+                     fireEffect != burning &&
+                     fireEffect != burnt &&
+                     fireEffect != _fireEffectsRoot)
+            {
+                if (fireEffect.activeSelf != show)
+                    fireEffect.SetActive(show);
+            }
+
+            for (var i = 0; i < _fireSystems.Count; i++)
+            {
+                var ps = _fireSystems[i];
+                if (ps == null) continue;
+
+                if (show)
+                {
+                    if (!ps.gameObject.activeInHierarchy && _fireEffectsRoot != null)
+                        ps.gameObject.SetActive(true);
+                    if (!ps.isPlaying)
+                        ps.Play(true);
+                }
+                else
+                {
+                    ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
+            }
         }
 
         private static bool IsState(string name, params string[] tokens)

@@ -39,19 +39,7 @@ namespace Bayou.World
         public string InkFlag => inkFlag ?? "";
 
         /// <summary>An unburnt altar the player can already light, at least as close as <paramref name="distSq"/>.</summary>
-        public static bool HasAltarAtMost(float distSq)
-        {
-            for (var i = 0; i < Active.Count; i++)
-            {
-                var altar = Active[i];
-                if (altar == null || altar.kind != BurnKind.Altar || altar._burned) continue;
-                if (!BurnableInteract.HasLantern() || !altar.InRange()) continue;
-                if (altar.DistanceSq() <= distSq)
-                    return true;
-            }
-
-            return false;
-        }
+        public static bool HasAltarAtMost(float distSq) => AltarBurn.HasAltarAtMost(distSq);
 
         public void Configure(BurnKind burnKind, string flag)
         {
