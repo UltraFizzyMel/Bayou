@@ -14,7 +14,7 @@ namespace Bayou.Fishing
     {
         private readonly HashSet<int> _inside = new();
         private Collider[] _zones = System.Array.Empty<Collider>();
-        private float _nextScan;
+        private bool _zonesCached;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Boot()
@@ -39,9 +39,9 @@ namespace Bayou.Fishing
 
         private void Update()
         {
-            if (Time.unscaledTime >= _nextScan)
+            if (!_zonesCached)
             {
-                _nextScan = Time.unscaledTime + 1.5f;
+                _zonesCached = true;
                 CacheZones();
             }
 

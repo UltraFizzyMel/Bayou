@@ -217,7 +217,7 @@ namespace Bayou.Creatures
         {
             if (Time.unscaledTime < _watersUntil && _waters != null)
                 return _waters;
-            _watersUntil = Time.unscaledTime + 1f;
+            _watersUntil = Time.unscaledTime + 30f;
             _waters = Object.FindObjectsByType<WaterVolume>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             return _waters;
         }

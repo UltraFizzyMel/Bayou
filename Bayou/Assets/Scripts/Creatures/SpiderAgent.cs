@@ -53,6 +53,7 @@ namespace Bayou.Creatures
         private CreatureSense _sense;
         private Animator _animator;
         private bool _snapToGround;
+        private float _nextGroundSnap;
         private Vector3 _spawn;
         private Vector3 _wander;
         private float _nextWander;
@@ -96,8 +97,11 @@ namespace Bayou.Creatures
             if (CreatureAi.IsFrozen)
                 return;
 
-            if (_snapToGround)
+            if (_snapToGround && Time.time >= _nextGroundSnap)
+            {
+                _nextGroundSnap = Time.time + 0.25f;
                 CreatureController.SnapBodyToGround(transform, 0.22f);
+            }
 
             if (Time.time < _stunUntil)
             {

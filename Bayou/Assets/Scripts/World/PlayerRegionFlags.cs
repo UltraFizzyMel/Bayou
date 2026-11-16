@@ -31,7 +31,11 @@ namespace Bayou.World
             Ensure();
         }
 
-        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) => Ensure();
+        private static void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            _anchorsReady = false;
+            Ensure();
+        }
 
         public static void Ensure()
         {
@@ -105,12 +109,12 @@ namespace Bayou.World
         private static Vector3 _piers = new(123.03f, 0f, -48.6f);
         private static Vector3 _pier2 = new(256.01f, 0f, 46.69f);
         private static Collider[] _fogVolumes = System.Array.Empty<Collider>();
-        private static float _anchorCacheUntil;
+        private static bool _anchorsReady;
 
         private static void CacheAnchors()
         {
-            if (Time.unscaledTime < _anchorCacheUntil) return;
-            _anchorCacheUntil = Time.unscaledTime + 2f;
+            if (_anchorsReady) return;
+            _anchorsReady = true;
             _foggy = FindPoint("Foggy Marsh Area", _foggy);
             _firstShore = FindPoint("Brackish Shore Area", _firstShore);
             _piers = FindPoint("Piers for Brackish Shore", _piers);

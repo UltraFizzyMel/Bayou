@@ -297,7 +297,7 @@ namespace Bayou.UI
             {
                 ApplyQuest(quest);
                 if (!string.IsNullOrWhiteSpace(_objectiveCache) && questObjectiveLabel != null)
-                    questObjectiveLabel.text = _objectiveCache;
+                    QuestFishNames.Apply(questObjectiveLabel, id, _objectiveCache);
                 return;
             }
 
@@ -305,9 +305,8 @@ namespace Bayou.UI
                 questTitleLabel.text = id;
 
             if (questObjectiveLabel != null)
-                questObjectiveLabel.text = string.IsNullOrWhiteSpace(_objectiveCache)
-                    ? "In progress"
-                    : _objectiveCache;
+                QuestFishNames.Apply(questObjectiveLabel, id,
+                    string.IsNullOrWhiteSpace(_objectiveCache) ? "In progress" : _objectiveCache);
 
             ShowQuestPanel(true);
         }
@@ -353,7 +352,7 @@ namespace Bayou.UI
             }
 
             if (questTitleLabel != null)
-                questTitleLabel.text = quest.info.displayName;
+                QuestFishNames.Apply(questTitleLabel, quest.info.id, quest.info.displayName);
 
             var objective = quest.GetHudObjectiveText();
             if (string.IsNullOrWhiteSpace(objective) && !string.IsNullOrWhiteSpace(_objectiveCache) &&
@@ -362,9 +361,10 @@ namespace Bayou.UI
 
             _objectiveCache = objective;
             if (questObjectiveLabel != null)
-                questObjectiveLabel.text = string.IsNullOrWhiteSpace(objective)
-                    ? "In progress"
-                    : objective;
+            {
+                var line = string.IsNullOrWhiteSpace(objective) ? "In progress" : objective;
+                QuestFishNames.Apply(questObjectiveLabel, quest.info.id, line);
+            }
 
             ShowQuestPanel(true);
         }

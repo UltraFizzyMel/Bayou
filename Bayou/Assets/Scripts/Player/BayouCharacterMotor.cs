@@ -212,6 +212,7 @@ namespace Bayou.Player
         private void Start()
         {
             CacheAnimatorParams();
+            IgnoreSolidWaterSurfaces();
         }
 
         private void Update()
@@ -237,13 +238,7 @@ namespace Bayou.Player
             {
                 return;
             }
-            isGrounded = Physics.Raycast(
-                origin: rb.position + Vector3.up * 0.05f,
-                direction: Vector3.down,
-                maxDistance: 0.05f + groundProbeDistance,
-                layerMask: groundMask,
-                queryTriggerInteraction: QueryTriggerInteraction.Ignore
-            );
+            isGrounded = ProbeGround();
 
             var swimming = waterSensor != null && waterSensor.IsSwimming;
             var wading = waterSensor != null && waterSensor.IsWading;
@@ -358,6 +353,64 @@ namespace Bayou.Player
         }
 
         private static readonly Collider[] OverlapBuffer = new Collider[12];
+        private static readonly RaycastHit[] GroundHits = new RaycastHit[8];
+
+        /// <summary>
+        /// Ground under the body, ignoring the water plane. A hit on that plane used to
+        /// count as standing, then the downward velocity slam bounced the capsule along it.
+        /// </summary>
+        private bool ProbeGround()
+        {
+            if (rb == null) return false;
+            var count = Physics.RaycastNonAlloc(
+                rb.position + Vector3.up * 0.05f,
+                Vector3.down,
+                GroundHits,
+                0.05f + groundProbeDistance,
+                groundMask,
+                QueryTriggerInteraction.Ignore);
+            for (var i = 0; i < count; i++)
+            {
+                var col = GroundHits[i].collider;
+                if (col == null || col == bodyCapsule) continue;
+                if (IsWaterSurface(col)) continue;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsWaterSurface(Collider col)
+        {
+            if (col == null) return false;
+            if (col.GetComponentInParent<Bayou.Environment.WaterVolume>() != null)
+                return true;
+            return col.CompareTag("Water");
+        }
+
+        /// <summary>
+        /// The water plane is a solid mesh until WaterVolume disables it. Ignore that plane so the
+        /// body can sink to swim depth. Terrain, docks, and crocodiles are separate objects and still collide.
+        /// </summary>
+        private void IgnoreSolidWaterSurfaces()
+        {
+            if (bodyCapsule == null) return;
+            var volumes = Object.FindObjectsByType<Bayou.Environment.WaterVolume>(
+                FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            for (var i = 0; i < volumes.Length; i++)
+            {
+                var volume = volumes[i];
+                if (volume == null) continue;
+                var cols = volume.GetComponents<Collider>();
+                for (var c = 0; c < cols.Length; c++)
+                {
+                    var col = cols[c];
+                    if (col == null || col == bodyCapsule || col.isTrigger) continue;
+                    if (col.attachedRigidbody != null) continue;
+                    Physics.IgnoreCollision(bodyCapsule, col, true);
+                }
+            }
+        }
 
         private bool _wasSwimming;
 

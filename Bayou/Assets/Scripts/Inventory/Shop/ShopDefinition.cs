@@ -34,6 +34,8 @@ namespace Bayou.Inventory.Shop
             foreach (var entry in stock)
             {
                 if (entry?.item == null) continue;
+                if (IsForbiddenShopKey(entry.item))
+                    continue;
                 if (!string.IsNullOrWhiteSpace(entry.requiredWorldFlag) &&
                     !WorldFlags.Has(entry.requiredWorldFlag))
                     continue;
@@ -52,6 +54,16 @@ namespace Bayou.Inventory.Shop
 
             ShopProgression.Append(bag, playerInventory);
             return bag;
+        }
+
+        /// <summary>
+        /// Caliste sells the maze key only. Quest keys must not become a second shop row,
+        /// even when a catalog guid still points at them.
+        /// </summary>
+        public static bool IsForbiddenShopKey(ItemDefinition item)
+        {
+            if (item == null || !item.IsKeyItem) return false;
+            return !item.MatchesId(KeyGateManager.MazeGateKeyItemId);
         }
 
         /// <summary>Unique gear and keys stay out of stock / cannot be bought again while owned.</summary>

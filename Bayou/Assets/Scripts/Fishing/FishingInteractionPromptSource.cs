@@ -43,14 +43,14 @@ namespace Bayou.Fishing
             var reel = FindActiveReel();
             if (reel != null && reel.IsActive)
             {
-                prompt = new InteractionPrompt("Hold LMB", "Reel in", 100);
+                prompt = new InteractionPrompt("Hold LMB", "BITE — reel the fish in", 100);
                 return true;
             }
 
             var attract = FindActiveAttract();
             if (attract != null && attract.IsActive)
             {
-                prompt = new InteractionPrompt("A / D", "Wiggle — wait for the bite, then hold LMB", 95);
+                prompt = new InteractionPrompt("A / D", "WAITING — wiggle. A bite changes this", 95);
                 return true;
             }
 

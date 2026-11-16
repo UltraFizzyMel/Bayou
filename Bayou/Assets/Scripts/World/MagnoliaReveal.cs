@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -110,16 +109,9 @@ namespace Bayou.World
 
         private static Transform[] FindBeds()
         {
-            var found = new List<Transform>();
-            var transforms = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-            for (var i = 0; i < transforms.Length; i++)
-            {
-                var t = transforms[i];
-                if (t == null || t.name != "Magnolias") continue;
-                found.Add(t);
-            }
-
-            return found.ToArray();
+            var root = GameObject.Find("Magnolias");
+            if (root == null) return System.Array.Empty<Transform>();
+            return new[] { root.transform };
         }
     }
 }

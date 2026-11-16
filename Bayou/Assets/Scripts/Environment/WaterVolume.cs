@@ -137,15 +137,16 @@ namespace Bayou.Environment
             if (_prepared && _trigger != null && _trigger.isTrigger)
                 return;
 
-            // Mesh colliders on water planes are non-convex, so they cannot be triggers.
-            // They also make the player rock/jitter, so they stay disabled.
+            // A solid plane cannot be a trigger. Leaving it enabled makes the body
+            // hop on the surface: swim velocity pushes down, the plane shoves it back up.
+            // Only disable. Flipping convex/isTrigger recooks the mesh and can turn it back on.
+            // Only the plane on this object. Child docks and rocks stay solid so the body cannot fall through them.
             var meshes = GetComponents<MeshCollider>();
             for (var i = 0; i < meshes.Length; i++)
             {
-                if (meshes[i] == null) continue;
-                meshes[i].convex = false;
-                meshes[i].isTrigger = false;
-                meshes[i].enabled = false;
+                var mesh = meshes[i];
+                if (mesh == null || mesh.attachedRigidbody != null) continue;
+                mesh.enabled = false;
             }
 
             var localSize = LocalSurfaceSize();

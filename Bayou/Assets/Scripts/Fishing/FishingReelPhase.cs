@@ -86,7 +86,12 @@ namespace Bayou.Fishing
             Bayou.Audio.FishingAudio.Resolve()?.StopReelingLoop();
 
             if (success)
+            {
+                FishingNetProjectile.ClearRecast();
                 CatchNearbyFish();
+            }
+            else
+                FishingNetProjectile.NoteRecast("Missed the fish. Recast with left mouse.");
 
             Destroy(gameObject);
         }

@@ -252,7 +252,8 @@ namespace Bayou.Player
                 return "";
 
             var name = string.IsNullOrWhiteSpace(quest.info.displayName) ? "Current quest" : quest.info.displayName;
-            var objective = quest.GetHudObjectiveText();
+            name = QuestFishNames.Tint(quest.info.id, name);
+            var objective = QuestFishNames.Tint(quest.info.id, quest.GetHudObjectiveText());
             if (string.IsNullOrWhiteSpace(objective))
                 return "Quest: " + name + ".";
             return "Quest — " + name + ": " + objective + ".";

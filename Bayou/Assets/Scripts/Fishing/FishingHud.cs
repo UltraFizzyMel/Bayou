@@ -34,7 +34,9 @@ namespace Bayou.Fishing
             var netCharging = _handNet != null && _handNet.IsCharging;
             var melee = _caster != null && _caster.IsMeleeMode ||
                         _equipment != null && _equipment.NetMode == HandNetMode.Combat;
-            if (!casting && !hasNet && attract == null && reel == null && !netCharging && !melee)
+            var recast = FishingNetProjectile.ActiveRecast;
+            if (!casting && !hasNet && attract == null && reel == null && !netCharging && !melee &&
+                string.IsNullOrEmpty(recast))
                 return;
 
             EnsureStyles();
@@ -47,15 +49,18 @@ namespace Bayou.Fishing
 
             if (reel != null && reel.IsActive)
             {
-                GUILayout.Label("REEL — hold LMB / Cast", _labelStyle);
-                DrawBar(reel.Progress01);
-                GUILayout.Label("Esc / Q / RMB cancel", _labelStyle);
+                var previous = _labelStyle.normal.textColor;
+                _labelStyle.normal.textColor = new Color(1f, 0.82f, 0.2f, 1f);
+                GUILayout.Label("BITE! A fish took the hook. Hold left mouse to reel.", _labelStyle);
+                _labelStyle.normal.textColor = previous;
+                DrawBar(reel.Progress01, new Color(1f, 0.72f, 0.15f, 1f));
+                GUILayout.Label("Right mouse cancels", _labelStyle);
             }
             else if (attract != null && attract.IsActive)
             {
-                GUILayout.Label("BOBBER DOWN — fish swimming in. Bite when the bar fills.", _labelStyle);
-                DrawBar(attract.Progress01);
-                GUILayout.Label("Wiggle A/D to attract  |  Esc cancel", _labelStyle);
+                GUILayout.Label("WAITING — line is in the water. Wiggle A/D.", _labelStyle);
+                DrawBar(attract.Progress01, new Color(0.35f, 0.85f, 0.55f, 1f));
+                GUILayout.Label("Right mouse cancels. A bite replaces this line.", _labelStyle);
             }
             else if (_caster != null && _caster.Phase == FishingCastPhase.DirectionSweep)
             {
@@ -65,7 +70,7 @@ namespace Bayou.Fishing
             else if (_caster != null && _caster.Phase == FishingCastPhase.ChargingTrajectory)
             {
                 GUILayout.Label("POWER — face a direction, hold LMB, release to cast", _labelStyle);
-                DrawBar(_caster.CurrentCharge01);
+                DrawBar(_caster.CurrentCharge01, new Color(0.35f, 0.85f, 0.55f, 1f));
                 GUILayout.Label("8-way facing · Esc / Q / RMB cancel", _labelStyle);
             }
             else if (hasNet && _caster != null)
@@ -73,9 +78,13 @@ namespace Bayou.Fishing
                 var net = FishingNetProjectile.Current ?? FishingNetProjectile.ActiveInWater;
                 var hint = net != null && !string.IsNullOrEmpty(net.StatusHint)
                     ? net.StatusHint
-                    : "Line out — Esc / Q / RMB recast";
+                    : "Line out. Recast with left mouse.";
                 GUILayout.Label(hint, _labelStyle);
-                GUILayout.Label("Esc / Q / RMB cancel", _labelStyle);
+                GUILayout.Label("Right mouse cancels", _labelStyle);
+            }
+            else if (!string.IsNullOrEmpty(recast))
+            {
+                GUILayout.Label(recast, _labelStyle);
             }
             else if (_equipment != null && _equipment.CurrentItem == BayouHeldItem.Rod)
             {
@@ -101,7 +110,7 @@ namespace Bayou.Fishing
                     if (_handNet != null && _handNet.IsCharging)
                     {
                         GUILayout.Label("THROW — release at the BIG circle", _labelStyle);
-                        DrawBar(_handNet.Pulse01);
+                        DrawBar(_handNet.Pulse01, new Color(0.35f, 0.85f, 0.55f, 1f));
                         GUILayout.Label("Right mouse / Esc cancel  ·  small circle = miss", _labelStyle);
                     }
                     else
@@ -118,13 +127,13 @@ namespace Bayou.Fishing
             GUILayout.EndArea();
         }
 
-        private void DrawBar(float t01)
+        private void DrawBar(float t01, Color fillColor)
         {
             var r = GUILayoutUtility.GetRect(18f, 18f, GUILayout.ExpandWidth(true));
             UnityEngine.GUI.Box(r, GUIContent.none);
             var fill = new Rect(r.x + 2f, r.y + 2f, (r.width - 4f) * Mathf.Clamp01(t01), r.height - 4f);
             var old = UnityEngine.GUI.color;
-            UnityEngine.GUI.color = new Color(0.35f, 0.85f, 0.55f, 1f);
+            UnityEngine.GUI.color = fillColor;
             UnityEngine.GUI.DrawTexture(fill, Texture2D.whiteTexture);
             UnityEngine.GUI.color = old;
         }

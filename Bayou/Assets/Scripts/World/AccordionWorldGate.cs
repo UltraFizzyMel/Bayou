@@ -144,8 +144,13 @@ namespace Bayou.World
             return inv != null && inv.HasItemsById(ItemId, 1);
         }
 
-        private static GameObject FindAccordion()
+        private bool _accordionSearched;
+        private GameObject _accordion;
+
+        private GameObject FindAccordion()
         {
+            if (_accordionSearched) return _accordion;
+            _accordionSearched = true;
             var transforms = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (var i = 0; i < transforms.Length; i++)
             {
@@ -157,7 +162,8 @@ namespace Bayou.World
                 if (t.parent != null &&
                     (t.parent.name == "Accordian" || t.parent.name == "Accordion"))
                     continue;
-                return t.gameObject;
+                _accordion = t.gameObject;
+                return _accordion;
             }
 
             return null;

@@ -30,6 +30,7 @@ namespace Bayou.Inventory.Shop
 
                 var item = Resolve(itemId);
                 if (item == null) continue;
+                if (ShopDefinition.IsForbiddenShopKey(item)) continue;
                 if (ShopDefinition.IsUniqueAlreadyOwned(item, playerInventory)) continue;
                 if (!bag.TryAddItem(item, 0, out _))
                     Debug.LogWarning($"[Shop] Could not place unlock {item.displayName}.");

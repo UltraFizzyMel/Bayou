@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Bayou;
 using Bayou.Fishing;
 using Bayou.Inventory.Shop;
@@ -30,12 +31,22 @@ namespace Bayou.Inventory
         [SerializeField] private TextMeshProUGUI allocateHint;
         [SerializeField] private Button discardButton;
 
+        private struct QueuedCatch
+        {
+            public ItemDefinition Item;
+            public string Title;
+            public bool Granted;
+            public InventoryItemInstance Held;
+        }
+
         private InventoryItemInstance _pending;
         private bool _allocating;
         private bool _revealing;
         private bool _grantedReward;
         private Coroutine _routine;
         private string _revealTitleOverride;
+        private readonly List<QueuedCatch> _queue = new();
+        private float _revealUntil;
 
         public static bool IsAllocating =>
             Instance != null && Instance._allocating;
@@ -83,7 +94,7 @@ namespace Bayou.Inventory
                 host = go.AddComponent<CaughtFishPresenter>();
             }
 
-            host.Begin(fishItem, title, granted: false);
+            host.Accept(fishItem, title, granted: false);
         }
 
         /// <summary>
@@ -99,15 +110,43 @@ namespace Bayou.Inventory
                 host = go.AddComponent<CaughtFishPresenter>();
             }
 
-            host.Begin(item, title, granted: true);
+            host.Accept(item, title, granted: true);
         }
 
         public void Begin(ItemDefinition fishItem, string title = null)
         {
-            Begin(fishItem, title, granted: false);
+            Accept(fishItem, title, granted: false);
         }
 
-        private void Begin(ItemDefinition fishItem, string title, bool granted)
+        /// <summary>Hides a leftover catch splash so it cannot sit on top of the bag and eat clicks.</summary>
+        public static void ReleaseStaleBlock()
+        {
+            if (Instance == null || Instance._revealing) return;
+            Instance.HideReveal();
+        }
+
+        private void Update()
+        {
+            if (_revealing && Time.unscaledTime > _revealUntil)
+            {
+                _revealing = false;
+                HideReveal();
+            }
+            else if (!_revealing && revealRoot != null && revealRoot.gameObject.activeSelf)
+            {
+                HideReveal();
+            }
+
+            if (_queue.Count > 0 &&
+                _routine == null &&
+                !_revealing &&
+                !_allocating &&
+                _pending == null &&
+                (InventoryController.Instance ?? FindFirstObjectByType<InventoryController>()) != null)
+                PumpQueue();
+        }
+
+        private void Accept(ItemDefinition fishItem, string title, bool granted)
         {
             if (fishItem == null)
             {
@@ -115,26 +154,41 @@ namespace Bayou.Inventory
                 return;
             }
 
-            _revealTitleOverride = title;
-            _grantedReward = granted;
-
             EnsureUi();
             EnsureInventorySubscription();
-
-            if (_routine != null)
-                StopCoroutine(_routine);
-
-            // Drop a previous unfinished catch (rare). Keep unique gear in the bag.
-            if (_pending != null && InventoryController.Instance != null)
+            if (_routine != null || _revealing || _allocating || _pending != null || _queue.Count > 0)
             {
-                var sameGrant = granted &&
-                                _pending.definition != null &&
-                                _pending.definition.MatchesId(fishItem.Id);
-                var pendingUnique = _pending.definition != null && _pending.definition.IsUniqueEquipment;
-                if (!pendingUnique && !sameGrant)
-                    InventoryController.Instance.RemoveItem(_pending);
+                Enqueue(fishItem, title, granted);
+                return;
             }
 
+            if (!BeginNow(fishItem, title, granted, null))
+                Enqueue(fishItem, title, granted);
+        }
+
+        private void Enqueue(ItemDefinition fishItem, string title, bool granted)
+        {
+            InventoryItemInstance held = null;
+            if (!granted)
+            {
+                var inventory = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
+                if (inventory != null && inventory.TryHoldNewItem(fishItem, out held))
+                    granted = true;
+            }
+
+            _queue.Add(new QueuedCatch
+            {
+                Item = fishItem,
+                Title = title,
+                Granted = granted,
+                Held = held
+            });
+        }
+
+        private bool BeginNow(ItemDefinition fishItem, string title, bool granted, InventoryItemInstance held)
+        {
+            _revealTitleOverride = title;
+            _grantedReward = granted || held != null;
             _pending = null;
             _allocating = false;
             _revealing = false;
@@ -143,10 +197,15 @@ namespace Bayou.Inventory
             if (inventory == null)
             {
                 Debug.LogWarning("[Catch] Could not hold item for inventory allocation.");
-                return;
+                HideAll();
+                return false;
             }
 
-            if (granted)
+            if (held != null)
+            {
+                _pending = held;
+            }
+            else if (granted)
             {
                 _pending = inventory.FindExact(fishItem.Id);
                 if (_pending == null)
@@ -162,10 +221,22 @@ namespace Bayou.Inventory
             if (_pending == null)
             {
                 Debug.LogWarning("[Catch] Could not hold item for inventory allocation.");
-                return;
+                HideAll();
+                return false;
             }
 
             _routine = StartCoroutine(CatchFlow(fishItem));
+            return true;
+        }
+
+        private void PumpQueue()
+        {
+            if (_revealing || _allocating || _pending != null || _routine != null) return;
+            if (_queue.Count == 0) return;
+            var next = _queue[0];
+            _queue.RemoveAt(0);
+            if (!BeginNow(next.Item, next.Title, next.Granted, next.Held))
+                _queue.Insert(0, next);
         }
 
         private void EnsureInventorySubscription()
@@ -179,6 +250,7 @@ namespace Bayou.Inventory
         private IEnumerator CatchFlow(ItemDefinition fishItem)
         {
             _revealing = true;
+            _revealUntil = Time.unscaledTime + Mathf.Max(0.35f, revealSeconds) + 0.35f;
             ShowReveal(fishItem);
             GameplayPause.SyncFromUiState();
 
@@ -199,7 +271,6 @@ namespace Bayou.Inventory
                 if (placedDef != null && placedDef.IsUniqueEquipment)
                     TryEquipUnique(placedDef);
                 EndSession(closeInventory: false);
-                _routine = null;
                 yield break;
             }
 
@@ -267,6 +338,7 @@ namespace Bayou.Inventory
             _allocating = false;
             _revealing = false;
             _pending = null;
+            _routine = null;
             HideAllocateBar();
             HideReveal();
 
@@ -282,6 +354,7 @@ namespace Bayou.Inventory
             }
 
             GameplayPause.SyncFromUiState();
+            PumpQueue();
         }
 
         private void ShowReveal(ItemDefinition fishItem)

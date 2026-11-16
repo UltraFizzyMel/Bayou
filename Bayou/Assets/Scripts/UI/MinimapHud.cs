@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Bayou.Player;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,8 +18,12 @@ namespace Bayou.UI
         }
 
         private Camera _camera;
+        private float _nextMapRender;
         private RectTransform _arrow;
+        private RectTransform _map;
         private RenderTexture _texture;
+        private readonly List<RectTransform> _markers = new();
+        private readonly List<Vector3> _targets = new();
 
         private void Awake()
         {
@@ -37,6 +42,8 @@ namespace Bayou.UI
             _camera.cullingMask = ~(1 << 5);
             _camera.targetTexture = _texture;
             _camera.depth = -20f;
+            // The map is a second full-scene camera. Leave it off and draw it on a timer.
+            _camera.enabled = false;
             camGo.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
 
             var canvasGo = new GameObject("MinimapCanvas");
@@ -61,6 +68,7 @@ namespace Bayou.UI
             var map = CreateRect("Map", frame);
             map.anchorMin = map.anchorMax = new Vector2(0.5f, 0.5f);
             map.sizeDelta = new Vector2(190f, 190f);
+            _map = map;
             var raw = map.gameObject.AddComponent<RawImage>();
             raw.texture = _texture;
             raw.raycastTarget = false;
@@ -94,8 +102,86 @@ namespace Bayou.UI
 
             var pos = player.position;
             _camera.transform.position = new Vector3(pos.x, pos.y + 40f, pos.z);
+            if (Time.unscaledTime >= _nextMapRender)
+            {
+                _nextMapRender = Time.unscaledTime + 0.2f;
+                _camera.Render();
+            }
             if (_arrow != null)
                 _arrow.localEulerAngles = new Vector3(0f, 0f, -player.eulerAngles.y);
+            DrawQuestMarkers(pos);
+        }
+
+        private void DrawQuestMarkers(Vector3 playerPos)
+        {
+            if (_map == null || _camera == null) return;
+            CollectTargets();
+            var mapHalf = _map.sizeDelta.x * 0.5f;
+            var worldHalf = Mathf.Max(1f, _camera.orthographicSize);
+            var scale = mapHalf / worldHalf;
+            var limit = mapHalf - 12f;
+
+            for (var i = 0; i < _targets.Count; i++)
+            {
+                var marker = Marker(i);
+                var delta = _targets[i] - playerPos;
+                var point = new Vector2(delta.x * scale, delta.z * scale);
+                if (point.magnitude > limit)
+                    point = point.normalized * limit;
+                marker.anchoredPosition = point;
+                marker.gameObject.SetActive(true);
+            }
+
+            for (var i = _targets.Count; i < _markers.Count; i++)
+            {
+                if (_markers[i] != null)
+                    _markers[i].gameObject.SetActive(false);
+            }
+        }
+
+        private void CollectTargets()
+        {
+            _targets.Clear();
+            var manager = QuestManager.Resolve();
+            var player = PlayerLocator.Transform;
+            if (manager == null) return;
+            foreach (var quest in manager.AllQuests)
+            {
+                if (quest == null || !quest.IsActiveForHud) continue;
+                if (!QuestObjectiveLocator.TryResolve(quest, manager, player, out var objective))
+                    continue;
+                var pos = objective.WorldPosition;
+                var stacked = false;
+                for (var i = 0; i < _targets.Count; i++)
+                {
+                    var d = _targets[i] - pos;
+                    d.y = 0f;
+                    if (d.sqrMagnitude < 2.25f)
+                    {
+                        stacked = true;
+                        break;
+                    }
+                }
+
+                if (!stacked)
+                    _targets.Add(pos);
+            }
+        }
+
+        private RectTransform Marker(int index)
+        {
+            while (_markers.Count <= index)
+            {
+                var rt = CreateRect("QuestMarker", _map);
+                rt.sizeDelta = new Vector2(14f, 14f);
+                rt.localRotation = Quaternion.Euler(0f, 0f, 45f);
+                var image = rt.gameObject.AddComponent<Image>();
+                image.color = new Color(0.92f, 0.78f, 0.32f, 1f);
+                image.raycastTarget = false;
+                _markers.Add(rt);
+            }
+
+            return _markers[index];
         }
 
         private void OnDestroy()

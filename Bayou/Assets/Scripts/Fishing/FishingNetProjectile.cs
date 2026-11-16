@@ -54,6 +54,27 @@ namespace Bayou.Fishing
         /// <summary>Short hint for HUD / prompts after the bobber lands.</summary>
         public string StatusHint { get; private set; } = "";
 
+        private static string _recastLine;
+        private static float _recastUntil;
+
+        /// <summary>Shown after a miss, expiry, or failed cast until the next cast.</summary>
+        public static string ActiveRecast =>
+            !string.IsNullOrEmpty(_recastLine) && Time.unscaledTime <= _recastUntil ? _recastLine : null;
+
+        public static void NoteRecast(string line)
+        {
+            _recastLine = string.IsNullOrWhiteSpace(line)
+                ? "Recast with left mouse."
+                : line;
+            _recastUntil = Time.unscaledTime + 8f;
+        }
+
+        public static void ClearRecast()
+        {
+            _recastLine = null;
+            _recastUntil = 0f;
+        }
+
         private void Awake()
         {
             _rb = GetComponent<Rigidbody>();
@@ -104,6 +125,7 @@ namespace Bayou.Fishing
         {
             Phase = FishingNetPhase.Flying;
             _hasLanded = false;
+            ClearRecast();
             StatusHint = "Line in the air…";
             _launchPos = transform.position;
             _launchTime = Time.time;
@@ -185,7 +207,7 @@ namespace Bayou.Fishing
             Phase = FishingNetPhase.AttractComplete;
             CancelMissLifetime();
 
-            StatusHint = "Bite! Hold LMB to reel.";
+            StatusHint = "BITE! A fish took the hook. Hold left mouse to reel.";
             var reel = GetComponent<FishingReelPhase>();
             if (reel == null)
                 reel = gameObject.AddComponent<FishingReelPhase>();
@@ -205,6 +227,7 @@ namespace Bayou.Fishing
             // Only flying casts time out. A planted bobber stays until cancel / catch.
             if (Phase != FishingNetPhase.Flying)
                 return;
+            NoteRecast("Cast expired. Recast with left mouse.");
             Destroy(gameObject);
         }
 
@@ -340,17 +363,19 @@ namespace Bayou.Fishing
 
             if (spot != null && spot.RequiredTool == FishCatchTool.Net && !rodFishNearby)
             {
-                StatusHint = "Net hole — switch to the hand net (2). Esc recast.";
+                StatusHint = "This hole needs the net (2). Recast the rod with left mouse.";
+                NoteRecast(StatusHint);
                 return;
             }
 
             if (!rodFishNearby && !rodSpot)
             {
-                StatusHint = "No rod fish here. Cast into a rod hole (catfish). Esc recast.";
+                StatusHint = "No fish took the cast. Recast with left mouse.";
+                NoteRecast(StatusHint);
                 return;
             }
 
-            StatusHint = "Fish nearby — wiggle A/D until the bite, then hold LMB.";
+            StatusHint = "WAITING — line is in the water. Wiggle A/D.";
             var attract = GetComponent<FishingAttractPhase>();
             if (attract != null)
                 attract.BeginAttract();
@@ -408,7 +433,8 @@ namespace Bayou.Fishing
         {
             _hasLanded = true;
             Phase = FishingNetPhase.LandedOnLand;
-            StatusHint = "Missed the water. Esc / RMB recast.";
+            StatusHint = "Missed the water. Recast with left mouse.";
+            NoteRecast(StatusHint);
             CancelMissLifetime();
 
             if (!stickOnDryLand)

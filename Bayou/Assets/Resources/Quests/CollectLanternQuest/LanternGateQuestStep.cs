@@ -11,7 +11,29 @@ public sealed class LanternGateQuestStep : QuestStep
     [SerializeField] private string markerLabel = "Gate";
     [SerializeField] private string lanternItemId = "Item_Lantern";
 
+    private string _authoredLabel;
+    private string _postedLabel;
+
+    private void Awake()
+    {
+        _authoredLabel = string.IsNullOrWhiteSpace(markerLabel) ? "Gate" : markerLabel;
+    }
+
     private void Start()
+    {
+        if (string.IsNullOrWhiteSpace(_authoredLabel))
+            _authoredLabel = string.IsNullOrWhiteSpace(markerLabel) ? "Gate" : markerLabel;
+
+        if (ShouldFinish())
+        {
+            FinishQuestStep();
+            return;
+        }
+
+        RefreshObjective();
+    }
+
+    private void Update()
     {
         if (ShouldFinish())
         {
@@ -19,18 +41,18 @@ public sealed class LanternGateQuestStep : QuestStep
             return;
         }
 
-        ChangeState(markerLabel);
-    }
-
-    private void Update()
-    {
-        if (ShouldFinish())
-            FinishQuestStep();
+        RefreshObjective();
     }
 
     public override bool TryGetObjectiveWorldPosition(out Vector3 worldPosition, out string label)
     {
-        label = markerLabel;
+        if (WantsCaliste() && QuestObjectiveLocator.TryFindCaliste(out worldPosition, out label))
+        {
+            label = "Caliste";
+            return true;
+        }
+
+        label = string.IsNullOrWhiteSpace(_authoredLabel) ? markerLabel : _authoredLabel;
         var gate = FindGate();
         if (gate == null)
         {
@@ -44,8 +66,33 @@ public sealed class LanternGateQuestStep : QuestStep
 
     protected override void SetQuestStepState(string state)
     {
-        if (!string.IsNullOrWhiteSpace(state))
-            markerLabel = state;
+        if (string.IsNullOrWhiteSpace(state)) return;
+        if (string.Equals(state, "Caliste", System.StringComparison.Ordinal)) return;
+        markerLabel = state;
+        _authoredLabel = state;
+    }
+
+    private void RefreshObjective()
+    {
+        var next = WantsCaliste() ? "Caliste" : _authoredLabel;
+        if (string.IsNullOrWhiteSpace(next) || next == _postedLabel) return;
+        _postedLabel = next;
+        ChangeState(next);
+    }
+
+    private static bool WantsCaliste()
+    {
+        if (PlayerHasMazeKey()) return false;
+        return QuestObjectiveLocator.TryFindCaliste(out _, out _);
+    }
+
+    private static bool PlayerHasMazeKey()
+    {
+        var inv = InventoryController.Instance ?? Object.FindFirstObjectByType<InventoryController>();
+        if (inv != null && inv.HasItemsById(KeyGateManager.MazeGateKeyItemId, 1))
+            return true;
+        var keys = KeyGateManager.Instance ?? Object.FindFirstObjectByType<KeyGateManager>();
+        return keys != null && keys.hasKeyMazeGate;
     }
 
     private bool ShouldFinish()
@@ -63,6 +110,9 @@ public sealed class LanternGateQuestStep : QuestStep
         {
             var gate = gates[i];
             if (gate == null) continue;
+            if (string.Equals(keyFlag, KeyGateManager.GraveyardKeyFlag, System.StringComparison.OrdinalIgnoreCase) &&
+                gate.HierarchyContains("Foggy"))
+                continue;
             if (!string.IsNullOrWhiteSpace(keyFlag) &&
                 !string.Equals(gate.KeyFlagName, keyFlag, System.StringComparison.OrdinalIgnoreCase))
                 continue;

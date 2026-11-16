@@ -95,10 +95,19 @@ public class InkExternalFunctions
     {
         var inv = InventoryController.Instance;
         if (inv == null) return false;
+        if (IsRosaryHandover(itemId))
+            itemId = "Item_RosaryNecklace";
         var removed = inv.TryRemoveItemsById(itemId, Mathf.Max(1, count));
         if (removed)
             NoteReturnedCargo(itemId);
         return removed;
+    }
+
+    private static bool IsRosaryHandover(string itemId)
+    {
+        if (string.IsNullOrWhiteSpace(itemId)) return false;
+        return ItemDefinition.IsPondQuestItem(itemId) ||
+               itemId.IndexOf("Rosary", System.StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
     private static void NoteReturnedCargo(string itemId)

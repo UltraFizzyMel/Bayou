@@ -386,8 +386,9 @@ namespace Bayou.UI
             var tag = go.AddComponent<QuestJournalRow>();
             tag.QuestId = id;
 
-            var title = quest.info.displayName;
-            var line2 = quest.GetJournalStatusLabel() + "  ·  " + quest.GetHudObjectiveText();
+            var title = QuestFishNames.Tint(quest.info.id, quest.info.displayName);
+            var line2 = quest.GetJournalStatusLabel() + "  ·  " +
+                        QuestFishNames.Tint(quest.info.id, quest.GetHudObjectiveText());
             if (string.IsNullOrWhiteSpace(quest.GetHudObjectiveText()) ||
                 quest.state == QuestState.FINISHED)
                 line2 = quest.GetJournalStatusLabel();
@@ -468,11 +469,12 @@ namespace Bayou.UI
                 return;
             }
 
-            _detailTitle.text = quest.info.displayName;
+            _detailTitle.richText = true;
+            _detailTitle.text = QuestFishNames.Tint(quest.info.id, quest.info.displayName);
             _detailStatus.text = quest.GetJournalStatusLabel();
             _detailStatus.color = StatusColor(quest.state);
 
-            var body = quest.GetHudObjectiveText();
+            var body = QuestFishNames.Tint(quest.info.id, quest.GetHudObjectiveText());
             if (quest.state == QuestState.CAN_START)
                 body = "This job is ready to take. Progress will show here once it is underway.";
             else if (quest.state == QuestState.FINISHED)
@@ -491,6 +493,7 @@ namespace Bayou.UI
                     ? "\n\nThis quest is pinned on the compass."
                     : "\n\nClick the entry again, or Track, to pin it.";
 
+            _detailBody.richText = true;
             _detailBody.text = body;
             if (_trackLabel != null)
                 _trackLabel.text = quest.IsActiveForHud ? (tracked ? "Tracking" : "Click to track") : "";
@@ -530,7 +533,19 @@ namespace Bayou.UI
             dim.raycastTarget = true;
 
             var panel = CreatePanel("Panel", _root.transform, new Vector2(0.5f, 0.5f), new Vector2(1080f, 680f));
-            panel.GetComponent<Image>().color = ShopUiStyle.PanelBrown;
+            var panelImage = panel.GetComponent<Image>();
+            var journalArt = LoadJournalArt();
+            if (journalArt != null)
+            {
+                panelImage.sprite = journalArt;
+                panelImage.type = Image.Type.Simple;
+                panelImage.preserveAspect = false;
+                panelImage.color = Color.white;
+            }
+            else
+            {
+                panelImage.color = ShopUiStyle.PanelBrown;
+            }
 
             var header = CreateTmp("Header", panel.transform, "Quest Journal", 28f, FontStyles.Bold,
                 TextAlignmentOptions.MidlineLeft, ShopUiStyle.TextCream);
@@ -543,7 +558,9 @@ namespace Bayou.UI
                 new Vector2(-200f, -58f), new Vector2(-24f, -16f));
 
             var listPanel = CreatePanel("List", panel.transform, new Vector2(0.5f, 0.5f), new Vector2(100f, 100f));
-            listPanel.GetComponent<Image>().color = ShopUiStyle.HeaderFooter;
+            listPanel.GetComponent<Image>().color = journalArt != null
+                ? new Color(ShopUiStyle.HeaderFooter.r, ShopUiStyle.HeaderFooter.g, ShopUiStyle.HeaderFooter.b, 0.72f)
+                : ShopUiStyle.HeaderFooter;
             Pin(listPanel.GetComponent<RectTransform>(), new Vector2(0f, 0f), new Vector2(0.46f, 1f),
                 new Vector2(20f, 20f), new Vector2(-8f, -70f));
 
@@ -578,7 +595,9 @@ namespace Bayou.UI
             scroll.viewport = scrollGo.GetComponent<RectTransform>();
 
             var detail = CreatePanel("Detail", panel.transform, new Vector2(0.5f, 0.5f), new Vector2(100f, 100f));
-            detail.GetComponent<Image>().color = ShopUiStyle.HeaderFooter;
+            detail.GetComponent<Image>().color = journalArt != null
+                ? new Color(ShopUiStyle.HeaderFooter.r, ShopUiStyle.HeaderFooter.g, ShopUiStyle.HeaderFooter.b, 0.72f)
+                : ShopUiStyle.HeaderFooter;
             Pin(detail.GetComponent<RectTransform>(), new Vector2(0.46f, 0f), new Vector2(1f, 1f),
                 new Vector2(8f, 20f), new Vector2(-20f, -70f));
 
@@ -650,6 +669,14 @@ namespace Bayou.UI
             go.AddComponent<EventSystem>();
             go.AddComponent<InputSystemUIInputModule>();
             go.AddComponent<BayouUiInputBootstrap>();
+        }
+
+        private static Sprite LoadJournalArt()
+        {
+            var sprite = Resources.Load<Sprite>("Bayou/UI/JournalUIPaperTexture");
+            if (sprite == null)
+                sprite = Resources.Load<Sprite>("Bayou/Ui/JournalUIPaperTexture");
+            return sprite;
         }
 
         private static GameObject CreatePanel(string name, Transform parent, Vector2 pivot, Vector2 size)

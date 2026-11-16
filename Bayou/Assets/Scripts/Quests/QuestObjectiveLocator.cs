@@ -250,6 +250,41 @@ public static class QuestObjectiveLocator
         return true;
     }
 
+    public static bool TryFindCaliste(out Vector3 pos, out string label)
+    {
+        pos = default;
+        label = "Caliste";
+        var player = Bayou.Player.PlayerLocator.Transform;
+        var near = player != null ? player.position : Vector3.zero;
+
+        Transform best = null;
+        var bestSq = float.MaxValue;
+        for (var i = 0; i < CalisteNames.Length; i++)
+        {
+            var go = FindNamed(CalisteNames[i]);
+            if (go == null) continue;
+            var d = go.transform.position - near;
+            d.y = 0f;
+            var sq = d.sqrMagnitude;
+            if (sq < bestSq)
+            {
+                bestSq = sq;
+                best = go.transform;
+            }
+        }
+
+        if (best == null)
+        {
+            var keeper = UnityEngine.Object.FindFirstObjectByType<Bayou.Inventory.Shop.Shopkeeper>();
+            if (keeper != null)
+                best = keeper.transform;
+        }
+
+        if (best == null) return false;
+        pos = best.position + Vector3.up * 1.8f;
+        return true;
+    }
+
     private static bool TryFindNamedNpc(string questId, Vector3 near, out Vector3 pos, out string label)
     {
         pos = default;

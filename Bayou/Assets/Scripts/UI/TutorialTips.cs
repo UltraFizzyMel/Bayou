@@ -44,7 +44,6 @@ namespace Bayou.UI
         private Canvas _canvas;
         private GameObject _panel;
         private TextMeshProUGUI _body;
-        private bool _netTipQueued;
         private bool _journalRequested;
         private bool _campfireRequested;
         private bool _inventoryWasOpen;
@@ -64,6 +63,12 @@ namespace Bayou.UI
         }
 
         public static void NotifyInventoryClosed() => Instance?.OnInventoryClosed();
+
+        /// <summary>
+        /// Shows the one-time inventory card in the same call that opens the bag,
+        /// so the tip is already visible on the first frame the panel appears.
+        /// </summary>
+        public static void NotifyInventoryOpened() => Instance?.ShowInventoryTipWithBag();
         public static void NotifyShopOpened() => Instance?.RequestShop();
         public static void NotifyShopClosed() => Instance?.OnShopClosed();
         public static void NotifyJournalOpened() => Instance?.OnJournalOpened();
@@ -97,7 +102,6 @@ namespace Bayou.UI
         private void Update()
         {
             if (IsMainMenu()) return;
-            PollHandNet();
             PollQuest();
             PollCampfire();
             if (DialogueIsPlaying() && _shown != null)
@@ -113,18 +117,44 @@ namespace Bayou.UI
                    string.Equals(scene.name, "MainMenu", System.StringComparison.OrdinalIgnoreCase);
         }
 
-        private void PollHandNet()
+        private const string InventoryTipBody =
+            "Click an item, then hold and drag it over an inventory slot to place it.\nPress I to open or close the inventory.\nWhile holding an object, press R to rotate it.";
+
+        private void ShowInventoryTipWithBag()
         {
-            if (_netTipQueued || Seen("inventory")) return;
-            var inv = InventoryController.Instance;
-            if (inv == null || !inv.HasItemsById("Item_HandNet", 1)) return;
-            // Already owned at startup, or just picked up: wait until dialogue and the receive card are gone.
-            if (DialogueIsPlaying() || CaughtFishPresenter.IsBusy) return;
-            _netTipQueued = true;
-            Request("inventory",
-                "Click an item, then hold and drag it over an inventory slot to place it.\nPress I to open or close the inventory.\nWhile holding an object, press R to rotate it.",
-                TipDismiss.InventoryClose,
-                pause: false);
+            if (Seen("inventory")) return;
+            if (_shown != null && _shown.Id == "inventory")
+            {
+                _inventoryWasOpen = true;
+                if (_panel != null)
+                    _panel.SetActive(true);
+                return;
+            }
+
+            for (var i = _queue.Count - 1; i >= 0; i--)
+            {
+                if (_queue[i].Id == "inventory")
+                    _queue.RemoveAt(i);
+            }
+
+            if (_shown != null)
+                ShelveShown();
+
+            _shown = new Tip
+            {
+                Id = "inventory",
+                Body = InventoryTipBody,
+                Dismiss = TipDismiss.InventoryClose,
+                Pause = false
+            };
+            _inventoryWasOpen = true;
+            _shopWasOpen = ShopOpen();
+            _journalWasOpen = false;
+            _campfireUiWasOpen = CampfireUiOpen();
+            if (_body != null)
+                _body.text = _shown.Body;
+            if (_panel != null)
+                _panel.SetActive(true);
         }
 
         private void PollQuest()

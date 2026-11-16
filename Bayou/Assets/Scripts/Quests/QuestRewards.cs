@@ -69,6 +69,13 @@ public static class QuestRewards
         spec = default;
         switch (questId)
         {
+            case QuestIds.CollectPondItem:
+                // Landry's turn-in. Ink may also HandOverItem; a second remove is a no-op.
+                // The cross is skipped below if GiveItem already put it in the bag.
+                spec = new Spec(
+                    consume: new[] { ("Item_RosaryNecklace", 1) },
+                    grantItems: new[] { "Item_Cross" });
+                return true;
             case QuestIds.CollectLantern:
                 // Landry's lantern turn-in already GiveItem/GrantKey the foggy marsh key.
                 // Skip here so the key is not granted twice. GrantItem also skips if owned.
