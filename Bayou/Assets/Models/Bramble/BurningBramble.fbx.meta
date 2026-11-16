@@ -3,7 +3,42 @@ guid: 17abdb6f59adc08488891337f0e96e3d
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: AshDark
+    second: {fileID: 2100000, guid: 680ccead03da7aa43b82e863c97dc282, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: AshGrey
+    second: {fileID: 2100000, guid: f8930118f75b7ac4cbec4e6e1f8eeb8b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BurningBrambleCane
+    second: {fileID: 2100000, guid: 59a86665d8817f4448f8d5664b889dd5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BurningBrambleCore
+    second: {fileID: 2100000, guid: 8494247260459f1489bbfe49afb81216, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BurningBrambleThorns
+    second: {fileID: 2100000, guid: aef430cf68d24d644bbdb2913cd0e5f2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: DimEmber
+    second: {fileID: 2100000, guid: ea9797f4619e7234cadfb3c9e735a1f6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: HotEmber
+    second: {fileID: 2100000, guid: 15c4565b537bdad499b2c887e02ca1c6, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

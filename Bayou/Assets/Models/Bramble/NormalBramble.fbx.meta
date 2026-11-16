@@ -3,7 +3,42 @@ guid: ede620c68101dcb42afe38a74cc582df
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BrambleBerry
+    second: {fileID: 2100000, guid: 8727ad0256eadfa4b963967daed2ebe2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BrambleCane
+    second: {fileID: 2100000, guid: ea2fe64c84765884ba4b79ab601ae8ae, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BrambleCaneRed
+    second: {fileID: 2100000, guid: 10355867a857e074db0a7ee275f7d15b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BrambleCore
+    second: {fileID: 2100000, guid: 9ad60b84da39c6c4d8a99231f64a20be, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BrambleLeafDark
+    second: {fileID: 2100000, guid: 42bfa40d12f38cd4c88c7d07e3aac2bb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BrambleLeafWithered
+    second: {fileID: 2100000, guid: c3b12bb668db9c24eb8bd0818deab46c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: BrambleThorns
+    second: {fileID: 2100000, guid: 77ee6f604f6876349a58f9fcb8cfe54c, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
