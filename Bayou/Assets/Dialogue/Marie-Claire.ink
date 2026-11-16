@@ -429,6 +429,7 @@ Have you disposed of the squeezebox?!
 ->END
 
 ===HowDisappointing ===
+~SeenDisappointment = true
 How... Disappointing...
 I suppose it cannot be helped now...
 Since you failed my last request, the least you could do is complete my next one. 

@@ -46,7 +46,6 @@ VAR olivier_known = ""
 VAR accordian_returned = false
 VAR accordion_returned = false
 VAR is_olivier_alive = true
-VAR is_Olivier_alive = true
 VAR olivier_firstmeeting = true
 VAR olivierquestionsasked = 0
 VAR Sad = false
@@ -186,3 +185,9 @@ VAR ASecondWayOutQuestId = "ASecondWayOutQuest"
 
 //quest states (questId + "State" for variable name)
 VAR ASecondWayOutQuestState = "CAN_START"
+
+VAR SeenPlacedFlower = false
+VAR SeenBaptistesExplanation = false
+VAR SeenDisappointment = false
+VAR SeenMarieYouSay = false
+VAR SeenMrLafleur = false

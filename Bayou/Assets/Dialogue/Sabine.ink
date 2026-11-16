@@ -127,7 +127,7 @@ What help are you seeking?
 
  *{flowerPlaced == true}[I placed the flower.]
  ->PlacedFlower
- *{ HasItem("Item_ChannelCatfish", 1) && HasItem("Item_AlligatorGar", 1) && BaptistesFued && !ACatfishAndAGrar}[I have the Catfish and the Grar.]->ACatfishAndAGrar
+ *{ HasItem("Item_ChannelCatfish", 1) && HasItem("Item_AlligatorGar", 1) && BaptistesFued && !ACatfishAndAGrar && (not is_olivier_alive or is_marie_alive)}[I have the Catfish and the Grar.]->ACatfishAndAGrar
  
  *{HasHerbalistFlower == true && !DeliverFlower}[I have a flower for you.]
  -> DeliverFlower 
@@ -158,17 +158,18 @@ What help are you seeking?
  ->SabineCaliste
  +{SabineCaliste}[How are things with Caliste?]
  ->SabineCalisteRelationship
- *{marie_known != "" && olivier_known != ""}[Do you know the Baptistes?]
+ *{marie_known != "" && olivier_known != "" && not SeenBaptistesExplanation}[Do you know the Baptistes?]
  ->BaptistesExplanation
  
- *{BaptistesExplanation && marie_known != "" && olivier_known != "" && sabinequestionsasked >=2}[What would you do about the Baptistes?]
+ *{SeenBaptistesExplanation && marie_known != "" && olivier_known != "" && sabinequestionsasked >=2}[What would you do about the Baptistes?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->BaptistesFued
  
- *{PlacedFlower}[You called me Mr. Lafleur?]
+ *{SeenPlacedFlower && not SeenMrLafleur}[You called me Mr. Lafleur?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->MrLafleur
- *{sabinequestionsasked >=3}[What have you lost?]
+ 
+ +{sabinequestionsasked >=3}[What have you lost?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->SabineLost
  
@@ -180,6 +181,7 @@ What help are you seeking?
  ->goodbye
  
 === BaptistesExplanation
+~ SeenBaptistesExplanation = true
 A pair destined for eternity but is eternity destined for them?
 They need to listen to the unspoken storm brewing between them before it consumes them both.
 ...
@@ -238,7 +240,9 @@ Not that I can tell you more about them...
 ->END
 
 ===MrLafleur
+~SeenMrLafleur = true
 ...
+I cannot say...
 Please stay safe out in the swirling waters.
 ->END
 
@@ -260,6 +264,7 @@ Please place it in a place more suited.
  
  ===PlacedFlower
  //On placing the flower the player should get key for deeper in the graveyard not on returning to Sabine.
+~SeenPlacedFlower = true
 I trust you found a missing thread on the tapestry you're walking?
 Keep a gentle touch lest the thread dissolves your painted silk into a river of loose fibres.
 That key you found leads deeper into the graveyards depths.

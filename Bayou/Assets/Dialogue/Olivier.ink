@@ -396,6 +396,7 @@ Oh my! Where? where did you find my accordion?
 
 
 ===MarieYouSay
+~SeenMarieYouSay = true
 Oh... Marie gave the accordion to you...
 That's...
 That's good to know.
@@ -448,6 +449,7 @@ Wouldn't want to burden Marie.
 ~is_marie_alive = false
 ~FinishQuest(AMealToDieForOlivierQuestId)
 //Cancel the catfish and grar quest for sabine
+
 ->END
 
 ===OlivierDeadHappyOrAlive
