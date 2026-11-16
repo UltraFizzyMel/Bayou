@@ -433,7 +433,7 @@ Ah... that's alright.
 }
 <b>DON'T...</b> Oh it's you.
 Did you find em and show em the flower ?
-+{flowerPlaced}[I did.]
++{deliveredFlower}[I did.]
 ->SatchelReward
 +[I have not.]
 ->StillSearching
@@ -447,7 +447,7 @@ Since you're here...
 ->BasicWaresIntro
 
 ===ReplaceHerbalistFlower
-You lost the magnolia. Take another. It still has to be placed on the grave.
+You lost the magnolia... Take another. 
 ~ GiveItem("Item_HerbalistFlower", 1)
 ->StillSearching
 
@@ -488,7 +488,7 @@ Don't let the bayou get ya.
 { HasItem("Item_Flounder", 1) && HasItem("Item_LargemouthBass", 1) && HasItem("Item_BlueCrab", 1)}Did you get the three fish?
 +{ HasItem("Item_Flounder", 1) && HasItem("Item_LargemouthBass", 1) && HasItem("Item_BlueCrab", 1)}[I have.]
 ->KeyReward
-+[Not Yet]
++[Not Yet.]
 ->TakeYourTime
 
 

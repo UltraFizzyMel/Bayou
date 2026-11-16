@@ -127,7 +127,9 @@ What help are you seeking?
 
  *{flowerPlaced == true}[I placed the flower.]
  ->PlacedFlower
- *{ HasItem("Item_ChannelCatfish", 1) && HasItem("Item_AlligatorGar", 1) && BaptistesFued && !ACatfishAndAGrar}[I have the Catfish and the Grar.]->ACatfishAndAGrar
+ *{ HasItem("Item_SpottedGar", 1) && HasItem("Item_Item_Crawfish", 1) && BaptistesFued && not SeenACrawfishAndAGrar && is_olivier_alive && is_marie_alive}[I have the Crawfish and the Grar.]->ACatfishAndAGrar
+ *{not is_olivier_alive or not is_marie_alive && not SeenFailedBaptistes}[I don't think ]
+ ->FailedBaptitses
  
  *{HasHerbalistFlower == true && !DeliverFlower}[I have a flower for you.]
  -> DeliverFlower 
@@ -135,7 +137,12 @@ What help are you seeking?
 +[Stay safe Sabine.]
  -> goodbye
  
+ ===FailedBaptitses
+ ~SeenFailedBaptistes = true
+ ->END
+ 
  ===ACatfishAndAGrar
+ ~SeenACrawfishAndAGrar = true
  Hopefully this offering will lead to a new spark.
  Doesn't it feel good to share your flame with another?
  +[I don't remember.]
@@ -158,17 +165,18 @@ What help are you seeking?
  ->SabineCaliste
  +{SabineCaliste}[How are things with Caliste?]
  ->SabineCalisteRelationship
- *{marie_known != "" && olivier_known != ""}[Do you know the Baptistes?]
+ *{marie_known != "" && olivier_known != "" && not SeenBaptistesExplanation}[Do you know the Baptistes?]
  ->BaptistesExplanation
  
- *{BaptistesExplanation && marie_known != "" && olivier_known != "" && sabinequestionsasked >=2}[What would you do about the Baptistes?]
+ *{SeenBaptistesExplanation && marie_known != "" && olivier_known != "" && sabinequestionsasked >=2}[What would you do about the Baptistes?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->BaptistesFued
  
- *{PlacedFlower}[You called me Mr. Lafleur?]
+ *{SeenPlacedFlower && not SeenMrLafleur}[You called me Mr. Lafleur?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->MrLafleur
- *{sabinequestionsasked >=3}[What have you lost?]
+ 
+ +{sabinequestionsasked >=3}[What have you lost?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->SabineLost
  
@@ -180,6 +188,7 @@ What help are you seeking?
  ->goodbye
  
 === BaptistesExplanation
+~ SeenBaptistesExplanation = true
 A pair destined for eternity but is eternity destined for them?
 They need to listen to the unspoken storm brewing between them before it consumes them both.
 ...
@@ -193,8 +202,9 @@ What do you mean?
 
 ===SimpleBaptisteSolution
 Nothing a heartfelt meal can't fix. The way to someone's heart can often be through their stomach afterall.
-Bring me a catfish and a grar and don't tell them anything. 
  ~StartQuest(ACatfishAndAGrarQuestId)
+Bring me a crawfish and a spotted grar and don't tell them anything.
+
 ->END
 
 ===SabineCaliste
@@ -238,7 +248,9 @@ Not that I can tell you more about them...
 ->END
 
 ===MrLafleur
+~SeenMrLafleur = true
 ...
+I cannot say...
 Please stay safe out in the swirling waters.
 ->END
 
@@ -260,6 +272,7 @@ Please place it in a place more suited.
  
  ===PlacedFlower
  //On placing the flower the player should get key for deeper in the graveyard not on returning to Sabine.
+~SeenPlacedFlower = true
 I trust you found a missing thread on the tapestry you're walking?
 Keep a gentle touch lest the thread dissolves your painted silk into a river of loose fibres.
 That key you found leads deeper into the graveyards depths.
@@ -332,8 +345,8 @@ Thank you Mr. Lafleur.
  === Helpritual
  I will need you to find three fish from across the Bayou.
  An Alligator Grar, the living nightmare from the Sunken Grove.
- A Largemouth Bass from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
- A Blue Catfish from the Brackish Shore. Closer to the start of your journey than you may ever have realised.
+ A Blue Catfish from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
+ A Largemouth Bass from the Brackish Shore. Closer to the start of your journey than you may ever have realised.
 Retrieve these three for me and you might just find what you've lost.
 Your remaining light is but a flicker, I hope it will be enough...
  ->END
@@ -356,7 +369,7 @@ I hope you change your mind.
  ->goodbye
  
  ===Ritualcomplete
- Ah! The final ember will not need to disolve into a thread of smoke!
+ Ah! The final ember will not need to disolve into a fading thread of smoke!
  Hand over the Three. 
  Oh and your Rosary too.
  ~FinishQuest(TheseRitualComponentsSeemSlipperyQuestId)
@@ -369,7 +382,7 @@ I hope you change your mind.
  
  ===FinishedRitual
  ....
- Tshhhhhhhhh//Play a sound hear tied to ritual?
+ Tshhhhhhhhh//Play a sound here tied to ritual?
  ...
  Go now Fabian into the core of the Sunken Grove. There you will find what you have been searching for.
  ->END
@@ -377,8 +390,8 @@ I hope you change your mind.
  ===UtmostImportance
  Their importance dwarfs either one of us. Let me remind you of the three.
  An Alligator Grar, the living nightmare from the Sunken Grove.
- A Largemouth Bass from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
- A Blue Catfish from the Brackish Shore. Closer to the start of your journey than you may ever have realised.
+ A Blue Catfish from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
+ A Largemouth Bass from the Brackish Shore. Closer to the start of your journey than you may ever have realised.
  Make haste but be careful, the Bayou is always listening.
  ->END
  

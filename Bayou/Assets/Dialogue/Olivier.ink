@@ -106,8 +106,8 @@ I have a key for any gates linking the Foggy Marsh and the Graveyard I could giv
 
 === AgreeToCatch ===
 Thank you friend!
-Please hurry, I cannot keep Marie waiting.
 ~StartQuest(EmergencyDinnerQuestId)
+Please hurry, I cannot keep Marie waiting.
 ->END
 
 === Refusal ===
@@ -133,19 +133,28 @@ Stay safe out there friend.
 Thank you so much my friend!
 Here's that key I promised ya!
 Please visit whenever you wish to, I just need to prepare dinner real quick.
-Stay safe out in the fog my friend.
 ~FinishQuest(EmergencyDinnerQuestId)
+Stay safe out in the fog my friend.
 ->END
 
 === OlivierStandardIntro
-{!SeenAccordionExplanation && EmergencyDinnerQuestState == "FINISHED" && inBrackishShore == true: ->LostAccordion}
-{!Sad}Good Evening my friend!
-{!Sad}You look in need of a touch of musical delight, alright!
-{!Sad}How can I help ya?
-{Sad}Evening friend.
-{Sad}I'm afraid I don't have any tunes for you tonight, my accordion is lost yet again.
-{Sad}Still, how could I help you?
+{!SeenAccordionExplanation && EmergencyDinnerQuestState == "FINISHED" && inBrackishShore == true: ->LostAccordion |-> ContinueIntro}
 
+===ContinueIntro
+
+{Sad:-> SadIntro | ->HappyIntro}
+->OlivierOptions
+
+=== SadIntro
+Evening friend.
+I'm afraid I don't have any tunes for you tonight, my accordion is lost yet again.
+Still, how could I help you?
+->OlivierOptions
+
+===HappyIntro
+Good Evening my friend!
+You look in need of a touch of musical delight, alright!
+How can I help ya?
 ->OlivierOptions
 
 === OlivierAfterEelIntro
@@ -180,7 +189,7 @@ Stay safe out in the fog my friend.
 *{sabine_known != "" && olivierquestionsasked >=3 && !SeenOlivierSabine}[What do you think of Sabine?]
 ->OlivierSabine
 
-+{olivierquestionsasked >=4}[What have you lost?]
++{olivierquestionsasked >=4 && LostAccordionQuestState == "FINISHED"}[What have you lost?]
 ->OlivierLost
 +[Chat Later.]
  -> goodbye
@@ -188,17 +197,17 @@ Stay safe out in the fog my friend.
 
  
  ===OlivierMarie
- {!LostAccordionStart}I hope they're getting better but I have a feeling I have done something to annoy them...
-{!LostAccordionStart}I don't even have my music to help clear the tension between us.
-{LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart} Definitely on the upswing! We've had many big dinners thanks to you!
-{LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart} I'm going to serenade them more going forward to show them my love still reigns true.
-{AMealToDieForOlivierStart && !OlivierDeadHappyOrAlive}They're been... better but soon they won't have a lot to worry them anymore.
-{OlivierHappy}Ever since you worked your magic they've never been better. 
-{OlivierHappy}Well... maybe on our wedding night...
-{OlivierHappy}Other than that night, never better!
-{OlivierAlive}They're... they've never been better...
-{OlivierAlive}I ran a bubble bath for them that definitly shocked them.
-{OlivierAlive}They've decided to step back from the limelight for the moment. Best leave them be.
+ {not LostAccordionStart:I hope they're getting better but I have a feeling I have done something to annoy them...}
+{not LostAccordionStart:I don't even have my music to help clear the tension between us.}
+{LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart: Definitely on the upswing! We've had many big dinners thanks to you!}
+{LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart: I'm going to serenade them more going forward to show them my love still reigns true.}
+{AMealToDieForOlivierStart &&  not OlivierDeadHappyOrAlive:They're been... better but soon they won't have a lot to worry them anymore.}
+{OlivierHappy:Ever since you worked your magic they've never been better. }
+{OlivierHappy:Well... maybe on our wedding night...}
+{OlivierHappy:Other than that night, never better!}
+{OlivierAlive:They're... they've never been better...}
+{OlivierAlive:I ran a bubble bath for them that definitly shocked them.}
+{OlivierAlive:They've decided to step back from the limelight for the moment. Best leave them be.}
  {OlivierAlive:Wouldn't want to find yourself on their badside. Um...Anything else I could help you with?->OlivierOptions }
  ->EnoughOnMarie
  
@@ -231,7 +240,7 @@ Stay safe out in the fog my friend.
  Ok fine...
  I don't know them well.
  I occasionally see them through the fog. 
- Anyone  that can survive out there for as long as she has should be feared.
+ You should be wary of anyone who has survived in the fog as long as her.
  I can't say more.
  -> OlivierOptions
  
@@ -260,8 +269,9 @@ Stay safe out in the fog my friend.
  
  === repeatName ===
  ~ repeatNameVisited = true
- Forget me already?
  ~ olivierquestionsasked = olivierquestionsasked +1
+ Forget me already?
+
  ->questions
  
  
@@ -345,8 +355,7 @@ If you have spare time on your hands please it would mean the world to me if you
 Thank you my friend. 
 ...
 Could I have a moment alone?
-+[You may.]
-->END
++[You may.]->END
 
 ===LostAccordionInProgress
 Ah... Hello friend.
@@ -362,8 +371,8 @@ Sorry to bother but have you managed to find my Accordion?
 I extend my deepest gratitude towards you. Thank you.
 I have an extra satchel I can give you as thanks.
 If you ever need anything, don't hesitate to ask.
-Stay safe and don't swim too deep my friend.
 ~FinishQuest(LostAccordionQuestId)
+Stay safe and don't swim too deep my friend.
 ->END
 
 === OtherThing
@@ -387,6 +396,7 @@ Oh my! Where? where did you find my accordion?
 
 
 ===MarieYouSay
+~SeenMarieYouSay = true
 Oh... Marie gave the accordion to you...
 That's...
 That's good to know.
@@ -413,8 +423,8 @@ I cannot say more yet my friend.
 
 === AcceptedEels
 Thank you friend...
-Please return as soon as you have them.
 ~StartQuest(AMealToDieForOlivierQuestId)
+Please return as soon as you have them.
 ->END
 
 ===HowClumsy

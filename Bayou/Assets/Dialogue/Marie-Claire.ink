@@ -163,11 +163,17 @@ Should you ever need passage down to the Brackish Shore Church Entrance then we 
 
 
 === MarieStandardIntro
-{MarieHappyVisitedAmount != 1}Well, look who it is. Good Evening dear.
-{!ExpandedHorizonsInProgress && ExpandedHorizonsStart && ExpandedHorizonsQuestState != "FINISHED"}->ExpandedHorizons
-{LostAccordionQuestState == "FINISHED" && hasFoundThirdBoatLoaction == true && !SeenAccordionDisposal}->AccordianDisposal
-->MarieStandardBranching
+{MarieHappyVisitedAmount != 1:Well, look who it is. Good Evening dear.|}
 
+{ not ExpandedHorizonsInProgress && ExpandedHorizonsStart && ExpandedHorizonsQuestState != "FINISHED" && inBrackishShore == true:
+->ExpandedHorizons
+- else: 
+ {
+ - LostAccordionQuestState == "FINISHED" && hasFoundThirdBoatLoaction == true && !SeenAccordionDisposal: ->AccordianDisposal
+ -else:
+  ->MarieStandardBranching
+ }
+}
 
 
 
@@ -191,7 +197,7 @@ Anything else dear?
 
 ===MarieBranchingQuestions
 *{marie_known == ""}[Who are you?]
-{mariequestionsasked + 1}
+~ mariequestionsasked = mariequestionsasked + 1
 ->Name
 + [How are things with Mr. Baptiste.]
 ->MrBaptiste
@@ -211,7 +217,7 @@ Anything else dear?
 ~ mariequestionsasked = mariequestionsasked + 1
 ->Caliste
 
-*{mariequestionsasked >=5}[Do you... do you remember a hospital?]
++{mariequestionsasked >=5 && ExpandedHorizonsQuestState == "FINISHED"}[Do you... do you remember a hospital?]
 ~ mariequestionsasked = mariequestionsasked + 1
 ->TheHospital
 
@@ -221,13 +227,13 @@ Anything else dear?
 
 ===MrBaptiste
 ...
-{!ExpandedHorizonsStart:Should you really be prying?}
-{!ExpandedHorizonsStart:No. No you should not.}
-{ExpandedHorizonsStart && !AccordianDisposalStart: Honestly... never been worse.}
-{ExpandedHorizonsStart && !AccordianDisposalStart: Not once since being bound to this boat have they remembered my preferences.}
-{AccordianDisposalStart && !AMealToDieForStart: They are getting on my final nerve. }
-{AccordianDisposalStart && !AMealToDieForStart: All I want from them is to show an ounce of care for what I actually want.}
-{AMealToDieForStart && !DeadAliveOrHappy:They're about to get a whole lot better.}
+{not ExpandedHorizonsStart:Should you really be prying?}
+{not ExpandedHorizonsStart:No. No, you should not.}
+{ExpandedHorizonsStart &&  not AccordianDisposalStart: Honestly... never been worse.}
+{ExpandedHorizonsStart && not AccordianDisposalStart: Not once since being bound to this boat have they remembered my preferences.}
+{AccordianDisposalStart && not AMealToDieForStart: They are getting on my final nerve. }
+{AccordianDisposalStart && not AMealToDieForStart: All I want from them is to show an ounce of care for what I actually want.}
+{AMealToDieForStart && not DeadAliveOrHappy:They're about to get a whole lot better.}
 {MarieHappy:Surprisingly, they've improved substantially.}
 {MarieHappy:Well... when he takes his breaks from playing at least.}
 {MarieAlive:They're good...}
@@ -292,8 +298,8 @@ That's all I recall dear.
 ->MoreQuestions
 
 === BoatLocations
-{!MarieHappy}Well... spit it out, where to?
-{MarieHappy}Where to dear?
+{!MarieHappy:Well... spit it out, where to?}
+{MarieHappy:Where to dear?}
 { is_in_foggy_marsh: 
 +[Near the Church]
 -> ChurchTrip
@@ -322,7 +328,7 @@ That's all I recall dear.
 ~ TakeBoat("church")
 Don't bring any spiders back with you.
 - else:
-That passage is not open, or you are short the fish it costs.
+Please come back with the fish for payment dear.
 }
 ->END
 
@@ -332,7 +338,7 @@ That passage is not open, or you are short the fish it costs.
 ~ TakeBoat("grove")
 Don't blame me if you get lost in the Grove.
 - else:
-That passage is not open, or you are short the fish it costs.
+Please come back with the fish for payment dear.
 }
 ->END
 
@@ -342,7 +348,7 @@ That passage is not open, or you are short the fish it costs.
 ~ TakeBoat("foggy")
 Welcome back to the Foggy Marsh.
 - else:
-That passage is not open, or you are short the fish it costs.
+Please come back with the fish for payment dear.
 }
 ->END
 
@@ -423,6 +429,7 @@ Have you disposed of the squeezebox?!
 ->END
 
 ===HowDisappointing ===
+~SeenDisappointment = true
 How... Disappointing...
 I suppose it cannot be helped now...
 Since you failed my last request, the least you could do is complete my next one. 
@@ -479,10 +486,10 @@ Do you have all three pufferfish?
 
 ===MarieHappy
 ~MarieHappyVisitedAmount =  MarieHappyVisitedAmount +1
-{MarieHappyVisitedAmount == 1}Well, look who it is! Good Evening dear.
-{MarieHappyVisitedAmount == 1}You won't believe what Olivier and I had for dinner last night!
-{MarieHappyVisitedAmount == 1}Things are finally looking up for us. We did however discuss something important...
-{MarieHappyVisitedAmount == 1}The trips we're giving you... we're gonna need to up the cost to two fish per trip unfortunately.
-{MarieHappyVisitedAmount == 1}That'll be all.
+{MarieHappyVisitedAmount == 1:Well, look who it is! Good Evening dear.}
+{MarieHappyVisitedAmount == 1:You won't believe what Olivier and I had for dinner last night!}
+{MarieHappyVisitedAmount == 1:Things are finally looking up for us. We did however discuss something important...}
+{MarieHappyVisitedAmount == 1:The trips we're giving you... we're gonna need to up the cost to two fish per trip unfortunately.}
+{MarieHappyVisitedAmount == 1:That'll be all.}
 ->MarieStandardIntro
  
