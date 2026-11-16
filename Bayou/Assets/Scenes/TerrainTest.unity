@@ -17877,6 +17877,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6797524622364177450, guid: d0eee295eef89e2499df008d4086606a, type: 3}
   m_PrefabInstance: {fileID: 1193122605}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &221087513 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+  m_PrefabInstance: {fileID: 5806775066702699873}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &224238110 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6227560334956765329, guid: c579e5ab0f09ea24b94cf8235bb58485, type: 3}
@@ -29745,6 +29750,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd0e662b1a374c44c9ff099196483ba8, type: 3}
+--- !u!1 &364628670 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+  m_PrefabInstance: {fileID: 1079070456}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &366052154
 GameObject:
   m_ObjectHideFlags: 0
@@ -52002,6 +52012,65 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8823814424392643981, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
   m_PrefabInstance: {fileID: 5806775066702699873}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &604466029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221087513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
+  questIds:
+  - LostCargoQuest
+  role: 0
+  itemId: Item_CalisteCargoGraveyard
+  labelOverride: Graveyard cargo
+  markerOffset: {x: 0, y: 1.6, z: 0}
+--- !u!114 &604466030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221087513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c3d4e5f6a7890123456789abcdef01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Quests.QuestItemPickup
+  item: {fileID: 11400000, guid: a11e5701b5ea1500030000000000000f, type: 2}
+  playerTag: Player
+  destroyOnPickup: 1
+  visualCue: {fileID: 0}
+  pickupPrompt: Pick up
+  endDemoOnPickup: 0
+  addStraightToBag: 1
+  preservePlacedCargoVisual: 1
+--- !u!135 &604466031
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221087513}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1.7598244
+  m_Center: {x: 0, y: 0.39596048, z: 0}
 --- !u!1 &604918005
 GameObject:
   m_ObjectHideFlags: 0
@@ -68726,6 +68795,65 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8823814424392643981, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
   m_PrefabInstance: {fileID: 1079070456}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &782846421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364628670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
+  questIds:
+  - LostCargoQuest
+  role: 0
+  itemId: Item_CalisteCargoFoggy
+  labelOverride: Foggy marsh cargo
+  markerOffset: {x: 0, y: 1.6, z: 0}
+--- !u!114 &782846422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364628670}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c3d4e5f6a7890123456789abcdef01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Quests.QuestItemPickup
+  item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000010, type: 2}
+  playerTag: Player
+  destroyOnPickup: 1
+  visualCue: {fileID: 0}
+  pickupPrompt: Pick up
+  endDemoOnPickup: 0
+  addStraightToBag: 1
+  preservePlacedCargoVisual: 1
+--- !u!135 &782846423
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364628670}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1.7598244
+  m_Center: {x: 0, y: 0.39596048, z: 0}
 --- !u!1001 &783764801
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -76652,7 +76780,16 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8823814424392643981, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 39543600}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1538934628}
+    - targetCorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1538934627}
+    - targetCorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1538934626}
   m_SourcePrefab: {fileID: 100100000, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
 --- !u!1 &872555297
 GameObject:
@@ -80060,6 +80197,7 @@ MonoBehaviour:
   pickupPrompt: Pick up
   endDemoOnPickup: 0
   addStraightToBag: 0
+  preservePlacedCargoVisual: 0
 --- !u!114 &910010206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -95045,7 +95183,16 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1944438082966023393, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 237953396}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 782846423}
+    - targetCorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 782846422}
+    - targetCorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 782846421}
   m_SourcePrefab: {fileID: 100100000, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
 --- !u!1001 &1079764635
 PrefabInstance:
@@ -137096,6 +137243,70 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 7702779526387289552, guid: f0097ed778c5e264fa3f02d5ccf0e71e, type: 3}
+--- !u!1 &1538934625 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+  m_PrefabInstance: {fileID: 871047631}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1538934626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1538934625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9622eca2193a1f43a5cb93ae7bba5d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestMarkerTarget
+  questIds:
+  - LostCargoQuest
+  role: 0
+  itemId: Item_CalisteCargoBrackish
+  labelOverride: Brackish shore cargo
+  markerOffset: {x: 0, y: 1.6, z: 0}
+--- !u!114 &1538934627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1538934625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c3d4e5f6a7890123456789abcdef01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Quests.QuestItemPickup
+  item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000011, type: 2}
+  playerTag: Player
+  destroyOnPickup: 1
+  visualCue: {fileID: 0}
+  pickupPrompt: Pick up
+  endDemoOnPickup: 0
+  addStraightToBag: 1
+  preservePlacedCargoVisual: 1
+--- !u!135 &1538934628
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1538934625}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1.7598244
+  m_Center: {x: 0, y: 0.39596048, z: 0}
 --- !u!1001 &1539636490
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -138888,6 +139099,7 @@ MonoBehaviour:
   pickupPrompt: Pick up lantern
   endDemoOnPickup: 0
   addStraightToBag: 1
+  preservePlacedCargoVisual: 0
 --- !u!65 &1556997997
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -196463,7 +196675,16 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 604466031}
+    - targetCorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 604466030}
+    - targetCorrespondingSourceObject: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 604466029}
   m_SourcePrefab: {fileID: 100100000, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
 --- !u!1001 &6253134006196962208
 PrefabInstance:
