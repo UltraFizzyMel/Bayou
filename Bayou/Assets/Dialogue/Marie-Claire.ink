@@ -217,7 +217,7 @@ Anything else dear?
 ~ mariequestionsasked = mariequestionsasked + 1
 ->Caliste
 
-+{mariequestionsasked >=5 && ExpandedHorizonsQuestState == "FINISHED}[Do you... do you remember a hospital?]
++{mariequestionsasked >=5 && ExpandedHorizonsQuestState == "FINISHED"}[Do you... do you remember a hospital?]
 ~ mariequestionsasked = mariequestionsasked + 1
 ->TheHospital
 
