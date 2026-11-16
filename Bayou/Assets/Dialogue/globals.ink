@@ -194,3 +194,4 @@ VAR SeenMrLafleur = false
 VAR ShownFlower = false
 VAR SeenFailedBaptistes = false
 VAR SeenACrawfishAndAGrar = false
+VAR SeenSabineCaliste = false

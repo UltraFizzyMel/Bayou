@@ -128,10 +128,10 @@ What help are you seeking?
  *{flowerPlaced == true}[I placed the flower.]
  ->PlacedFlower
  *{ HasItem("Item_SpottedGar", 1) && HasItem("Item_Item_Crawfish", 1) && BaptistesFued && not SeenACrawfishAndAGrar && is_olivier_alive && is_marie_alive}[I have the Crawfish and the Grar.]->ACatfishAndAGrar
- *{not is_olivier_alive or not is_marie_alive && not SeenFailedBaptistes}[I don't think ]
+ *{not is_olivier_alive or not is_marie_alive && not SeenFailedBaptistes && SeenACrawfishAndAGrar}[The Baptistes can't be helped.]
  ->FailedBaptitses
  
- *{HasHerbalistFlower == true && !DeliverFlower}[I have a flower for you.]
+ *{HasHerbalistFlower == true && !deliveredFlower}[I have a flower for you.]
  -> DeliverFlower 
  
 +[Stay safe Sabine.]
@@ -139,6 +139,8 @@ What help are you seeking?
  
  ===FailedBaptitses
  ~SeenFailedBaptistes = true
+ Ah... 
+ Too late to change fate yet again.
  ->END
  
  ===ACatfishAndAGrar
@@ -160,10 +162,10 @@ What help are you seeking?
  ===SabineQuestions
  What question {shuffle:eats away at you?|plagues your mind?}
  
- *[Do you know Caliste?]
+ *{not SeenSabineCaliste}[Do you know Caliste?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->SabineCaliste
- +{SabineCaliste}[How are things with Caliste?]
+ +{SeenSabineCaliste}[How are things with Caliste?]
  ->SabineCalisteRelationship
  *{marie_known != "" && olivier_known != "" && not SeenBaptistesExplanation}[Do you know the Baptistes?]
  ->BaptistesExplanation
@@ -208,6 +210,7 @@ Bring me a crawfish and a spotted grar and don't tell them anything.
 ->END
 
 ===SabineCaliste
+~SeenSabineCaliste = true
 I do...
 I haven't seen them in the flesh for quite the long time.
 Should you have a moment to spare could you please get me a Red Snapper and a Sailfin Molly?
