@@ -184,7 +184,11 @@ namespace Bayou.Inventory
             if (sized && (size - _stableGridSize).sqrMagnitude > 0.25f)
             {
                 _stableGridSize = size;
-                _relayoutFrames = Mathf.Max(_relayoutFrames, 2);
+                // One follow-up pass only — Mathf.Max(..., 2) never reached zero when
+                // backpack grid size jittered, and ApplyFillLayout ran every LateUpdate
+                // while the bag was open on timeScale 0 (hand-net pickup felt like a freeze).
+                if (_relayoutFrames <= 0)
+                    _relayoutFrames = 1;
             }
 
             if (_relayoutFrames <= 0) return;

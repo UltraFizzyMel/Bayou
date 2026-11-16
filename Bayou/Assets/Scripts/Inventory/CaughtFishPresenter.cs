@@ -110,7 +110,12 @@ namespace Bayou.Inventory
                 host = go.AddComponent<CaughtFishPresenter>();
             }
 
-            host.Accept(fishItem, title, granted: false);
+            // Rod / net / lantern: grant and seat in the bag. Never open the drag-to-allocate
+            // flow on timeScale 0 (player builds appeared frozen with only the bottom hint bar).
+            if (fishItem.IsUniqueEquipment)
+                host.Accept(fishItem, title, granted: true);
+            else
+                host.Accept(fishItem, title, granted: false);
         }
 
         /// <summary>
@@ -208,7 +213,9 @@ namespace Bayou.Inventory
         private void Enqueue(ItemDefinition fishItem, string title, bool granted)
         {
             InventoryItemInstance held = null;
-            if (!granted)
+            if (fishItem != null && fishItem.IsUniqueEquipment)
+                granted = true;
+            else if (!granted)
             {
                 var inventory = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
                 if (inventory != null && inventory.TryHoldNewItem(fishItem, out held))
@@ -252,6 +259,12 @@ namespace Bayou.Inventory
                 else if (!_pending.IsPlaced)
                     inventory.TryPlaceAnywhere(_pending);
             }
+            else if (fishItem.IsUniqueEquipment)
+            {
+                _grantedReward = true;
+                if (!TrySeatUnique(inventory, fishItem, ref _pending))
+                    _pending = null;
+            }
             else if (!inventory.TryHoldNewItem(fishItem, out _pending))
             {
                 _pending = null;
@@ -289,7 +302,8 @@ namespace Bayou.Inventory
         private IEnumerator CatchFlow(ItemDefinition fishItem)
         {
             _revealing = true;
-            _revealUntil = Time.unscaledTime + Mathf.Max(0.35f, revealSeconds) + 0.35f;
+            var splash = fishItem.IsUniqueEquipment ? 0.3f : Mathf.Max(0.35f, revealSeconds);
+            _revealUntil = Time.unscaledTime + splash + 0.1f;
             if (!TryShowReveal(fishItem))
             {
                 EndSession(closeInventory: false);
@@ -298,7 +312,7 @@ namespace Bayou.Inventory
 
             GameplayPause.SyncFromUiState();
 
-            var wait = Mathf.Max(0.35f, revealSeconds);
+            var wait = fishItem.IsUniqueEquipment ? 0.3f : Mathf.Max(0.35f, revealSeconds);
             var t = 0f;
             while (t < wait)
             {
@@ -331,7 +345,10 @@ namespace Bayou.Inventory
                 HideReveal();
                 _revealing = false;
 
-                if (_grantedReward && _pending != null && _pending.IsPlaced)
+                if (fishItem.IsUniqueEquipment)
+                    return FinishUniquePickup(fishItem);
+
+                if (_pending != null && _pending.IsPlaced && _grantedReward)
                 {
                     var placedDef = _pending.definition;
                     if (placedDef != null && placedDef.IsUniqueEquipment)
@@ -370,6 +387,66 @@ namespace Bayou.Inventory
             EndSession(closeInventory: false);
             if (unique)
                 StartCoroutine(EquipNextFrame(def));
+        }
+
+        private bool FinishUniquePickup(ItemDefinition fishItem)
+        {
+            var inventory = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
+            if (inventory == null)
+            {
+                EndSession(closeInventory: true);
+                return false;
+            }
+
+            if (!TrySeatUnique(inventory, fishItem, ref _pending))
+            {
+                inventory.TryAddItem(fishItem);
+                _pending = inventory.FindExact(fishItem.Id);
+            }
+
+            var def = _pending?.definition ?? fishItem;
+            if (def != null)
+                StartCoroutine(EquipNextFrame(def));
+
+            EndSession(closeInventory: true);
+            return true;
+        }
+
+        /// <summary>
+        /// Puts unique gear on the grid without the drag allocation step.
+        /// </summary>
+        private static bool TrySeatUnique(
+            InventoryController inventory,
+            ItemDefinition def,
+            ref InventoryItemInstance pending)
+        {
+            if (inventory == null || def == null) return false;
+
+            if (pending != null && pending.IsPlaced) return true;
+            if (pending != null && !pending.IsPlaced && inventory.TryPlaceAnywhere(pending))
+                return true;
+
+            if (pending != null && !pending.IsPlaced)
+            {
+                inventory.Bag?.Remove(pending);
+                pending = null;
+            }
+
+            pending = inventory.FindExact(def.Id);
+            if (pending != null)
+            {
+                if (pending.IsPlaced) return true;
+                if (inventory.TryPlaceAnywhere(pending)) return true;
+            }
+
+            if (inventory.TryAddItem(def))
+            {
+                pending = inventory.FindExact(def.Id);
+                return pending != null && pending.IsPlaced;
+            }
+
+            pending = inventory.GrantReward(def);
+            return pending != null && pending.IsPlaced;
         }
 
         private static IEnumerator EquipNextFrame(ItemDefinition def)
