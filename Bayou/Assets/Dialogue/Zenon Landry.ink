@@ -323,14 +323,21 @@ How might I be of service?
 
 ===ZenonCaliste
 ~landryquestionsasked = landryquestionsasked + 1
+She chose to make a trade in order to become the best trader...
+However she lost something which could never be replaced.
 ->END
 
 ===ZenonBaptistes
 ~landryquestionsasked = landryquestionsasked + 1
+An unlikely pair you'd think. They used to be much happier.
+How long until Marie's deal for eternity becomes her own worst nightmare?
+How long will Olivier continue to play music that is the best in the eyes of everyone except her?
 ->END
 
 ===ZenonGrave
 ~landryquestionsasked = landryquestionsasked + 1
+...
+You best forget you saw it.
 ->END
 
  === goodbye ===
