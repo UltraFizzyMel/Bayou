@@ -100,7 +100,7 @@ Care to do me a favour?
  -else:
  You had a change of heart?
  +[I have.]
- -> AFavourIntroduction
+ -> AcceptedFirstFavour
 +[I haven't]
  -> ChangedMind
 }
@@ -156,9 +156,7 @@ What are you waiting for? Run along now, don’t keep me waiting.
 === HandOverFlounders
 Fabulous! Look at you go. As promised you will be rewarded.
 Should you ever need passage down to the Brackish Shore Church Entrance then we shall take you all the way there for the price of a single fish.
-
 ~ FinishQuest(PaymentForARideQuestId)
-
 ->MarieStandardBranching
 
 
@@ -174,7 +172,6 @@ Should you ever need passage down to the Brackish Shore Church Entrance then we 
   ->MarieStandardBranching
  }
 }
-
 
 
 === MarieStandardBranching ===
