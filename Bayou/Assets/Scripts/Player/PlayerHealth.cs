@@ -38,6 +38,8 @@ namespace Bayou.Player
         private float _poisonDebt;
         private string _poisonDeathTip;
 
+        public const string FastWaterDeathTip = "You died because you were in fast water.";
+
         public static string DeathScreenText { get; private set; } = "You collapsed.";
 
         private static readonly int ColorId = Shader.PropertyToID("_Color");
@@ -198,7 +200,7 @@ namespace Bayou.Player
             _poisonUntil = 0f;
             _poisonDebt = 0f;
             _current = 0;
-            Kill(string.IsNullOrWhiteSpace(causeTip) ? "The river washed you away." : causeTip);
+            Kill(string.IsNullOrWhiteSpace(causeTip) ? FastWaterDeathTip : causeTip);
         }
 
         private void Kill(string causeTip)

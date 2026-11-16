@@ -560,6 +560,8 @@ namespace Bayou.UI
 
                 if (view.Icon != null)
                 {
+                    view.Icon.useSpriteMesh = false;
+                    view.Icon.type = Image.Type.Simple;
                     view.Icon.sprite = def != null ? def.icon : null;
                     view.Icon.enabled = def != null && def.icon != null;
                     view.Icon.preserveAspect = true;
@@ -628,6 +630,8 @@ namespace Bayou.UI
                 _equippedRoot.gameObject.SetActive(show);
             if (!show) return;
 
+            _equippedIcon.useSpriteMesh = false;
+            _equippedIcon.type = Image.Type.Simple;
             _equippedIcon.sprite = icon;
             _equippedIcon.enabled = icon != null;
             _equippedIcon.preserveAspect = true;

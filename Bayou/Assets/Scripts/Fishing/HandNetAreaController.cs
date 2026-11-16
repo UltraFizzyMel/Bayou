@@ -533,7 +533,11 @@ namespace Bayou.Fishing
             lr.endWidth = width;
             lr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             lr.receiveShadows = false;
-            lr.material = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(color);
+            var mat = Bayou.Rendering.BayouShaderUtil.CreateUnlitColor(color);
+            if (mat != null)
+                lr.material = mat;
+            else
+                lr.enabled = false;
         }
 
         private void HideRing()

@@ -11,19 +11,14 @@ namespace Bayou.Inventory
         public RectTransform Rect { get; private set; }
 
         private Image _image;
-        private Color _baseColor = InventoryGridUI.BackpackCellTint;
+        private Color _baseColor = new(0f, 0f, 0f, 0.42f);
 
         private void Awake()
         {
             Rect = GetComponent<RectTransform>();
             _image = GetComponent<Image>();
-            if (_image == null) return;
-
-            // A null sprite still draws. Color must be the see-through black or the quad is white.
-            _image.sprite = null;
-            _image.type = Image.Type.Simple;
-            _baseColor = InventoryGridUI.BackpackCellTint;
-            _image.color = _baseColor;
+            if (_image != null)
+                _baseColor = _image.color;
         }
 
         public void Setup(int x, int y)

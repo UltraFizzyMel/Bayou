@@ -24,17 +24,10 @@ namespace Bayou
         }
 
         /// <summary>Inventory, shop, catch reveal, and other menus own the interact key.</summary>
-        public static bool BlocksWorldInteract
-        {
-            get
-            {
-                var clearedHiddenBag = InventoryDisplayUI.Active != null &&
-                                       InventoryDisplayUI.Active.ReconcileHidden();
-                if (clearedHiddenBag && !MenuWantsPause() && Time.timeScale <= 0f)
-                    Time.timeScale = _savedTimeScale > 0f ? _savedTimeScale : 1f;
-                return IsPaused || IsInventoryOpen() || CaughtFishPresenter.IsBusy;
-            }
-        }
+        public static bool BlocksWorldInteract =>
+            IsPaused ||
+            IsInventoryOpen() ||
+            CaughtFishPresenter.IsBusy;
 
         public static bool IsDialoguePlaying
         {
@@ -57,8 +50,15 @@ namespace Bayou
 
         public static void SyncFromUiState()
         {
-            InventoryDisplayUI.Active?.ReconcileHidden();
-            var shouldPause = MenuWantsPause();
+            var shouldPause =
+                TutorialHold ||
+                IsInventoryOpen() ||
+                CaughtFishPresenter.IsBusy ||
+                AudioSettings.IsOpen ||
+                Bayou.UI.QuestJournalHud.IsOpen ||
+                (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) ||
+                (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen) ||
+                Bayou.UI.PauseMenu.IsOpen;
 
             if (shouldPause)
             {
@@ -72,18 +72,6 @@ namespace Bayou
             {
                 Time.timeScale = _savedTimeScale > 0f ? _savedTimeScale : 1f;
             }
-        }
-
-        private static bool MenuWantsPause()
-        {
-            return TutorialHold ||
-                IsInventoryOpen() ||
-                CaughtFishPresenter.IsBusy ||
-                AudioSettings.IsOpen ||
-                Bayou.UI.QuestJournalHud.IsOpen ||
-                (ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen) ||
-                (BonfireUIController.Active != null && BonfireUIController.Active.IsOpen) ||
-                Bayou.UI.PauseMenu.IsOpen;
         }
 
         private static bool IsInventoryOpen()

@@ -43,8 +43,10 @@ namespace Bayou.Fishing
             EnsureStyles();
 
             // Compact tip while idle; taller box during cast phases.
+            // The held-item plate occupies the bottom-left (24, 24, 186×186). Lift this box above it.
             var height = casting || hasNet || attract != null || biting || reel != null || netCharging ? 128f : 64f;
-            var area = new Rect(16f, Screen.height - height - 16f, 460f, height);
+            var lift = (24f + 186f + 12f) * (Screen.height / 1080f);
+            var area = new Rect(16f, Screen.height - height - lift, 460f, height);
             GUI.Box(area, GUIContent.none, _boxStyle);
             GUILayout.BeginArea(new Rect(area.x + 12f, area.y + 10f, area.width - 24f, area.height - 16f));
 

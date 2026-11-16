@@ -418,22 +418,45 @@ namespace Bayou.Fishing
 
         private void EnsureCarryLight()
         {
-            if (_carryLight != null) return;
+            // Unity's overloaded == treats a destroyed component as null. ?? does not,
+            // and writing .type on that fake-null throws MissingComponentException.
+            if (_carryLight != null)
+                return;
+
             var existing = transform.Find("CarryLanternLight");
-            var go = existing != null ? existing.gameObject : new GameObject("CarryLanternLight");
-            go.transform.SetParent(transform, false);
+            GameObject go;
+            if (existing != null && existing.GetComponent<Light>() != null)
+            {
+                go = existing.gameObject;
+            }
+            else
+            {
+                if (existing != null)
+                    Destroy(existing.gameObject);
+
+                go = new GameObject("CarryLanternLight");
+                go.transform.SetParent(transform, false);
+                go.AddComponent<Light>();
+            }
+
             go.transform.localPosition = new Vector3(0.12f, 1.15f, 0.18f);
             go.transform.localScale = Vector3.one;
-            _carryLight = go.GetComponent<Light>() ?? go.AddComponent<Light>();
-            _carryLight.type = LightType.Point;
-            _carryLight.intensity = 18f;
-            _carryLight.range = 9f;
-            _carryLight.color = new Color(1f, 0.78f, 0.48f, 1f);
-            _carryLight.shadows = LightShadows.None;
-            _carryLight.renderMode = LightRenderMode.ForcePixel;
-            _carryLight.cullingMask = ~0;
-            _carryLight.renderingLayerMask = int.MaxValue;
-            _carryLight.enabled = false;
+
+            var light = go.GetComponent<Light>();
+            if (light == null)
+                return;
+
+            _carryLight = light;
+            // None before any other write so a default soft shadow cannot reach URP.
+            light.shadows = LightShadows.None;
+            light.type = LightType.Point;
+            light.intensity = 18f;
+            light.range = 9f;
+            light.color = new Color(1f, 0.78f, 0.48f, 1f);
+            light.renderMode = LightRenderMode.ForcePixel;
+            light.cullingMask = ~0;
+            light.renderingLayerMask = int.MaxValue;
+            light.enabled = false;
             if (go.GetComponent<UnityEngine.Rendering.Universal.UniversalAdditionalLightData>() == null)
                 go.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalLightData>();
         }

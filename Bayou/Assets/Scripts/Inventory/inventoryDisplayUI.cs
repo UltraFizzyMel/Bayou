@@ -51,14 +51,11 @@ namespace Bayou.Inventory
         private Vector2 _lastDragScreen;
         private Camera _lastDragCam;
         private bool _isOpen;
-        private InventoryItemInstance _held;
-        private RectTransform _holdSlot;
-        private int _dragStartHold = -1;
         private int _relayoutFrames;
         private Vector2 _stableGridSize;
         private Func<InventoryItemUI, PointerEventData, bool> _crossPanelDropHandler;
 
-        public bool IsOpen => _isOpen && BagIsShowing();
+        public bool IsOpen => _isOpen;
         public InventoryController Inventory => inventory;
         public RectTransform PanelRoot => panelRoot;
         public Vector2Int CurrentDragGrabOffset => _dragGrabOffset;
@@ -107,21 +104,16 @@ namespace Bayou.Inventory
 
         private void ApplyBackpackArt()
         {
-            var img = panelRoot != null ? panelRoot.GetComponent<Image>() : GetComponent<Image>();
-            if (img != null)
-            {
-                // Folder is Bayou/UI. The old "Ui" path missed the sprite and left the beige cells in front.
-                var sprite = Resources.Load<Sprite>("Bayou/UI/BackpackBackground")
-                             ?? Resources.Load<Sprite>("Bayou/Ui/BackpackBackground");
-                if (sprite != null)
-                {
-                    img.sprite = sprite;
-                    img.type = Image.Type.Simple;
-                    img.preserveAspect = false;
-                    img.color = Color.white;
-                }
-            }
-
+            var img = panelRoot != null ? panelRoot.GetComponent<UnityEngine.UI.Image>() : GetComponent<UnityEngine.UI.Image>();
+            if (img == null) return;
+            // The leather sprite is Resources/Bayou/UI. "Ui" does not load it.
+            var sprite = Resources.Load<Sprite>("Bayou/UI/BackpackBackground")
+                         ?? Resources.Load<Sprite>("Bayou/Ui/BackpackBackground");
+            if (sprite == null) return;
+            img.sprite = sprite;
+            img.type = UnityEngine.UI.Image.Type.Simple;
+            img.preserveAspect = false;
+            img.color = Color.white;
             gridUI?.UseBackpackFrame();
         }
 
@@ -136,7 +128,6 @@ namespace Bayou.Inventory
             toggleInventoryAction?.action?.Enable();
             rotateItemAction?.action?.Enable();
             ResolveToggleFromControlsIfNeeded();
-            ApplyBackpackArt();
             InteractionPromptBroker.Register(this);
         }
 
@@ -168,12 +159,6 @@ namespace Bayou.Inventory
 
         private void Update()
         {
-            if (_isOpen && !BagIsShowing())
-            {
-                ReconcileHidden();
-                GameplayPause.SyncFromUiState();
-            }
-
             if (_isOpen && WasClosePressed())
             {
                 EscapeGate.Consume();
@@ -184,43 +169,14 @@ namespace Bayou.Inventory
                 Toggle();
             }
 
-            if (_dragging != null && Mouse.current != null && !Mouse.current.leftButton.isPressed)
-                FinishStuckDrag();
-
             if (_dragging != null && InventoryDragInput.WasRotatePressedThisFrame(rotateItemAction))
                 RotateDraggedItem();
-        }
-
-        private void FinishStuckDrag()
-        {
-            var ui = _dragging;
-            RestoreRaycasts(ui);
-            var system = EventSystem.current;
-            if (system == null || ui == null)
-            {
-                CancelDrag();
-                return;
-            }
-
-            var data = new PointerEventData(system)
-            {
-                position = _lastDragScreen,
-                pressPosition = _lastDragScreen
-            };
-            EndDrag(ui, data);
-            RestoreRaycasts(ui);
         }
 
         private void LateUpdate()
         {
             UpdateBagStatus();
             if (!_isOpen || gridUI == null) return;
-
-            gridUI.SetRightGutter(0f);
-            RemoveCoveringSlots();
-            gridUI.RemoveStrayChildren();
-            RemoveStrayItemGraphics();
-            SuppressWhiteSquares();
 
             var gridRect = gridUI.transform as RectTransform;
             var size = gridRect != null ? gridRect.rect.size : Vector2.zero;
@@ -237,8 +193,6 @@ namespace Bayou.Inventory
             if (panelRoot != null)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
             gridUI.ApplyFillLayout();
-            gridUI.RemoveStrayChildren();
-            RemoveCoveringSlots();
 
             size = gridRect != null ? gridRect.rect.size : Vector2.zero;
             if (size.x < 16f || size.y < 16f)
@@ -246,13 +200,13 @@ namespace Bayou.Inventory
 
             _relayoutFrames--;
             Refresh();
-            SuppressWhiteSquares();
         }
 
         public void Toggle()
         {
             if (Bayou.Environment.SignReadUi.IsOpen) return;
-            if (IsLockedByShop || IsLockedByCatch || IsLockedByBonfire) return;
+            if (IsLockedByShop || IsLockedByBonfire) return;
+            if (CaughtFishPresenter.IsRevealing) return;
             if (GameplayPause.IsDialoguePlaying) return;
             if (_isOpen) Close();
             else Open();
@@ -266,13 +220,8 @@ namespace Bayou.Inventory
                 inventory = InventoryController.Instance;
 
             EnsureCanvasHealthy();
-            EnsureRaycaster();
-            CaughtFishPresenter.ReleaseStaleBlock();
             _isOpen = true;
             SetPanelVisible(true);
-            Bayou.UI.TutorialTips.NotifyInventoryOpened();
-            RemoveCoveringSlots();
-            RestoreItemRaycasts();
             Canvas.ForceUpdateCanvases();
             if (panelRoot != null)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
@@ -285,7 +234,10 @@ namespace Bayou.Inventory
 
         public void Close()
         {
-            if (IsLockedByCatch) return;
+            // After the Found card, _allocating used to stay true and this returned without closing.
+            if (!CaughtFishPresenter.IsRevealing)
+                CaughtFishPresenter.ReleaseBagLock();
+            if (CaughtFishPresenter.IsRevealing) return;
             ForceClose();
         }
 
@@ -293,7 +245,6 @@ namespace Bayou.Inventory
         public void ForceClose()
         {
             CancelDrag();
-            ReturnHoldToGrid();
             _isOpen = false;
             _relayoutFrames = 0;
             SetPanelVisible(false);
@@ -332,7 +283,24 @@ namespace Bayou.Inventory
                 graphic.enabled = visible;
         }
 
+        private bool _refreshing;
+
         public void Refresh()
+        {
+            if (_refreshing) return;
+            if (inventory?.Bag == null || gridUI == null) return;
+            _refreshing = true;
+            try
+            {
+                RefreshBody();
+            }
+            finally
+            {
+                _refreshing = false;
+            }
+        }
+
+        private void RefreshBody()
         {
             if (inventory?.Bag == null || gridUI == null) return;
 
@@ -347,7 +315,7 @@ namespace Bayou.Inventory
             if (!_isOpen)
                 return;
 
-            gridUI.UseBackpackFrame();
+            gridUI.ApplyFillLayout();
             Canvas.ForceUpdateCanvases();
             var gridRect = gridUI.transform as RectTransform;
             if (gridRect == null || gridRect.rect.width < 16f || gridRect.rect.height < 16f)
@@ -355,16 +323,11 @@ namespace Bayou.Inventory
 
             SyncGridToModel();
             gridUI.EnsureBuilt();
-            gridUI.SetRightGutter(0f);
             gridUI.ApplyFillLayout();
-            gridUI.RemoveStrayChildren();
             Canvas.ForceUpdateCanvases();
             if (gridUI.transform is RectTransform gridRt)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(gridRt);
             SyncItemLayerToGrid();
-            RemoveCoveringSlots();
-            SettleHeldItem();
-            RemoveStrayItemGraphics();
 
             var bagItems = inventory.Bag.AllItems;
             var keep = new HashSet<string>();
@@ -388,13 +351,6 @@ namespace Bayou.Inventory
 
                 if (_dragging != null && _dragging.Item == item)
                     continue;
-
-                if (_held == item)
-                {
-                    // No side slot on the leather. Keep the item in the bag and off the opening.
-                    ui.gameObject.SetActive(false);
-                    continue;
-                }
 
                 if (!item.IsPlaced)
                 {
@@ -430,8 +386,6 @@ namespace Bayou.Inventory
                     Destroy(ui.gameObject);
                 _displayed.Remove(id);
             }
-
-            SuppressWhiteSquares();
         }
 
         public bool ContainsScreenPoint(Vector2 screen, Camera cam)
@@ -476,12 +430,7 @@ namespace Bayou.Inventory
             if (ui?.Item == null || inventory == null) return;
 
             _dragging = ui;
-            if (ui.Rect != null)
-                ui.Rect.localScale = Vector3.one;
             var item = ui.Item;
-            _dragStartHold = _held == item ? 0 : -1;
-            if (_dragStartHold >= 0)
-                _held = null;
             _dragStartCompartmentId = item.compartmentId;
             _dragStartX = item.gridX;
             _dragStartY = item.gridY;
@@ -522,11 +471,9 @@ namespace Bayou.Inventory
 
         public void EndDrag(InventoryItemUI ui, PointerEventData eventData)
         {
-            RestoreRaycasts(ui);
             if (ui == null || ui != _dragging || inventory?.Bag == null)
             {
                 _dragging = null;
-                _dragStartHold = -1;
                 gridUI?.ClearHighlights();
                 return;
             }
@@ -534,15 +481,8 @@ namespace Bayou.Inventory
             var item = ui.Item;
             gridUI?.ClearHighlights();
 
-            if (TryHoldSlotAt(eventData.position, eventData.pressEventCamera, out var holdSlot) ||
-                TryHoldSlotAt(eventData.position, null, out holdSlot))
-            {
-                ParkInHold(item, holdSlot);
-                _dragging = null;
-                _dragStartHold = -1;
-                Refresh();
-                return;
-            }
+            var cg = ui.GetComponent<CanvasGroup>();
+            if (cg != null) cg.blocksRaycasts = true;
 
             var overOwnGrid = ScreenPointToGrid(eventData.position, eventData.pressEventCamera,
                                    out var compartmentId, out var hoverX, out var hoverY) ||
@@ -601,53 +541,30 @@ namespace Bayou.Inventory
             }
 
             // Revert.
-            if (_dragStartHold >= 0)
-            {
-                _held = item;
-                inventory.Bag.HoldItem(item);
-            }
-            else if (!string.IsNullOrEmpty(_dragStartCompartmentId))
-            {
+            if (!string.IsNullOrEmpty(_dragStartCompartmentId))
                 inventory.TryPlace(item, _dragStartCompartmentId, _dragStartX, _dragStartY, _dragStartRotation);
-            }
             else
-            {
                 inventory.Bag.HoldItem(item);
-            }
 
             _dragging = null;
-            _dragStartHold = -1;
             Refresh();
         }
 
         public void CancelDrag()
         {
-            var ui = _dragging;
-            RestoreRaycasts(ui);
-            if (ui?.Item == null || inventory == null)
+            if (_dragging?.Item == null || inventory == null)
             {
                 _dragging = null;
-                _dragStartHold = -1;
                 return;
             }
 
-            var item = ui.Item;
-            if (_dragStartHold >= 0)
-            {
-                _held = item;
-                inventory.Bag?.HoldItem(item);
-            }
-            else if (!string.IsNullOrEmpty(_dragStartCompartmentId))
-            {
+            var item = _dragging.Item;
+            if (!string.IsNullOrEmpty(_dragStartCompartmentId))
                 inventory.TryPlace(item, _dragStartCompartmentId, _dragStartX, _dragStartY, _dragStartRotation);
-            }
             else
-            {
                 inventory.Bag?.HoldItem(item);
-            }
 
             _dragging = null;
-            _dragStartHold = -1;
             gridUI?.ClearHighlights();
             Refresh();
         }
@@ -834,273 +751,30 @@ namespace Bayou.Inventory
                 Destroy(layoutGroup);
         }
 
-        /// <summary>
-        /// The backpack art fills the window, so a side slot would sit on the leather.
-        /// Drop any leftover HoldSlot / HoldColumn graphic. Item views are moved off it first.
-        /// </summary>
-        private void RemoveCoveringSlots()
-        {
-            var gridRect = gridUI != null ? gridUI.transform as RectTransform : null;
-            var parent = gridRect != null ? gridRect.parent as RectTransform : null;
-            if (parent == null)
-                parent = panelRoot != null ? panelRoot : transform as RectTransform;
-            StripSlotChrome(parent);
-            if (panelRoot != null && panelRoot != parent)
-                StripSlotChrome(panelRoot);
-            if (gridRect != null)
-                StripSlotChrome(gridRect);
-            _holdSlot = null;
-        }
-
-        private void StripSlotChrome(Transform parent)
-        {
-            if (parent == null) return;
-            for (var i = parent.childCount - 1; i >= 0; i--)
-            {
-                var child = parent.GetChild(i);
-                if (child == null) continue;
-                if (child.name != "HoldSlot" && child.name != "HoldColumn") continue;
-
-                for (var c = child.childCount - 1; c >= 0; c--)
-                {
-                    var nested = child.GetChild(c);
-                    if (nested.GetComponent<InventoryItemUI>() == null) continue;
-                    var home = itemLayer != null ? (Transform)itemLayer : parent;
-                    nested.SetParent(home, false);
-                }
-
-                Destroy(child.gameObject);
-            }
-        }
-
-        private void SettleHeldItem()
-        {
-            if (_held == null || inventory == null) return;
-            var parked = _held;
-            _held = null;
-            if (inventory.TryPlaceAnywhere(parked))
-                return;
-            _held = parked;
-            inventory.Bag?.HoldItem(parked);
-        }
-
-        private bool TryHoldSlotAt(Vector2 screen, Camera cam, out int slot)
-        {
-            slot = -1;
-            var rt = _holdSlot;
-            if (rt == null || !rt.gameObject.activeInHierarchy) return false;
-            if (rt.parent is RectTransform grid && gridUI != null && grid == gridUI.transform) return false;
-            if (!RectTransformUtility.RectangleContainsScreenPoint(rt, screen, cam)) return false;
-            slot = 0;
-            return true;
-        }
-
-        private void ParkInHold(InventoryItemInstance item, int slot)
-        {
-            if (item == null || inventory?.Bag == null || slot != 0) return;
-            var occupant = _held != null && _held != item ? _held : null;
-            _held = item;
-            inventory.Bag.HoldItem(item);
-            if (occupant == null) return;
-
-            if (!string.IsNullOrEmpty(_dragStartCompartmentId) &&
-                inventory.TryPlace(occupant, _dragStartCompartmentId, _dragStartX, _dragStartY, occupant.rotation))
-                return;
-
-            if (inventory.TryPlaceAnywhere(occupant))
-                return;
-
-            _held = occupant;
-            inventory.Bag.HoldItem(occupant);
-            if (!string.IsNullOrEmpty(_dragStartCompartmentId))
-                inventory.TryPlace(item, _dragStartCompartmentId, _dragStartX, _dragStartY, _dragStartRotation);
-            else
-                inventory.Bag.HoldItem(item);
-        }
-
-        private void LayoutInHold(InventoryItemUI ui)
-        {
-            var parent = _holdSlot;
-            if (ui == null || parent == null) return;
-            if (ui.transform.parent != parent)
-                ui.transform.SetParent(parent, false);
-            if (gridUI != null && ui.Item != null)
-                ui.ApplySize(gridUI, ui.Item.rotation);
-            var rt = ui.Rect;
-            if (rt == null) return;
-            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
-            rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.anchoredPosition = Vector2.zero;
-            var size = rt.rect.size;
-            if (size.x < 1f || size.y < 1f)
-                size = rt.sizeDelta;
-            var limit = Mathf.Max(24f, parent.rect.width - 8f);
-            if (limit < 8f)
-                limit = parent.sizeDelta.x - 8f;
-            var largest = Mathf.Max(size.x, size.y);
-            rt.localScale = largest > limit ? Vector3.one * (limit / largest) : Vector3.one;
-            ui.transform.SetAsLastSibling();
-        }
-
-        private void ReturnHoldToGrid()
-        {
-            if (inventory == null || _held == null) return;
-            if (inventory.TryPlaceAnywhere(_held))
-                _held = null;
-            else
-                inventory.Bag?.HoldItem(_held);
-        }
-
-        public bool ReconcileHidden()
-        {
-            if (!_isOpen || BagIsShowing()) return false;
-            _isOpen = false;
-            _relayoutFrames = 0;
-            return true;
-        }
-
-        private bool BagIsShowing()
-        {
-            if (!isActiveAndEnabled) return false;
-            var root = panelRoot != null ? panelRoot.gameObject : gameObject;
-            if (!root.activeInHierarchy) return false;
-            if (panelRoot == null || panelRoot == (RectTransform)transform)
-            {
-                var graphic = GetComponent<Graphic>();
-                if (graphic != null && !graphic.enabled) return false;
-            }
-
-            return true;
-        }
-
-        private void RemoveStrayItemGraphics()
-        {
-            var grid = gridUI != null ? gridUI.transform : null;
-            if (grid != null && itemLayer != null && itemLayer != grid)
-            {
-                for (var i = grid.childCount - 1; i >= 0; i--)
-                {
-                    var child = grid.GetChild(i);
-                    if (child == null) continue;
-                    var ui = child.GetComponent<InventoryItemUI>();
-                    if (ui == null) continue;
-                    ui.transform.SetParent(itemLayer, false);
-                }
-            }
-
-            if (itemLayer == null) return;
-            for (var i = itemLayer.childCount - 1; i >= 0; i--)
-            {
-                var child = itemLayer.GetChild(i);
-                if (child == null) continue;
-                if (child.GetComponent<InventoryItemUI>() != null) continue;
-                Destroy(child.gameObject);
-            }
-
-            var panel = panelRoot != null ? panelRoot : transform as RectTransform;
-            if (panel == null) return;
-            for (var i = panel.childCount - 1; i >= 0; i--)
-            {
-                var child = panel.GetChild(i);
-                if (child == null || child == itemLayer || child == _holdSlot) continue;
-                if (gridUI != null && child == gridUI.transform) continue;
-                var img = child.GetComponent<Image>();
-                if (img == null || child.GetComponent<InventoryItemUI>() != null) continue;
-                var missing = img.sprite == null;
-                var pureWhite = img.color.r > 0.98f && img.color.g > 0.98f && img.color.b > 0.98f && img.color.a > 0.9f;
-                if (missing || pureWhite)
-                    Destroy(child.gameObject);
-            }
-        }
-
-        /// <summary>
-        /// A blank Image (no sprite, the built-in UI sprite, or the 1×1 white sprite) at Color.white
-        /// draws as a solid white square. The one in the middle of the bag is that graphic, left on
-        /// top of the grid after the hold slot was removed. Cells are repainted; anything else white
-        /// and blank is turned off. Item icons keep their real sprites.
-        /// </summary>
-        private void SuppressWhiteSquares()
-        {
-            var root = panelRoot != null ? panelRoot : transform as RectTransform;
-            if (root == null) return;
-
-            var images = root.GetComponentsInChildren<Image>(true);
-            for (var i = 0; i < images.Length; i++)
-            {
-                var img = images[i];
-                if (img == null || img.gameObject == root.gameObject) continue;
-                if (!IsUnmodulatedWhite(img.color)) continue;
-
-                if (img.GetComponent<InventoryCellUI>() != null)
-                {
-                    img.sprite = null;
-                    img.type = Image.Type.Simple;
-                    img.color = InventoryGridUI.BackpackCellTint;
-                    continue;
-                }
-
-                if (HasContentSprite(img.sprite)) continue;
-
-                img.sprite = null;
-                img.color = new Color(0f, 0f, 0f, 0f);
-                img.enabled = false;
-                img.raycastTarget = false;
-            }
-        }
-
-        private static bool IsUnmodulatedWhite(Color c) =>
-            c.r > 0.98f && c.g > 0.98f && c.b > 0.98f && c.a > 0.9f;
-
-        private static bool HasContentSprite(Sprite sprite)
-        {
-            if (sprite == null) return false;
-            var name = sprite.name;
-            if (string.IsNullOrEmpty(name)) return false;
-            if (name == "BayouUiWhite" || name == "UISprite" || name == "Background" || name == "Knob")
-                return false;
-            return true;
-        }
-
-        private static void RestoreRaycasts(InventoryItemUI ui)
-        {
-            if (ui == null) return;
-            var cg = ui.GetComponent<CanvasGroup>();
-            if (cg == null) return;
-            cg.blocksRaycasts = true;
-            cg.alpha = 1f;
-        }
-
-        private void RestoreItemRaycasts()
-        {
-            foreach (var ui in _displayed.Values)
-            {
-                if (ui == null || ui == _dragging) continue;
-                RestoreRaycasts(ui);
-            }
-        }
-
-        private void EnsureRaycaster()
-        {
-            var canvas = GetComponentInParent<Canvas>();
-            if (canvas == null) return;
-            var raycaster = canvas.GetComponent<GraphicRaycaster>();
-            if (raycaster == null)
-                raycaster = canvas.gameObject.AddComponent<GraphicRaycaster>();
-            raycaster.enabled = true;
-
-            var system = EventSystem.current;
-            if (system == null) return;
-            var module = system.GetComponent<InputSystemUIInputModule>();
-            if (module != null)
-                BayouUiInputBootstrap.Wire(module);
-        }
-
         private void EnsureCanvasHealthy()
         {
             var canvas = GetComponentInParent<Canvas>();
             if (canvas == null) return;
 
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            var raycaster = canvas.GetComponent<GraphicRaycaster>();
+            if (raycaster != null)
+                raycaster.enabled = true;
+
+            var group = canvas.GetComponent<CanvasGroup>();
+            if (group != null)
+            {
+                group.blocksRaycasts = true;
+                group.interactable = true;
+            }
+
+            if (EventSystem.current != null)
+            {
+                EventSystem.current.enabled = true;
+                var module = EventSystem.current.GetComponent<InputSystemUIInputModule>();
+                if (module != null)
+                    module.enabled = true;
+            }
 
             var rt = canvas.transform as RectTransform;
             if (rt != null)
@@ -1127,13 +801,15 @@ namespace Bayou.Inventory
             }
 
             // Keep the bag a centered case when not docked for shop (shop stretch-docks the panel).
+            // Cell layout must not resize this panel. Only a collapsed/shrunk rect is put back
+            // to the original 900×700; a larger panel is left alone.
             if (panelRoot != null && panelRoot != rt && !IsStretchDocked(panelRoot))
             {
                 panelRoot.anchorMin = new Vector2(0.5f, 0.5f);
                 panelRoot.anchorMax = new Vector2(0.5f, 0.5f);
                 panelRoot.pivot = new Vector2(0.5f, 0.5f);
-                if (panelRoot.sizeDelta.x < 200f || panelRoot.sizeDelta.y < 200f)
-                    panelRoot.sizeDelta = new Vector2(920f, 720f);
+                if (panelRoot.sizeDelta.x < 900f - 0.5f || panelRoot.sizeDelta.y < 700f - 0.5f)
+                    panelRoot.sizeDelta = new Vector2(900f, 700f);
                 panelRoot.anchoredPosition = Vector2.zero;
                 panelRoot.localScale = Vector3.one;
                 panelRoot.localRotation = Quaternion.identity;
@@ -1244,11 +920,9 @@ namespace Bayou.Inventory
             if (!show) return;
 
             var corners = new Vector3[4];
-            var anchor = panelRoot != null ? panelRoot : gridUI != null ? gridUI.transform as RectTransform : null;
-            if (anchor == null) return;
-            anchor.GetWorldCorners(corners);
+            panelRoot.GetWorldCorners(corners);
             var top = (corners[1] + corners[2]) * 0.5f;
-            _bagStatus.rectTransform.position = top + new Vector3(0f, 18f, 0f);
+            _bagStatus.rectTransform.position = top + new Vector3(0f, -28f, 0f);
 
             var wallet = PlayerWallet.Instance;
             var money = wallet != null ? wallet.Balance : 0;

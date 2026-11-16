@@ -21,13 +21,18 @@ namespace Bayou.Inventory
         [SerializeField] private float padRight = 28f;
         [SerializeField] private float padTop = 28f;
         [SerializeField] private float padBottom = 28f;
-        [SerializeField] private float cellSpacing = 3f;
+        [SerializeField] private float cellSpacing = 6f;
         [SerializeField] private bool forceSquareCells = true;
         [SerializeField] private Color cellColor = new(0f, 0f, 0f, 0.42f);
-        [SerializeField] private bool backpackFrame = true;
+        [SerializeField] private bool backpackFrame;
 
-        /// <summary>See-through black so the leather opening shows between and through the cells.</summary>
-        public static readonly Color BackpackCellTint = new(0f, 0f, 0f, 0.42f);
+        // Fractions of the 900×700 backpack panel (art is stretched, preserveAspect off).
+        // Measured on BackpackBackground so the centered 7×6 block sits in the dark
+        // opening, clear of the rosary, cloth, flask, top buckle, and bottom belt.
+        // The panel itself is not resized.
+        private static readonly Vector2 OpeningAnchorMin = new(0.24f, 0.22f);
+        private static readonly Vector2 OpeningAnchorMax = new(0.75f, 0.82f);
+        private static readonly Color EmptyCell = new(0f, 0f, 0f, 0.42f);
 
         private InventoryCellUI[,] _cells;
         private GridLayoutGroup _layout;
@@ -36,28 +41,12 @@ namespace Bayou.Inventory
 
         public int Columns => columns;
         public int Rows => rows;
-        public Color CellColor => cellColor;
         public GridLayoutGroup Layout => _layout != null ? _layout : GetComponent<GridLayoutGroup>();
-
-        private float _rightGutter;
-
-        /// <summary>Extra space to the right of the cells so a side slot is not drawn on top of them.</summary>
-        public void SetRightGutter(float pixels)
-        {
-            _rightGutter = Mathf.Max(0f, pixels);
-        }
 
         private void Awake()
         {
             _layout = GetComponent<GridLayoutGroup>();
             _rect = transform as RectTransform;
-            UseBackpackFrame();
-        }
-
-        private void OnEnable()
-        {
-            // Play-mode script reloads restore the serialized beige color and skip Awake.
-            UseBackpackFrame();
         }
 
         private void Start() => EnsureBuilt();
@@ -89,8 +78,6 @@ namespace Bayou.Inventory
             if (_layout == null) _layout = GetComponent<GridLayoutGroup>();
             if (_rect == null) _rect = transform as RectTransform;
 
-            backpackFrame = true;
-            cellColor = BackpackCellTint;
             ApplyFillLayout();
 
             foreach (Transform child in transform)
@@ -106,11 +93,7 @@ namespace Bayou.Inventory
                 cell.Setup(x, y);
                 var img = cell.GetComponent<Image>();
                 if (img != null)
-                {
-                    img.sprite = null;
-                    img.type = Image.Type.Simple;
                     img.raycastTarget = true;
-                }
                 cell.SetBaseColor(cellColor);
 
                 _cells[x, y] = cell;
@@ -119,26 +102,9 @@ namespace Bayou.Inventory
             _built = true;
             if (backpackFrame)
                 TintCells();
-            RemoveStrayChildren();
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(_rect);
             ApplyFillLayout();
-        }
-
-        /// <summary>
-        /// The grid's only children are cells. A stray Image (missing sprite draws as a white square)
-        /// must not stay parented here.
-        /// </summary>
-        public void RemoveStrayChildren()
-        {
-            for (var i = transform.childCount - 1; i >= 0; i--)
-            {
-                var child = transform.GetChild(i);
-                if (child == null) continue;
-                if (child.GetComponent<InventoryCellUI>() != null) continue;
-                if (child.GetComponent<InventoryItemUI>() != null) continue;
-                Destroy(child.gameObject);
-            }
         }
 
         private void TintCells()
@@ -147,16 +113,8 @@ namespace Bayou.Inventory
             for (var y = 0; y < rows; y++)
             for (var x = 0; x < columns; x++)
             {
-                var cell = _cells[x, y];
-                if (cell == null) continue;
-                var img = cell.GetComponent<Image>();
-                if (img != null)
-                {
-                    // Drop the filled white/beige UI sprite. A bare Image tints as a flat quad.
-                    img.sprite = null;
-                    img.type = Image.Type.Simple;
-                }
-                cell.SetBaseColor(cellColor);
+                if (_cells[x, y] != null)
+                    _cells[x, y].SetBaseColor(cellColor);
             }
         }
 
@@ -166,8 +124,8 @@ namespace Bayou.Inventory
         public void UseBackpackFrame()
         {
             backpackFrame = true;
-            cellColor = BackpackCellTint;
-            cellSpacing = 3f;
+            // See-through black so the leather shows through. Cream cells read as yellow.
+            cellColor = EmptyCell;
             TintCells();
             ApplyFillLayout();
         }
@@ -178,37 +136,55 @@ namespace Bayou.Inventory
             if (_rect == null) _rect = transform as RectTransform;
             if (_rect == null) return;
 
-            if (backpackFrame && _rect.parent is RectTransform frame &&
-                frame.rect.width > 16f && frame.rect.height > 16f)
+            if (backpackFrame || ParentShowsBackpack())
             {
-                padLeft = frame.rect.width * 0.18f;
-                padRight = frame.rect.width * 0.18f;
-                padTop = frame.rect.height * 0.145f;
-                padBottom = frame.rect.height * 0.13f;
-            }
+                // Seat only this rect in the opening. Never touch the parent panel size.
+                backpackFrame = true;
+                cellColor = EmptyCell;
+                _rect.anchorMin = OpeningAnchorMin;
+                _rect.anchorMax = OpeningAnchorMax;
+                _rect.pivot = new Vector2(0.5f, 0.5f);
+                _rect.offsetMin = Vector2.zero;
+                _rect.offsetMax = Vector2.zero;
+                _rect.anchoredPosition = Vector2.zero;
+                _rect.sizeDelta = Vector2.zero;
+                _rect.localScale = Vector3.one;
+                _rect.localRotation = Quaternion.identity;
+                var stray = _rect.GetComponent<Image>();
+                if (stray != null)
+                {
+                    stray.color = new Color(0f, 0f, 0f, 0f);
+                    stray.raycastTarget = false;
+                }
 
-            if (fillParent && _rect.parent is RectTransform)
+                if (_rect.GetComponent<RectMask2D>() == null)
+                    _rect.gameObject.AddComponent<RectMask2D>();
+            }
+            else if (fillParent && _rect.parent is RectTransform)
             {
                 // Top-left pivot so GridLayoutGroup UpperLeft matches item index math.
                 _rect.anchorMin = Vector2.zero;
                 _rect.anchorMax = Vector2.one;
                 _rect.pivot = new Vector2(0f, 1f);
                 _rect.offsetMin = new Vector2(padLeft, padBottom);
-                _rect.offsetMax = new Vector2(-(padRight + _rightGutter), -padTop);
+                _rect.offsetMax = new Vector2(-padRight, -padTop);
                 _rect.localScale = Vector3.one;
                 _rect.localRotation = Quaternion.identity;
             }
 
             Canvas.ForceUpdateCanvases();
 
-            var width = _rect.rect.width;
-            var height = _rect.rect.height;
-            if (width < 16f || height < 16f)
-                return; // panel not laid out yet (closed / inactive)
+            // Parent span, not _rect.rect. Reading the rect in the same frame the
+            // anchors change still returns the old full-panel size, and those huge
+            // cells then paint across the straps.
+            if (!TryGetArrangedSize(out var width, out var height))
+                return;
 
             var spacing = Mathf.Max(0f, cellSpacing);
-            var cellW = (width - spacing * (columns - 1)) / columns;
-            var cellH = (height - spacing * (rows - 1)) / rows;
+            var innerW = Mathf.Max(0f, width - spacing * (columns - 1));
+            var innerH = Mathf.Max(0f, height - spacing * (rows - 1));
+            var cellW = innerW / columns;
+            var cellH = innerH / rows;
 
             if (forceSquareCells)
             {
@@ -220,7 +196,17 @@ namespace Bayou.Inventory
             cellW = Mathf.Max(12f, cellW);
             cellH = Mathf.Max(12f, cellH);
 
-            _layout.padding = new RectOffset(0, 0, 0, 0);
+            var padX = 0;
+            var padY = 0;
+            if (backpackFrame)
+            {
+                var usedW = columns * cellW + (columns - 1) * spacing;
+                var usedH = rows * cellH + (rows - 1) * spacing;
+                padX = Mathf.Max(0, Mathf.FloorToInt((width - usedW) * 0.5f));
+                padY = Mathf.Max(0, Mathf.FloorToInt((height - usedH) * 0.5f));
+            }
+
+            _layout.padding = new RectOffset(padX, padX, padY, padY);
             _layout.spacing = new Vector2(spacing, spacing);
             _layout.cellSize = new Vector2(cellW, cellH);
             _layout.constraint = GridLayoutGroup.Constraint.FixedColumnCount;
@@ -230,6 +216,41 @@ namespace Bayou.Inventory
             _layout.childAlignment = TextAnchor.UpperLeft;
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(_rect);
+            if (backpackFrame)
+                TintCells();
+        }
+
+        private bool TryGetArrangedSize(out float width, out float height)
+        {
+            width = 0f;
+            height = 0f;
+            if (_rect == null) return false;
+
+            var parent = _rect.parent as RectTransform;
+            if (parent != null && parent.rect.width >= 16f && parent.rect.height >= 16f)
+            {
+                width = parent.rect.width * Mathf.Abs(_rect.anchorMax.x - _rect.anchorMin.x) + _rect.sizeDelta.x;
+                height = parent.rect.height * Mathf.Abs(_rect.anchorMax.y - _rect.anchorMin.y) + _rect.sizeDelta.y;
+            }
+            else
+            {
+                width = _rect.rect.width;
+                height = _rect.rect.height;
+            }
+
+            return width >= 16f && height >= 16f;
+        }
+
+        private bool ParentShowsBackpack()
+        {
+            var parentImage = _rect != null && _rect.parent != null
+                ? _rect.parent.GetComponent<Image>()
+                : null;
+            var spriteName = parentImage != null && parentImage.sprite != null
+                ? parentImage.sprite.name
+                : null;
+            return !string.IsNullOrEmpty(spriteName) &&
+                   spriteName.IndexOf("Backpack", System.StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         public Vector2 CellTopLeftLocal(int x, int y)

@@ -142,7 +142,9 @@ namespace Bayou.Rendering
             if (go == null) return;
             var rend = go.GetComponent<MeshRenderer>();
             if (rend == null) return;
-            rend.sharedMaterial = BayouShaderUtil.CreateUnlitColor(color);
+            var mat = BayouShaderUtil.CreateUnlitColor(color);
+            if (mat != null)
+                rend.sharedMaterial = mat;
             rend.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             rend.enabled = true;
         }

@@ -47,6 +47,7 @@ namespace Bayou.Inventory
         private string _revealTitleOverride;
         private readonly List<QueuedCatch> _queue = new();
         private float _revealUntil;
+        private int _acceptDepth;
 
         public static bool IsAllocating =>
             Instance != null && Instance._allocating;
@@ -54,6 +55,21 @@ namespace Bayou.Inventory
         /// <summary>True during the catch reveal splash or while waiting for place/discard.</summary>
         public static bool IsBusy =>
             Instance != null && (Instance._revealing || Instance._allocating);
+
+        public static bool IsRevealing =>
+            Instance != null && Instance._revealing;
+
+        /// <summary>
+        /// Bag close after the Found card is gone. Does not hide the card while it is still showing.
+        /// </summary>
+        public static void ReleaseBagLock()
+        {
+            if (Instance == null || Instance._revealing) return;
+            Instance._allocating = false;
+            Instance._pending = null;
+            Instance.HideAllocateBar();
+            GameplayPause.SyncFromUiState();
+        }
 
         public InventoryItemInstance PendingItem => _pending;
 
@@ -131,6 +147,8 @@ namespace Bayou.Inventory
             {
                 _revealing = false;
                 HideReveal();
+                if (!_allocating)
+                    GameplayPause.SyncFromUiState();
             }
             else if (!_revealing && revealRoot != null && revealRoot.gameObject.activeSelf)
             {
@@ -154,16 +172,37 @@ namespace Bayou.Inventory
                 return;
             }
 
-            EnsureUi();
-            EnsureInventorySubscription();
-            if (_routine != null || _revealing || _allocating || _pending != null || _queue.Count > 0)
+            // InventoryChanged fires inside TryHoldNewItem, before this call returns.
+            // A listener that presents again would recurse until the player process dies.
+            if (_acceptDepth > 0)
             {
-                Enqueue(fishItem, title, granted);
+                _queue.Add(new QueuedCatch
+                {
+                    Item = fishItem,
+                    Title = title,
+                    Granted = granted
+                });
                 return;
             }
 
-            if (!BeginNow(fishItem, title, granted, null))
-                Enqueue(fishItem, title, granted);
+            _acceptDepth++;
+            try
+            {
+                EnsureUi();
+                EnsureInventorySubscription();
+                if (_routine != null || _revealing || _allocating || _pending != null || _queue.Count > 0)
+                {
+                    Enqueue(fishItem, title, granted);
+                    return;
+                }
+
+                if (!BeginNow(fishItem, title, granted, null))
+                    Enqueue(fishItem, title, granted);
+            }
+            finally
+            {
+                _acceptDepth--;
+            }
         }
 
         private void Enqueue(ItemDefinition fishItem, string title, bool granted)
@@ -251,7 +290,12 @@ namespace Bayou.Inventory
         {
             _revealing = true;
             _revealUntil = Time.unscaledTime + Mathf.Max(0.35f, revealSeconds) + 0.35f;
-            ShowReveal(fishItem);
+            if (!TryShowReveal(fishItem))
+            {
+                EndSession(closeInventory: false);
+                yield break;
+            }
+
             GameplayPause.SyncFromUiState();
 
             var wait = Mathf.Max(0.35f, revealSeconds);
@@ -262,29 +306,58 @@ namespace Bayou.Inventory
                 yield return null;
             }
 
-            HideReveal();
-            _revealing = false;
-
-            if (_grantedReward && _pending != null && _pending.IsPlaced)
-            {
-                var placedDef = _pending.definition;
-                if (placedDef != null && placedDef.IsUniqueEquipment)
-                    TryEquipUnique(placedDef);
+            if (!ContinueAfterReveal(fishItem))
                 EndSession(closeInventory: false);
-                yield break;
+        }
+
+        private bool TryShowReveal(ItemDefinition fishItem)
+        {
+            try
+            {
+                ShowReveal(fishItem);
+                return true;
             }
+            catch (System.Exception ex)
+            {
+                Debug.LogException(ex);
+                return false;
+            }
+        }
 
-            _allocating = true;
+        private bool ContinueAfterReveal(ItemDefinition fishItem)
+        {
+            try
+            {
+                HideReveal();
+                _revealing = false;
 
-            var shopOpen = ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen;
-            var bag = InventoryDisplayUI.Active ?? FindFirstObjectByType<InventoryDisplayUI>();
-            if (!shopOpen)
-                bag?.Open();
-            bag?.Refresh();
+                if (_grantedReward && _pending != null && _pending.IsPlaced)
+                {
+                    var placedDef = _pending.definition;
+                    if (placedDef != null && placedDef.IsUniqueEquipment)
+                        StartCoroutine(EquipNextFrame(placedDef));
+                    EndSession(closeInventory: false);
+                    return true;
+                }
 
-            ShowAllocateBar(fishItem);
-            GameplayPause.SyncFromUiState();
-            _routine = null;
+                _allocating = true;
+
+                var shopOpen = ShopUIController.ActiveShop != null && ShopUIController.ActiveShop.IsOpen;
+                var bag = InventoryDisplayUI.Active ?? FindFirstObjectByType<InventoryDisplayUI>();
+                if (!shopOpen)
+                    bag?.Open();
+                bag?.Refresh();
+
+                ShowAllocateBar(fishItem);
+                GameplayPause.SyncFromUiState();
+                _routine = null;
+                return true;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogException(ex);
+                return false;
+            }
         }
 
         private void OnInventoryChanged()
@@ -296,7 +369,13 @@ namespace Bayou.Inventory
             var unique = def != null && def.IsUniqueEquipment;
             EndSession(closeInventory: false);
             if (unique)
-                TryEquipUnique(def);
+                StartCoroutine(EquipNextFrame(def));
+        }
+
+        private static IEnumerator EquipNextFrame(ItemDefinition def)
+        {
+            yield return null;
+            TryEquipUnique(def);
         }
 
         private static void TryEquipUnique(ItemDefinition def)
@@ -360,12 +439,21 @@ namespace Bayou.Inventory
         private void ShowReveal(ItemDefinition fishItem)
         {
             if (revealRoot != null)
+            {
+                var dim = revealRoot.GetComponent<Image>();
+                if (dim != null)
+                    dim.raycastTarget = false;
                 revealRoot.gameObject.SetActive(true);
+            }
             if (allocateBar != null)
                 allocateBar.gameObject.SetActive(false);
 
             if (revealIcon != null)
             {
+                // Full-rect quad. The hand-net icon's tight mesh is generated from
+                // the net holes and native-crashes the player the first time it is shown.
+                revealIcon.useSpriteMesh = false;
+                revealIcon.type = Image.Type.Simple;
                 revealIcon.sprite = fishItem.icon;
                 revealIcon.color = fishItem.icon != null
                     ? Color.white
@@ -389,9 +477,14 @@ namespace Bayou.Inventory
         private void HideReveal()
         {
             if (revealRoot == null) return;
-            var dim = revealRoot.GetComponent<Image>();
-            if (dim != null)
-                dim.raycastTarget = false;
+            // Full-screen Found card must not stay above the bag and eat drags.
+            var graphics = revealRoot.GetComponentsInChildren<Graphic>(true);
+            for (var i = 0; i < graphics.Length; i++)
+            {
+                if (graphics[i] != null)
+                    graphics[i].raycastTarget = false;
+            }
+
             revealRoot.gameObject.SetActive(false);
         }
 
@@ -426,8 +519,40 @@ namespace Bayou.Inventory
             HideAllocateBar();
         }
 
+        private static bool IsInventoryCanvas(Canvas candidate)
+        {
+            if (candidate == null) return false;
+            var bag = InventoryDisplayUI.Active ?? Object.FindFirstObjectByType<InventoryDisplayUI>();
+            var bagCanvas = bag != null ? bag.GetComponentInParent<Canvas>() : null;
+            return bagCanvas != null && candidate == bagCanvas;
+        }
+
         private void EnsureUi()
         {
+            // The Found card is its own canvas. A full-screen graphic on the bag canvas keeps later drags.
+            if (IsInventoryCanvas(canvas))
+            {
+                if (revealRoot != null)
+                {
+                    var dim = revealRoot.GetComponent<Image>();
+                    if (dim != null)
+                        dim.raycastTarget = false;
+                    Destroy(revealRoot.gameObject);
+                }
+
+                if (allocateBar != null && allocateBar.GetComponentInParent<Canvas>() == canvas)
+                    Destroy(allocateBar.gameObject);
+
+                revealRoot = null;
+                revealIcon = null;
+                revealTitle = null;
+                revealName = null;
+                allocateBar = null;
+                allocateHint = null;
+                discardButton = null;
+                canvas = null;
+            }
+
             if (canvas != null && revealRoot != null && discardButton != null)
                 return;
 
@@ -461,6 +586,7 @@ namespace Bayou.Inventory
                 cardRt.sizeDelta = new Vector2(420f, 460f);
                 var cardImg = card.gameObject.AddComponent<Image>();
                 cardImg.color = ShopUiStyle.PanelBrown;
+                cardImg.raycastTarget = false;
 
                 revealTitle = CreateTmp("Title", card, "Caught!", 36f, TextAlignmentOptions.Center);
                 var titleRt = revealTitle.rectTransform;
@@ -477,6 +603,7 @@ namespace Bayou.Inventory
                 iconGo.anchoredPosition = new Vector2(0f, 20f);
                 revealIcon = iconGo.gameObject.AddComponent<Image>();
                 revealIcon.color = ShopUiStyle.CellCream;
+                revealIcon.raycastTarget = false;
 
                 revealName = CreateTmp("Name", card, "Fish", 28f, TextAlignmentOptions.Center);
                 var nameRt = revealName.rectTransform;
@@ -497,6 +624,7 @@ namespace Bayou.Inventory
                 allocateBar.anchoredPosition = new Vector2(0f, 24f);
                 var barImg = allocateBar.gameObject.AddComponent<Image>();
                 barImg.color = ShopUiStyle.HeaderFooter;
+                barImg.raycastTarget = false;
 
                 allocateHint = CreateTmp("Hint", allocateBar, "Drag the fish into your case.", 20f, TextAlignmentOptions.MidlineLeft);
                 var hintRt = allocateHint.rectTransform;
@@ -541,6 +669,8 @@ namespace Bayou.Inventory
         {
             var go = CreateRect(name, parent);
             var tmp = go.gameObject.AddComponent<TextMeshProUGUI>();
+            if (TMP_Settings.defaultFontAsset != null)
+                tmp.font = TMP_Settings.defaultFontAsset;
             tmp.text = text;
             tmp.fontSize = size;
             tmp.alignment = align;
