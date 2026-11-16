@@ -29,6 +29,7 @@ namespace Bayou.UI
         private Vector3 _targetPos;
         private string _targetLabel;
         private bool _isTurnIn;
+        private float _nextResolve;
 
         public static QuestMarkerHud Instance { get; private set; }
 
@@ -54,7 +55,16 @@ namespace Bayou.UI
             }
 
             EnsureRefs();
-            if (!TryResolveTarget())
+            if (Time.unscaledTime >= _nextResolve)
+            {
+                _nextResolve = Time.unscaledTime + 0.2f;
+                if (!TryResolveTarget())
+                {
+                    SetVisible(false);
+                    return;
+                }
+            }
+            else if (!_hasTarget)
             {
                 SetVisible(false);
                 return;

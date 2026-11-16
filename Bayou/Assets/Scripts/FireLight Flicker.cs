@@ -15,15 +15,22 @@ public class FireLightFlicker : MonoBehaviour
 
     void Start()
     {
-        myLight = GetComponent<Light>(); //get the light component of the light object
+        myLight = GetComponent<Light>();
+        if (myLight == null)
+        {
+            enabled = false;
+            return;
+        }
+
         baseIntensity = myLight.intensity;
     }
 
     void Update()
     {
-        
+        if (myLight == null)
+            return;
+
         int randomNumberInRange = Random.Range(min, max);
         myLight.intensity = baseIntensity + randomNumberInRange;
-
     }
 }

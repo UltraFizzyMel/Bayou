@@ -15,7 +15,7 @@ MonoBehaviour:
   itemId: Item_SpiritLantern
   displayName: Spirit Lantern
   description: A lantern that burns ritual seals.
-  icon: {fileID: 21300000, guid: 35288a08194bc0e4381fbac3385d4bcd, type: 3}
+  icon: {fileID: 21300000, guid: afc71bfd70b91e7459f751841623d0dd, type: 3}
   shape:
     width: 1
     height: 2

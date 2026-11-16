@@ -71,6 +71,9 @@ namespace Bayou.Environment
 
             if (!_playerInRange || item == null) return;
             if (SignReadUi.IsOpen) return;
+            if (Bayou.GameplayPause.IsDialoguePlaying) return;
+            if (DialogueTrigger.HasTalkAtMost(DistToPlayerSq()))
+                return;
 
             var input = InputManager.GetInstance();
             if (input == null || !input.GetInteractPressed())
