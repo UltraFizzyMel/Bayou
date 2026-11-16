@@ -138,14 +138,23 @@ Stay safe out in the fog my friend.
 ->END
 
 === OlivierStandardIntro
-{!SeenAccordionExplanation && EmergencyDinnerQuestState == "FINISHED" && inBrackishShore == true: ->LostAccordion}
-{!Sad}Good Evening my friend!
-{!Sad}You look in need of a touch of musical delight, alright!
-{!Sad}How can I help ya?
-{Sad}Evening friend.
-{Sad}I'm afraid I don't have any tunes for you tonight, my accordion is lost yet again.
-{Sad}Still, how could I help you?
+{!SeenAccordionExplanation && EmergencyDinnerQuestState == "FINISHED" && inBrackishShore == true: ->LostAccordion |-> ContinueIntro}
 
+===ContinueIntro
+
+{Sad:-> SadIntro | ->HappyIntro}
+->OlivierOptions
+
+=== SadIntro
+Evening friend.
+I'm afraid I don't have any tunes for you tonight, my accordion is lost yet again.
+Still, how could I help you?
+->OlivierOptions
+
+===HappyIntro
+Good Evening my friend!
+You look in need of a touch of musical delight, alright!
+How can I help ya?
 ->OlivierOptions
 
 === OlivierAfterEelIntro
@@ -188,11 +197,11 @@ Stay safe out in the fog my friend.
 
  
  ===OlivierMarie
- {!LostAccordionStart}I hope they're getting better but I have a feeling I have done something to annoy them...
-{!LostAccordionStart}I don't even have my music to help clear the tension between us.
+ {not LostAccordionStart}I hope they're getting better but I have a feeling I have done something to annoy them...
+{not LostAccordionStart}I don't even have my music to help clear the tension between us.
 {LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart} Definitely on the upswing! We've had many big dinners thanks to you!
 {LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart} I'm going to serenade them more going forward to show them my love still reigns true.
-{AMealToDieForOlivierStart && !OlivierDeadHappyOrAlive}They're been... better but soon they won't have a lot to worry them anymore.
+{AMealToDieForOlivierStart &&  not OlivierDeadHappyOrAlive}They're been... better but soon they won't have a lot to worry them anymore.
 {OlivierHappy}Ever since you worked your magic they've never been better. 
 {OlivierHappy}Well... maybe on our wedding night...
 {OlivierHappy}Other than that night, never better!

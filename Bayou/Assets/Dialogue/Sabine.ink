@@ -332,8 +332,8 @@ Thank you Mr. Lafleur.
  === Helpritual
  I will need you to find three fish from across the Bayou.
  An Alligator Grar, the living nightmare from the Sunken Grove.
- A Largemouth Bass from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
- A Blue Catfish from the Brackish Shore. Closer to the start of your journey than you may ever have realised.
+ A Blue Catfish from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
+ A Largemouth Bass from the Brackish Shore. Closer to the start of your journey than you may ever have realised.
 Retrieve these three for me and you might just find what you've lost.
 Your remaining light is but a flicker, I hope it will be enough...
  ->END
@@ -356,7 +356,7 @@ I hope you change your mind.
  ->goodbye
  
  ===Ritualcomplete
- Ah! The final ember will not need to disolve into a thread of smoke!
+ Ah! The final ember will not need to disolve into a fading thread of smoke!
  Hand over the Three. 
  Oh and your Rosary too.
  ~FinishQuest(TheseRitualComponentsSeemSlipperyQuestId)
@@ -369,7 +369,7 @@ I hope you change your mind.
  
  ===FinishedRitual
  ....
- Tshhhhhhhhh//Play a sound hear tied to ritual?
+ Tshhhhhhhhh//Play a sound here tied to ritual?
  ...
  Go now Fabian into the core of the Sunken Grove. There you will find what you have been searching for.
  ->END
@@ -377,8 +377,8 @@ I hope you change your mind.
  ===UtmostImportance
  Their importance dwarfs either one of us. Let me remind you of the three.
  An Alligator Grar, the living nightmare from the Sunken Grove.
- A Largemouth Bass from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
- A Blue Catfish from the Brackish Shore. Closer to the start of your journey than you may ever have realised.
+ A Blue Catfish from the secluded graveyard pond. Look beyond that which fences you in by the Landry Tomb.
+ A Largemouth Bass from the Brackish Shore. Closer to the start of your journey than you may ever have realised.
  Make haste but be careful, the Bayou is always listening.
  ->END
  

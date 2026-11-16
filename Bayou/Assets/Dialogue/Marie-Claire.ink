@@ -164,10 +164,16 @@ Should you ever need passage down to the Brackish Shore Church Entrance then we 
 
 === MarieStandardIntro
 {MarieHappyVisitedAmount != 1}Well, look who it is. Good Evening dear.
-{!ExpandedHorizonsInProgress && ExpandedHorizonsStart && ExpandedHorizonsQuestState != "FINISHED"}->ExpandedHorizons
-{LostAccordionQuestState == "FINISHED" && hasFoundThirdBoatLoaction == true && !SeenAccordionDisposal}->AccordianDisposal
-->MarieStandardBranching
 
+{ not ExpandedHorizonsInProgress && ExpandedHorizonsStart && ExpandedHorizonsQuestState != "FINISHED":
+->ExpandedHorizons
+- else: 
+ {
+ - LostAccordionQuestState == "FINISHED" && hasFoundThirdBoatLoaction == true && !SeenAccordionDisposal: ->AccordianDisposal
+ -else:
+  ->MarieStandardBranching
+ }
+}
 
 
 
@@ -221,13 +227,13 @@ Anything else dear?
 
 ===MrBaptiste
 ...
-{!ExpandedHorizonsStart:Should you really be prying?}
-{!ExpandedHorizonsStart:No. No you should not.}
-{ExpandedHorizonsStart && !AccordianDisposalStart: Honestly... never been worse.}
-{ExpandedHorizonsStart && !AccordianDisposalStart: Not once since being bound to this boat have they remembered my preferences.}
-{AccordianDisposalStart && !AMealToDieForStart: They are getting on my final nerve. }
-{AccordianDisposalStart && !AMealToDieForStart: All I want from them is to show an ounce of care for what I actually want.}
-{AMealToDieForStart && !DeadAliveOrHappy:They're about to get a whole lot better.}
+{not ExpandedHorizonsStart:Should you really be prying?}
+{not ExpandedHorizonsStart:No. No you should not.}
+{ExpandedHorizonsStart &&  not AccordianDisposalStart: Honestly... never been worse.}
+{ExpandedHorizonsStart && not AccordianDisposalStart: Not once since being bound to this boat have they remembered my preferences.}
+{AccordianDisposalStart && not AMealToDieForStart: They are getting on my final nerve. }
+{AccordianDisposalStart && not AMealToDieForStart: All I want from them is to show an ounce of care for what I actually want.}
+{AMealToDieForStart && not DeadAliveOrHappy:They're about to get a whole lot better.}
 {MarieHappy:Surprisingly, they've improved substantially.}
 {MarieHappy:Well... when he takes his breaks from playing at least.}
 {MarieAlive:They're good...}
