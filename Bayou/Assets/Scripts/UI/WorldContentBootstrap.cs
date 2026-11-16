@@ -1,4 +1,5 @@
 using Bayou.Fishing;
+using Bayou.Inventory;
 using Bayou.World;
 using UnityEngine.SceneManagement;
 
@@ -25,6 +26,7 @@ namespace Bayou.UI
             AccordionDisposal.Ensure();
             PauseMenu.Ensure();
             MinimapHud.Ensure();
+            HandmadeInventoryRuntimeBootstrap.Ensure();
         }
     }
 }
