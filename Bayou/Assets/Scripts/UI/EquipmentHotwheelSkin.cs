@@ -32,12 +32,12 @@ namespace Bayou.UI
         public bool clockwise = true;
         public Vector2 wheelSize = new(560f, 560f);
         [Tooltip("Distance from center to item icons, in wheel-local pixels.")]
-        public float iconOrbit = 168f;
-        public Vector2 iconSize = new(72f, 72f);
-        public Vector2 slotPlateSize = new(96f, 96f);
+        public float iconOrbit = 184f;
+        public Vector2 iconSize = new(92f, 92f);
+        public Vector2 slotPlateSize = new(138f, 138f);
         [Range(0.05f, 0.6f)]
         [Tooltip("Ignore aim inside this fraction of the wheel radius (hub).")]
-        public float innerDeadzone = 0.22f;
+        public float innerDeadzone = 0.24f;
 
         [Header("Tint")]
         public Color discColor = Color.white;

@@ -243,8 +243,8 @@ namespace Bayou.UI
                 _campfireRequested = true;
                 Request("campfire",
                     "Use the campfire to save your game and set your respawn point.\nIf you choose a fish to cook you will additionally restore health.",
-                    TipDismiss.CampfireUi,
-                    pause: false);
+                    TipDismiss.Button,
+                    pause: true);
                 return;
             }
         }
@@ -390,8 +390,9 @@ namespace Bayou.UI
 
         private void OnCampfireUiClosed()
         {
-            if (_shown == null || _shown.Dismiss != TipDismiss.CampfireUi) return;
-            Dismiss();
+            if (_shown == null) return;
+            if (_shown.Id == "campfire" || _shown.Dismiss == TipDismiss.CampfireUi)
+                Dismiss();
         }
 
         private void ShelveShown()

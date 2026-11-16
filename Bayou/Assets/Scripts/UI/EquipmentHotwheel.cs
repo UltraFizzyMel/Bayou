@@ -3,6 +3,7 @@
 #endif
 
 using System.Collections.Generic;
+using Bayou;
 using Bayou.Fishing;
 using Bayou.Inventory;
 using Bayou.Inventory.Shop;
@@ -737,6 +738,7 @@ namespace Bayou.UI
 
         private static bool ShouldHide()
         {
+            if (GameplayPause.TutorialHold) return true;
             if (AudioSettings.IsOpen) return true;
             if (PauseMenu.IsOpen) return true;
             if (QuestJournalHud.IsOpen) return true;
@@ -924,7 +926,7 @@ namespace Bayou.UI
             _hub.raycastTarget = false;
 
             var selRt = CreateRect("Selector", _wheelRoot);
-            selRt.sizeDelta = new Vector2(36f, skin.iconOrbit + 24f);
+            selRt.sizeDelta = new Vector2(44f, skin.iconOrbit + skin.slotPlateSize.y * 0.35f);
             selRt.pivot = new Vector2(0.5f, 0f);
             _selector = selRt;
             var selImg = selRt.gameObject.AddComponent<Image>();
@@ -972,17 +974,17 @@ namespace Bayou.UI
                 view.Index = host.Find("Index")?.GetComponent<TextMeshProUGUI>();
                 if (view.Index == null)
                 {
-                    view.Index = CreateTmp("Index", host, (i + 1).ToString(), 16f, FontStyles.Bold);
-                    view.Index.rectTransform.anchoredPosition = new Vector2(0f, skin.iconSize.y * 0.42f);
-                    view.Index.rectTransform.sizeDelta = new Vector2(40f, 22f);
+                    view.Index = CreateTmp("Index", host, (i + 1).ToString(), 17f, FontStyles.Bold);
+                    view.Index.rectTransform.anchoredPosition = new Vector2(0f, skin.slotPlateSize.y * 0.38f);
+                    view.Index.rectTransform.sizeDelta = new Vector2(48f, 24f);
                 }
 
                 view.Name = host.Find("Name")?.GetComponent<TextMeshProUGUI>();
                 if (view.Name == null)
                 {
-                    view.Name = CreateTmp("Name", host, "Empty", 13f, FontStyles.Normal);
-                    view.Name.rectTransform.anchoredPosition = new Vector2(0f, -skin.iconSize.y * 0.55f);
-                    view.Name.rectTransform.sizeDelta = new Vector2(130f, 22f);
+                    view.Name = CreateTmp("Name", host, "Empty", 14f, FontStyles.Normal);
+                    view.Name.rectTransform.anchoredPosition = new Vector2(0f, -skin.slotPlateSize.y * 0.42f);
+                    view.Name.rectTransform.sizeDelta = new Vector2(148f, 24f);
                 }
 
                 _slots[i] = view;

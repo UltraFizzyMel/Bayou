@@ -21,10 +21,10 @@ MonoBehaviour:
   firstSlotAngle: 90
   clockwise: 1
   wheelSize: {x: 560, y: 560}
-  iconOrbit: 168
-  iconSize: {x: 72, y: 72}
-  slotPlateSize: {x: 96, y: 96}
-  innerDeadzone: 0.22
+  iconOrbit: 184
+  iconSize: {x: 92, y: 92}
+  slotPlateSize: {x: 138, y: 138}
+  innerDeadzone: 0.24
   discColor: {r: 1, g: 1, b: 1, a: 1}
   hubColor: {r: 1, g: 1, b: 1, a: 1}
   selectorColor: {r: 1, g: 0.86, b: 0.45, a: 1}
