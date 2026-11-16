@@ -95,6 +95,9 @@ namespace Bayou.Inventory.UI
             _canvas.overrideSorting = true;
             _canvas.sortingOrder = SortOrder;
             // No GraphicRaycaster — the ghost must never steal drops.
+            var raycaster = go.GetComponent<GraphicRaycaster>();
+            if (raycaster != null)
+                raycaster.enabled = false;
 
             var scaler = go.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;

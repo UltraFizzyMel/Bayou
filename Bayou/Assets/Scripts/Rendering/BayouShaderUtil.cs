@@ -19,22 +19,23 @@ namespace Bayou.Rendering
                 if (_cachedUnlit != null) return _cachedUnlit;
 
                 var template = Resources.Load<Material>(ResourcesUnlitMat);
-                if (template != null && template.shader != null)
+                if (template != null && IsUsable(template.shader))
                 {
                     _cachedUnlitTemplate = template;
                     _cachedUnlit = template.shader;
                     return _cachedUnlit;
                 }
 
+                _cachedUnlitTemplate = null;
                 _cachedUnlit =
-                    Shader.Find("HDRP/Unlit") ??
-                    Shader.Find("HDRenderPipeline/Unlit") ??
+                    Shader.Find("Sprites/Default") ??
+                    Shader.Find("UI/Default") ??
                     Shader.Find("Universal Render Pipeline/Unlit") ??
                     Shader.Find("Universal Render Pipeline/Lit") ??
-                    Shader.Find("HDRP/Lit") ??
-                    Shader.Find("Sprites/Default") ??
-                    Shader.Find("Unlit/Color") ??
-                    Shader.Find("Hidden/InternalErrorShader");
+                    Shader.Find("Unlit/Color");
+
+                if (!IsUsable(_cachedUnlit))
+                    _cachedUnlit = null;
 
                 return _cachedUnlit;
             }
@@ -43,10 +44,10 @@ namespace Bayou.Rendering
         public static Material CreateUnlitColor(Color color)
         {
             var shader = Unlit;
-            if (shader == null)
+            if (!IsUsable(shader))
             {
                 Debug.LogError("[Bayou] No usable unlit shader in build — check Always Included / Resources.");
-                return new Material(Shader.Find("Hidden/InternalErrorShader") ?? Shader.Find("Sprites/Default"));
+                return null;
             }
 
             Material mat;
@@ -57,6 +58,14 @@ namespace Bayou.Rendering
 
             ApplyColor(mat, color);
             return mat;
+        }
+
+        private static bool IsUsable(Shader shader)
+        {
+            if (shader == null) return false;
+            var name = shader.name;
+            if (string.IsNullOrEmpty(name)) return false;
+            return name.IndexOf("InternalError", System.StringComparison.OrdinalIgnoreCase) < 0;
         }
 
         public static void ApplyColor(Material mat, Color color)

@@ -47,12 +47,18 @@ namespace Bayou.Testing
         private void Awake()
         {
             showHud = false;
+#if !UNITY_EDITOR
+            // Dev cheats stay in the editor. A player build must not run them.
+            enableInPlayMode = false;
+            enabled = false;
+#endif
         }
 
         private void OnEnable()
         {
-#if ENABLE_INPUT_SYSTEM
-            EnsureKeyboardDevice();
+#if !UNITY_EDITOR
+            enableInPlayMode = false;
+            enabled = false;
 #endif
         }
 
@@ -86,9 +92,7 @@ namespace Bayou.Testing
         private void HandleShortcuts()
         {
 #if ENABLE_INPUT_SYSTEM
-            EnsureKeyboardDevice();
-            var kb = Keyboard.current;
-            if (kb == null) return;
+            if (Keyboard.current == null) return;
 #endif
             // ` toggles panel. Esc closes volume (AudioSettingsHotkeys owns V).
             if (WasBackquotePressed()) showHud = !showHud;
@@ -575,19 +579,6 @@ namespace Bayou.Testing
         }
 
 #if ENABLE_INPUT_SYSTEM
-        private static void EnsureKeyboardDevice()
-        {
-            if (Keyboard.current != null) return;
-
-            foreach (var device in InputSystem.devices)
-            {
-                if (device is Keyboard)
-                    return;
-            }
-
-            InputSystem.AddDevice<Keyboard>();
-        }
-
         private static bool IsShiftHeld()
         {
             var kb = Keyboard.current;
@@ -624,8 +615,6 @@ namespace Bayou.Testing
             };
         }
 #else
-        private static void EnsureKeyboardDevice() { }
-
         private static bool IsShiftHeld() =>
             Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 

@@ -136,6 +136,7 @@ namespace Bayou.Inventory.UI
             if (icon == null) return;
 
             icon.type = Image.Type.Simple;
+            icon.useSpriteMesh = false;
             icon.preserveAspect = true;
             icon.sprite = sprite;
             icon.enabled = sprite != null;

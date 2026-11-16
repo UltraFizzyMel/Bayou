@@ -180,18 +180,24 @@ namespace Bayou.Fishing
 
         private void ConfigureLight(Light light)
         {
+            if (light == null)
+                return;
+
+            light.shadows = LightShadows.None;
             light.type = LightType.Point;
             light.intensity = intensity;
             light.range = EffectiveRange();
             light.color = color;
-            light.shadows = LightShadows.None;
             light.renderMode = LightRenderMode.ForcePixel;
             light.cullingMask = ~0;
             light.renderingLayerMask = int.MaxValue;
 
-            var data = light.GetComponent<UniversalAdditionalLightData>() ??
-                       light.gameObject.AddComponent<UniversalAdditionalLightData>();
-            data.usePipelineSettings = true;
+            // ?? ignores a destroyed Unity component and then the property write throws.
+            var data = light.GetComponent<UniversalAdditionalLightData>();
+            if (data == null)
+                data = light.gameObject.AddComponent<UniversalAdditionalLightData>();
+            if (data != null)
+                data.usePipelineSettings = true;
         }
 
         private void EnsureGlow()

@@ -20,11 +20,14 @@ namespace Bayou.Environment
         [Tooltip("Optional water particles. Left inactive until assigned, then played only while the player is in the current.")]
         [SerializeField] private GameObject CurrentEffect;
 
+        private const float SweepCommitDistance = 0.75f;
+
         private Rigidbody _playerBody;
         private BayouCharacterMotor _player;
         private Vector3 _enterPos;
         private float _enteredAt;
         private bool _killed;
+        private bool _swept;
 
         private void Reset()
         {
@@ -45,11 +48,17 @@ namespace Bayou.Environment
         private void OnTriggerEnter(Collider other)
         {
             if (!TryGetPlayer(other, out var motor, out var body)) return;
+            var continuing = _player == motor && _swept && !_killed;
             _player = motor;
             _playerBody = body;
-            _enterPos = motor.transform.position;
-            _enteredAt = Time.time;
-            _killed = false;
+            if (!continuing)
+            {
+                _enterPos = motor.transform.position;
+                _enteredAt = Time.time;
+                _killed = false;
+                _swept = false;
+            }
+
             SetEffect(true);
         }
 
@@ -57,9 +66,12 @@ namespace Bayou.Environment
         {
             if (!TryGetPlayer(other, out var motor, out _)) return;
             if (_player != null && motor != _player) return;
+            SetEffect(false);
+            // The current has already taken them. Leaving the volume does not save them.
+            if (_swept && !_killed)
+                return;
             _player = null;
             _playerBody = null;
-            SetEffect(false);
         }
 
         private void FixedUpdate()
@@ -84,6 +96,9 @@ namespace Bayou.Environment
             _playerBody.linearVelocity = new Vector3(next.x, velocity.y, next.z);
 
             var carried = Vector3.Dot(_player.transform.position - _enterPos, dir);
+            if (carried >= SweepCommitDistance)
+                _swept = true;
+
             var waited = Time.time - _enteredAt;
             if (waited < Mathf.Max(0.2f, delayBeforeDeath) &&
                 carried < Mathf.Max(0.5f, distanceBeforeDeath))
@@ -91,10 +106,14 @@ namespace Bayou.Environment
 
             var health = _player.GetComponent<PlayerHealth>() ?? PlayerHealth.Resolve();
             if (health == null || !health.IsAlive)
+            {
+                if (health != null)
+                    Clear();
                 return;
+            }
 
             _killed = true;
-            health.KillByHazard("The river washed you away.");
+            health.KillByHazard(PlayerHealth.FastWaterDeathTip);
             Clear();
         }
 
@@ -102,6 +121,7 @@ namespace Bayou.Environment
         {
             _player = null;
             _playerBody = null;
+            _swept = false;
             SetEffect(false);
         }
 

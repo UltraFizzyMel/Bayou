@@ -343,6 +343,24 @@ public class DialogueManager : MonoBehaviour
 
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
+
+        // ShowDialogueCanvas turns this canvas on and leaves it at sorting 200.
+        // Darkened Background stays active with raycastTarget and eats every later click.
+        var hiddenCanvas = dialoguePanel != null
+            ? dialoguePanel.GetComponentInParent<Canvas>(true)
+            : null;
+        if (hiddenCanvas != null)
+        {
+            var group = hiddenCanvas.GetComponent<CanvasGroup>();
+            if (group != null)
+            {
+                group.blocksRaycasts = false;
+                group.interactable = false;
+            }
+
+            if (hiddenCanvas.gameObject != dialoguePanel)
+                hiddenCanvas.gameObject.SetActive(false);
+        }
     }
 
     /// <summary>

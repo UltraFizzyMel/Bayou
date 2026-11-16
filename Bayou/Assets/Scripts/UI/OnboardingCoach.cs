@@ -89,13 +89,9 @@ namespace Bayou.UI
 
         public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
         {
+            // The move card already shows this line. A second prompt under it stacks the same text.
             prompt = default;
-            if (!_teachingMove || ShouldHide())
-                return false;
-            if (_shownAt < 0f || Time.unscaledTime - _shownAt < 0.35f)
-                return false;
-            prompt = new InteractionPrompt("", "WASD = Move  ·  Shift = Sprint", 180);
-            return true;
+            return false;
         }
 
         private bool IsMoving()

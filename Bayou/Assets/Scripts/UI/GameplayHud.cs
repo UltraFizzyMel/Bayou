@@ -415,8 +415,9 @@ namespace Bayou.UI
             scaler.matchWidthOrHeight = 0.5f;
             canvasGo.AddComponent<GraphicRaycaster>().enabled = false;
 
+            // Minimap is 210px at x=18. Keep the quest log to its right so the two panels do not cover each other.
             questPanel = CreatePanel("QuestLog", canvasGo.transform,
-                new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(24f, -24f), new Vector2(360f, 120f));
+                new Vector2(0f, 1f), new Vector2(0f, 1f), new Vector2(244f, -24f), new Vector2(360f, 120f));
             questTitleLabel = CreateTmp("QuestTitle", questPanel.transform, "No active quest", 22f, FontStyles.Bold,
                 TextAlignmentOptions.TopLeft);
             StretchTmp(questTitleLabel.rectTransform, 14f, 10f, 14f, 58f);
