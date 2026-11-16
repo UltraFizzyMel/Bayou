@@ -103,19 +103,55 @@ namespace Bayou.World
         private static bool TryDestination(string destination, out Vector3 position)
         {
             position = default;
+            if (TryNearMarie(out position))
+                return true;
+
             switch (destination)
             {
                 case Church:
-                    // Brackish shore landing closest to the church (first shore piers).
                     return Anchor("Piers for Brackish Shore", new Vector3(123.03f, -4.5f, -48.6f), out position);
                 case Foggy:
                     return Anchor("Foggy Marsh Dock", new Vector3(4.56f, 1.2f, 164.4f), out position);
                 case Grove:
-                    // Second brackish shore, the pier toward the sunken grove.
                     return Anchor("Brackish Shore Pier 2", new Vector3(256.01f, -4.5f, 46.69f), out position);
                 default:
                     return false;
             }
+        }
+
+        private static bool TryNearMarie(out Vector3 position)
+        {
+            position = default;
+            string[] names = { "Marie Claire Baptiste", "Marie-Claire", "Marie", "NPC_Marie" };
+            Transform best = null;
+            var bestSq = float.MaxValue;
+            for (var i = 0; i < names.Length; i++)
+            {
+                var go = GameObject.Find(names[i]);
+                if (go == null) continue;
+                var sq = go.transform.position.sqrMagnitude;
+                if (sq < bestSq)
+                {
+                    bestSq = sq;
+                    best = go.transform;
+                }
+            }
+
+            if (best == null)
+            {
+                var houseboat = GameObject.Find("Houseboat") ?? GameObject.Find("Church Houseboat");
+                if (houseboat != null)
+                    best = houseboat.transform;
+            }
+
+            if (best == null) return false;
+            var forward = best.forward;
+            forward.y = 0f;
+            if (forward.sqrMagnitude < 0.01f)
+                forward = Vector3.forward;
+            forward.Normalize();
+            position = best.position - forward * 2.8f + Vector3.up * 1.15f;
+            return true;
         }
 
         private static bool Anchor(string objectName, Vector3 fallback, out Vector3 position)

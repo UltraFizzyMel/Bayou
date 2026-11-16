@@ -212,6 +212,7 @@ namespace Bayou.Inventory
             if (IsLockedByShop || IsLockedByBonfire) return;
             if (CaughtFishPresenter.IsRevealing) return;
             if (GameplayPause.IsDialoguePlaying) return;
+            if (!_isOpen && UiModalExclusion.BlocksInventory()) return;
             if (_isOpen) Close();
             else Open();
         }
@@ -220,12 +221,19 @@ namespace Bayou.Inventory
         {
             if (IsLockedByBonfire || IsLockedByShop) return;
             if (GameplayPause.IsDialoguePlaying) return;
+            if (UiModalExclusion.BlocksInventory()) return;
+            UiModalExclusion.OnInventoryOpening();
             if (inventory == null)
                 inventory = InventoryController.Instance;
 
             EnsureCanvasHealthy();
+            EnsureBackdrop();
             _isOpen = true;
             SetPanelVisible(true);
+            if (panelRoot != null)
+                panelRoot.SetAsLastSibling();
+            else
+                transform.SetAsLastSibling();
             Canvas.ForceUpdateCanvases();
             if (panelRoot != null)
                 LayoutRebuilder.ForceRebuildLayoutImmediate(panelRoot);
@@ -253,6 +261,7 @@ namespace Bayou.Inventory
             _isOpen = false;
             _relayoutFrames = 0;
             SetPanelVisible(false);
+            SetBackdropVisible(false);
             Bayou.UI.TutorialTips.NotifyInventoryClosed();
             gridUI?.ClearHighlights();
             GameplayPause.SyncFromUiState();
@@ -959,6 +968,36 @@ namespace Bayou.Inventory
         {
             var kb = Keyboard.current;
             return kb != null && kb.escapeKey.wasPressedThisFrame;
+        }
+
+        private GameObject _backdrop;
+
+        private void EnsureBackdrop()
+        {
+            var canvas = GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+            if (_backdrop == null)
+            {
+                _backdrop = new GameObject("InventoryBackdrop", typeof(RectTransform), typeof(Image));
+                _backdrop.transform.SetParent(canvas.transform, false);
+                _backdrop.transform.SetAsFirstSibling();
+                var rt = _backdrop.GetComponent<RectTransform>();
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.offsetMin = Vector2.zero;
+                rt.offsetMax = Vector2.zero;
+                var img = _backdrop.GetComponent<Image>();
+                img.color = ShopUiStyle.OverlayDim;
+                img.raycastTarget = true;
+            }
+
+            _backdrop.SetActive(true);
+        }
+
+        private void SetBackdropVisible(bool on)
+        {
+            if (_backdrop != null)
+                _backdrop.SetActive(on);
         }
     }
 }

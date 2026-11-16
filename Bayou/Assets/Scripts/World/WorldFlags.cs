@@ -32,6 +32,7 @@ public static class WorldFlags
     public const string FoggyAltarBurned = "Is_foggyalter_burned";
     public const string GraveAltarBurned = "Is_gravealtar_burned";
     public const string BrackishAltarBurned = "Is_brackishaltar_burned";
+    public const string WeddingRingFound = "Has_Wedding_Ring";
 
     private static readonly HashSet<string> Flags = new(StringComparer.OrdinalIgnoreCase);
 

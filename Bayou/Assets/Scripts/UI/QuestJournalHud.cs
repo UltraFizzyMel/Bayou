@@ -122,6 +122,8 @@ namespace Bayou.UI
 
         private void SetOpen(bool open, bool syncPause = true)
         {
+            if (open)
+                UiModalExclusion.OnJournalOpening();
             _isOpen = open;
             if (_root != null && _root.activeSelf != open)
                 _root.SetActive(open);
@@ -153,6 +155,7 @@ namespace Bayou.UI
                 Bayou.Inventory.Shop.ShopUIController.ActiveShop.IsOpen) return false;
             if (Bayou.Save.BonfireUIController.Active != null &&
                 Bayou.Save.BonfireUIController.Active.IsOpen) return false;
+            if (UiModalExclusion.BlocksJournal()) return false;
             return true;
         }
 

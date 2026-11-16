@@ -27,6 +27,8 @@ namespace Bayou.UI
             PauseMenu.Ensure();
             MinimapHud.Ensure();
             HandmadeInventoryRuntimeBootstrap.Ensure();
+            VisitGravesQuestBootstrap.Ensure();
+            SunkenGroveEndingBootstrap.Ensure();
         }
     }
 }

@@ -165,6 +165,7 @@ namespace Bayou.Inventory.Shop
 
             if (overlayRoot != null)
             {
+                SetShopBackdropVisible(overlayRoot, false);
                 overlayRoot.gameObject.SetActive(false);
                 var dim = overlayRoot.GetComponent<Image>();
                 if (dim != null)
@@ -255,7 +256,10 @@ namespace Bayou.Inventory.Shop
         {
             if (_isOpen)
                 return;
+            if (UiModalExclusion.BlocksShop())
+                return;
 
+            UiModalExclusion.OnShopOpening();
             RefreshRuntimeReferences();
 
             if (definition != null)
@@ -332,7 +336,8 @@ namespace Bayou.Inventory.Shop
             if (overlayRoot != null)
             {
                 overlayRoot.gameObject.SetActive(true);
-                // Dim is visual only — must not steal clicks from the player bag.
+                EnsureShopBackdrop(overlayRoot);
+                SetShopBackdropVisible(overlayRoot, true);
                 var dim = overlayRoot.GetComponent<Image>();
                 if (dim != null)
                     dim.raycastTarget = false;
@@ -382,7 +387,10 @@ namespace Bayou.Inventory.Shop
             if (ActiveShop == this)
                 ActiveShop = null;
             if (overlayRoot != null)
+            {
+                SetShopBackdropVisible(overlayRoot, false);
                 overlayRoot.gameObject.SetActive(false);
+            }
 
             ApplySplitLayout(false);
             GameplayPause.SyncFromUiState();
@@ -428,7 +436,10 @@ namespace Bayou.Inventory.Shop
             if (ActiveShop == this)
                 ActiveShop = null;
             if (overlayRoot != null)
+            {
+                SetShopBackdropVisible(overlayRoot, false);
                 overlayRoot.gameObject.SetActive(false);
+            }
 
             ApplySplitLayout(false);
             GameplayPause.SyncFromUiState();
@@ -775,6 +786,47 @@ namespace Bayou.Inventory.Shop
 
             if (handmadePlayerInventoryUi == null)
                 handmadePlayerInventoryUi = InventoryDisplayUI.Active ?? FindFirstObjectByType<InventoryDisplayUI>();
+        }
+
+        private static void EnsureShopBackdrop(Transform overlayRoot)
+        {
+            if (overlayRoot == null) return;
+            var parent = overlayRoot.parent != null ? overlayRoot.parent : overlayRoot;
+            var existing = parent.Find("ShopGameplayDim");
+            Image dimImg;
+            if (existing == null)
+            {
+                var dimGo = new GameObject("ShopGameplayDim", typeof(RectTransform), typeof(Image));
+                dimGo.transform.SetParent(parent, false);
+                var insert = overlayRoot.GetSiblingIndex();
+                dimGo.transform.SetSiblingIndex(insert);
+                var rt = dimGo.GetComponent<RectTransform>();
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.offsetMin = Vector2.zero;
+                rt.offsetMax = Vector2.zero;
+                dimImg = dimGo.GetComponent<Image>();
+            }
+            else
+            {
+                dimImg = existing.GetComponent<Image>();
+            }
+
+            if (dimImg != null)
+            {
+                dimImg.color = ShopUiStyle.OverlayDim;
+                dimImg.raycastTarget = false;
+            }
+        }
+
+        private static void SetShopBackdropVisible(Transform overlayRoot, bool on)
+        {
+            if (overlayRoot == null) return;
+            var parent = overlayRoot.parent;
+            if (parent == null) return;
+            var dim = parent.Find("ShopGameplayDim");
+            if (dim != null)
+                dim.gameObject.SetActive(on);
         }
     }
 }

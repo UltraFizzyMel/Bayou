@@ -7,14 +7,13 @@ using UnityEngine.SceneManagement;
 namespace Bayou.World
 {
     /// <summary>
-    /// The marsh flower is laid on the graveyard altar — the rosary (cross of beads)
-    /// Sabine points to near Lover's Nook. The blossom stays hidden until that placement.
+    /// The marsh flower is laid on Caliste's grave. The blossom stays hidden until placement.
     /// Magnolias (the cluster) is a different object and is not touched here.
     /// </summary>
     [DefaultExecutionOrder(-40)]
     public sealed class GraveFlowerPlacement : MonoBehaviour, IInteractionPromptSource
     {
-        public const string GraveObjectName = "Altar Graveyard";
+        public const string GraveObjectName = VisitGravesQuestBootstrap.CalisteGraveName;
         public const string VisualName = "PlacedFlower";
         private const string FlowerId = "Item_HerbalistFlower";
 
@@ -40,7 +39,7 @@ namespace Bayou.World
             if (string.Equals(scene.name, "MainMenu", System.StringComparison.OrdinalIgnoreCase))
                 return;
 
-            var grave = GameObject.Find(GraveObjectName);
+            var grave = GameObject.Find(GraveObjectName) ?? VisitGravesQuestBootstrap.FindCalisteGraveFallback();
             if (grave == null) return;
             if (grave.GetComponent<GraveFlowerPlacement>() == null)
                 grave.AddComponent<GraveFlowerPlacement>();
