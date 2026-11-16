@@ -309,7 +309,51 @@ namespace Bayou.UI
             CollectOwnedEquipment();
             TryPlaceOwned("Item_FishingRod", 0);
             TryPlaceOwned("Item_HandNet", 1);
-            TryPlaceOwned("Item_Lantern", 2);
+            if (!TryPlaceExact("Item_SpiritLantern", 2))
+                TryPlaceOwned("Item_Lantern", 2);
+            RetargetLanternSlot();
+        }
+
+        private bool TryPlaceExact(string itemId, int preferredSlot)
+        {
+            ItemDefinition def = null;
+            for (var i = 0; i < _owned.Count; i++)
+            {
+                if (_owned[i] != null &&
+                    string.Equals(_owned[i].Id, itemId, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    def = _owned[i];
+                    break;
+                }
+            }
+
+            if (def == null) return false;
+            if (string.Equals(itemId, "Item_SpiritLantern", System.StringComparison.OrdinalIgnoreCase))
+            {
+                for (var i = 0; i < _slotItemIds.Length; i++)
+                {
+                    if (!string.Equals(_slotItemIds[i], "Item_Lantern", System.StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    _slotItemIds[i] = def.Id;
+                    return true;
+                }
+            }
+
+            return PlaceInSlot(def, preferredSlot);
+        }
+
+        private void RetargetLanternSlot()
+        {
+            var inv = InventoryController.Instance;
+            if (inv == null || inv.CountExact("Item_SpiritLantern") < 1) return;
+            if (inv.CountExact("Item_Lantern") >= 1) return;
+
+            for (var i = 0; i < _slotItemIds.Length; i++)
+            {
+                if (!string.Equals(_slotItemIds[i], "Item_Lantern", System.StringComparison.OrdinalIgnoreCase))
+                    continue;
+                _slotItemIds[i] = "Item_SpiritLantern";
+            }
         }
 
         private void TryPlaceOwned(string itemId, int preferredSlot)
@@ -325,27 +369,33 @@ namespace Bayou.UI
             }
 
             if (def == null) return;
+            PlaceInSlot(def, preferredSlot);
+        }
 
+        private bool PlaceInSlot(ItemDefinition def, int preferredSlot)
+        {
+            if (def == null) return false;
             for (var i = 0; i < _slotItemIds.Length; i++)
             {
-                if (string.Equals(_slotItemIds[i], def.Id, System.StringComparison.OrdinalIgnoreCase) ||
-                    (!string.IsNullOrWhiteSpace(_slotItemIds[i]) && def.MatchesId(_slotItemIds[i])))
-                    return;
+                if (string.Equals(_slotItemIds[i], def.Id, System.StringComparison.OrdinalIgnoreCase))
+                    return true;
             }
 
             if (preferredSlot >= 0 && preferredSlot < _slotItemIds.Length &&
                 string.IsNullOrWhiteSpace(_slotItemIds[preferredSlot]))
             {
                 _slotItemIds[preferredSlot] = def.Id;
-                return;
+                return true;
             }
 
             for (var i = 0; i < _slotItemIds.Length; i++)
             {
                 if (!string.IsNullOrWhiteSpace(_slotItemIds[i])) continue;
                 _slotItemIds[i] = def.Id;
-                return;
+                return true;
             }
+
+            return false;
         }
 
         private static void HideSceneMockWheel()
@@ -492,7 +542,7 @@ namespace Bayou.UI
                 var view = _slots[i];
                 if (view == null) continue;
 
-                var def = i < _slotItemIds.Length ? ResolveItem(_slotItemIds[i]) : null;
+                var def = i < _slotItemIds.Length ? PreferSpiritIcon(ResolveItem(_slotItemIds[i])) : null;
                 var selected = def != null &&
                                BayouFishingEquipment.TryResolveHeldItem(def.Id, out var mapped) &&
                                mapped == held;
@@ -570,7 +620,7 @@ namespace Bayou.UI
 
             _hudHidden = hide;
             _hudHeld = held;
-            var def = held == BayouHeldItem.None ? null : ResolveItem(ItemIdForHeld(held));
+            var def = held == BayouHeldItem.None ? null : PreferSpiritIcon(ResolveItem(ItemIdForHeld(held)));
             var icon = def != null ? def.icon : null;
             var show = !hide && held != BayouHeldItem.None;
 
@@ -591,7 +641,8 @@ namespace Bayou.UI
             {
                 case BayouHeldItem.Rod: return "Item_FishingRod";
                 case BayouHeldItem.Net: return "Item_HandNet";
-                case BayouHeldItem.Lantern: return "Item_Lantern";
+                case BayouHeldItem.Lantern:
+                    return OwnsExact("Item_SpiritLantern") ? "Item_SpiritLantern" : "Item_Lantern";
                 default: return null;
             }
         }
@@ -700,21 +751,41 @@ namespace Bayou.UI
             return _equipment;
         }
 
+        private static bool OwnsExact(string itemId)
+        {
+            var inv = InventoryController.Instance;
+            return inv != null && inv.CountExact(itemId) >= 1;
+        }
+
+        private static ItemDefinition PreferSpiritIcon(ItemDefinition def)
+        {
+            if (def == null || !ItemDefinition.IsLanternItem(def.Id)) return def;
+            if (!OwnsExact("Item_SpiritLantern") || OwnsExact("Item_Lantern")) return def;
+            return ResolveItem("Item_SpiritLantern") ?? def;
+        }
+
         private static ItemDefinition ResolveItem(string itemId)
         {
             if (string.IsNullOrWhiteSpace(itemId)) return null;
             var catalog = GameSaveSystem.Instance != null ? GameSaveSystem.Instance.ItemCatalog : null;
             catalog ??= Resources.Load<ItemCatalog>("Bayou/ItemCatalog");
             var fromCat = catalog != null ? catalog.Resolve(itemId) : null;
-            if (fromCat != null) return fromCat;
+            if (fromCat != null &&
+                (string.Equals(fromCat.Id, itemId, System.StringComparison.OrdinalIgnoreCase) ||
+                 string.Equals(fromCat.name, itemId, System.StringComparison.OrdinalIgnoreCase)))
+                return fromCat;
 
+            ItemDefinition loose = null;
             foreach (var def in Resources.LoadAll<ItemDefinition>("Bayou/Items"))
             {
-                if (def != null && def.MatchesId(itemId))
+                if (def == null) continue;
+                if (string.Equals(def.Id, itemId, System.StringComparison.OrdinalIgnoreCase))
                     return def;
+                if (loose == null && def.MatchesId(itemId))
+                    loose = def;
             }
 
-            return null;
+            return fromCat ?? loose;
         }
 
         private void BuildUi()

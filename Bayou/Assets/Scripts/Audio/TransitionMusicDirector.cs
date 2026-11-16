@@ -16,6 +16,7 @@ namespace Bayou.Audio
         private const float ChurchVolume = 0.7f;
         private const float GraveyardVolume = 0.7f;
         private const float SwampVolume = 0.62f;
+        private const float FoggyVolume = 0.56f;
         private const float AmbientVolume = 0.55f;
 
         public enum Area
@@ -318,9 +319,11 @@ namespace Bayou.Audio
             var ambient = AmbientFor(area);
             _current = clip;
             _playing = true;
-            var musicVolume = area == Area.FoggyMarsh || area == Area.BrackishShore || area == Area.SunkenGrove
-                ? SwampVolume
-                : area == Area.Graveyard ? GraveyardVolume : ChurchVolume;
+            var musicVolume = area == Area.FoggyMarsh
+                ? FoggyVolume
+                : area == Area.BrackishShore || area == Area.SunkenGrove
+                    ? SwampVolume
+                    : area == Area.Graveyard ? GraveyardVolume : ChurchVolume;
             var group = area == Area.Church || area == Area.Graveyard
                 ? _clips != null ? _clips.MusicGroup : null
                 : null;

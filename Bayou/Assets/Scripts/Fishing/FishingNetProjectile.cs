@@ -54,6 +54,12 @@ namespace Bayou.Fishing
         /// <summary>Short hint for HUD / prompts after the bobber lands.</summary>
         public string StatusHint { get; private set; } = "";
 
+        public void SetStatus(string line)
+        {
+            if (!string.IsNullOrEmpty(line))
+                StatusHint = line;
+        }
+
         private static string _recastLine;
         private static float _recastUntil;
 
@@ -67,6 +73,12 @@ namespace Bayou.Fishing
                 ? "Recast with left mouse."
                 : line;
             _recastUntil = Time.unscaledTime + 8f;
+        }
+
+        public static void NoteSuccess(string line)
+        {
+            _recastLine = string.IsNullOrWhiteSpace(line) ? "Caught." : line;
+            _recastUntil = Time.unscaledTime + 2.4f;
         }
 
         public static void ClearRecast()

@@ -30,6 +30,25 @@ namespace Bayou.Quests
         public ItemDefinition Item => item;
         public static IReadOnlyList<QuestItemPickup> Living => All;
 
+        /// <summary>A quest pickup the player is already standing on, at least as close as <paramref name="distSq"/>.</summary>
+        public static bool HasPickupAtMost(float distSq)
+        {
+            var player = PlayerLocator.Transform;
+            for (var i = 0; i < All.Count; i++)
+            {
+                var pickup = All[i];
+                if (pickup == null || !pickup.isActiveAndEnabled || !pickup._playerInRange || pickup.item == null)
+                    continue;
+                if (player == null) return true;
+                var delta = pickup.transform.position - player.position;
+                delta.y = 0f;
+                if (delta.sqrMagnitude <= distSq)
+                    return true;
+            }
+
+            return false;
+        }
+
         private static readonly List<QuestItemPickup> All = new();
         private static readonly List<UniquePickupRecord> UniqueHomes = new();
 
@@ -144,6 +163,15 @@ namespace Bayou.Quests
             var dialogue = DialogueManager.GetInstance();
             if (dialogue != null && dialogue.dialogueIsPlaying)
                 return;
+
+            var player = PlayerLocator.Transform;
+            if (player != null)
+            {
+                var delta = transform.position - player.position;
+                delta.y = 0f;
+                if (DialogueTrigger.HasTalkAtMost(delta.sqrMagnitude))
+                    return;
+            }
 
             var input = InputManager.GetInstance();
             if (input == null || !input.GetInteractPressed())

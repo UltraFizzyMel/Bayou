@@ -67,7 +67,7 @@ namespace Bayou.Inventory.UI
         private bool _layoutRebuildPending;
         private System.Func<InventoryItemView, PointerEventData, bool> _crossPanelDropHandler;
 
-        public bool IsOpen => _isOpen;
+        public bool IsOpen => _isOpen && panelRoot != null && panelRoot.gameObject.activeInHierarchy;
         public InventoryController Inventory => inventory;
         public RectTransform PanelRoot => panelRoot;
         public Vector2Int CurrentDragGrabOffset => _dragGrabOffset;
@@ -153,6 +153,12 @@ namespace Bayou.Inventory.UI
 
         private void Update()
         {
+            if (_isOpen && (panelRoot == null || !panelRoot.gameObject.activeInHierarchy))
+            {
+                _isOpen = false;
+                GameplayPause.SyncFromUiState();
+            }
+
             if (toggleInventoryAction?.action != null && toggleInventoryAction.action.WasPressedThisFrame())
                 Toggle();
 

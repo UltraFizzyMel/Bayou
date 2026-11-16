@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using Bayou.Inventory;
 using Bayou.Player;
 using Bayou.UI;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Bayou.Environment
 {
@@ -20,9 +23,102 @@ namespace Bayou.Environment
         [SerializeField] private float interactRadius = 3.5f;
 
         private static readonly List<ReadableSign> All = new();
+        private static int _rangeFrame = -1;
 
         private bool _playerInRange;
         private float _distSq;
+        private Renderer[] _renderers = System.Array.Empty<Renderer>();
+
+        /// <summary>A sign the player can already read, at least as close as <paramref name="distSq"/>, or a sign panel that is open.</summary>
+        public static bool HasWorldInteractAtMost(float distSq)
+        {
+            if (SignReadUi.IsOpen) return true;
+            for (var i = 0; i < All.Count; i++)
+            {
+                var sign = All[i];
+                if (sign == null || !sign._playerInRange) continue;
+                if (sign._distSq <= distSq)
+                    return true;
+            }
+
+            return false;
+        }
+
+        private void Start() => RefreshLiveText();
+
+        /// <summary>
+        /// The read panel uses the fields on this component. A placeholder does not replace
+        /// a sentence already written on the sign.
+        /// </summary>
+        public void RefreshLiveText()
+        {
+            var label = ReadChildLabel();
+            if (IsPlaceholder(title, body) && !string.IsNullOrWhiteSpace(label) && !IsPlaceholder(title, label))
+            {
+                var split = label.IndexOf('\n');
+                if (split > 0)
+                {
+                    title = label.Substring(0, split).Trim();
+                    body = label.Substring(split + 1).Trim();
+                }
+                else
+                {
+                    body = label.Trim();
+                }
+            }
+            else if (!IsPlaceholder(title, body))
+            {
+                WriteChildLabelIfBlank();
+            }
+
+            if (SignReadUi.IsOpen && SignReadUi.Owner == this)
+                SignReadUi.Show(this, title, body);
+        }
+
+        private static bool IsPlaceholder(string signTitle, string signBody)
+        {
+            if (string.IsNullOrWhiteSpace(signBody)) return true;
+            var bodyTrim = signBody.Trim();
+            if (bodyTrim == "..." || bodyTrim == "The writing is faded.") return true;
+            return signTitle == "Sign" ||
+                   signTitle == "Church road" ||
+                   signTitle == "Foggy marsh" ||
+                   signTitle == "Graveyard path" ||
+                   signTitle == "Mile marker";
+        }
+
+        private string ReadChildLabel()
+        {
+            var tmp = GetComponentsInChildren<TMP_Text>(true);
+            for (var i = 0; i < tmp.Length; i++)
+            {
+                if (tmp[i] == null) continue;
+                var text = tmp[i].text;
+                if (!string.IsNullOrWhiteSpace(text))
+                    return text;
+            }
+
+            var ui = GetComponentsInChildren<Text>(true);
+            for (var i = 0; i < ui.Length; i++)
+            {
+                if (ui[i] == null) continue;
+                if (!string.IsNullOrWhiteSpace(ui[i].text))
+                    return ui[i].text;
+            }
+
+            return null;
+        }
+
+        private void WriteChildLabelIfBlank()
+        {
+            var next = string.IsNullOrWhiteSpace(title) ? body : title + "\n" + body;
+            var tmp = GetComponentsInChildren<TMP_Text>(true);
+            for (var i = 0; i < tmp.Length; i++)
+            {
+                if (tmp[i] == null || !IsPlaceholder(title, tmp[i].text)) continue;
+                tmp[i].text = next;
+            }
+        }
 
         public void Configure(string signTitle, string signBody, string prompt = "Read")
         {
@@ -38,6 +134,7 @@ namespace Bayou.Environment
         {
             if (!All.Contains(this))
                 All.Add(this);
+            _renderers = GetComponentsInChildren<Renderer>(true);
             InteractionPromptBroker.Register(this);
         }
 
@@ -63,9 +160,19 @@ namespace Bayou.Environment
 
         private void Update()
         {
-            RefreshRange();
+            RefreshAllRangesOnce();
             if (!_playerInRange || !IsClosestInRange()) return;
             if (Bayou.GameplayPause.BlocksWorldInteract || Bayou.GameplayPause.IsDialoguePlaying)
+                return;
+            if (InventoryDisplayUI.Active != null && InventoryDisplayUI.Active.IsOpen)
+                return;
+            if (Bayou.World.BrambleBurn.TookInteractThisFrame)
+                return;
+            if (DialogueTrigger.HasTalkAtMost(_distSq))
+                return;
+            if (Bayou.Quests.QuestItemPickup.HasPickupAtMost(_distSq))
+                return;
+            if (SignReadUi.IsOpen && SignReadUi.Owner != this)
                 return;
 
             if (!WasInteractPressed())
@@ -114,7 +221,7 @@ namespace Bayou.Environment
         private float DistanceSqToPlayer(Vector3 playerPos)
         {
             var bestSq = FlatSq(transform.position, playerPos);
-            var renderers = GetComponentsInChildren<Renderer>();
+            var renderers = _renderers;
             for (var i = 0; i < renderers.Length; i++)
             {
                 var rend = renderers[i];
@@ -139,14 +246,16 @@ namespace Bayou.Environment
             return d.sqrMagnitude;
         }
 
+        private static void RefreshAllRangesOnce()
+        {
+            if (_rangeFrame == Time.frameCount) return;
+            _rangeFrame = Time.frameCount;
+            for (var i = 0; i < All.Count; i++)
+                All[i]?.RefreshRange();
+        }
+
         private bool IsClosestInRange()
         {
-            for (var i = 0; i < All.Count; i++)
-            {
-                if (All[i] != null)
-                    All[i].RefreshRange();
-            }
-
             ReadableSign best = null;
             var bestSq = float.MaxValue;
             for (var i = 0; i < All.Count; i++)
@@ -166,7 +275,7 @@ namespace Bayou.Environment
         private static bool WasInteractPressed()
         {
 #if ENABLE_INPUT_SYSTEM
-            var playerInput = UnityEngine.Object.FindFirstObjectByType<UnityEngine.InputSystem.PlayerInput>();
+            var playerInput = CachedPlayerInput();
             var interact = playerInput != null ? playerInput.actions?.FindAction("Interact", false) : null;
             if (interact != null && interact.WasPressedThisFrame())
             {
@@ -183,6 +292,15 @@ namespace Bayou.Environment
 #endif
             var input = InputManager.GetInstance();
             return input != null && input.GetInteractPressed();
+        }
+
+        private static UnityEngine.InputSystem.PlayerInput _playerInput;
+
+        private static UnityEngine.InputSystem.PlayerInput CachedPlayerInput()
+        {
+            if (_playerInput == null)
+                _playerInput = UnityEngine.Object.FindFirstObjectByType<UnityEngine.InputSystem.PlayerInput>();
+            return _playerInput;
         }
 
         private float DistToPlayerSq() => _distSq;

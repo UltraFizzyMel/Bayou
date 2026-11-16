@@ -65,7 +65,7 @@ namespace Bayou.UI
                 return;
             }
 
-            if (ShouldHide())
+            if (ShouldHide() || TutorialTips.IsCardVisible)
             {
                 SetCardVisible(false);
                 return;

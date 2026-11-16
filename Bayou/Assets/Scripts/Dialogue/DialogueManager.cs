@@ -227,7 +227,7 @@ public class DialogueManager : MonoBehaviour
             currentStory.ChoosePathString(knotName);
 
         dialogueIsPlaying = true;
-        dialoguePanel.SetActive(true);
+        ShowDialogueCanvas();
         EnableAdvanceAction();
         _advanceLatched = false;
         // Don't treat the E/click that started this conversation as "advance".
@@ -343,6 +343,71 @@ public class DialogueManager : MonoBehaviour
 
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
+    }
+
+    /// <summary>
+    /// Dialogue Canvas is saved inactive, scaled to 0, and sorting order 0.
+    /// Activating only the child panel leaves the UI invisible.
+    /// </summary>
+    private void ShowDialogueCanvas()
+    {
+        if (dialoguePanel == null)
+            return;
+
+        var canvas = dialoguePanel.GetComponentInParent<Canvas>(true);
+        if (canvas != null)
+        {
+            if (!canvas.gameObject.activeSelf)
+                canvas.gameObject.SetActive(true);
+
+            var rt = canvas.transform as RectTransform;
+            if (rt != null)
+            {
+                if (rt.localScale.sqrMagnitude < 0.0001f)
+                    rt.localScale = Vector3.one;
+
+                var collapsed = rt.rect.width < 2f || rt.rect.height < 2f;
+                var pointAnchor = rt.anchorMax.x - rt.anchorMin.x < 0.5f && rt.sizeDelta.sqrMagnitude < 4f;
+                if (collapsed || pointAnchor)
+                {
+                    rt.anchorMin = Vector2.zero;
+                    rt.anchorMax = Vector2.one;
+                    rt.pivot = new Vector2(0.5f, 0.5f);
+                    rt.offsetMin = Vector2.zero;
+                    rt.offsetMax = Vector2.zero;
+                    if (rt.localScale.sqrMagnitude < 0.0001f)
+                        rt.localScale = Vector3.one;
+                }
+            }
+
+            canvas.enabled = true;
+            if (!canvas.overrideSorting || canvas.sortingOrder < 200)
+            {
+                canvas.overrideSorting = true;
+                canvas.sortingOrder = 200;
+            }
+
+            var group = canvas.GetComponent<CanvasGroup>();
+            if (group != null)
+            {
+                if (group.alpha < 0.01f)
+                    group.alpha = 1f;
+                group.interactable = true;
+                group.blocksRaycasts = true;
+            }
+        }
+
+        var node = dialoguePanel.transform;
+        while (node != null)
+        {
+            if (!node.gameObject.activeSelf)
+                node.gameObject.SetActive(true);
+            if (node.GetComponent<Canvas>() != null)
+                break;
+            node = node.parent;
+        }
+
+        dialoguePanel.SetActive(true);
     }
 
     private Coroutine _openShopRoutine;

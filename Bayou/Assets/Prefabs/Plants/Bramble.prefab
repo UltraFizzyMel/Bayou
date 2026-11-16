@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5251859981867684358}
   - component: {fileID: 5812258437893641247}
+  - component: {fileID: 8123456700123456789}
   m_Layer: 0
   m_Name: Bramble
   m_TagString: Untagged
@@ -57,6 +58,23 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 5.0582376, y: 5.487772, z: 1}
   m_Center: {x: -7.103635, y: 4.9523697, z: -0.0000062584877}
+--- !u!114 &8123456700123456789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3908857822915613000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4e8b1a07d2f4e6a9b3c5d7e1f2048a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.World.BrambleBurn
+  intact: {fileID: 0}
+  burning: {fileID: 0}
+  burnt: {fileID: 0}
+  fireEffect: {fileID: 0}
+  fireParticles: {fileID: 0}
 --- !u!1 &6960258402586442437
 GameObject:
   m_ObjectHideFlags: 0

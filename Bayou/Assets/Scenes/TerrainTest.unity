@@ -135738,7 +135738,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1588128577
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157127,10 +157127,10 @@ MonoBehaviour:
   padRight: 28
   padTop: 28
   padBottom: 28
-  cellSpacing: 6
+  cellSpacing: 3
   forceSquareCells: 1
-  cellColor: {r: 0.92, g: 0.88, b: 0.78, a: 1}
-  backpackFrame: 0
+  cellColor: {r: 0, g: 0, b: 0, a: 0.42}
+  backpackFrame: 1
 --- !u!1001 &1814643435
 PrefabInstance:
   m_ObjectHideFlags: 0

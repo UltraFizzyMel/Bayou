@@ -18,6 +18,8 @@ namespace Bayou.UI
     public sealed class TutorialTips : MonoBehaviour
     {
         private const string Prefix = "Bayou.Tip.";
+        private const string ShownRevision = "Bayou.Tip.VisibleRevision";
+        private const float MinVisibleSeconds = 0.3f;
 
         private enum TipDismiss
         {
@@ -39,6 +41,12 @@ namespace Bayou.UI
 
         public static TutorialTips Instance { get; private set; }
 
+        public static bool IsCardVisible =>
+            Instance != null &&
+            Instance._shown != null &&
+            Instance._panel != null &&
+            Instance._panel.activeInHierarchy;
+
         private readonly List<Tip> _queue = new();
         private Tip _shown;
         private Canvas _canvas;
@@ -52,6 +60,9 @@ namespace Bayou.UI
         private bool _campfireUiWasOpen;
         private float _nextCampfireScan;
         private BonfireInteractable[] _fires = System.Array.Empty<BonfireInteractable>();
+        private GameObject _gotIt;
+        private float _visibleSince = -1f;
+        private bool _dismissFromButton;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Boot()
@@ -86,6 +97,7 @@ namespace Bayou.UI
             }
 
             Instance = this;
+            EnsureShownRevision();
             Build();
             Hide();
         }
@@ -104,10 +116,39 @@ namespace Bayou.UI
             if (IsMainMenu()) return;
             PollQuest();
             PollCampfire();
-            if (DialogueIsPlaying() && _shown != null)
+            NoteVisible();
+            if (DialogueIsPlaying() && _shown != null && _shown.Id != "inventory")
                 ShelveShown();
             PollDismissEdges();
             TryShow();
+        }
+
+        private void NoteVisible()
+        {
+            if (_shown == null || _panel == null || !_panel.activeInHierarchy)
+                return;
+            if (_visibleSince < 0f)
+                _visibleSince = Time.unscaledTime;
+        }
+
+        private bool WasActuallyShown() =>
+            _visibleSince >= 0f && Time.unscaledTime - _visibleSince >= MinVisibleSeconds;
+
+        /// <summary>
+        /// Tips saved by an earlier build were marked before the card was visible.
+        /// Clear those keys once. Later launches keep a real dismissal.
+        /// </summary>
+        private static void EnsureShownRevision()
+        {
+            if (PlayerPrefs.GetInt(ShownRevision, 0) >= 1) return;
+            PlayerPrefs.DeleteKey(Prefix + "inventory");
+            PlayerPrefs.DeleteKey(Prefix + "campfire");
+            PlayerPrefs.DeleteKey(Prefix + "combat");
+            PlayerPrefs.DeleteKey(Prefix + "shop");
+            PlayerPrefs.DeleteKey(Prefix + "journal");
+            PlayerPrefs.DeleteKey(Prefix + "wheel");
+            PlayerPrefs.SetInt(ShownRevision, 1);
+            PlayerPrefs.Save();
         }
 
         private static bool IsMainMenu()
@@ -151,10 +192,12 @@ namespace Bayou.UI
             _shopWasOpen = ShopOpen();
             _journalWasOpen = false;
             _campfireUiWasOpen = CampfireUiOpen();
+            _visibleSince = Time.unscaledTime;
             if (_body != null)
                 _body.text = _shown.Body;
             if (_panel != null)
                 _panel.SetActive(true);
+            SyncGotIt();
         }
 
         private void PollQuest()
@@ -178,7 +221,7 @@ namespace Bayou.UI
             if (player == null) return;
             if (Time.unscaledTime >= _nextCampfireScan)
             {
-                _nextCampfireScan = Time.unscaledTime + 0.5f;
+                _nextCampfireScan = Time.unscaledTime + 1f;
                 _fires = Object.FindObjectsByType<BonfireInteractable>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
             }
 
@@ -249,10 +292,12 @@ namespace Bayou.UI
             _shopWasOpen = ShopOpen();
             _journalWasOpen = false;
             _campfireUiWasOpen = CampfireUiOpen();
+            _visibleSince = Time.unscaledTime;
             if (_body != null)
                 _body.text = _shown.Body;
             if (_panel != null)
                 _panel.SetActive(true);
+            SyncGotIt();
             if (_shown.Pause)
                 GameplayPause.SetTutorialHold(true);
         }
@@ -353,9 +398,19 @@ namespace Bayou.UI
         {
             if (_shown == null) return;
             var paused = _shown.Pause;
-            MarkSeen(_shown.Id);
+            var shown = _dismissFromButton || WasActuallyShown();
+            _dismissFromButton = false;
+            if (shown)
+                MarkSeen(_shown.Id);
             _shown = null;
+            _visibleSince = -1f;
             Hide();
+            if (!shown)
+            {
+                if (paused)
+                    GameplayPause.SetTutorialHold(false);
+                return;
+            }
             var nextPauses = false;
             for (var i = 0; i < _queue.Count; i++)
             {
@@ -396,7 +451,7 @@ namespace Bayou.UI
             canvasGo.transform.SetParent(transform, false);
             _canvas = canvasGo.AddComponent<Canvas>();
             _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            _canvas.sortingOrder = 800;
+            _canvas.sortingOrder = 410;
             _canvas.overrideSorting = true;
             var scaler = canvasGo.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
@@ -407,12 +462,14 @@ namespace Bayou.UI
             _panel = new GameObject("TipPanel", typeof(RectTransform), typeof(Image));
             _panel.transform.SetParent(canvasGo.transform, false);
             var rt = _panel.GetComponent<RectTransform>();
-            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
-            rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.sizeDelta = new Vector2(760f, 340f);
+            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 1f);
+            rt.pivot = new Vector2(0.5f, 1f);
+            rt.anchoredPosition = new Vector2(0f, -108f);
+            rt.sizeDelta = new Vector2(680f, 300f);
             var img = _panel.GetComponent<Image>();
+            img.sprite = WhiteSprite();
             img.color = new Color(0.08f, 0.07f, 0.05f, 0.94f);
-            img.raycastTarget = true;
+            img.raycastTarget = false;
 
             _body = CreateText("Body", _panel.transform, 24f);
             var bodyRt = _body.rectTransform;
@@ -423,14 +480,22 @@ namespace Bayou.UI
 
             var buttonGo = new GameObject("GotIt", typeof(RectTransform), typeof(Image), typeof(Button));
             buttonGo.transform.SetParent(_panel.transform, false);
+            _gotIt = buttonGo;
             var buttonRt = buttonGo.GetComponent<RectTransform>();
             buttonRt.anchorMin = buttonRt.anchorMax = new Vector2(0.5f, 0f);
             buttonRt.pivot = new Vector2(0.5f, 0f);
-            buttonRt.anchoredPosition = new Vector2(0f, 24f);
-            buttonRt.sizeDelta = new Vector2(180f, 48f);
-            buttonGo.GetComponent<Image>().color = new Color(0.45f, 0.32f, 0.14f, 1f);
+            buttonRt.anchoredPosition = new Vector2(0f, 18f);
+            buttonRt.sizeDelta = new Vector2(180f, 44f);
+            var buttonImage = buttonGo.GetComponent<Image>();
+            buttonImage.sprite = WhiteSprite();
+            buttonImage.color = new Color(0.45f, 0.32f, 0.14f, 1f);
+            buttonImage.raycastTarget = true;
             var button = buttonGo.GetComponent<Button>();
-            button.onClick.AddListener(Dismiss);
+            button.onClick.AddListener(() =>
+            {
+                _dismissFromButton = true;
+                Dismiss();
+            });
             var label = CreateText("Label", buttonGo.transform, 22f);
             label.text = "Got it";
             label.alignment = TextAlignmentOptions.Center;
@@ -458,6 +523,18 @@ namespace Bayou.UI
             if (font != null)
                 tmp.font = font;
             return tmp;
+        }
+
+        private void SyncGotIt()
+        {
+            if (_gotIt != null)
+                _gotIt.SetActive(_shown != null && _shown.Dismiss == TipDismiss.Button);
+        }
+
+        private static Sprite WhiteSprite()
+        {
+            var tex = Texture2D.whiteTexture;
+            return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 4f);
         }
     }
 }

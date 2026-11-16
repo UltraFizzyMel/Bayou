@@ -89,6 +89,10 @@ namespace Bayou.Inventory
                 _plate.type = Image.Type.Simple;
                 _plate.preserveAspect = false;
                 _plate.raycastTarget = true;
+                // Prefab default is the built-in white UI sprite at Color.white. Keep it invisible
+                // until ApplyIcon paints the real plate, so it cannot sit as a white square.
+                if (_item?.definition == null)
+                    _plate.color = new Color(0f, 0f, 0f, 0f);
             }
 
             var iconTf = transform.Find("Icon");

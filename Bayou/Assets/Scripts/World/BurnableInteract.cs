@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Bayou.Inventory;
 using Bayou.UI;
 using UnityEngine;
@@ -30,10 +31,27 @@ namespace Bayou.World
         [SerializeField] private GameObject fireEffect;
         [SerializeField] private float interactRadius = 3.4f;
 
+        private static readonly List<BurnableInteract> Active = new();
+
         private bool _burned;
 
         public bool IsBurned => _burned;
         public string InkFlag => inkFlag ?? "";
+
+        /// <summary>An unburnt altar the player can already light, at least as close as <paramref name="distSq"/>.</summary>
+        public static bool HasAltarAtMost(float distSq)
+        {
+            for (var i = 0; i < Active.Count; i++)
+            {
+                var altar = Active[i];
+                if (altar == null || altar.kind != BurnKind.Altar || altar._burned) continue;
+                if (!BurnableInteract.HasLantern() || !altar.InRange()) continue;
+                if (altar.DistanceSq() <= distSq)
+                    return true;
+            }
+
+            return false;
+        }
 
         public void Configure(BurnKind burnKind, string flag)
         {
@@ -56,9 +74,18 @@ namespace Bayou.World
             ApplyFire(_burned);
         }
 
-        private void OnEnable() => InteractionPromptBroker.Register(this);
+        private void OnEnable()
+        {
+            if (!Active.Contains(this))
+                Active.Add(this);
+            InteractionPromptBroker.Register(this);
+        }
 
-        private void OnDisable() => InteractionPromptBroker.Unregister(this);
+        private void OnDisable()
+        {
+            Active.Remove(this);
+            InteractionPromptBroker.Unregister(this);
+        }
 
         private void Update()
         {
@@ -70,6 +97,8 @@ namespace Bayou.World
             var flower = GetComponent<GraveFlowerPlacement>();
             if (flower != null && flower.ClaimsInteract)
                 return;
+
+            if (BrambleBurn.TookInteractThisFrame) return;
 
             var input = InputManager.GetInstance();
             if (input == null || !input.GetInteractPressed())
