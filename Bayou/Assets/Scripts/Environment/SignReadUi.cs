@@ -1,3 +1,4 @@
+using Bayou.Inventory.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -143,7 +144,7 @@ namespace Bayou.Environment
             rt.pivot = new Vector2(0.5f, 0.5f);
             rt.sizeDelta = new Vector2(640f, 320f);
             var img = _panel.AddComponent<Image>();
-            img.sprite = WhiteSprite();
+            img.sprite = UiWhiteSprite.Get();
             img.color = new Color(0.08f, 0.07f, 0.05f, 0.92f);
             img.raycastTarget = false;
 
@@ -198,10 +199,5 @@ namespace Bayou.Environment
             return tmp;
         }
 
-        private static Sprite WhiteSprite()
-        {
-            var tex = Texture2D.whiteTexture;
-            return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 4f);
-        }
     }
 }

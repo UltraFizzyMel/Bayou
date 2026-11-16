@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Bayou.Creatures;
 using Bayou.Inventory;
 using Bayou.Inventory.Shop;
+using Bayou.Inventory.UI;
 using Bayou.Save;
 using TMPro;
 using UnityEngine;
@@ -467,7 +468,7 @@ namespace Bayou.UI
             rt.anchoredPosition = new Vector2(0f, -108f);
             rt.sizeDelta = new Vector2(680f, 300f);
             var img = _panel.GetComponent<Image>();
-            img.sprite = WhiteSprite();
+            img.sprite = UiWhiteSprite.Get();
             img.color = new Color(0.08f, 0.07f, 0.05f, 0.94f);
             img.raycastTarget = false;
 
@@ -487,7 +488,7 @@ namespace Bayou.UI
             buttonRt.anchoredPosition = new Vector2(0f, 18f);
             buttonRt.sizeDelta = new Vector2(180f, 44f);
             var buttonImage = buttonGo.GetComponent<Image>();
-            buttonImage.sprite = WhiteSprite();
+            buttonImage.sprite = UiWhiteSprite.Get();
             buttonImage.color = new Color(0.45f, 0.32f, 0.14f, 1f);
             buttonImage.raycastTarget = true;
             var button = buttonGo.GetComponent<Button>();
@@ -531,10 +532,5 @@ namespace Bayou.UI
                 _gotIt.SetActive(_shown != null && _shown.Dismiss == TipDismiss.Button);
         }
 
-        private static Sprite WhiteSprite()
-        {
-            var tex = Texture2D.whiteTexture;
-            return Sprite.Create(tex, new Rect(0f, 0f, tex.width, tex.height), new Vector2(0.5f, 0.5f), 4f);
-        }
     }
 }
