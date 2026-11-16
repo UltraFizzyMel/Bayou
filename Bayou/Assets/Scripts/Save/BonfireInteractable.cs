@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Bayou.Player;
 using Bayou.UI;
 using UnityEngine;
@@ -14,9 +15,32 @@ namespace Bayou.Save
         [SerializeField] private string restPrompt = "Rest / cook fish to heal";
         [SerializeField] private float interactRadius = 2.6f;
 
+        private static readonly List<BonfireInteractable> Active = new();
+
         private bool _playerInRange;
+        private float _nextUiLookup;
 
         public string BonfireId => bonfireId ?? "";
+
+        /// <summary>A campfire the player is close enough to rest at, at least as close as <paramref name="distSq"/>.</summary>
+        public static bool HasRestAtMost(float distSq)
+        {
+            var player = PlayerLocator.Transform;
+            if (player == null) return false;
+            for (var i = 0; i < Active.Count; i++)
+            {
+                var fire = Active[i];
+                if (fire == null || !fire.isActiveAndEnabled) continue;
+                var delta = fire.transform.position - player.position;
+                delta.y = 0f;
+                var sq = delta.sqrMagnitude;
+                var reach = Mathf.Max(1.2f, fire.interactRadius);
+                if (sq <= reach * reach && sq <= distSq)
+                    return true;
+            }
+
+            return false;
+        }
 
         public void Configure(string id, string name, BonfireUIController ui)
         {
@@ -37,15 +61,30 @@ namespace Bayou.Save
                 bonfireUi = FindFirstObjectByType<BonfireUIController>();
         }
 
-        private void OnEnable() => InteractionPromptBroker.Register(this);
-        private void OnDisable() => InteractionPromptBroker.Unregister(this);
+        private void OnEnable()
+        {
+            if (!Active.Contains(this))
+                Active.Add(this);
+            InteractionPromptBroker.Register(this);
+        }
+
+        private void OnDisable()
+        {
+            Active.Remove(this);
+            InteractionPromptBroker.Unregister(this);
+        }
 
         private void Update()
         {
             RefreshRange();
 
             if (bonfireUi == null)
+            {
+                if (Time.unscaledTime < _nextUiLookup) return;
+                _nextUiLookup = Time.unscaledTime + 1f;
                 bonfireUi = FindFirstObjectByType<BonfireUIController>(FindObjectsInactive.Include);
+            }
+
             if (bonfireUi == null) return;
 
             var blocked = bonfireUi.IsOpen ||

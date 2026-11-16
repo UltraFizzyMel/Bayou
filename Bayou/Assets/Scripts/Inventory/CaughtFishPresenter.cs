@@ -388,8 +388,11 @@ namespace Bayou.Inventory
 
         private void HideReveal()
         {
-            if (revealRoot != null)
-                revealRoot.gameObject.SetActive(false);
+            if (revealRoot == null) return;
+            var dim = revealRoot.GetComponent<Image>();
+            if (dim != null)
+                dim.raycastTarget = false;
+            revealRoot.gameObject.SetActive(false);
         }
 
         private void ShowAllocateBar(ItemDefinition fishItem)
@@ -448,7 +451,7 @@ namespace Bayou.Inventory
                 Stretch(overlay);
                 var dim = overlay.gameObject.AddComponent<Image>();
                 dim.color = ShopUiStyle.OverlayDim;
-                dim.raycastTarget = true;
+                dim.raycastTarget = false;
                 revealRoot = overlay;
 
                 var card = CreateRect("Card", overlay);

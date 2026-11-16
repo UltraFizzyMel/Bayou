@@ -118,6 +118,23 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
     public string KeyFlagName => keyName ?? "";
     public bool HasBeenOpened => _isOpen;
 
+    /// <summary>A locked gate the player is already standing in, at least as close as <paramref name="distSq"/>.</summary>
+    public static bool HasPendingGateAtMost(float distSq)
+    {
+        var gates = AllGates();
+        if (gates == null) return false;
+        for (var i = 0; i < gates.Length; i++)
+        {
+            var gate = gates[i];
+            if (gate == null || !gate.isActiveAndEnabled || !gate.playerInRange) continue;
+            if (gate._isOpen || gate.PassageIsClear()) continue;
+            if (gate.DistToPlayerSq() <= distSq)
+                return true;
+        }
+
+        return false;
+    }
+
     public bool HierarchyContains(string fragment)
     {
         if (string.IsNullOrWhiteSpace(fragment)) return false;
@@ -318,9 +335,12 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
             TrySubscribeInventory();
 
         if (_isOpen || !playerInRange) return;
+        if (Bayou.World.BrambleBurn.TookInteractThisFrame) return;
 
         var dialogue = DialogueManager.GetInstance();
         if (dialogue != null && dialogue.dialogueIsPlaying)
+            return;
+        if (DialogueTrigger.HasTalkAtMost(DistToPlayerSq()))
             return;
 
         var input = InputManager.GetInstance();

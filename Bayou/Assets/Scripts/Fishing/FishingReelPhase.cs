@@ -28,6 +28,7 @@ namespace Bayou.Fishing
         public float Progress01 { get; private set; }
 
         private FishingNetProjectile _projectile;
+        private float _reelUntil;
 
         private void Awake()
         {
@@ -45,6 +46,7 @@ namespace Bayou.Fishing
             Active = this;
             IsActive = true;
             Progress01 = 0f;
+            _reelUntil = Time.unscaledTime + 6f;
             enabled = true;
             Bayou.Audio.FishingAudio.Resolve()?.StartReelingLoop();
         }
@@ -76,6 +78,8 @@ namespace Bayou.Fishing
 
             if (Progress01 >= 1f)
                 Finish(success: true);
+            else if (Time.unscaledTime >= _reelUntil)
+                Finish(success: false);
         }
 
         private void Finish(bool success)
@@ -87,8 +91,8 @@ namespace Bayou.Fishing
 
             if (success)
             {
-                FishingNetProjectile.ClearRecast();
                 CatchNearbyFish();
+                FishingNetProjectile.NoteSuccess("Caught.");
             }
             else
                 FishingNetProjectile.NoteRecast("Missed the fish. Recast with left mouse.");

@@ -144,6 +144,7 @@ namespace Bayou.Inventory.UI
             var image = go.GetComponent<Image>();
             image.sprite = UiWhiteSprite.Get();
             image.type = Image.Type.Simple;
+            image.color = new Color(0f, 0f, 0f, 0f);
             return image;
         }
     }

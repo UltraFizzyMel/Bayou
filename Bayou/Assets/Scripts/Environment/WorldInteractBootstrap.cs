@@ -67,13 +67,19 @@ namespace Bayou.Environment
                 var t = transforms[i];
                 if (t == null) continue;
                 if (!TryCopyForSign(t.name, out var title, out var body)) continue;
-                if (t.GetComponent<ReadableSign>() != null) continue;
-                if (t.GetComponentInChildren<ReadableSign>(true) != null) continue;
+                var existing = t.GetComponent<ReadableSign>() ?? t.GetComponentInChildren<ReadableSign>(true);
+                if (existing != null)
+                {
+                    existing.RefreshLiveText();
+                    continue;
+                }
+
                 if (t.GetComponentInParent<ReadableSign>(true) != null) continue;
                 if (HasSignAncestor(t)) continue;
 
                 var sign = t.gameObject.AddComponent<ReadableSign>();
                 sign.Configure(title, body, "Read");
+                sign.RefreshLiveText();
             }
         }
 
