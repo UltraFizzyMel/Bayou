@@ -45,9 +45,8 @@ namespace Bayou.Environment
             if (marker != null)
                 Object.Destroy(marker);
 
-            var calisteBox = GameObject.Find("Pickup_CalistesBox");
-            if (calisteBox != null)
-                Object.Destroy(calisteBox);
+            // Do not delete Pickup_CalistesBox: a designer may have assigned this
+            // existing world object to one of Caliste's Lost Cargo pickups.
         }
 
         private sealed class SignWireRunner : MonoBehaviour

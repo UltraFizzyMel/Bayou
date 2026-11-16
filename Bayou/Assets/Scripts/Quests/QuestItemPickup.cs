@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Bayou.Demo;
+using Bayou.Environment;
 using Bayou.Inventory;
 using Bayou.Player;
 using Bayou.UI;
@@ -22,12 +23,17 @@ namespace Bayou.Quests
         [Tooltip("If true, picking this up finishes the demo. Leave off for the lantern so it can be used.")]
         [SerializeField] private bool endDemoOnPickup;
         [SerializeField] private bool addStraightToBag = true;
+        // Placed cargo boxes already have their own meshes and scene positions.
+        [SerializeField] private bool preservePlacedCargoVisual;
+        private const float ProximityPickupRange = 2.35f;
+        private const float ProximityMaxHeight = 3f;
 
         private Vector3 _homePosition;
         private Quaternion _homeRotation;
         private bool _playerInRange;
 
         public ItemDefinition Item => item;
+        public bool PreservePlacedCargoVisual => preservePlacedCargoVisual;
         public static IReadOnlyList<QuestItemPickup> Living => All;
 
         /// <summary>A quest pickup the player is already standing on, at least as close as <paramref name="distSq"/>.</summary>
@@ -37,7 +43,7 @@ namespace Bayou.Quests
             for (var i = 0; i < All.Count; i++)
             {
                 var pickup = All[i];
-                if (pickup == null || !pickup.isActiveAndEnabled || !pickup._playerInRange || pickup.item == null)
+                if (pickup == null || !pickup.isActiveAndEnabled || !pickup.PlayerInPickupRange() || pickup.item == null)
                     continue;
                 if (player == null) return true;
                 var delta = pickup.transform.position - player.position;
@@ -78,16 +84,51 @@ namespace Bayou.Quests
             CaptureHome();
         }
 
+        /// <summary>
+        /// Editor-only scene setup entry point for Caliste's three cargo crates.
+        /// Keep the artist's placed mesh/materials and do not snap its transform to terrain.
+        /// </summary>
+        public void ConfigureAsCargoBox(ItemDefinition definition)
+        {
+            item = definition;
+            pickupPrompt = "Pick up";
+            addStraightToBag = true;
+            destroyOnPickup = true;
+            endDemoOnPickup = false;
+            preservePlacedCargoVisual = true;
+            CaptureHome();
+        }
+
+        private bool PlayerInPickupRange()
+        {
+            if (_playerInRange && !preservePlacedCargoVisual) return true;
+            // Physics trigger callbacks can be missed for objects placed in the editor,
+            // especially when the player starts inside the trigger or the collider has
+            // no matching Rigidbody. A short proximity check makes E reliable.
+            var player = PlayerLocator.Transform;
+            if (player == null) return false;
+            var d = transform.position - player.position;
+            if (Mathf.Abs(d.y) > ProximityMaxHeight) return false;
+            d.y = 0f;
+            return d.sqrMagnitude <= ProximityPickupRange * ProximityPickupRange;
+        }
+
         private void Reset()
         {
-            var col = GetComponent<Collider>();
-            if (col != null)
-                col.isTrigger = true;
+            // Keep artist-placed solid colliders solid so players cannot walk
+            // through crates. The setup menu provides a separate trigger sphere.
+            var colliders = GetComponents<Collider>();
+            foreach (var collider in colliders)
+                if (collider != null && collider.isTrigger) return;
+            var trigger = gameObject.AddComponent<SphereCollider>();
+            trigger.isTrigger = true;
+            trigger.radius = 1.7f;
         }
 
         private void Awake()
         {
-            Bayou.Rendering.WorldItemVisual.EnsurePickupVisual(gameObject, item);
+            if (!preservePlacedCargoVisual)
+                Bayou.Rendering.WorldItemVisual.EnsurePickupVisual(gameObject, item);
             CaptureHome();
         }
 
@@ -95,8 +136,11 @@ namespace Bayou.Quests
         {
             if (item != null && item.IsUniqueEquipment)
                 addStraightToBag = false;
-            Bayou.Rendering.WorldItemVisual.EnsurePickupVisual(gameObject, item);
-            Bayou.Rendering.WorldItemVisual.SnapToGround(transform, 0.22f);
+            if (!preservePlacedCargoVisual)
+            {
+                Bayou.Rendering.WorldItemVisual.EnsurePickupVisual(gameObject, item);
+                Bayou.Rendering.WorldItemVisual.SnapToGround(transform, 0.22f);
+            }
             CaptureHome();
         }
 
@@ -124,6 +168,13 @@ namespace Bayou.Quests
             }
         }
 
+        private void OnTriggerStay(Collider other)
+        {
+            if (other.CompareTag(playerTag) ||
+                other.GetComponentInParent<Bayou.Player.BayouCharacterMotor>() != null)
+                _playerInRange = true;
+        }
+
         private void OnTriggerExit(Collider other)
         {
             if (other.CompareTag(playerTag) ||
@@ -138,7 +189,7 @@ namespace Bayou.Quests
         public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
         {
             prompt = default;
-            if (!_playerInRange || item == null) return false;
+            if (!PlayerInPickupRange() || item == null) return false;
 
             var name = string.IsNullOrWhiteSpace(item.displayName) ? item.name : item.displayName;
             var action = string.IsNullOrWhiteSpace(pickupPrompt) ? $"Pick up {name}" : $"{pickupPrompt} {name}";
@@ -158,7 +209,8 @@ namespace Bayou.Quests
 
         private void Update()
         {
-            if (!_playerInRange || item == null) return;
+            if (!PlayerInPickupRange() || item == null) return;
+            if (Bayou.GameplayPause.BlocksWorldInteract || SignReadUi.IsOpen) return;
 
             var dialogue = DialogueManager.GetInstance();
             if (dialogue != null && dialogue.dialogueIsPlaying)
@@ -184,13 +236,18 @@ namespace Bayou.Quests
                 return;
             }
 
-            if (addStraightToBag && item != null && !item.IsUniqueEquipment)
-                GiveItemDirectly();
+            if (addStraightToBag && !item.IsUniqueEquipment)
+            {
+                // Do not remove a world pickup unless the inventory actually accepted it.
+                // For cargo, we allow the normal bag's unplaced-item fallback if the grid is full.
+                if (!GiveItemDirectly()) return;
+            }
             else
+            {
                 CaughtFishPresenter.Present(item);
-
-            if (item.IsUniqueEquipment && (inv == null || !inv.HasItemsById(item.Id, 1)))
-                return;
+                if (item.IsUniqueEquipment && (inv == null || !inv.HasItemsById(item.Id, 1)))
+                    return;
+            }
 
             if (endDemoOnPickup)
                 DemoEndController.Show();
@@ -285,13 +342,20 @@ namespace Bayou.Quests
             return pickup;
         }
 
-        private void GiveItemDirectly()
+        private bool GiveItemDirectly()
         {
             var inv = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
-            if (inv == null || item == null) return;
-            if (inv.HasItemsById(item.Id, 1)) return;
-            if (!inv.TryAddItem(item) && !inv.TryHoldNewItem(item, out _))
-                CaughtFishPresenter.Present(item);
+            if (inv == null || item == null)
+            {
+                Debug.LogWarning($"[QuestPickup] Can't collect '{name}': inventory or item definition missing.", this);
+                return false;
+            }
+            // A collected unique cargo ID must never create a second copy.
+            if (inv.HasItemsById(item.Id, 1)) return true;
+            if (inv.TryAddItem(item)) return true;
+            if (inv.TryHoldNewItem(item, out _)) return true;
+            Debug.LogWarning($"[QuestPickup] Couldn't put '{item.Id}' in the bag. Pickup remains in the world.", this);
+            return false;
         }
     }
 }
