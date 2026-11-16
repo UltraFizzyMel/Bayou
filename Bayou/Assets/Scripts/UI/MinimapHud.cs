@@ -106,6 +106,7 @@ namespace Bayou.UI
             {
                 _nextMapRender = Time.unscaledTime + 0.2f;
                 _camera.Render();
+                CollectTargets();
             }
             if (_arrow != null)
                 _arrow.localEulerAngles = new Vector3(0f, 0f, -player.eulerAngles.y);
@@ -115,7 +116,6 @@ namespace Bayou.UI
         private void DrawQuestMarkers(Vector3 playerPos)
         {
             if (_map == null || _camera == null) return;
-            CollectTargets();
             var mapHalf = _map.sizeDelta.x * 0.5f;
             var worldHalf = Mathf.Max(1f, _camera.orthographicSize);
             var scale = mapHalf / worldHalf;

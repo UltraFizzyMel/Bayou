@@ -37,14 +37,19 @@ namespace Bayou.Fishing
 
         public event Action AttractComplete;
 
+        public const float BiteWindowSeconds = 2.8f;
+
         public float Progress01 { get; private set; }
         public bool IsActive { get; private set; }
+        public bool IsBiting { get; private set; }
         public float CurrentAttractRadius { get; private set; }
 
         public static FishingAttractPhase Active { get; private set; }
 
         private int _lastDirection;
         private bool _hasDirection;
+        private float _biteUntil;
+        private bool _reelArmed;
         private FishingNetProjectile _net;
 
         public void BeginAttract()
@@ -60,6 +65,8 @@ namespace Bayou.Fishing
             _net = GetComponent<FishingNetProjectile>();
             Active = this;
             IsActive = true;
+            IsBiting = false;
+            _biteUntil = 0f;
             Progress01 = 0.1f;
             CurrentAttractRadius = baseAttractRadius;
             _lastDirection = 0;
@@ -72,6 +79,7 @@ namespace Bayou.Fishing
             if (!IsActive && !enabled) return;
             if (Active == this) Active = null;
             IsActive = false;
+            IsBiting = false;
             Progress01 = 0f;
             enabled = false;
             ClearFishTargets();
@@ -98,7 +106,28 @@ namespace Bayou.Fishing
             var dir = x > inputDeadzone ? 1 : (x < -inputDeadzone ? -1 : 0);
             var dt = Time.unscaledDeltaTime;
 
-            // Passiveive pull while the net sits in the water.
+            if (IsBiting)
+            {
+                _net?.SetStatus("BITE! A fish took the hook. Hold left mouse to reel.");
+                if (!_reelArmed)
+                    _reelArmed = !IsReelHeld();
+                else if (IsReelHeld())
+                {
+                    CompleteAttract();
+                    return;
+                }
+
+                if (Time.unscaledTime >= _biteUntil)
+                {
+                    FishingNetProjectile.NoteRecast("Missed the fish. Recast with left mouse.");
+                    CancelAttract();
+                    Destroy(gameObject);
+                }
+
+                return;
+            }
+
+            // Passive pull while the net sits in the water.
             Progress01 += passiveAttractPerSecond * dt;
 
             if (dir != 0)
@@ -119,7 +148,26 @@ namespace Bayou.Fishing
             PullFishTowardNet(netPos, CurrentAttractRadius, Progress01);
 
             if (Progress01 >= minProgressToBite && TryBite(netPos, biteRadius))
-                CompleteAttract();
+                BeginBiteWindow();
+        }
+
+        private void BeginBiteWindow()
+        {
+            if (!IsActive || IsBiting) return;
+            IsBiting = true;
+            _reelArmed = !IsReelHeld();
+            _biteUntil = Time.unscaledTime + BiteWindowSeconds;
+            _net?.SetStatus("BITE! A fish took the hook. Hold left mouse to reel.");
+        }
+
+        private static bool IsReelHeld()
+        {
+#if ENABLE_INPUT_SYSTEM
+            var mouse = Mouse.current;
+            if (mouse != null && mouse.leftButton.isPressed)
+                return true;
+#endif
+            return false;
         }
 
         private void OnDestroy()
@@ -182,6 +230,7 @@ namespace Bayou.Fishing
             if (!IsActive) return;
             if (Active == this) Active = null;
             IsActive = false;
+            IsBiting = false;
             Progress01 = 1f;
             enabled = false;
             ClearFishTargets();

@@ -18,7 +18,13 @@ namespace Bayou.Environment
         private string _guiTitle = "";
         private string _guiBody = "";
 
-        public static bool IsOpen => Instance != null && Instance._panel != null && Instance._panel.activeSelf;
+        public static bool IsOpen =>
+            Instance != null &&
+            Instance.isActiveAndEnabled &&
+            Instance._owner != null &&
+            Instance._panel != null &&
+            Instance._panel.activeSelf &&
+            Instance._panel.activeInHierarchy;
         public static Object Owner => Instance != null ? Instance._owner : null;
 
         public static void Show(Object owner, string title, string body)
@@ -52,6 +58,12 @@ namespace Bayou.Environment
         {
             if (Instance == this)
                 Instance = null;
+        }
+
+        private void Update()
+        {
+            if (_panel != null && _panel.activeSelf && (_owner == null || !_panel.activeInHierarchy))
+                Close();
         }
 
         private void Present(Object owner, string title, string body)

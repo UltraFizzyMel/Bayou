@@ -35,14 +35,15 @@ namespace Bayou.Fishing
             var melee = _caster != null && _caster.IsMeleeMode ||
                         _equipment != null && _equipment.NetMode == HandNetMode.Combat;
             var recast = FishingNetProjectile.ActiveRecast;
-            if (!casting && !hasNet && attract == null && reel == null && !netCharging && !melee &&
+            var biting = attract != null && attract.IsBiting;
+            if (!casting && !hasNet && attract == null && reel == null && !biting && !netCharging && !melee &&
                 string.IsNullOrEmpty(recast))
                 return;
 
             EnsureStyles();
 
             // Compact tip while idle; taller box during cast phases.
-            var height = casting || hasNet || attract != null || reel != null || netCharging ? 128f : 64f;
+            var height = casting || hasNet || attract != null || biting || reel != null || netCharging ? 128f : 64f;
             var area = new Rect(16f, Screen.height - height - 16f, 460f, height);
             GUI.Box(area, GUIContent.none, _boxStyle);
             GUILayout.BeginArea(new Rect(area.x + 12f, area.y + 10f, area.width - 24f, area.height - 16f));
@@ -50,11 +51,19 @@ namespace Bayou.Fishing
             if (reel != null && reel.IsActive)
             {
                 var previous = _labelStyle.normal.textColor;
-                _labelStyle.normal.textColor = new Color(1f, 0.82f, 0.2f, 1f);
-                GUILayout.Label("BITE! A fish took the hook. Hold left mouse to reel.", _labelStyle);
+                _labelStyle.normal.textColor = new Color(0.95f, 0.9f, 0.7f, 1f);
+                GUILayout.Label("REELING — keep holding left mouse.", _labelStyle);
                 _labelStyle.normal.textColor = previous;
                 DrawBar(reel.Progress01, new Color(1f, 0.72f, 0.15f, 1f));
                 GUILayout.Label("Right mouse cancels", _labelStyle);
+            }
+            else if (attract != null && attract.IsBiting)
+            {
+                var previous = _labelStyle.normal.textColor;
+                _labelStyle.normal.textColor = new Color(1f, 0.82f, 0.2f, 1f);
+                GUILayout.Label("BITE! A fish took the hook. Hold left mouse to reel.", _labelStyle);
+                _labelStyle.normal.textColor = previous;
+                GUILayout.Label("The bite stays up until you reel or it gets away. Right mouse cancels.", _labelStyle);
             }
             else if (attract != null && attract.IsActive)
             {

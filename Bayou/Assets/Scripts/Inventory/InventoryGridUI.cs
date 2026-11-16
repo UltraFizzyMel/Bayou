@@ -21,10 +21,13 @@ namespace Bayou.Inventory
         [SerializeField] private float padRight = 28f;
         [SerializeField] private float padTop = 28f;
         [SerializeField] private float padBottom = 28f;
-        [SerializeField] private float cellSpacing = 6f;
+        [SerializeField] private float cellSpacing = 3f;
         [SerializeField] private bool forceSquareCells = true;
-        [SerializeField] private Color cellColor = new(0.92f, 0.88f, 0.78f, 1f);
-        [SerializeField] private bool backpackFrame;
+        [SerializeField] private Color cellColor = new(0f, 0f, 0f, 0.42f);
+        [SerializeField] private bool backpackFrame = true;
+
+        /// <summary>See-through black so the leather opening shows between and through the cells.</summary>
+        public static readonly Color BackpackCellTint = new(0f, 0f, 0f, 0.42f);
 
         private InventoryCellUI[,] _cells;
         private GridLayoutGroup _layout;
@@ -33,12 +36,28 @@ namespace Bayou.Inventory
 
         public int Columns => columns;
         public int Rows => rows;
+        public Color CellColor => cellColor;
         public GridLayoutGroup Layout => _layout != null ? _layout : GetComponent<GridLayoutGroup>();
+
+        private float _rightGutter;
+
+        /// <summary>Extra space to the right of the cells so a side slot is not drawn on top of them.</summary>
+        public void SetRightGutter(float pixels)
+        {
+            _rightGutter = Mathf.Max(0f, pixels);
+        }
 
         private void Awake()
         {
             _layout = GetComponent<GridLayoutGroup>();
             _rect = transform as RectTransform;
+            UseBackpackFrame();
+        }
+
+        private void OnEnable()
+        {
+            // Play-mode script reloads restore the serialized beige color and skip Awake.
+            UseBackpackFrame();
         }
 
         private void Start() => EnsureBuilt();
@@ -70,6 +89,8 @@ namespace Bayou.Inventory
             if (_layout == null) _layout = GetComponent<GridLayoutGroup>();
             if (_rect == null) _rect = transform as RectTransform;
 
+            backpackFrame = true;
+            cellColor = BackpackCellTint;
             ApplyFillLayout();
 
             foreach (Transform child in transform)
@@ -85,7 +106,11 @@ namespace Bayou.Inventory
                 cell.Setup(x, y);
                 var img = cell.GetComponent<Image>();
                 if (img != null)
+                {
+                    img.sprite = null;
+                    img.type = Image.Type.Simple;
                     img.raycastTarget = true;
+                }
                 cell.SetBaseColor(cellColor);
 
                 _cells[x, y] = cell;
@@ -94,9 +119,26 @@ namespace Bayou.Inventory
             _built = true;
             if (backpackFrame)
                 TintCells();
+            RemoveStrayChildren();
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(_rect);
             ApplyFillLayout();
+        }
+
+        /// <summary>
+        /// The grid's only children are cells. A stray Image (missing sprite draws as a white square)
+        /// must not stay parented here.
+        /// </summary>
+        public void RemoveStrayChildren()
+        {
+            for (var i = transform.childCount - 1; i >= 0; i--)
+            {
+                var child = transform.GetChild(i);
+                if (child == null) continue;
+                if (child.GetComponent<InventoryCellUI>() != null) continue;
+                if (child.GetComponent<InventoryItemUI>() != null) continue;
+                Destroy(child.gameObject);
+            }
         }
 
         private void TintCells()
@@ -105,8 +147,16 @@ namespace Bayou.Inventory
             for (var y = 0; y < rows; y++)
             for (var x = 0; x < columns; x++)
             {
-                if (_cells[x, y] != null)
-                    _cells[x, y].SetBaseColor(cellColor);
+                var cell = _cells[x, y];
+                if (cell == null) continue;
+                var img = cell.GetComponent<Image>();
+                if (img != null)
+                {
+                    // Drop the filled white/beige UI sprite. A bare Image tints as a flat quad.
+                    img.sprite = null;
+                    img.type = Image.Type.Simple;
+                }
+                cell.SetBaseColor(cellColor);
             }
         }
 
@@ -116,7 +166,8 @@ namespace Bayou.Inventory
         public void UseBackpackFrame()
         {
             backpackFrame = true;
-            cellColor = new Color(0.16f, 0.12f, 0.08f, 0.42f);
+            cellColor = BackpackCellTint;
+            cellSpacing = 3f;
             TintCells();
             ApplyFillLayout();
         }
@@ -143,7 +194,7 @@ namespace Bayou.Inventory
                 _rect.anchorMax = Vector2.one;
                 _rect.pivot = new Vector2(0f, 1f);
                 _rect.offsetMin = new Vector2(padLeft, padBottom);
-                _rect.offsetMax = new Vector2(-padRight, -padTop);
+                _rect.offsetMax = new Vector2(-(padRight + _rightGutter), -padTop);
                 _rect.localScale = Vector3.one;
                 _rect.localRotation = Quaternion.identity;
             }
