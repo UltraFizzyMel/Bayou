@@ -17,9 +17,9 @@ namespace Bayou.World
     public sealed class BrambleBurn : MonoBehaviour, IInteractionPromptSource
     {
         private const float Reach = 4.25f;
-        private const float ChainReach = 6.5f;
+        private const float ChainReach = 8f;
         private const float ChainDelay = 0.8f;
-        private const float BurnSeconds = 4.2f;
+        private const float BurnSeconds = 2.9f;
 
         private enum Phase
         {

@@ -185,7 +185,7 @@ My wares may be of interest...
 +[I have a question for you.]
 ->BranchingQuestions
 
-+{ HasItem("Item_CalisteCargoGraveyard", 1) || HasItem("Item_CalisteCargoFoggy", 1) || HasItem("Item_CalisteCargoBrackish", 1) }[{SeenMissingBoxes:I have something for you.  else: Do you recognise this box?}]
++{ HasItem("Item_CalisteCargoGraveyard", 1) or HasItem("Item_CalisteCargoFoggy", 1) or HasItem("Item_CalisteCargoBrackish", 1) }[{SeenMissingBoxes:I have something for you. | Do you recognise this box?}]
 {SeenMissingBoxes:->ReturnBox |->MissingBoxes}
 
 +[Wares?]

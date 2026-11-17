@@ -244,6 +244,7 @@ Run along then dear.
 
 === Name 
 Well if you must know, I'm Mrs Baptiste. 
+#speaker: Mrs. Baptiste
 ~ marie_known = "true"
 ->MarieStandardBranching
 
@@ -295,8 +296,7 @@ That's all I recall dear.
 ->MoreQuestions
 
 === BoatLocations
-{!MarieHappy:Well... spit it out, where to?}
-{MarieHappy:Where to dear?}
+{MarieHappyVisitedAmount > 0:Where to dear? |Well... spit it out, where to?}
 { is_in_foggy_marsh: 
 +[Near the Church]
 -> ChurchTrip

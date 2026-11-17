@@ -1734,6 +1734,66 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 20763990}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &21147627
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 21147628}
+  - component: {fileID: 21147629}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Flounder_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &21147628
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21147627}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -36.4, y: -1.9700003, z: 23.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 881662477}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &21147629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21147627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Flounder_01
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000002, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.3886792, g: 0.24435523, b: 0.13127087, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1 &21881905
 GameObject:
   m_ObjectHideFlags: 0
@@ -3812,7 +3872,7 @@ Transform:
   m_GameObject: {fileID: 39543599}
   serializedVersion: 2
   m_LocalRotation: {x: -0.54286647, y: 0.03622377, z: 0.039940882, w: 0.8380863}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 2.39, z: 0}
   m_LocalScale: {x: 0.37000307, y: 0.37000307, z: 0.37000307}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6787,8 +6847,8 @@ Transform:
   m_GameObject: {fileID: 77996416}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.06298137, z: -0, w: 0.99801475}
-  m_LocalPosition: {x: -6.11, y: 9.240199, z: 59.79}
-  m_LocalScale: {x: 15.151998, y: 5.7972326, z: 1}
+  m_LocalPosition: {x: -5.089996, y: 9.240199, z: 62.11}
+  m_LocalScale: {x: 19.447588, y: 5.7972326, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 272434700}
@@ -16247,6 +16307,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6797524622364177450, guid: d0eee295eef89e2499df008d4086606a, type: 3}
   m_PrefabInstance: {fileID: 836132449}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &197632499
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 197632500}
+  - component: {fileID: 197632501}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Pufferfish_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &197632500
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 197632499}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -32.1, y: -1.9700003, z: 10.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 294691708}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &197632501
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 197632499}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Pufferfish_04
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000005, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 1, g: 0.98427427, b: 0, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &198612377
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16952,6 +17072,66 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc9a739eb2bad7d44bf255459b6b2865, type: 3}
+--- !u!1 &209547610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 209547611}
+  - component: {fileID: 209547612}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Flounder_05
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &209547611
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 209547610}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 106.33, y: 4, z: 107.82}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 881662477}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &209547612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 209547610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Flounder_05
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000002, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.3886792, g: 0.24435523, b: 0.13127087, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &209584571
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24352,6 +24532,41 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0eee295eef89e2499df008d4086606a, type: 3}
+--- !u!1 &294691707
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 294691708}
+  m_Layer: 0
+  m_Name: Pufferfish
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &294691708
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 294691707}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 661538397}
+  - {fileID: 970234223}
+  - {fileID: 1442018061}
+  - {fileID: 197632500}
+  m_Father: {fileID: 1560348905}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &295958847
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27186,6 +27401,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2008060758863714170, guid: 1a3e17b7739426845928f07cae10d82e, type: 3}
   m_PrefabInstance: {fileID: 1027932743}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &329622911
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 329622912}
+  - component: {fileID: 329622913}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Bluecrab_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &329622912
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 329622911}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 59.26, y: 3.5, z: 133.55}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1444138654}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &329622913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 329622911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Bluecrab_01
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000003, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0, g: 0.81428576, b: 1, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &329642595
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28658,35 +28933,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1341403218387182337, guid: 196b552fa2f2383469a011b1e1273f8d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -7.838623
+      value: -7.96
       objectReference: {fileID: 0}
     - target: {fileID: 1341403218387182337, guid: 196b552fa2f2383469a011b1e1273f8d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.68734527
+      value: 0.69349617
       objectReference: {fileID: 0}
     - target: {fileID: 1341403218387182337, guid: 196b552fa2f2383469a011b1e1273f8d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.18864033
+      value: -0.26665744
       objectReference: {fileID: 0}
     - target: {fileID: 1341403218387182337, guid: 196b552fa2f2383469a011b1e1273f8d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.26284227
+      value: 0.47112626
       objectReference: {fileID: 0}
     - target: {fileID: 1341403218387182337, guid: 196b552fa2f2383469a011b1e1273f8d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.6502963
+      value: -0.47539142
       objectReference: {fileID: 0}
     - target: {fileID: 1341403218387182337, guid: 196b552fa2f2383469a011b1e1273f8d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 4.734
+      value: 4.479
       objectReference: {fileID: 0}
     - target: {fileID: 1341403218387182337, guid: 196b552fa2f2383469a011b1e1273f8d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 37.499
+      value: 65.472
       objectReference: {fileID: 0}
     - target: {fileID: 1341403218387182337, guid: 196b552fa2f2383469a011b1e1273f8d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -85.219
+      value: -65.981
       objectReference: {fileID: 0}
     - target: {fileID: 1861763122528319931, guid: 196b552fa2f2383469a011b1e1273f8d, type: 3}
       propertyPath: m_Name
@@ -29472,6 +29747,68 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 82719715bcc0d4244ae6f3ba940ead1b, type: 3}
   m_PrefabInstance: {fileID: 358739581}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &358899471
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 936832800}
+    m_Modifications:
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.3399963
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.47999954
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899089262055335271, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Name
+      value: Lamp (4)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+--- !u!4 &358899472 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+  m_PrefabInstance: {fileID: 358899471}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &359042482
 GameObject:
@@ -34299,6 +34636,68 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce214a30357fd04998b0bd04f185ad8, type: 3}
+--- !u!1001 &401485636
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 936832800}
+    m_Modifications:
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 17.309998
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.17999995
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 30.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899089262055335271, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Name
+      value: Lamp (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+--- !u!4 &401485637 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+  m_PrefabInstance: {fileID: 401485636}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &402444641
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43826,6 +44225,7 @@ Transform:
   - {fileID: 449757964}
   - {fileID: 943885566}
   - {fileID: 8800100002}
+  - {fileID: 1560348905}
   m_Father: {fileID: 762243719}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &516419670
@@ -45981,6 +46381,68 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 529601947}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &530344708
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 936832800}
+    m_Modifications:
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 22.39
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.7799988
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899089262055335271, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Name
+      value: Lamp (2)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+--- !u!4 &530344709 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+  m_PrefabInstance: {fileID: 530344708}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &530454718
 GameObject:
   m_ObjectHideFlags: 0
@@ -46732,7 +47194,7 @@ MonoBehaviour:
     tool: 0
     count: 1
     moving: 1
-    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
+    tint: {r: 1, g: 0.43137255, b: 0.4117647, a: 1}
   oneTimeLoot: []
   fishPrefab: {fileID: 0}
   spawnOnStart: 1
@@ -47558,6 +48020,68 @@ Transform:
   - {fileID: 1587466081}
   m_Father: {fileID: 1207406508}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &549820049
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 936832800}
+    m_Modifications:
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 26.929993
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.30999994
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 20.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899089262055335271, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Name
+      value: Lamp
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+--- !u!4 &549820050 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+  m_PrefabInstance: {fileID: 549820049}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &550309377
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -47860,9 +48384,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9131555104093018776, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: body
-      value: "ichard Williams \nFather \u2022 Husband \u2022 Taid\nWe hope you still
-        find yourself chuckling at Wile E. Coyote wherever you may be. Miss you dearly,
-        Taidie. "
+      value: "Father \u2022 Husband \u2022 Taid\nWe hope you still find yourself
+        chuckling at Wile E. Coyote wherever you may be. Miss you dearly, Taidie. "
       objectReference: {fileID: 0}
     - target: {fileID: 9131555104093018776, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: title
@@ -52146,6 +52669,66 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 600471128}
   m_Mesh: {fileID: -9066853307589294510, guid: bb199fe43273c7341ad71d5e402e78bf, type: 3}
+--- !u!1 &601212464
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 601212465}
+  - component: {fileID: 601212466}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Snapper_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &601212465
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601212464}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 109.85999, y: 3.5, z: 106.61}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 605210322}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &601212466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601212464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Snapper_02
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: 70b6fbf6d15c7d743ae842f952cdc605, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 1, g: 0.42987776, b: 0.41320753, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &601467398
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52596,6 +53179,42 @@ Transform:
   - {fileID: 1399463615}
   m_Father: {fileID: 857355695}
   m_LocalEulerAnglesHint: {x: 0, y: 18.587, z: 0}
+--- !u!1 &605210321
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 605210322}
+  m_Layer: 0
+  m_Name: Snappers
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &605210322
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 605210321}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1727268952}
+  - {fileID: 601212465}
+  - {fileID: 1811585781}
+  - {fileID: 1430934400}
+  - {fileID: 908471504}
+  m_Father: {fileID: 1560348905}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &605574414
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -53216,6 +53835,66 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 608556064}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &609465441
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 609465442}
+  - component: {fileID: 609465443}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Flounder_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &609465442
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609465441}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -27.1, y: -1.9700003, z: 40.7}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 881662477}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &609465443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 609465441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Flounder_01
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000002, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.3886792, g: 0.24435523, b: 0.13127087, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1 &610594248
 GameObject:
   m_ObjectHideFlags: 0
@@ -57699,6 +58378,66 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 660819497}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &661538396
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 661538397}
+  - component: {fileID: 661538398}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Pufferfish_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &661538397
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 661538396}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 11.25, y: -1.9700003, z: 22.08}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 294691708}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &661538398
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 661538396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Pufferfish_01
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000005, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 1, g: 0.98427427, b: 0, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!4 &661994017 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 68432219681052608, guid: ff1ef7007eb80ee4ba993c116b778549, type: 3}
@@ -61857,9 +62596,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.ReadableSign
   title: Journey's End Church
-  body: "/\\                    /\\                      /\\\n |                  
-    |                     |\n\nAll Welcome!    \nProverbs 4:26 \"Give careful thought
-    to the paths for your feet and be steadfast in all your ways\"\n"
+  body: "/\\              /\\                         /\\\n |                   |                    
+    |\n\nAll Welcome!    \nProverbs 4:26 \"Give careful thought to the paths for
+    your feet and be steadfast in all your ways\"\n"
   readPrompt: Read
   interactRadius: 3.5
 --- !u!1 &709856773
@@ -72796,6 +73535,66 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82719715bcc0d4244ae6f3ba940ead1b, type: 3}
+--- !u!1 &824429525
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 824429526}
+  - component: {fileID: 824429527}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Flounder_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &824429526
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824429525}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -6.66, y: -1.9700003, z: 27.82}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 881662477}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &824429527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 824429525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Flounder_01
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000002, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.3886792, g: 0.24435523, b: 0.13127087, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &825746703
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -77659,7 +78458,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1944438082966023393, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.52
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: 1944438082966023393, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -77667,7 +78466,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1944438082966023393, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.73
+      value: -0.27
       objectReference: {fileID: 0}
     - target: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_Name
@@ -78693,6 +79492,42 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 881096475}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &881662476
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 881662477}
+  m_Layer: 0
+  m_Name: Flounders
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &881662477
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881662476}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 21147628}
+  - {fileID: 609465442}
+  - {fileID: 824429526}
+  - {fileID: 1504989412}
+  - {fileID: 209547611}
+  m_Father: {fileID: 1560348905}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &881750151
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -79699,8 +80534,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 1431902147}
     m_Modifications:
     - target: {fileID: -4206114601645459774, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
+      propertyPath: body
+      value: Eyes wide open, ears perked high, chasing balls across the sky.
+      objectReference: {fileID: 0}
+    - target: {fileID: -4206114601645459774, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
       propertyPath: title
-      value: Bruno ________
+      value: 'Bruno '
       objectReference: {fileID: 0}
     - target: {fileID: 5888293501775004368, guid: 026a4a8136b10914ca1aa7a8a9dc5303, type: 3}
       propertyPath: m_LocalPosition.x
@@ -80856,6 +81695,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2125754513259841357, guid: ad69b3e9835f38b4e8caf9ea366cd5e6, type: 3}
   m_PrefabInstance: {fileID: 57940521}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &908471503
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 908471504}
+  - component: {fileID: 908471505}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Snapper_05
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &908471504
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908471503}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 62.700005, y: 3.5, z: 136.3}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 605210322}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &908471505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 908471503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Snapper_05
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: 70b6fbf6d15c7d743ae842f952cdc605, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 1, g: 0.42987776, b: 0.41320753, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &909065231
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -81621,7 +82520,7 @@ MonoBehaviour:
     tool: 0
     count: 1
     moving: 1
-    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
+    tint: {r: 1, g: 0.43137255, b: 0.4117647, a: 1}
   oneTimeLoot: []
   fishPrefab: {fileID: 0}
   spawnOnStart: 1
@@ -81835,6 +82734,66 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 917591761}
   m_Mesh: {fileID: -3890688692072204658, guid: 351a46c2fde307b44b86831717134f00, type: 3}
+--- !u!1 &918324150
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 918324151}
+  - component: {fileID: 918324152}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Bluecrab_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &918324151
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918324150}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.76, y: -1.97, z: 30.47}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1444138654}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &918324152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 918324150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Bluecrab_04
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000003, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0, g: 0.81428576, b: 1, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1 &918898078
 GameObject:
   m_ObjectHideFlags: 0
@@ -83093,6 +84052,42 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 936166282}
   m_CullTransparentMesh: 1
+--- !u!1 &936832799
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 936832800}
+  m_Layer: 0
+  m_Name: Lamps
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &936832800
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 936832799}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -32.429993, y: 8.110199, z: -28.79}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 549820050}
+  - {fileID: 401485637}
+  - {fileID: 530344709}
+  - {fileID: 2053835774}
+  - {fileID: 358899472}
+  m_Father: {fileID: 1890738886}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &937231805
 GameObject:
   m_ObjectHideFlags: 0
@@ -86699,6 +87694,66 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &967773316
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 967773317}
+  - component: {fileID: 967773318}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Bluecrab_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &967773317
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 967773316}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 67.35, y: 3.5, z: 141.84}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1444138654}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &967773318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 967773316}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Bluecrab_02
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000003, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0, g: 0.81428576, b: 1, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &969269635
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -86764,6 +87819,66 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0eee295eef89e2499df008d4086606a, type: 3}
+--- !u!1 &970234222
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 970234223}
+  - component: {fileID: 970234224}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Pufferfish_02
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &970234223
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970234222}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 30.77, y: -1.9700003, z: 24.12}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 294691708}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &970234224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970234222}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Pufferfish_02
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000005, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 1, g: 0.98427427, b: 0, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!4 &971124344 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6797524622364177450, guid: d0eee295eef89e2499df008d4086606a, type: 3}
@@ -96223,15 +97338,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1944438082966023393, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.23
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 1944438082966023393, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.58
+      value: 1.37
       objectReference: {fileID: 0}
     - target: {fileID: 1944438082966023393, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.95
+      value: -0.154
       objectReference: {fileID: 0}
     - target: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_Name
@@ -114890,7 +116005,7 @@ Light:
   serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.9
+  m_Intensity: 0.8
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -122618,8 +123733,8 @@ Transform:
   m_GameObject: {fileID: 1370446210}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.06298137, z: -0, w: 0.99801475}
-  m_LocalPosition: {x: -17.87, y: 9.240199, z: 58.3}
-  m_LocalScale: {x: 15.151998, y: 5.7972326, z: 1}
+  m_LocalPosition: {x: -16.85, y: 9.240199, z: 60.62}
+  m_LocalScale: {x: 19.447588, y: 5.7972326, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 272434700}
@@ -129668,6 +130783,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3348261760583781395, guid: 8ccf65f13e312b642ab841bbed99ee91, type: 3}
   m_PrefabInstance: {fileID: 1429511464}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1430934399
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1430934400}
+  - component: {fileID: 1430934401}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Snapper_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1430934400
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430934399}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 60.379997, y: 3.5, z: 103.2}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 605210322}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1430934401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1430934399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Snapper_04
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: 70b6fbf6d15c7d743ae842f952cdc605, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 1, g: 0.42987776, b: 0.41320753, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &1431399794
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -130624,6 +131799,66 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1441784273}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1442018060
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1442018061}
+  - component: {fileID: 1442018062}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Pufferfish_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1442018061
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442018060}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -38.6, y: -1.9700003, z: 16.72}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 294691708}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1442018062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1442018060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Pufferfish_03
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000005, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 1, g: 0.98427427, b: 0, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &1442194335
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -130819,6 +132054,41 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 7702779526387289552, guid: f0097ed778c5e264fa3f02d5ccf0e71e, type: 3}
+--- !u!1 &1444138653
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1444138654}
+  m_Layer: 0
+  m_Name: Blue Crabs
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1444138654
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1444138653}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 329622912}
+  - {fileID: 967773317}
+  - {fileID: 1751069797}
+  - {fileID: 918324151}
+  m_Father: {fileID: 1560348905}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1444667673
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -136380,6 +137650,66 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1503634485}
   m_CullTransparentMesh: 1
+--- !u!1 &1504989411
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1504989412}
+  - component: {fileID: 1504989413}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Flounder_04
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1504989412
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504989411}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 27.6, y: -1.9700003, z: 26.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 881662477}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1504989413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504989411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Flounder_01
+  requiredTool: 1
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000002, type: 2}
+    tool: 1
+    count: 1
+    moving: 1
+    tint: {r: 0.3886792, g: 0.24435523, b: 0.13127087, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1 &1505500931
 GameObject:
   m_ObjectHideFlags: 0
@@ -140417,8 +141747,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 1431902147}
     m_Modifications:
     - target: {fileID: -825404408243981055, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
+      propertyPath: body
+      value: Loved and lost forever
+      objectReference: {fileID: 0}
+    - target: {fileID: -825404408243981055, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: title
-      value: Ava ________
+      value: 'Ava '
       objectReference: {fileID: 0}
     - target: {fileID: 6309964968003507130, guid: 9ad9169d2fffecc46824fe5a79a205c7, type: 3}
       propertyPath: m_Name
@@ -140996,6 +142330,41 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2248392796883778498, guid: d1958076882483a479672853d79f13d9, type: 3}
   m_PrefabInstance: {fileID: 1560073274}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1560348904
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1560348905}
+  m_Layer: 0
+  m_Name: Brackish Shore Fishing Spots
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1560348905
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1560348904}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 103.6, y: -4.7, z: -84.6}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 605210322}
+  - {fileID: 1444138654}
+  - {fileID: 294691708}
+  - {fileID: 881662477}
+  m_Father: {fileID: 516246035}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1560668689
 GameObject:
   m_ObjectHideFlags: 0
@@ -142776,7 +144145,7 @@ Transform:
   m_GameObject: {fileID: 1587110125}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.3133839, z: -0, w: 0.94962656}
-  m_LocalPosition: {x: 6.75, y: 9.240199, z: 65.05}
+  m_LocalPosition: {x: 6.75, y: 9.240199, z: 65.22}
   m_LocalScale: {x: 15.152002, y: 5.7972326, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -143922,7 +145291,7 @@ MonoBehaviour:
     tool: 0
     count: 2
     moving: 1
-    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
+    tint: {r: 1, g: 0.43137255, b: 0.4117647, a: 1}
   oneTimeLoot: []
   fishPrefab: {fileID: 0}
   spawnOnStart: 1
@@ -148971,7 +150340,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 82719715bcc0d4244ae6f3ba940ead1b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -109.43
+      value: -109.68
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 82719715bcc0d4244ae6f3ba940ead1b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -158417,6 +159786,66 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d6b6a1d2340b6af4fa24ee48629337ea, type: 3}
+--- !u!1 &1727268951
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1727268952}
+  - component: {fileID: 1727268953}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Snapper_01
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1727268952
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727268951}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 115.1, y: 3.5, z: 147.23}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 605210322}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1727268953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727268951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Snapper_01
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: 70b6fbf6d15c7d743ae842f952cdc605, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 1, g: 0.42987776, b: 0.41320753, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1 &1727577121
 GameObject:
   m_ObjectHideFlags: 0
@@ -160270,6 +161699,66 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1751009973}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1751069796
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1751069797}
+  - component: {fileID: 1751069798}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Bluecrab_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1751069797
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1751069796}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -20.12, y: -2.55, z: 40.94}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1444138654}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1751069798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1751069796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Bluecrab_03
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: a11e5701b5ea15000300000000000003, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 0, g: 0.81428576, b: 1, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &1752151672
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -162453,6 +163942,11 @@ PrefabInstance:
     - target: {fileID: 6533970979056866544, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 9131555104093018776, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
+      propertyPath: body
+      value: A bright and giving spirit who left us far too soon. May you find the
+        peace and warmth you so freely gave to others.
       objectReference: {fileID: 0}
     - target: {fileID: 9131555104093018776, guid: b4c8bc10b3232ee49ac52f60df8f8422, type: 3}
       propertyPath: title
@@ -165577,7 +167071,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5711054125791633963, guid: cd0e662b1a374c44c9ff099196483ba8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.11
+      value: 4.55
       objectReference: {fileID: 0}
     - target: {fileID: 5711054125791633963, guid: cd0e662b1a374c44c9ff099196483ba8, type: 3}
       propertyPath: m_LocalPosition.z
@@ -165621,6 +167115,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5711054125791633963, guid: cd0e662b1a374c44c9ff099196483ba8, type: 3}
   m_PrefabInstance: {fileID: 1811487472}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1811585780
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1811585781}
+  - component: {fileID: 1811585782}
+  m_Layer: 0
+  m_Name: Fish_Brackish_Snapper_03
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1811585781
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1811585780}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 60.659996, y: 3.5, z: 99.96}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 605210322}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1811585782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1811585780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f578c8878a33c034b9ca9c9b8db6c13e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Bayou.Fishing.FishingSpot
+  spotName: Fish_Brackish_Snapper_03
+  requiredTool: 0
+  radius: 4.5
+  spawnY: 0.12
+  waterBounds: {fileID: 0}
+  shoreMargin: 0.45
+  snapToWaterOnPlay: 0
+  fishSpawns:
+  - item: {fileID: 11400000, guid: 70b6fbf6d15c7d743ae842f952cdc605, type: 2}
+    tool: 0
+    count: 1
+    moving: 1
+    tint: {r: 1, g: 0.42987776, b: 0.41320753, a: 1}
+  oneTimeLoot: []
+  fishPrefab: {fileID: 0}
+  spawnOnStart: 1
 --- !u!1001 &1811625731
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -173119,6 +174673,10 @@ PrefabInstance:
       propertyPath: m_Center.z
       value: -0.0000032133848
       objectReference: {fileID: 0}
+    - target: {fileID: 6960258402586442437, guid: 626a205af3c15804a90d92159781e5f8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -173440,6 +174998,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 936832800}
   - {fileID: 645587780}
   - {fileID: 314810053}
   m_Father: {fileID: 1345654989}
@@ -175862,13 +177421,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1916520051}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.33000627, z: -0, w: -0.9439788}
-  m_LocalPosition: {x: 115.56, y: -0.60000014, z: 6.7}
+  m_LocalRotation: {x: -0, y: 0.5135081, z: -0, w: -0.8580848}
+  m_LocalPosition: {x: 113.2, y: -0.60000014, z: 6.7}
   m_LocalScale: {x: 4.7261333, y: 16.599106, z: 1.2564669}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1123328470}
-  m_LocalEulerAnglesHint: {x: 0, y: -398.538, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -421.796, z: 0}
 --- !u!65 &1916520053
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -177105,8 +178664,8 @@ MonoBehaviour:
   - item: {fileID: 11400000, guid: c1a2b3c4d5e6789012345678abcdef01, type: 2}
     tool: 0
     count: 2
-    moving: 1
-    tint: {r: 0.9, g: 0.25, b: 0.2, a: 1}
+    moving: 0
+    tint: {r: 1, g: 0.43137255, b: 0.4117647, a: 1}
   oneTimeLoot: []
   fishPrefab: {fileID: 0}
   spawnOnStart: 1
@@ -183004,11 +184563,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4845822323681349829, guid: c697e1fad0d6ea24385327cade99ca01, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.621185
+      value: -11.6
       objectReference: {fileID: 0}
     - target: {fileID: 4845822323681349829, guid: c697e1fad0d6ea24385327cade99ca01, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.3183396
+      value: 1.81
       objectReference: {fileID: 0}
     - target: {fileID: 4845822323681349829, guid: c697e1fad0d6ea24385327cade99ca01, type: 3}
       propertyPath: m_LocalPosition.z
@@ -187364,6 +188923,68 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2051798722}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &2053835773
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 936832800}
+    m_Modifications:
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 13.300003
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.18000007
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 7.0599995
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6899089262055335271, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+      propertyPath: m_Name
+      value: Lamp (3)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+--- !u!4 &2053835774 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6121990089988210653, guid: 6f536c2cf5a533a4b80da14e2415b049, type: 3}
+  m_PrefabInstance: {fileID: 2053835773}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2053957675
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -188068,13 +189689,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2065178408}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.18713623, z: -0, w: -0.98233396}
-  m_LocalPosition: {x: 111.84, y: -0.60000014, z: 4.61}
+  m_LocalRotation: {x: -0, y: 0.32117888, z: -0, w: -0.9470186}
+  m_LocalPosition: {x: 111.06, y: -0.60000014, z: 4.61}
   m_LocalScale: {x: 4.7261333, y: 16.599106, z: 1.2564669}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1123328470}
-  m_LocalEulerAnglesHint: {x: 0, y: -381.57098, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -397.468, z: 0}
 --- !u!65 &2065178410
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -191647,7 +193268,7 @@ Transform:
   m_GameObject: {fileID: 2099665232}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.40933427, z: -0, w: 0.9123845}
-  m_LocalPosition: {x: 17.629997, y: 9.240199, z: 74.95999}
+  m_LocalPosition: {x: 17.629997, y: 9.240199, z: 75.12999}
   m_LocalScale: {x: 15.152, y: 5.7972326, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -197026,7 +198647,7 @@ MonoBehaviour:
     tool: 1
     count: 1
     moving: 1
-    tint: {r: 0.95, g: 0.82, b: 0.15, a: 1}
+    tint: {r: 0.3882353, g: 0.24313726, b: 0.12941177, a: 1}
   oneTimeLoot: []
   fishPrefab: {fileID: 0}
   spawnOnStart: 1
@@ -197266,7 +198887,7 @@ MonoBehaviour:
     tool: 1
     count: 1
     moving: 1
-    tint: {r: 0.95, g: 0.82, b: 0.15, a: 1}
+    tint: {r: 0.3882353, g: 0.24313726, b: 0.12941177, a: 1}
   oneTimeLoot: []
   fishPrefab: {fileID: 0}
   spawnOnStart: 1
@@ -197326,7 +198947,7 @@ MonoBehaviour:
     tool: 1
     count: 1
     moving: 1
-    tint: {r: 0.95, g: 0.82, b: 0.15, a: 1}
+    tint: {r: 0.3882353, g: 0.24313726, b: 0.12941177, a: 1}
   oneTimeLoot: []
   fishPrefab: {fileID: 0}
   spawnOnStart: 1
@@ -197926,7 +199547,7 @@ MonoBehaviour:
     tool: 1
     count: 1
     moving: 1
-    tint: {r: 0.95, g: 0.82, b: 0.15, a: 1}
+    tint: {r: 0.3882353, g: 0.24313726, b: 0.12941177, a: 1}
   oneTimeLoot: []
   fishPrefab: {fileID: 0}
   spawnOnStart: 1
@@ -198945,7 +200566,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1944438082966023393, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.36
+      value: 0.13
       objectReference: {fileID: 0}
     - target: {fileID: 1944438082966023393, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.y
@@ -198953,7 +200574,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1944438082966023393, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.71
+      value: -0.18
       objectReference: {fileID: 0}
     - target: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_Name

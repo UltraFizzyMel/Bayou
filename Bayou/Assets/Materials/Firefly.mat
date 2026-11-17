@@ -9,12 +9,11 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Firefly
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 2100000, guid: 9efebc9abfa1da440a4f65be07792d91, type: 2}
+  m_Parent: {fileID: 2100000, guid: 6421854cf72d74147bbb859672587d83, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _ALPHAPREMULTIPLY_ON
   - _EMISSION
-  - _SURFACE_TYPE_TRANSPARENT
+  - _SPECULAR_SETUP
   m_InvalidKeywords:
   - _COLORADDSUBDIFF_ON
   - _FLIPBOOKBLENDING_OFF
@@ -23,21 +22,20 @@ Material:
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap:
-    RenderType: Transparent
+    RenderType: Opaque
   disabledShaderPasses:
-  - DepthOnly
-  - SHADOWCASTER
   - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs: []
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _WorkflowMode: 0
     m_Colors:
-    - _BaseColor: {r: 1, g: 0.7535995, b: 0.103773475, a: 1}
-    - _Color: {r: 1, g: 0.7535995, b: 0.10377345, a: 1}
-    - _EmissionColor: {r: 1, g: 0.5439561, b: 0, a: 1}
+    - _BaseColor: {r: 0.6830188, g: 0.5037868, b: 0.3183125, a: 1}
+    - _Color: {r: 0.68301874, g: 0.50378674, b: 0.31831247, a: 1}
+    - _EmissionColor: {r: 1, g: 0.2276105, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &7405159115633970230
