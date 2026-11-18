@@ -138,7 +138,11 @@ Stay safe out in the fog my friend.
 ->END
 
 === OlivierStandardIntro
-{!SeenAccordionExplanation && EmergencyDinnerQuestState == "FINISHED" && inBrackishShore == true: ->LostAccordion |-> ContinueIntro}
+{SeenAccordionExplanation == false && EmergencyDinnerQuestState == "FINISHED" && inBrackishShore == true && LostAccordionQuestState != "FINISHED": 
+->LostAccordion 
+-else:
+-> ContinueIntro
+}
 
 ===ContinueIntro
 
@@ -197,18 +201,18 @@ How can I help ya?
 
  
  ===OlivierMarie
-{not LostAccordionStart:I hope they're getting better but I have a feeling I have done something to annoy them...}
-{not LostAccordionStart:I don't even have my music to help clear the tension between us.}
-{LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart: Definitely on the upswing! We've had many big dinners thanks to you!}
-{LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart: I'm going to serenade them more going forward to show them my love still reigns true.}
-{AMealToDieForOlivierStart &&  not OlivierDeadHappyOrAlive:They're been... better but soon they won't have a lot to worry them anymore.}
-{OlivierHappy:Ever since you worked your magic they've never been better. }
-{OlivierHappy:Well... maybe on our wedding night...}
-{OlivierHappy:Other than that night, never better!}
-{OlivierAlive:They're... they've never been better...}
-{OlivierAlive:I ran a bubble bath for them that definitly shocked them.}
-{OlivierAlive:They've decided to step back from the limelight for the moment. Best leave them be.}
- {OlivierAlive:Wouldn't want to find yourself on their badside. Um...Anything else I could help you with?->OlivierOptions }
+{not LostAccordionStart:I hope they're getting better but I have a feeling I have done something to annoy them...|}
+{not LostAccordionStart:I don't even have my music to help clear the tension between us.|}
+{LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart: Definitely on the upswing! We've had many big dinners thanks to you!|}
+{LostAccordionQuestState == "FINISHED" && !AMealToDieForOlivierStart: I'm going to serenade them more going forward to show them my love still reigns true.|}
+{AMealToDieForOlivierStart &&  not OlivierDeadHappyOrAlive:They're been... better but soon they won't have a lot to worry them anymore.|}
+{OlivierHappyVisited:Ever since you worked your magic they've never been better. |}
+{OlivierHappyVisited > 1:Well... maybe on our wedding night...|}
+{OlivierHappyVisited > 1:Other than that night, never better!|}
+{SeenOlivierAlive:They're... they've never been better...|}
+{SeenOlivierAlive:I ran a bubble bath for them that definitly shocked them.|}
+{SeenOlivierAlive:They've decided to step back from the limelight for the moment. Best leave them be.|}
+ {SeenOlivierAlive:Wouldn't want to find yourself on their badside. Um...Anything else I could help you with?->OlivierOptions |}
  ->EnoughOnMarie
  
  
@@ -456,6 +460,7 @@ Wouldn't want to burden Marie.
 {is_marie_alive == true}->OlivierHappy
 
 ===OlivierAlive
+~SeenOlivierAlive = true
 Evening my friend.
 How can I help ya?
 ->OlivierOptions

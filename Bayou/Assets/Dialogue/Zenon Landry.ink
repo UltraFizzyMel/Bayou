@@ -16,7 +16,7 @@
 
 
 
- #portrait: father_landry_neutral #layout: left #background: church
+ #portrait: father_landry_neutral #layout: left #background: church #border:Border
 
 ->collectPondItemStart
 

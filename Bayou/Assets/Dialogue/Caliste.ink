@@ -237,12 +237,12 @@ Don't look at me with that frown of yours boy.
 ->MovingOn
 
 ===CalisteSabineOpinion
-{is_sabine_alive == true &&  !ASharedDinnerInProgress: The Herbalist? I don't remember their face.}
-{is_sabine_alive == true &&  !ASharedDinnerInProgress: They are nice enough... I want to see them again. }
-{is_sabine_alive == true && ASharedDinnerInProgress && !KeyReward: Their eyes say my unsaid worries aloud.}
-{is_sabine_alive == true && ASharedDinnerInProgress && !KeyReward: I don't remember them but I yearn to do so... They seem to have known me from my life before.}
-{is_sabine_alive == true && ASharedDinnerInProgress && KeyReward: It's as is I have known them my whole life.}
-{is_sabine_alive == true && ASharedDinnerInProgress && KeyReward: My favourite part of any day is either seeing them or thinking about them! ->Stilldreaming}
+{is_sabine_alive == true &&  !ASharedDinnerInProgress && SpecialDeliveryQuestState != "FINISHED": The Herbalist? I don't remember their face.}
+{is_sabine_alive == true &&  !ASharedDinnerInProgress && SpecialDeliveryQuestState == "FINISHED": They are nice enough... I want to see them again. }
+{is_sabine_alive == true && ASharedDinnerInProgress && SharedDinnerQuestState != "FINISHED": Their eyes say my unsaid worries aloud.}
+{is_sabine_alive == true && ASharedDinnerInProgress && SharedDinnerQuestState != "FINISHED": I don't remember them but I yearn to do so... They seem to have known me from my life before.}
+{is_sabine_alive == true && ASharedDinnerInProgress && SharedDinnerQuestState == "FINISHED": It's as is I have known them my whole life.}
+{is_sabine_alive == true && ASharedDinnerInProgress && SharedDinnerQuestState == "FINISHED": My favourite part of any day is either seeing them or thinking about them! ->Stilldreaming}
 {is_sabine_alive == false: They haven't come past in a while...}
 {is_sabine_alive == false: Did I... do something wrong?->SomethingWrong}
 ->SabineMovingOn

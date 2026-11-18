@@ -74,6 +74,7 @@ VAR repeatNameVisited = false
 VAR SeenOlivierCaliste = false
 VAR SeenOlivierLandry = false
 VAR SeenOlivierSabine = false
+VAR SeenOlivierAlive = false
 
 
 
