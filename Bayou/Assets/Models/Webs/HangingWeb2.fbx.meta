@@ -3,7 +3,17 @@ guid: a8c587f245c3d074c9f1b6d16a1acf4e
 ModelImporter:
   serializedVersion: 24200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bayou_Cocoon
+    second: {fileID: 2100000, guid: 39ff961e993b00441be9ce69eb6de100, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Bayou_Silk
+    second: {fileID: 2100000, guid: ff83510bd29df87478b9cf9414c3b783, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

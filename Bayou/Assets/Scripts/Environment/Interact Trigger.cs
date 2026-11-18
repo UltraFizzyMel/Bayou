@@ -22,7 +22,7 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
     [SerializeField] private Animator animator;
     [SerializeField] private KeyGateManager keyGateManager;
         [SerializeField] private bool consumeKeyOnOpen = true;
-    [SerializeField] private Collider[] disableCollidersOnOpen;
+    //[SerializeField] private Collider[] disableCollidersOnOpen;
     [SerializeField] private string openPrompt = "Open gate";
     [SerializeField] private string lockedPrompt = "Locked — need key";
 
@@ -36,8 +36,8 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
         if (animator == null)
             animator = GetComponentInParent<Animator>();
 
-        if (disableCollidersOnOpen == null || disableCollidersOnOpen.Length == 0)
-            AutoCollectBlockingColliders();
+        //if (disableCollidersOnOpen == null || disableCollidersOnOpen.Length == 0)
+            //AutoCollectBlockingColliders();
 
         if (requiredKeyItem != null && string.IsNullOrWhiteSpace(requiredItemId))
             requiredItemId = requiredKeyItem.Id;
@@ -47,8 +47,9 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
         // Keyless church entrances are built open. Do not mark a keyed gate used.
         if (string.IsNullOrWhiteSpace(keyName) &&
             requiredKeyItem == null &&
-            string.IsNullOrWhiteSpace(requiredItemId) &&
-            PassageIsClear())
+            string.IsNullOrWhiteSpace(requiredItemId) )
+            //&&
+            //PassageIsClear())
         {
             _isOpen = true;
             var volume = GetComponent<Collider>();
@@ -127,7 +128,7 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
         {
             var gate = gates[i];
             if (gate == null || !gate.isActiveAndEnabled || !gate.playerInRange) continue;
-            if (gate._isOpen || gate.PassageIsClear()) continue;
+            if (gate._isOpen) continue;
             if (gate.DistToPlayerSq() <= distSq)
                 return true;
         }
@@ -148,12 +149,12 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
     }
 
     /// <summary>True when the player can already walk through. Those gates stay quiet.</summary>
-    public bool PassageIsClear()
+   /* public bool PassageIsClear()
     {
         if (_isOpen || IsOpenChurchEntrance() || IsChurchEntranceLeftOpen() || AnimatorSaysOpen())
             return true;
-        return !HasSolidBlocker();
-    }
+        //return !HasSolidBlocker();
+    }*/
 
     private bool IsChurchEntranceLeftOpen()
     {
@@ -177,7 +178,7 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
         return false;
     }
 
-    private bool HasSolidBlocker()
+  /*  private bool HasSolidBlocker()
     {
         var listed = false;
         if (disableCollidersOnOpen != null)
@@ -201,7 +202,7 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
         }
 
         return false;
-    }
+    }*/
 
     private bool IsOpenChurchEntrance()
     {
@@ -307,7 +308,7 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
     public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
     {
         prompt = default;
-        if (!playerInRange || _isOpen || PassageIsClear()) return false;
+        if (!playerInRange || _isOpen) return false;
 
         var dist = DistToPlayerSq();
         if (CanUnlock())
@@ -405,14 +406,14 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
             animator.CrossFade("Open", 0.05f, 0, 0f);
         }
 
-        if (disableCollidersOnOpen != null)
+       /* if (disableCollidersOnOpen != null)
         {
             foreach (var col in disableCollidersOnOpen)
             {
                 if (col != null)
                     col.enabled = false;
             }
-        }
+        }*/
 
         if (playLog)
             Debug.Log($"[Gate] Opened ({keyName} / {ResolveItemId()}).");
@@ -430,7 +431,7 @@ public sealed class InteractTrigger : MonoBehaviour, IInteractionPromptSource
             found.Add(col);
         }
 
-        disableCollidersOnOpen = found.ToArray();
+        //disableCollidersOnOpen = found.ToArray();
     }
 
     private void TrySubscribeInventory()
