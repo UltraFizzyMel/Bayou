@@ -453,7 +453,7 @@ namespace Bayou.Fishing
             light.intensity = 18f;
             light.range = 9f;
             light.color = new Color(1f, 0.78f, 0.48f, 1f);
-            light.renderMode = LightRenderMode.ForcePixel;
+            light.renderMode = LightRenderMode.Auto;
             light.cullingMask = ~0;
             light.renderingLayerMask = int.MaxValue;
             light.enabled = false;

@@ -188,7 +188,8 @@ namespace Bayou.Fishing
             light.intensity = intensity;
             light.range = EffectiveRange();
             light.color = color;
-            light.renderMode = LightRenderMode.ForcePixel;
+            // ForcePixel made the carry/world lantern compete as a per-pixel additional light every frame (build perf).
+            light.renderMode = LightRenderMode.Auto;
             light.cullingMask = ~0;
             light.renderingLayerMask = int.MaxValue;
 
