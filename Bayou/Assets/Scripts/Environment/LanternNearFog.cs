@@ -218,7 +218,7 @@ namespace Bayou.Environment
             if (!_faded.Contains(id))
                 return;
             if (entry.Ps == null) return;
-            entry.Ps.main.startColor = entry.Original;
+            //entry.Ps.main.startColor = entry.Original;
             _faded.Remove(id);
             _lastMul.Remove(id);
         }
@@ -246,7 +246,7 @@ namespace Bayou.Environment
                 }
 
                 if (entry.Ps != null)
-                    entry.Ps.main.startColor = entry.Original;
+                    //entry.Ps.main.startColor = entry.Original;
                 _faded.Remove(id);
                 _lastMul.Remove(id);
                 budget--;

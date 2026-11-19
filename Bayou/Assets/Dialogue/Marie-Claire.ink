@@ -202,7 +202,7 @@ Anything else dear?
 ~ mariequestionsasked = mariequestionsasked + 1
 ->Shadow
 
-*{mariequestionsasked >= 1 && !SeenMarieLandry}[Do you know Father Landry?]
+*{mariequestionsasked >= 1 && !SeenMarieLandry && priest_name != ""}[Do you know Father Landry?]
 ~ mariequestionsasked = mariequestionsasked + 1
 ->Landry
 

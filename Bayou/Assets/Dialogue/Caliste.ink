@@ -200,7 +200,7 @@ My wares may be of interest...
 +{calistequestionsasked < 3}[Who are you?]
 {caliste_known == "":-> introduction("Caliste") | -> repeatName}
 
-*{!SeenCalisteLandry}[Do you know Father Landry?]
+*{!SeenCalisteLandry && priest_name != ""}[Do you know Father Landry?]
 ->CalisteLandry
 *{sabine_known != "" && !SeenCalisteSabine}[Do you know Sabine?]
 ->CalisteSabine

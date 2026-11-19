@@ -37,6 +37,8 @@ VAR Seen_Zenon_Grave = false
 VAR Is_foggyalter_burned = false
 VAR Is_gravealtar_burned = false
 VAR Is_brackishaltar_burned = false
+VAR  SeenZenonLocation = false
+VAR SeenZenonSabineRitual = false
 
 VAR DestroyTheWitchQuestId = "DestroyTheWitchQuest"
 VAR DestroyTheWitchQuestState = "CAN_START"

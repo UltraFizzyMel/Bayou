@@ -147,12 +147,18 @@ Come back when you are ready.
 
 === LanternReminder ===
 
-The lantern waits past the graveyard, near the foggy marsh.
+It's good to see you again.
++[Could I ask you something?]
+->service
++[What did you need from me?]
+->LanternTask
 
+
+===LanternTask ===
+I need you to retrieve a special lantern for me.
+It waits past the graveyard, near the foggy marsh.
 Be careful out there.
-
--> END
-
+->END
 
 === LanternFound ===
 
@@ -280,17 +286,21 @@ How might I be of service?
 
 === questions ===
 
-+{!repeatName}[Who are you?]
++[Who are you?]
  { priest_name == "":-> introduction("Landry") | -> repeatName}
 
-+{!location}[Where am I?]
++{landryquestionsasked <2 && SeenZenonLocation}[Where am I?]
  -> location
  
-*{caliste_known != ""}[Do you know Caliste?]
++{caliste_known != "" && landryquestionsasked >1}[Do you know Caliste?]
 ->ZenonCaliste
-*{olivier_known != "" && marie_known != ""}[Thoughts on the Baptistes?]
++{olivier_known != "" && marie_known != "" && landryquestionsasked >2 && landryquestionsasked<3}[Thoughts on the Baptistes?]
 ->ZenonBaptistes
-*{landryquestionsasked >=8}[You have a grave?]
++{sabine_known != ""  && landryquestionsasked >3}[Have you met Sabine?]
+->ZenonSabine
++{TheseRitualComponentsSeemSlipperyQuestState == "IN_PROGRESS" or TheseRitualComponentsSeemSlipperyQuestState == "CAN_FINISH" }[Do you know about a ritual?]
+->ZenonSabineRitual
+*{landryquestionsasked >=20}[You have a grave?]
 ->ZenonGrave
 
 +[Chat Later]
@@ -298,37 +308,46 @@ How might I be of service?
 
 
  === introduction(name) ===
-
+~landryquestionsasked = landryquestionsasked + 1
  ~ priest_name = name
  The name is <color=\#F8FF30>Father Landry.</color> #speaker: Father Landry
  -> questions
 
-
+===ZenonSabineRitual
+~SeenZenonSabineRitual = true
+->END
 
  === repeatName ===
  Call me Landry...
- ~landryquestionsasked = landryquestionsasked + 1
- ->questions
+ ->service
 
  === location ===
+ ~SeenZenonLocation = true
  The Bayou... You must have hit your head hard.
  ~landryquestionsasked = landryquestionsasked + 1
- -> questions
+ -> service
 
 ===ZenonCaliste
+
 ~landryquestionsasked = landryquestionsasked + 1
 She chose to make a trade in order to become the best trader...
 However she lost something which could never be replaced.
-->END
+->service
 
 ===ZenonBaptistes
+
 ~landryquestionsasked = landryquestionsasked + 1
 An unlikely pair you'd think. They used to be much happier.
 How long until Marie's deal for eternity becomes her own worst nightmare?
 How long will Olivier continue to play music that is the best in the eyes of everyone except her?
-->END
+->service
+
+===ZenonSabine
+A hardy one indeed. Their loses come more due to the choices of those around them. Will you make them lose something too?
+->service
 
 ===ZenonGrave
+
 ~landryquestionsasked = landryquestionsasked + 1
 ...
 You best forget you saw it.
@@ -345,9 +364,18 @@ You best forget you saw it.
     ~ FinishQuest(BreakTheSealsQuestId)
     -> END
  - else:
-    Three altars. Burn each one, then return to me.
-    -> END
+    It's good to see you again.
++[Could I ask you something?]
+->service
++[What did you need from me?]
+->AltarTask
+    
  }
+ 
+ ===AltarTask
+ Three altars await you. Burn each one, then return to me.
+ Stay safe out there.
+    -> END
  
  === PurgeTheWitchInProgress
  { DestroyTheWitchQuestState == "CAN_FINISH":

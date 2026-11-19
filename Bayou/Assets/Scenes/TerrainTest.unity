@@ -2713,7 +2713,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: body
-      value: '                                                                    
+      value: '                                                                  
         /\
 
         Fisher''s Lane & Widow''s Reach_____|
@@ -15294,7 +15294,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: body
-      value: '                                       /\
+      value: '                                     /\
 
         The Mirewood  _____|
 
@@ -150872,7 +150872,7 @@ PrefabInstance:
     - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: body
       value: "Sunken Grove & Darkwater Docks --->\n<---Foggy Marsh\nFisher's Lane
-        _____\n                                   |\n                                  
+        _____\n                                   |\n                                 
         \\/"
       objectReference: {fileID: 0}
     - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
@@ -171535,7 +171535,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: title
-      value: 
+      value: _
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -197739,11 +197739,11 @@ PrefabInstance:
       propertyPath: body
       value: "/\\\r\n |______Mauseleum  Maze to Serpent's Stoneway\r\n\r\n<---  The
         ------ Tomb\r\n\r\nJourney's End Church ______\r\n                                                 
-        |\r\n                                                 V\r\n"
+        |\r\n                                                V\r\n"
       objectReference: {fileID: 0}
     - target: {fileID: 8123456789012345003, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: title
-      value: 
+      value: Journey's End Graveyard
       objectReference: {fileID: 0}
     - target: {fileID: 8675817873126578536, guid: de327a0ee90297a4b900cf99e86af008, type: 3}
       propertyPath: m_LocalPosition.x

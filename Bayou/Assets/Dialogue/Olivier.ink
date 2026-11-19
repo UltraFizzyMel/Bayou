@@ -187,7 +187,7 @@ How can I help ya?
 *{olivierquestionsasked >=2 && !SeenOlivierCaliste}[Do you know Caliste?]
 ->OlivierCaliste
 
-*{!SeenOlivierLandry}[Do you know Father Landry?]
+*{!SeenOlivierLandry && priest_name != ""}[Do you know Father Landry?]
 ->OlivierLandry
 
 *{sabine_known != "" && olivierquestionsasked >=3 && !SeenOlivierSabine}[What do you think of Sabine?]

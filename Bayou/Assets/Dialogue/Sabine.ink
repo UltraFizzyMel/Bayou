@@ -170,7 +170,7 @@ What help are you seeking?
  *{marie_known != "" && olivier_known != "" && not SeenBaptistesExplanation}[Do you know the Baptistes?]
  ->BaptistesExplanation
  
- *{SeenBaptistesExplanation && marie_known != "" && olivier_known != "" && sabinequestionsasked >=2}[What would you do about the Baptistes?]
+ *{SeenBaptistesExplanation && marie_known != "" && olivier_known != "" && sabinequestionsasked >=2 && AMealToDieForQuestState!= "FINISHED" && AMealToDieForOlivierQuestState != "FINISHED"}[What would you do about the Baptistes?]
  ~sabinequestionsasked = sabinequestionsasked + 1
  ->BaptistesFued
  
