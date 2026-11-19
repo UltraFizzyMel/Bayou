@@ -90,6 +90,16 @@ namespace Bayou.Fishing
         /// <summary>Alias for older call sites / HUD.</summary>
         public BayouFishingTool CurrentTool => (BayouFishingTool)CurrentItem;
 
+        public static bool HasEquippedLantern => HeldLantern.IsAnyLit ||
+            IsPlayerLanternEquipped();
+
+        private static bool IsPlayerLanternEquipped()
+        {
+            var equipment = Bayou.Player.PlayerLocator.Equipment;
+            return equipment != null && equipment.isActiveAndEnabled &&
+                equipment.CurrentItem == BayouHeldItem.Lantern;
+        }
+
         public bool IsHolding(BayouHeldItem item) => CurrentItem == item;
 
         /// <summary>True when a creature is actively hunting the player.</summary>
@@ -409,11 +419,11 @@ namespace Bayou.Fishing
 
         private void UpdateCarryLight()
         {
-            EnsureCarryLight();
             var on = CurrentItem == BayouHeldItem.Lantern;
-            if (_carryLight != null)
+            if (on)
+                EnsureCarryLight();
+            if (_carryLight != null && _carryLight.enabled != on)
                 _carryLight.enabled = on;
-            _lantern?.SetLit(false);
         }
 
         private void EnsureCarryLight()

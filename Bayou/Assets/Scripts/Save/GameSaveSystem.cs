@@ -33,6 +33,7 @@ namespace Bayou.Save
 
         /// <summary>When true, the next Start skips loading the save.</summary>
         public static bool SuppressNextLoad { get; set; }
+        public static bool ResumeAtSceneSpawn { get; set; }
 
         public event Action GameSaved;
         public event Action GameLoaded;
@@ -46,6 +47,7 @@ namespace Bayou.Save
         {
             Instance = null;
             SuppressNextLoad = false;
+            ResumeAtSceneSpawn = false;
         }
 
         private void Awake()
@@ -74,18 +76,20 @@ namespace Bayou.Save
             CaptureSpawnIfNeeded();
 
             var suppress = SuppressNextLoad;
+            var resumeAtSpawn = ResumeAtSceneSpawn;
             SuppressNextLoad = false;
+            ResumeAtSceneSpawn = false;
 
             // Editor Play Mode must not consume the real player save — that teleports
             // testers to an old campfire and desyncs inventory from a fresh quest log.
-            if (Application.isEditor)
+            if (Application.isEditor && !resumeAtSpawn)
             {
                 Debug.Log("[Save] Editor play starts fresh. Rest at a campfire to set a death checkpoint for this session.");
                 yield break;
             }
 
             if (loadSaveOnStart && !suppress && HasSaveFile)
-                Load();
+                Load(restorePosition: !resumeAtSpawn);
         }
 
         public bool Save(string bonfireId)
@@ -112,6 +116,16 @@ namespace Bayou.Save
                 walletBalance = wallet != null ? wallet.Balance : 0,
                 playerHealth = health != null ? health.Current : PlayerHealth.DefaultMaxHealth,
                 playerMaxHealth = health != null ? health.Max : PlayerHealth.DefaultMaxHealth,
+                satchelExpansion = inventory.HasSatchelExpansion,
+                purchasedMazeGateKey = WorldFlags.Has("purchased_maze_gate_key"),
+                returnedGraveyardCargo = WorldFlags.Has(WorldFlags.FoundBoxGraveyard),
+                returnedFoggyCargo = WorldFlags.Has(WorldFlags.FoundBoxFoggyMarsh),
+                returnedBrackishCargo = WorldFlags.Has(WorldFlags.FoundBoxBrackishShore),
+                burnedFoggyAltar = WorldFlags.Has(WorldFlags.FoggyAltarBurned),
+                burnedGraveAltar = WorldFlags.Has(WorldFlags.GraveAltarBurned),
+                burnedBrackishAltar = WorldFlags.Has(WorldFlags.BrackishAltarBurned),
+                returnedAccordion = WorldFlags.Has(WorldFlags.ReturnedAccordion),
+                disposedAccordion = WorldFlags.Has(WorldFlags.DisposedAccordion),
                 inventoryItems = CaptureInventory(inventory)
             };
 
@@ -132,7 +146,9 @@ namespace Bayou.Save
             }
         }
 
-        public bool Load()
+        public bool Load() => Load(restorePosition: true);
+
+        private bool Load(bool restorePosition)
         {
             if (!HasSaveFile)
                 return false;
@@ -144,7 +160,7 @@ namespace Bayou.Save
                 if (data == null)
                     return false;
 
-                return ApplySaveData(data);
+                return ApplySaveData(data, restorePosition);
             }
             catch (Exception ex)
             {
@@ -153,7 +169,21 @@ namespace Bayou.Save
             }
         }
 
-        private bool ApplySaveData(GameSaveData data)
+        private static void RestoreBurnedAltars(GameSaveData data)
+        {
+            if (data.burnedFoggyAltar) WorldFlags.Set(WorldFlags.FoggyAltarBurned);
+            if (data.burnedGraveAltar) WorldFlags.Set(WorldFlags.GraveAltarBurned);
+            if (data.burnedBrackishAltar) WorldFlags.Set(WorldFlags.BrackishAltarBurned);
+
+            foreach (var altar in FindObjectsByType<Bayou.World.AltarBurn>(FindObjectsSortMode.None))
+            {
+                if (!WorldFlags.Has(altar.InkFlag)) continue;
+                DialogueManager.GetInstance()?.SetBoolVariable(altar.InkFlag, true);
+                altar.Configure(altar.InkFlag);
+            }
+        }
+
+        private bool ApplySaveData(GameSaveData data, bool restorePosition)
         {
             if (data.sceneName != SceneManager.GetActiveScene().name)
             {
@@ -170,15 +200,30 @@ namespace Bayou.Save
 
             var inventory = InventoryController.Instance;
             if (inventory != null)
+            {
+                if (data.satchelExpansion) inventory.ExpandWithSatchel();
                 RestoreInventory(inventory, data.inventoryItems);
+                if (inventory.HasItemsById("Item_Satchel", 1))
+                {
+                    inventory.RemoveExact("Item_Satchel");
+                    inventory.ExpandWithSatchel();
+                }
+            }
+
+            if (data.purchasedMazeGateKey) WorldFlags.Set("purchased_maze_gate_key");
+            if (data.returnedGraveyardCargo) WorldFlags.Set(WorldFlags.FoundBoxGraveyard);
+            if (data.returnedFoggyCargo) WorldFlags.Set(WorldFlags.FoundBoxFoggyMarsh);
+            if (data.returnedBrackishCargo) WorldFlags.Set(WorldFlags.FoundBoxBrackishShore);
+            if (data.returnedAccordion) Bayou.World.AccordionCustody.MarkReturned();
+            if (data.disposedAccordion) Bayou.World.AccordionCustody.MarkDisposed(sold: true);
+            RestoreBurnedAltars(data);
 
             var player = FindPlayer();
             if (player != null)
             {
-                PlacePlayer(
-                    player,
-                    new Vector3(data.playerX, data.playerY, data.playerZ),
-                    Quaternion.Euler(0f, data.playerRotY, 0f));
+                if (restorePosition && data.sceneName == SceneManager.GetActiveScene().name)
+                    PlacePlayer(player, new Vector3(data.playerX, data.playerY, data.playerZ),
+                        Quaternion.Euler(0f, data.playerRotY, 0f));
                 var health = player.GetComponent<PlayerHealth>() ?? PlayerHealth.EnsureOn(player.gameObject);
                 if (data.playerMaxHealth > 0)
                     health.Restore(data.playerHealth, data.playerMaxHealth);

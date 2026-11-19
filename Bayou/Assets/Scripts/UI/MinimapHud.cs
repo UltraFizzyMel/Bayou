@@ -156,7 +156,8 @@ namespace Bayou.UI
             if (manager == null) return;
             foreach (var quest in manager.AllQuests)
             {
-                if (quest == null || !quest.IsActiveForHud) continue;
+                if (quest?.info == null || !quest.IsActiveForHud ||
+                    quest.info.id != GameplayHud.Instance?.TrackedQuestId) continue;
                 if (!QuestObjectiveLocator.TryResolve(quest, manager, player, out var objective))
                     continue;
                 var pos = objective.WorldPosition;

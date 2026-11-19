@@ -48,6 +48,32 @@ public static class QuestObjectiveLocator
             return false;
         }
 
+        if (questId == QuestIds.CollectLantern)
+        {
+            var gate = FindNamed("Church Graveyard Gate");
+            var gateInteraction = gate != null ? gate.GetComponentInChildren<InteractTrigger>() : null;
+            if (gate != null && (gateInteraction == null || !gateInteraction.HasBeenOpened))
+            {
+                objective = new Objective(gate.transform.position + Vector3.up, "Church graveyard gate", false);
+                return true;
+            }
+        }
+
+        if (questId == QuestIds.EmergencyDinner &&
+            TryFindNearestNeededFish(near, out var garPosition, out var garName, "Item_SpottedGar"))
+        {
+            var owned = InventoryController.Instance?.CountExact("Item_SpottedGar") ?? 0;
+            objective = new Objective(garPosition, $"{garName} ({Mathf.Min(owned, 2)}/2)", false);
+            return true;
+        }
+
+        if (questId == QuestIds.CollectLantern &&
+            TryFallbackByQuestId(questId, near, out var lanternPosition, out var lanternLabel))
+        {
+            objective = new Objective(lanternPosition, lanternLabel, false);
+            return true;
+        }
+
         // Prefer the live step's own target.
         if (manager != null && manager.TryGetActiveStep(questId, out var step) &&
             step.TryGetObjectiveWorldPosition(out var stepPos, out var stepLabel))
@@ -191,7 +217,7 @@ public static class QuestObjectiveLocator
         return true;
     }
 
-    public static bool TryFindNearestNeededFish(Vector3 near, out Vector3 pos, out string label)
+    public static bool TryFindNearestNeededFish(Vector3 near, out Vector3 pos, out string label, string requiredItem = null)
     {
         pos = default;
         label = null;
@@ -204,7 +230,7 @@ public static class QuestObjectiveLocator
             var f = fish[i];
             if (f == null || f.IsCaught || !f.isActiveAndEnabled) continue;
             var item = f.InventoryItem;
-            if (item == null) continue;
+            if (item == null || (requiredItem != null && !item.MatchesId(requiredItem))) continue;
             // Prefer quest fish; otherwise any catchable fish.
             var isQuestFish = item.MatchesId("Item_RedSnapper") || item.MatchesId("Item_SailfinMolly");
             if (!isQuestFish && !item.isFish) continue;
@@ -227,6 +253,8 @@ public static class QuestObjectiveLocator
             label = bestFish.InventoryItem != null ? bestFish.InventoryItem.displayName : "Fish";
             return true;
         }
+
+        if (requiredItem != null) return false;
 
         // Fall back to a fishing spot.
         FishingSpot bestSpot = null;

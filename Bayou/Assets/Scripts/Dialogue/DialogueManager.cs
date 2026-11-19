@@ -221,6 +221,16 @@ public class DialogueManager : MonoBehaviour
         // before the opening knot is evaluated.
         SyncQuestStatesIntoDialogueVariables();
         Bayou.World.PlayerRegionFlags.PushToDialogue();
+        if (currentStory.variablesState.GlobalVariableExistsWithName("calisteboxesreturned"))
+        {
+            var returned = (WorldFlags.Has(WorldFlags.FoundBoxGraveyard) ? 1 : 0) +
+                (WorldFlags.Has(WorldFlags.FoundBoxFoggyMarsh) ? 1 : 0) +
+                (WorldFlags.Has(WorldFlags.FoundBoxBrackishShore) ? 1 : 0);
+            if (dialogueVariables.variables.TryGetValue("calisteboxesreturned", out var stored) &&
+                stored is IntValue count)
+                returned = Mathf.Max(returned, count.value);
+            dialogueVariables.VariableChanged("calisteboxesreturned", new IntValue(returned));
+        }
         dialogueVariables.StartListening(currentStory);
 
         if (!string.IsNullOrEmpty(knotName))

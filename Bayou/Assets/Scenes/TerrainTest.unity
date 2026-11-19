@@ -5891,7 +5891,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: keyName
-      value: hasKeyChurchReturnKey
+      value: hasKeyChurchReturn
       objectReference: {fileID: 0}
     - target: {fileID: 3660983268424807966, guid: f9fea2eaee72e89469b7bd53bd068673, type: 3}
       propertyPath: m_Enabled

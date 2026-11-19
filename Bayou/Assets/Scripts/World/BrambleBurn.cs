@@ -82,7 +82,7 @@ namespace Bayou.World
                 return;
             }
 
-            if (_phase != Phase.Intact) return;
+            if (_phase != Phase.Intact || intact == null || burnt == null) return;
             if (!HasLantern()) return;
             if (Bayou.GameplayPause.BlocksWorldInteract || Bayou.GameplayPause.IsDialoguePlaying)
                 return;
@@ -102,7 +102,7 @@ namespace Bayou.World
         public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
         {
             prompt = default;
-            if (_phase != Phase.Intact || !HasLantern()) return false;
+            if (_phase != Phase.Intact || intact == null || burnt == null || !HasLantern()) return false;
             if (Bayou.GameplayPause.BlocksWorldInteract || Bayou.GameplayPause.IsDialoguePlaying)
                 return false;
             if (SignReadUi.IsOpen) return false;
@@ -114,7 +114,7 @@ namespace Bayou.World
 
         private void Ignite()
         {
-            if (_phase != Phase.Intact) return;
+            if (_phase != Phase.Intact || intact == null || burnt == null) return;
             _claimedFrame = Time.frameCount;
             _chained = false;
             _chainAt = Time.time + ChainDelay;
@@ -137,7 +137,20 @@ namespace Bayou.World
             }
         }
 
+        private static int _closestFrame = -1;
+        private static BrambleBurn _closestThisFrame;
+
         private static BrambleBurn ClosestIntact()
+        {
+            if (_closestFrame == Time.frameCount)
+                return _closestThisFrame;
+
+            _closestFrame = Time.frameCount;
+            _closestThisFrame = FindClosestIntact();
+            return _closestThisFrame;
+        }
+
+        private static BrambleBurn FindClosestIntact()
         {
             var player = PlayerLocator.Transform;
             if (player == null) return null;
@@ -147,7 +160,8 @@ namespace Bayou.World
             for (var i = 0; i < All.Count; i++)
             {
                 var bramble = All[i];
-                if (bramble == null || bramble._phase != Phase.Intact) continue;
+                if (bramble == null || bramble._phase != Phase.Intact ||
+                    bramble.intact == null || bramble.burnt == null) continue;
                 var sq = bramble.DistanceSq();
                 if (sq > reachSq || sq > bestSq) continue;
                 bestSq = sq;
@@ -177,7 +191,7 @@ namespace Bayou.World
                 for (var i = 0; i < _boxes.Length; i++)
                 {
                     var box = _boxes[i];
-                    if (box != null && box.enabled)
+                    if (box != null && box.enabled && box.gameObject.activeInHierarchy)
                         return box.bounds.center;
                 }
             }
@@ -333,11 +347,6 @@ namespace Bayou.World
                 go.SetActive(on);
         }
 
-        private static bool HasLantern()
-        {
-            var inv = InventoryController.Instance;
-            if (inv == null) return false;
-            return inv.CountExact("Item_Lantern") >= 1 || inv.CountExact("Item_SpiritLantern") >= 1;
-        }
+        private static bool HasLantern() => Bayou.Fishing.BayouFishingEquipment.HasEquippedLantern;
     }
 }

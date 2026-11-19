@@ -75,8 +75,10 @@ namespace Bayou.World
 
             var dialogue = DialogueManager.GetInstance();
             if (dialogue == null) return;
-            dialogue.SetBoolVariable(FoggyVar, foggy);
-            dialogue.SetBoolVariable(FirstBrackishVar, first);
+            if (!dialogue.TryGetBoolVariable(FoggyVar, out var storedFoggy) || storedFoggy != foggy)
+                dialogue.SetBoolVariable(FoggyVar, foggy);
+            if (!dialogue.TryGetBoolVariable(FirstBrackishVar, out var storedFirst) || storedFirst != first)
+                dialogue.SetBoolVariable(FirstBrackishVar, first);
         }
 
         public static void Classify(Vector3 world, out bool foggy, out bool firstShore)

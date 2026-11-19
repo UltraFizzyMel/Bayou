@@ -36,6 +36,16 @@ namespace Bayou.Inventory
                 ? Bag.GetGrid(Bag.CompartmentIds[0])
                 : null;
 
+        public bool HasSatchelExpansion { get; private set; }
+
+        public void ExpandWithSatchel()
+        {
+            if (HasSatchelExpansion || Grid == null) return;
+            Grid.AddRow();
+            HasSatchelExpansion = true;
+            NotifyChanged();
+        }
+
         public event Action InventoryChanged;
         public event Action<string> CompartmentUnlocked;
 

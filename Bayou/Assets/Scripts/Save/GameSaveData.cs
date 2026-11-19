@@ -25,6 +25,16 @@ namespace Bayou.Save
         public float playerZ;
         public float playerRotY;
         public int walletBalance;
+        public bool satchelExpansion;
+        public bool purchasedMazeGateKey;
+        public bool returnedGraveyardCargo;
+        public bool returnedFoggyCargo;
+        public bool returnedBrackishCargo;
+        public bool burnedFoggyAltar;
+        public bool burnedGraveAltar;
+        public bool burnedBrackishAltar;
+        public bool returnedAccordion;
+        public bool disposedAccordion;
         public int playerHealth;
         public int playerMaxHealth;
         public SavedItemEntry[] inventoryItems = Array.Empty<SavedItemEntry>();

@@ -189,7 +189,7 @@ namespace Bayou.Quests
         public bool TryGetInteractionPrompt(out InteractionPrompt prompt)
         {
             prompt = default;
-            if (!PlayerInPickupRange() || item == null) return false;
+            if (item == null || WasCargoReturned() || !PlayerInPickupRange()) return false;
 
             var name = string.IsNullOrWhiteSpace(item.displayName) ? item.name : item.displayName;
             var action = string.IsNullOrWhiteSpace(pickupPrompt) ? $"Pick up {name}" : $"{pickupPrompt} {name}";
@@ -209,7 +209,13 @@ namespace Bayou.Quests
 
         private void Update()
         {
-            if (!PlayerInPickupRange() || item == null) return;
+            if (item == null) return;
+            if (WasCargoReturned())
+            {
+                HideCollected();
+                return;
+            }
+            if (!PlayerInPickupRange()) return;
             if (Bayou.GameplayPause.BlocksWorldInteract || SignReadUi.IsOpen) return;
 
             var dialogue = DialogueManager.GetInstance();
@@ -236,10 +242,9 @@ namespace Bayou.Quests
                 return;
             }
 
-            if (addStraightToBag && !item.IsUniqueEquipment)
+            if ((addStraightToBag || IsCargoBox()) && !item.IsUniqueEquipment)
             {
                 // Do not remove a world pickup unless the inventory actually accepted it.
-                // For cargo, we allow the normal bag's unplaced-item fallback if the grid is full.
                 if (!GiveItemDirectly()) return;
             }
             else
@@ -342,6 +347,17 @@ namespace Bayou.Quests
             return pickup;
         }
 
+        private bool WasCargoReturned()
+        {
+            if (!IsCargoBox()) return false;
+            if (item.MatchesId("Item_CalisteCargoGraveyard")) return WorldFlags.Has(WorldFlags.FoundBoxGraveyard);
+            if (item.MatchesId("Item_CalisteCargoFoggy")) return WorldFlags.Has(WorldFlags.FoundBoxFoggyMarsh);
+            return item.MatchesId("Item_CalisteCargoBrackish") && WorldFlags.Has(WorldFlags.FoundBoxBrackishShore);
+        }
+
+        private bool IsCargoBox() => preservePlacedCargoVisual ||
+            item.Id.StartsWith("Item_CalisteCargo", System.StringComparison.OrdinalIgnoreCase);
+
         private bool GiveItemDirectly()
         {
             var inv = InventoryController.Instance ?? FindFirstObjectByType<InventoryController>();
@@ -353,7 +369,8 @@ namespace Bayou.Quests
             // A collected unique cargo ID must never create a second copy.
             if (inv.HasItemsById(item.Id, 1)) return true;
             if (inv.TryAddItem(item)) return true;
-            if (inv.TryHoldNewItem(item, out _)) return true;
+            if (!IsCargoBox() && inv.TryHoldNewItem(item, out _)) return true;
+            Bayou.UI.GameplayHud.Instance?.ShowNotice("Your inventory is full.");
             Debug.LogWarning($"[QuestPickup] Couldn't put '{item.Id}' in the bag. Pickup remains in the world.", this);
             return false;
         }

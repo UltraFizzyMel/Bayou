@@ -6,8 +6,8 @@ namespace Bayou.World
 {
     /// <summary>
     /// One guard for selling or discarding Olivier's accordion.
-    /// While Lost Accordion is in progress the item stays in the bag.
-    /// A completed sale or discard sets accordion_disposed / accordian_disposed.
+    /// Lost Accordion prevents discarding the item. A completed shop sale or an allowed
+    /// discard sets accordion_disposed / accordian_disposed.
     /// Turning the quest in does not count as disposal.
     /// </summary>
     public static class AccordionCustody
@@ -52,9 +52,9 @@ namespace Bayou.World
             Debug.Log("[Accordion] " + BlockedMessage);
         }
 
-        public static void MarkDisposed()
+        public static void MarkDisposed(bool sold = false)
         {
-            if (LostQuestInProgress())
+            if (!sold && LostQuestInProgress())
                 return;
 
             WorldFlags.Set(WorldFlags.DisposedAccordion, true);
@@ -73,13 +73,13 @@ namespace Bayou.World
 
         public static void NoteMerchantBag(InventoryBagModel merchantBag)
         {
-            if (merchantBag == null || LostQuestInProgress())
+            if (merchantBag == null)
                 return;
 
             foreach (var item in merchantBag.AllItems)
             {
                 if (!IsAccordion(item)) continue;
-                MarkDisposed();
+                MarkDisposed(sold: true);
                 return;
             }
         }

@@ -99,7 +99,7 @@ namespace Bayou.Environment
             }
 
             var inside = Inside.Count > 0;
-            var lantern = HeldLantern.IsAnyLit;
+            var lantern = BayouFishingEquipment.HasEquippedLantern;
 
             if (!inside)
             {

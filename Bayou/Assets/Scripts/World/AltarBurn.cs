@@ -17,7 +17,7 @@ namespace Bayou.World
         public const string BrackishFlag = BurnableInteract.BrackishFlag;
 
         private const float Reach = 4.25f;
-        private const float BurnSeconds = 5f;
+        private const float BurnSeconds = 2.5f;
 
         private enum Phase
         {
@@ -48,7 +48,7 @@ namespace Bayou.World
             for (var i = 0; i < Active.Count; i++)
             {
                 var altar = Active[i];
-                if (altar == null || altar._phase == Phase.Burnt) continue;
+                if (altar == null || altar._phase != Phase.Intact) continue;
                 if (!HasLantern() || !altar.InRange()) continue;
                 if (altar.DistanceSq() <= distSq)
                     return true;
@@ -69,6 +69,12 @@ namespace Bayou.World
         {
             ResolveVisuals();
             _colliders = GetComponentsInChildren<Collider>(true);
+            if (_colliders.Length == 0)
+            {
+                var fallback = gameObject.AddComponent<BoxCollider>();
+                fallback.isTrigger = true;
+                _colliders = new Collider[] { fallback };
+            }
             Apply(ReadBurned() ? Phase.Burnt : Phase.Intact);
         }
 
@@ -104,12 +110,13 @@ namespace Bayou.World
                 return;
 
             if (BrambleBurn.TookInteractThisFrame) return;
-            if (!InRange()) return;
+            if (!IsNearestIntactAltar()) return;
 
             var input = InputManager.GetInstance();
             if (input == null || !input.GetInteractPressed())
                 return;
 
+            input.RegisterInteractPressed();
             Ignite();
         }
 
@@ -124,8 +131,20 @@ namespace Bayou.World
             if (flower != null && flower.ClaimsInteract)
                 return false;
 
-            if (!InRange()) return false;
+            if (!IsNearestIntactAltar()) return false;
             prompt = new InteractionPrompt("E", "Light the altar", 60, DistanceSq());
+            return true;
+        }
+
+        private bool IsNearestIntactAltar()
+        {
+            if (!InRange()) return false;
+            var closestDistance = DistanceSq();
+            foreach (var altar in Active)
+            {
+                if (altar == null || altar == this || altar._phase != Phase.Intact) continue;
+                if (altar.DistanceSq() < closestDistance) return false;
+            }
             return true;
         }
 
@@ -145,6 +164,9 @@ namespace Bayou.World
             }
 
             Apply(Phase.Burnt);
+            var burned = (WorldFlags.Has(FoggyFlag) ? 1 : 0) +
+                (WorldFlags.Has(GraveFlag) ? 1 : 0) + (WorldFlags.Has(BrackishFlag) ? 1 : 0);
+            GameplayHud.Instance?.ShowNotice($"Altars burned: {burned}/3");
             TryAdvanceSeals();
         }
 
@@ -326,7 +348,7 @@ namespace Bayou.World
                 for (var i = 0; i < _colliders.Length; i++)
                 {
                     var col = _colliders[i];
-                    if (col != null && col.enabled)
+                    if (col != null && col.enabled && col.gameObject.activeInHierarchy)
                         return col.bounds.center;
                 }
             }
@@ -343,11 +365,6 @@ namespace Bayou.World
             return delta.sqrMagnitude;
         }
 
-        private static bool HasLantern()
-        {
-            var inv = InventoryController.Instance;
-            if (inv == null) return false;
-            return inv.HasItemsById("Item_Lantern", 1) || inv.HasItemsById("Item_SpiritLantern", 1);
-        }
+        private static bool HasLantern() => Bayou.Fishing.BayouFishingEquipment.HasEquippedLantern;
     }
 }

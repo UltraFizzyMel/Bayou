@@ -43,7 +43,10 @@ namespace Bayou.World
 
             var legacy = altar.GetComponent<BurnableInteract>();
             if (legacy != null)
+            {
+                legacy.enabled = false;
                 Object.Destroy(legacy);
+            }
 
             var burn = altar.GetComponent<AltarBurn>();
             if (burn == null)
@@ -78,6 +81,7 @@ namespace Bayou.World
                 {
                     if (t.GetComponent<BrambleBurn>() == null)
                         t.gameObject.AddComponent<BrambleBurn>();
+                    legacy.enabled = false;
                     Object.Destroy(legacy);
                     continue;
                 }
@@ -91,11 +95,8 @@ namespace Bayou.World
         {
             if (t == null) return false;
             if (t.GetComponent<BrambleBurn>() != null) return true;
-            if (HasBrambleVisuals(t)) return true;
-
             var name = t.name;
-            if (!IsBrambleName(name)) return false;
-            return !IsBrambleAuxiliaryName(name);
+            return IsBrambleName(name) && !IsBrambleAuxiliaryName(name) && HasBrambleVisuals(t);
         }
 
         private static bool HasBrambleVisuals(Transform t)

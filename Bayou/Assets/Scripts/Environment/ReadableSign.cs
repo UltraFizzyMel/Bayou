@@ -53,7 +53,7 @@ namespace Bayou.Environment
         public void RefreshLiveText()
         {
             var label = ReadChildLabel();
-            if (IsPlaceholder(title, body) && !string.IsNullOrWhiteSpace(label) && !IsPlaceholder(title, label))
+            if (!string.IsNullOrWhiteSpace(label) && !IsPlaceholder(string.Empty, label))
             {
                 var split = label.IndexOf('\n');
                 if (split > 0)
@@ -187,6 +187,7 @@ namespace Bayou.Environment
             if (SignReadUi.IsOpen)
                 return;
 
+            RefreshLiveText();
             SignReadUi.Show(this, title, body);
             if (string.Equals(title, "Zenon Landry", System.StringComparison.OrdinalIgnoreCase))
                 WorldFlags.MarkSeenZenonGrave();

@@ -217,6 +217,12 @@ namespace Bayou.Player
 
         private void Update()
         {
+            if (IsFishingCast())
+            {
+                moveInput = Vector2.zero;
+                return;
+            }
+
             moveInput = Vector2.ClampMagnitude(
 #if ENABLE_INPUT_SYSTEM
                 Bayou.Input.BayouInput.ReadMove(moveAction),

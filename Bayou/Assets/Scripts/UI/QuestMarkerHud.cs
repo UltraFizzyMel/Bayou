@@ -107,7 +107,7 @@ namespace Bayou.UI
             {
                 quest = pinned;
             }
-            else if (!manager.TryGetPrimaryActiveQuest(out quest))
+            else
             {
                 return false;
             }
