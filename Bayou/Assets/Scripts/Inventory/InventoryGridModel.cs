@@ -9,8 +9,8 @@ namespace Bayou.Inventory
     public sealed class InventoryGridModel
     {
         private readonly int _width;
-        private readonly int _height;
-        private readonly InventoryItemInstance[,] _cells;
+        private int _height;
+        private InventoryItemInstance[,] _cells;
         private readonly List<InventoryItemInstance> _items = new();
         private readonly List<Vector2Int> _offsetBuffer = new();
 
@@ -23,6 +23,16 @@ namespace Bayou.Inventory
             _width = Mathf.Max(1, width);
             _height = Mathf.Max(1, height);
             _cells = new InventoryItemInstance[_width, _height];
+        }
+
+        public void AddRow()
+        {
+            var expanded = new InventoryItemInstance[_width, _height + 1];
+            for (var x = 0; x < _width; x++)
+                for (var y = 0; y < _height; y++)
+                    expanded[x, y] = _cells[x, y];
+            _cells = expanded;
+            _height++;
         }
 
         public bool CanPlace(InventoryItemInstance item, int anchorX, int anchorY, int rotation)

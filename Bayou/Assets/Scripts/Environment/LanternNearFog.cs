@@ -36,6 +36,7 @@ namespace Bayou.Environment
         private readonly List<int> _fadedScratch = new();
         private Bounds _marshBounds;
         private bool _boundsValid;
+        private bool _collected;
         private float _nextScan;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -72,8 +73,11 @@ namespace Bayou.Environment
             if (Time.unscaledTime < _nextScan) return;
             _nextScan = Time.unscaledTime + ActiveScanSeconds;
 
-            if (_entries.Count == 0)
+            if (!_collected)
+            {
                 Collect();
+                _collected = true;
+            }
 
             var player = PlayerLocator.Transform;
             if (player == null || !_boundsValid || !PlayerNearMarsh(player.position))
@@ -94,10 +98,18 @@ namespace Bayou.Environment
             var scene = SceneManager.GetActiveScene();
             if (!scene.IsValid()) return;
 
-            var roots = scene.GetRootGameObjects();
             var fogRoots = new List<Transform>(4);
-            for (var i = 0; i < roots.Length; i++)
-                GatherFogRoots(roots[i].transform, fogRoots);
+            var marshFog = GameObject.Find("Foggy Marsh fog particles");
+            if (marshFog != null && marshFog.scene == scene)
+            {
+                fogRoots.Add(marshFog.transform);
+            }
+            else
+            {
+                var roots = scene.GetRootGameObjects();
+                for (var i = 0; i < roots.Length; i++)
+                    GatherFogRoots(roots[i].transform, fogRoots);
+            }
 
             for (var r = 0; r < fogRoots.Count; r++)
             {
@@ -256,7 +268,7 @@ namespace Bayou.Environment
         /// <summary>True while a world lantern light is actually out (carry slot or held mesh).</summary>
         private static bool LanternIlluminating()
         {
-            if (HeldLantern.IsAnyLit)
+            if (BayouFishingEquipment.HasEquippedLantern)
                 return true;
 
             var eq = PlayerLocator.Equipment;

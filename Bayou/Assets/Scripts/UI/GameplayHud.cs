@@ -265,7 +265,7 @@ namespace Bayou.UI
 
             if (quest.IsActiveForHud)
             {
-                if (string.IsNullOrEmpty(_trackedQuestId) || _trackedQuestId == quest.info.id)
+                if (_trackedQuestId == quest.info.id)
                 {
                     _trackedQuestId = quest.info.id;
                     ApplyQuest(quest);
@@ -284,8 +284,7 @@ namespace Bayou.UI
         {
             if (string.IsNullOrEmpty(id)) return;
 
-            // Adopt this quest if we have none yet, or it matches the tracked one.
-            if (_trackedQuestId != null && id != _trackedQuestId)
+            if (id != _trackedQuestId)
                 return;
 
             _trackedQuestId = id;
@@ -311,10 +310,40 @@ namespace Bayou.UI
             ShowQuestPanel(true);
         }
 
+        private TextMeshProUGUI _noticeLabel;
+        private Coroutine _noticeRoutine;
+
+        public void ShowNotice(string message)
+        {
+            if (rootCanvas == null) return;
+            if (_noticeLabel == null)
+            {
+                _noticeLabel = CreateTmp("WorldNotice", rootCanvas.transform, "", 24f, FontStyles.Bold,
+                    TextAlignmentOptions.Center);
+                var noticeRect = _noticeLabel.rectTransform;
+                noticeRect.anchorMin = noticeRect.anchorMax = new Vector2(0.5f, 0.8f);
+                noticeRect.anchoredPosition = Vector2.zero;
+                noticeRect.sizeDelta = new Vector2(650f, 50f);
+                _noticeLabel.raycastTarget = false;
+            }
+            if (_noticeRoutine != null) StopCoroutine(_noticeRoutine);
+            _noticeLabel.text = message;
+            _noticeLabel.gameObject.SetActive(true);
+            _noticeRoutine = StartCoroutine(HideNotice());
+        }
+
+        private System.Collections.IEnumerator HideNotice()
+        {
+            yield return new WaitForSecondsRealtime(3f);
+            _noticeLabel.gameObject.SetActive(false);
+            _noticeRoutine = null;
+        }
+
         public string TrackedQuestId => _trackedQuestId;
 
         public void TrackQuest(string questId)
         {
+            _objectiveCache = string.Empty;
             _trackedQuestId = string.IsNullOrWhiteSpace(questId) ? null : questId.Trim();
             RefreshQuestFromManager();
         }
@@ -329,13 +358,6 @@ namespace Bayou.UI
                 pinned.IsActiveForHud)
             {
                 ApplyQuest(pinned);
-                return;
-            }
-
-            if (manager != null && manager.TryGetPrimaryActiveQuest(out var quest))
-            {
-                _trackedQuestId = quest.info != null ? quest.info.id : null;
-                ApplyQuest(quest);
                 return;
             }
 

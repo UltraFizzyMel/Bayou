@@ -192,12 +192,7 @@ namespace Bayou.World
             }
         }
 
-        private static bool HasLantern()
-        {
-            var inv = InventoryController.Instance;
-            if (inv == null) return false;
-            return inv.HasItemsById("Item_Lantern", 1) || inv.HasItemsById("Item_SpiritLantern", 1);
-        }
+        private static bool HasLantern() => Bayou.Fishing.BayouFishingEquipment.HasEquippedLantern;
 
         private bool InRange()
         {

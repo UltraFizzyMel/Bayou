@@ -442,8 +442,6 @@ namespace Bayou.UI
             var manager = QuestManager.Resolve();
             if (manager != null && manager.TryGetQuest(questId, out var quest))
             {
-                if (quest.IsActiveForHud)
-                    GameplayHud.Instance?.TrackQuest(questId);
                 ApplyDetail(quest);
             }
             HighlightRows();

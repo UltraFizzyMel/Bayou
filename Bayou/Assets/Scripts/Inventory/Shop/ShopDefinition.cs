@@ -70,6 +70,9 @@ namespace Bayou.Inventory.Shop
         public static bool IsUniqueAlreadyOwned(ItemDefinition item, InventoryController playerInventory)
         {
             if (item == null || playerInventory == null) return false;
+            if (item.IsKeyItem && item.MatchesId(KeyGateManager.MazeGateKeyItemId) &&
+                WorldFlags.Has("purchased_maze_gate_key")) return true;
+            if (item.MatchesId("Item_Satchel") && playerInventory.HasSatchelExpansion) return true;
             if (!item.IsOnePerPlayer) return false;
             return playerInventory.HasItemsById(item.Id, 1);
         }

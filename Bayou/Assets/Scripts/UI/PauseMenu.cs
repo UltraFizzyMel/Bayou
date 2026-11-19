@@ -26,6 +26,9 @@ namespace Bayou.UI
         private GameObject _root;
         private GameObject _mainPage;
         private GameObject _settingsPage;
+        private GameObject _controlsPage;
+        private Text _title;
+        private bool _controlsFromMainMenu;
         private Text _qualityLabel;
         private Text _fullLabel;
         private Text _vsyncLabel;
@@ -41,6 +44,13 @@ namespace Bayou.UI
             if (_instance != null) return;
             var go = new GameObject(nameof(PauseMenu));
             _instance = go.AddComponent<PauseMenu>();
+        }
+
+        public static void OpenMainMenuControls()
+        {
+            Ensure();
+            _instance._controlsFromMainMenu = true;
+            _instance.ShowControls();
         }
 
         private void Awake()
@@ -76,7 +86,14 @@ namespace Bayou.UI
 
             if (!IsOpen)
             {
+                if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMenu") return;
                 ShowMain();
+                return;
+            }
+
+            if (_controlsPage != null && _controlsPage.activeSelf)
+            {
+                CloseControls();
                 return;
             }
 
@@ -105,8 +122,31 @@ namespace Bayou.UI
         private void ShowMain()
         {
             SetOpen(true);
+            _title.text = "Paused";
             if (_mainPage != null) _mainPage.SetActive(true);
             if (_settingsPage != null) _settingsPage.SetActive(false);
+            if (_controlsPage != null) _controlsPage.SetActive(false);
+        }
+
+        private void ShowControls()
+        {
+            SetOpen(true);
+            _title.text = "Controls";
+            _mainPage.SetActive(false);
+            _settingsPage.SetActive(false);
+            _controlsPage.SetActive(true);
+        }
+
+        private void CloseControls()
+        {
+            if (!_controlsFromMainMenu)
+            {
+                ShowMain();
+                return;
+            }
+            _controlsFromMainMenu = false;
+            _controlsPage.SetActive(false);
+            SetOpen(false);
         }
 
         private void ShowSettings()
@@ -149,16 +189,29 @@ namespace Bayou.UI
             var panelImage = panel.gameObject.AddComponent<Image>();
             panelImage.color = new Color(0.11f, 0.1f, 0.08f, 0.96f);
 
-            var title = CreateText("Title", panel, "Paused", 36, FontStyle.Bold);
-            title.rectTransform.anchoredPosition = new Vector2(0f, 300f);
-            title.color = new Color(0.96f, 0.91f, 0.78f, 1f);
+            _title = CreateText("Title", panel, "Paused", 36, FontStyle.Bold);
+            _title.rectTransform.anchoredPosition = new Vector2(0f, 300f);
+            _title.rectTransform.sizeDelta = new Vector2(440f, 60f);
+            _title.color = new Color(0.96f, 0.91f, 0.78f, 1f);
 
             _mainPage = new GameObject("Main", typeof(RectTransform));
             _mainPage.transform.SetParent(panel, false);
             Stretch(_mainPage.GetComponent<RectTransform>());
             AddButton(_mainPage.transform, "Resume", new Vector2(0f, 60f), () => SetOpen(false));
             AddButton(_mainPage.transform, "Settings", new Vector2(0f, -20f), ShowSettings);
-            AddButton(_mainPage.transform, "Quit", new Vector2(0f, -100f), QuitGame);
+            AddButton(_mainPage.transform, "Controls", new Vector2(0f, -100f), ShowControls);
+            AddButton(_mainPage.transform, "Quit", new Vector2(0f, -180f), QuitGame);
+
+            _controlsPage = new GameObject("Controls", typeof(RectTransform));
+            _controlsPage.transform.SetParent(panel, false);
+            Stretch(_controlsPage.GetComponent<RectTransform>());
+            var controls = CreateText("Bindings", _controlsPage.transform,
+                "WASD    Move\nMouse    Look\nE    Interact\nI    Inventory\nJ    Journal\nTab    Equipment wheel\n" +
+                "Left click    Use equipped tool\nA / D    Wiggle cast line\nR    Rotate held item\nEsc    Back / Pause",
+                24, FontStyle.Normal);
+            controls.rectTransform.sizeDelta = new Vector2(430f, 450f);
+            AddButton(_controlsPage.transform, "Back", new Vector2(0f, -270f), CloseControls);
+            _controlsPage.SetActive(false);
 
             _settingsPage = new GameObject("Settings", typeof(RectTransform));
             _settingsPage.transform.SetParent(panel, false);

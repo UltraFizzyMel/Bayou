@@ -421,6 +421,16 @@ namespace Bayou.Inventory.Shop
             if (!_transaction.TryCloseDeal(_wallet))
                 return;
 
+            if (_transaction.DidBuy(KeyGateManager.MazeGateKeyItemId, _playerInventory.Bag))
+                WorldFlags.Set("purchased_maze_gate_key");
+
+            if (_transaction.DidBuy("Item_Satchel", _playerInventory.Bag))
+            {
+                _playerInventory.RemoveExact("Item_Satchel");
+                _playerInventory.ExpandWithSatchel();
+                Bayou.UI.GameplayHud.Instance?.ShowNotice("Your inventory has been expanded.");
+            }
+
             Bayou.World.AccordionCustody.NoteMerchantBag(_merchantBag);
 
             if (_playerInventory != null && _transaction.DidBuy("Item_FishingRod", _playerInventory.Bag))
@@ -519,6 +529,18 @@ namespace Bayou.Inventory.Shop
             return RectTransformUtility.RectangleContainsScreenPoint(rt, screen, cam);
         }
 
+        private static bool IsProtectedSale(ItemDefinition definition)
+        {
+            var id = definition.Id;
+            if (definition.MatchesId(Bayou.World.AccordionCustody.ItemId)) return false;
+            return definition.IsKeyItem || definition.IsUniqueEquipment ||
+                ItemDefinition.IsPondQuestItem(id) ||
+                id.StartsWith("Item_CalisteCargo", System.StringComparison.OrdinalIgnoreCase) ||
+                definition.MatchesId("Item_Box") || definition.MatchesId("Item_Cross") ||
+                definition.MatchesId("Item_SabineSupplies") || definition.MatchesId("Item_HerbalistFlower") ||
+                definition.MatchesId("Item_WeddingRing");
+        }
+
         // Handmade personal bag -> merchant stock (sell).
         private bool TryDropHandmadePersonalToMerchant(InventoryItemUI ui, PointerEventData eventData)
         {
@@ -531,10 +553,13 @@ namespace Bayou.Inventory.Shop
                 return false;
 
             var item = ui.Item;
-            if (Bayou.World.AccordionCustody.BlockIfQuestNeedsIt(item))
-                return false;
             if (Bayou.World.FlowerCustody.BlockIfQuestNeedsIt(item))
                 return false;
+            if (IsProtectedSale(item.definition))
+            {
+                ShowNotice("This item cannot be sold.");
+                return false;
+            }
 
             var grabOffset = handmadePlayerInventoryUi?.CurrentDragGrabOffset ?? Vector2Int.zero;
             ResolveAnchor(_merchantBag, item, compartmentId, hoverX, hoverY, grabOffset, out var gx, out var gy);
@@ -562,10 +587,13 @@ namespace Bayou.Inventory.Shop
                 return false;
 
             var item = view.Item;
-            if (Bayou.World.AccordionCustody.BlockIfQuestNeedsIt(item))
-                return false;
             if (Bayou.World.FlowerCustody.BlockIfQuestNeedsIt(item))
                 return false;
+            if (IsProtectedSale(item.definition))
+            {
+                ShowNotice("This item cannot be sold.");
+                return false;
+            }
 
             var grabOffset = playerInventoryUi?.CurrentDragGrabOffset ?? Vector2Int.zero;
             ResolveAnchor(_merchantBag, item, compartmentId, hoverX, hoverY, grabOffset, out var gx, out var gy);
