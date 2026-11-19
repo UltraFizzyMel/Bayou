@@ -243,7 +243,7 @@ Run along then dear.
 ->END
 
 === Name 
-Well if you must know, I'm Mrs Baptiste. 
+Well if you must know, I'm <color=\#F8FF30>Mrs Baptiste</color>. 
 #speaker: Mrs. Baptiste
 ~ marie_known = "true"
 ->MarieStandardBranching

@@ -86,7 +86,7 @@ We meet again.
 ===Again
 ...
 The bayou waters have eroded who you once were.
-You once knew me as a shape across the pond, Sabine.
+You once knew me as a shape across the pond, <color=\#F8FF30>Sabine</color>.
 #speaker: Sabine
 ...
 ~sabine_known = "Sabine"

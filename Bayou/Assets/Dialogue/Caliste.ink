@@ -364,7 +364,6 @@ Thank you sonny!
     ~ FinishQuest(LostCargoQuestId)
     That should be all of my boxes. I'll be able to expand my wares.
 - else:
-    { calisteboxesreturned == 1: I believe I've lost two other boxes somewhere out in that there swamp. Should you find them please return em. }
     { calisteboxesreturned == 2: I have only one other missing box for you to find. }
 }
 -> AnythingElse
