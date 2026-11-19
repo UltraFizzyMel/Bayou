@@ -287,7 +287,7 @@ How might I be of service?
 === questions ===
 
 +[Who are you?]
- { priest_name == "":-> introduction("Landry") | -> repeatName}
+ { priest_name == "" && landryquestionsasked <3:-> introduction("Landry") | -> repeatName}
 
 +{landryquestionsasked <2 && SeenZenonLocation}[Where am I?]
  -> location
@@ -296,10 +296,12 @@ How might I be of service?
 ->ZenonCaliste
 +{olivier_known != "" && marie_known != "" && landryquestionsasked >2 && landryquestionsasked<3}[Thoughts on the Baptistes?]
 ->ZenonBaptistes
-+{sabine_known != ""  && landryquestionsasked >3}[Have you met Sabine?]
++{sabine_known != ""  && landryquestionsasked >3 && TheseRitualComponentsSeemSlipperyQuestState == "CAN_START"}[Have you met Sabine?]
 ->ZenonSabine
-+{TheseRitualComponentsSeemSlipperyQuestState == "IN_PROGRESS" or TheseRitualComponentsSeemSlipperyQuestState == "CAN_FINISH" }[Do you know about a ritual?]
++{not SeenZenonSabineRitual && TheseRitualComponentsSeemSlipperyQuestState == "IN_PROGRESS" or TheseRitualComponentsSeemSlipperyQuestState == "CAN_FINISH" }[Do you know about a ritual?]
 ->ZenonSabineRitual
++{SeenZenonSabineRitual}[What did you do?]
+->WhatAreYouTalkingAbout
 *{landryquestionsasked >=20}[You have a grave?]
 ->ZenonGrave
 
@@ -314,7 +316,14 @@ How might I be of service?
  -> questions
 
 ===ZenonSabineRitual
+Oh my... I didn't know she'd try to actually do it.
+Thanks for letting me know.
 ~SeenZenonSabineRitual = true
+->END
+
+===WhatAreYouTalkingAbout
+...
+I do not know what you're refering to.
 ->END
 
  === repeatName ===
