@@ -202,8 +202,8 @@ namespace Bayou.Creatures
             }
 
             _dead = true;
-            gameObject.SetActive(false);
             PlayAnim("Die");
+            //gameObject.SetActive(false);
             return NetHitResult.Killed;
         }
 
