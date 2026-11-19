@@ -323,7 +323,7 @@ Thanks for letting me know.
 
 ===WhatAreYouTalkingAbout
 ...
-I do not know what you're refering to.
+I do not know what you're referring to.
 ->END
 
  === repeatName ===
