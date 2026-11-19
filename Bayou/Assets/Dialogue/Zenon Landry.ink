@@ -17,10 +17,14 @@
 
 
  #portrait: father_landry_neutral #layout: left #background: church #border:Border
+{priest_name == "":-> Unknown | ->Known}
 
+===Unknown
 ->collectPondItemStart
 
-
+===Known
+#speaker: Father Landry
+->collectPondItemStart
 
 === collectPondItemStart ===
 
