@@ -64643,9 +64643,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bayou.Environment.ReadableSign
   title: Journey's End Church
-  body: "/\\              /\\                         /\\\n |                   |                    
+  body: "/\\                   /\\                   /\\\n |                   |                  
     |\n\nAll Welcome!    \nProverbs 4:26 \"Give careful thought to the paths for
-    your feet and be steadfast in all your ways\"\n"
+    your feet and be steadfast in all your ways.\"\n"
   readPrompt: Read
   interactRadius: 3.5
 --- !u!1 &709856773
@@ -81328,6 +81328,26 @@ PrefabInstance:
     - target: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_Name
       value: Caliste Box (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Size.x
+      value: 0.009828936
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Size.z
+      value: 0.04462964
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Center.x
+      value: -0.00008157951
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Center.y
+      value: -0.000051150382
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Center.z
+      value: -0.018014532
       objectReference: {fileID: 0}
     - target: {fileID: 8823814424392643981, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -100869,6 +100889,26 @@ PrefabInstance:
     - target: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_Name
       value: Caliste Box (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Size.x
+      value: 0.009828936
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Size.z
+      value: 0.05573955
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Center.x
+      value: -0.00008157951
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Center.y
+      value: -0.000051150382
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Center.z
+      value: -0.023569511
       objectReference: {fileID: 0}
     - target: {fileID: 8823814424392643981, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -207800,6 +207840,26 @@ PrefabInstance:
     - target: {fileID: 3446468157825748812, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_Name
       value: Caliste Box
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Size.x
+      value: 0.009828936
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Size.z
+      value: 0.04857928
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Center.x
+      value: -0.00008157951
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Center.y
+      value: -0.00005115038
+      objectReference: {fileID: 0}
+    - target: {fileID: 4146963385969098332, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
+      propertyPath: m_Center.z
+      value: -0.019989358
       objectReference: {fileID: 0}
     - target: {fileID: 8823814424392643981, guid: 5b118f6f2d297da4bbe384a39fc1ed6e, type: 3}
       propertyPath: m_LocalPosition.x
