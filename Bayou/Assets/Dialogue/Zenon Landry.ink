@@ -290,10 +290,10 @@ How might I be of service?
 
 === questions ===
 
-+[Who are you?]
- { priest_name == "" && landryquestionsasked <3:-> introduction("Landry") | -> repeatName}
++{landryquestionsasked <3}[Who are you?]
+ { priest_name == "":-> introduction("Landry") | -> repeatName}
 
-+{landryquestionsasked <2 && SeenZenonLocation}[Where am I?]
++{landryquestionsasked <2 && not SeenZenonLocation}[Where am I?]
  -> location
  
 +{caliste_known != "" && landryquestionsasked >1}[Do you know Caliste?]
